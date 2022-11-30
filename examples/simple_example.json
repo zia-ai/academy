@@ -1,0 +1,109 @@
+{
+  "examples": [
+    {
+      "id": "example-id-efef22bd-0",
+      "text": "What are the lottery numbers?",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "nlu_detected_intent": "out_of_scope",
+        "nlu_confidence": "0.99",
+        "overall_call_star_rating": "1",
+        "idx": "0",
+        "first_customer_utt": "True",
+        "second_customer_utt": "False",
+        "final_customer_utt": "True"
+      },
+      "context": {
+        "context_id": "id-efef22bd",
+        "type": "conversation",
+        "role": "client"
+      },
+      "created_at": "2022-11-19T13:20:48.564000Z"
+    },
+    {
+      "id": "example-id-ffe431ac-0",
+      "text": "Hello is there anyone there",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "nlu_detected_intent": "fallback",
+        "nlu_confidence": "0.03",
+        "overall_call_star_rating": "1",
+        "idx": "0",
+        "first_customer_utt": "True",
+        "second_customer_utt": "False",
+        "final_customer_utt": "True"
+      },
+      "context": {
+        "context_id": "id-ffe431ac",
+        "type": "conversation",
+        "role": "client"
+      },
+      "created_at": "2022-11-20T14:43:43.090000Z"
+    },
+    {
+      "id": "example-id-4352ab43-0",
+      "text": "Hi there how are you",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "nlu_detected_intent": "greeting",
+        "nlu_confidence": "0.87",
+        "overall_call_star_rating": "5",
+        "idx": "0",
+        "first_customer_utt": "True",
+        "second_customer_utt": "False",
+        "final_customer_utt": "False"
+      },
+      "context": {
+        "context_id": "id-4352ab43",
+        "type": "conversation",
+        "role": "client"
+      },
+      "created_at": "2022-11-21T11:34:21.003000Z"
+    },
+    {
+      "id": "example-id-4352ab43-1",
+      "text": "I'm well thank you, how may I help",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "nlu_detected_intent": "help",
+        "nlu_confidence": "0.43",
+        "overall_call_star_rating": "5",
+        "idx": "1",
+        "first_customer_utt": "True",
+        "second_customer_utt": "False",
+        "final_customer_utt": "False"
+      },
+      "context": {
+        "context_id": "id-4352ab43",
+        "type": "conversation",
+        "role": "expert"
+      },
+      "created_at": "2022-11-21T11:34:43.343000Z"
+    },
+    {
+      "id": "example-id-4352ab43-2",
+      "text": "Can you help me with this billing problem",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "nlu_detected_intent": "billing",
+        "nlu_confidence": "0.98",
+        "overall_call_star_rating": "5",
+        "idx": "2",
+        "first_customer_utt": "False",
+        "second_customer_utt": "True",
+        "final_customer_utt": "True"
+      },
+      "context": {
+        "context_id": "id-4352ab43",
+        "type": "conversation",
+        "role": "client"
+      },
+      "created_at": "2022-11-21T11:35:02.453000Z"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+pandas = "*"
+click = "*"
+requests = "*"
+requests-toolbelt = "*"
+autopep8 = "*"
+dataclasses-json = "*"
+datasets = "*"
+nltk = "*"
+spacy = "*"
+kaggle = "*"
+presidio-analyzer = "*"
+presidio-anonymizer = "*"
+google-cloud-translate = "2.0.1"
+dframcy = "*"
+tqdm = "*"
+seaborn = "*"
+lxml = "*"
+pytest = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

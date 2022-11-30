@@ -1,0 +1,10 @@
+version: 2.8
+
+nlu:
+- intent: greet
+  examples: |
+    - Hi there darling [Kay](name)
+    - Hello [Stephen](name)
+    - Yo yo yo
+    - Well hello there
+    - Hi 

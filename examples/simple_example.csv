@@ -1,0 +1,6 @@
+external_id,timestamp,utterance,speaker,nlu_detected_intent,nlu_confidence,overall_call_star_rating
+id-4352ab43,2022-11-21T11:34:21.003,"Hi there how are you","CUSTOMER",greeting,0.87,5
+id-4352ab43,2022-11-21T11:34:43.343,"I'm well thank you, how may I help","AGENT",help,0.43,5
+id-4352ab43,2022-11-21T11:35:02.453,"Can you help me with this billing problem","CUSTOMER",billing,0.98,5
+id-ffe431ac,2022-11-20T14:43:43.090,"Hello is there anyone there","CUSTOMER",fallback,0.03,1
+id-efef22bd,2022-11-19T13:20:48.564,"What are the lottery numbers?","CUSTOMER",out_of_scope,0.99,1

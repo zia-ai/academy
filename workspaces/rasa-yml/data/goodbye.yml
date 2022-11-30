@@ -1,0 +1,10 @@
+version: 2.8
+
+nlu:
+- intent: goodbye
+  examples: |
+    - so long [Dave](name)
+    - see ya [loser](insult)
+    - good bye
+    - ta for now [Alexandra](name)
+    - bye bye
