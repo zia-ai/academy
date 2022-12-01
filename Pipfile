@@ -23,6 +23,8 @@ tqdm = "*"
 seaborn = "*"
 lxml = "*"
 pytest = "*"
+mediawikiapi = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 
