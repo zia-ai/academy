@@ -1,0 +1,15 @@
+.DS_Store
+__pycache__
+.vscode
+venv
+data/*
+!data
+!data/.gitignore
+hf
+zia
+hf-linux-amd64
+.google-credentials.json
+onprem/*
+*.zip
+*.gz
+
