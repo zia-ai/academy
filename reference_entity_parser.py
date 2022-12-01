@@ -13,6 +13,17 @@
 # Note this is only if you need a list like that because your target NLU
 # does not support or is not trained for contextual or system detection methods
 # 
+# Attributation: Example downloader uses data from this Wikipedia page
+# https://en.wikipedia.org/wiki/List_of_towns_in_England
+#
+# Under :
+# https://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License
+# https://en.wikipedia.org/wiki/Wikipedia:Reusing_Wikipedia_content
+#
+# ./examples/towns.csv and towns.json are redistributed under
+# Creative Commons Attribution 4.0 International License. 
+# see ./LICENSE.txt
+#
 #
 # *****************************************************************************
 
