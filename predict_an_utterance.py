@@ -4,11 +4,20 @@
 #
 # MAKE SURE NLU IS TRAINED IN TARGET WORKSPACE
 #
+# export HF_PASSWORD=<password>
+#
 # python predict_utterance.py 
 # -i "Yo! It's going to need to be a new shipping address as my circumstances have changed"
-# -u username
-# -p password
+# -u <username>
+# -p $HF_PASSWORD
 # -b playbook-id
+#
+# To use with bearer token on on-prem
+# HF_BEARER=`hf auth print-access-token` 
+# or
+# HF_BEARER=`zia auth print-access-token` 
+#
+# python predict_utterance.py --bearer $HF_BEARER -i "Utterance"
 #
 # *****************************************************************************
 
@@ -21,14 +30,23 @@ import click
 
 @click.command()
 @click.option('-i','--input',type=str,required=True,help='Input utterance')
-@click.option('-u', '--username', type=str, required=True, help='HumanFirst username')
-@click.option('-p', '--password', type=str, required=True, help='HumanFirst password')
+@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
+@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
-def main(input: str, username: str, password: int, namespace: bool, playbook: str):
-    
-    # determine which intents to analyse
-    headers = authorize(username,password)
+@click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
+def main(input: str, username: str, password: int, namespace: bool, playbook: str, bearertoken: str):
+
+    # check which authorization method using
+    if bearertoken == '':
+        for arg in ['username','password']:
+            if arg == '':
+                raise Exception(f'If bearer token not provided, must provide username and password')
+        headers = authorize(username,password)
+    else:
+        headers = get_headers(bearertoken)
+        
+    # determine which intents to analyse        
     response_dict = predict(headers, input, namespace, playbook)
     top3 = get_top_n_intents(3, response_dict)
     print("")
@@ -39,7 +57,6 @@ def main(input: str, username: str, password: int, namespace: bool, playbook: st
     print("")
     # print(json.dumps(response_dict["matches"],indent=2))
     # print(json.dumps(response_dict["hierMatches"],indent=2))
-
 
 
 def get_top_n_intents(comparison: int, response_dict: dict) -> list:
@@ -62,16 +79,24 @@ def extract_score(response_dict: dict, target_intent: str) -> int:
                 return score
     return 0
 
+def get_headers(bearer_token: str) -> dict:
+    bearer_string = f'Bearer {bearer_token}'
+    headers = {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
+        'Authorization': bearer_string
+    }
+    return headers
+
 def authorize(username: str, password: str) -> dict:
     '''Get bearer token for a username and password'''
      
     # print(f'Hello {username} getting auth token details')
 
     auth_url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA5xZ7WCkI6X1Q2yzWHUrc70OXH5iCp7-c'
-    headers = {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Accept': 'application/json'
-    }
+
+    headers = get_headers('')
+
     auth_body = {
         "email": username,
         "password": password,
@@ -82,7 +107,7 @@ def authorize(username: str, password: str) -> dict:
     if auth_response.status_code != 200:
         raise Exception(f'Not authorised, google returned {auth_response.status_code} {auth_response.json()}')
     idToken = auth_response.json()['idToken']
-    headers['Authorization'] = f'Bearer {idToken}'   
+    headers = get_headers(idToken)
     # print('Retrieved idToken and added to headers')
     return headers
 
