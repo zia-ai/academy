@@ -48,6 +48,9 @@ def main(hf: str, watson:str, output: str, indent: int, fuzzy_match: bool, skill
   skill_name: str
     Watson skill name
   
+  delimiter: str
+    delimiter for parent and child intent names
+  
   Returns
   -------
   None
@@ -85,6 +88,9 @@ def intents_conversion(hf_data : dict, delimiter: str) -> list:
   ----------
   hf_data : dict
     represents the HumanFirst json 
+  
+  delimiter: str
+    delimiter for parent and child intent names
 
   Returns
   -------
@@ -167,6 +173,9 @@ def find_intent_name(hfintents : list, id : str, delimiter: str) -> str:
     
   id : str
     parent intent id
+  
+  delimiter: str
+    delimiter for parent and child intent names
 
   Returns
   -------
