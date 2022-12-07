@@ -57,11 +57,13 @@ def main(hf: str, watson: str, output: str, indent: int, fuzzy_match: bool, skil
     # load the HumanFirst data
     hf_file = open(hf, mode='r', encoding='utf8')
     hf_data = json.load(hf_file)
+    hf_file.close()
     print(f'Loaded hf file: {hf}')
     summarise_hf_workspace(hf_data)
+    
+    # validate names are compatible
     re_watson_name_format = re.compile(r'^(?!sys)[A-Za-z0-9-_\.]+$')
     validate_nlu_compatible_names(hf_data,re_watson_name_format)
-    hf_file.close()
 
     # load the Watson data
     watson_file = open(watson, mode='r', encoding='utf8')
@@ -71,6 +73,7 @@ def main(hf: str, watson: str, output: str, indent: int, fuzzy_match: bool, skil
 
     # conversion of entities format from humanfirst json to watson json
     watson_data["entities"] = entities_conversion(hf_data, fuzzy_match)
+    watson_data = cleanse_entity_synonym_case_and_duplicates(watson_data)
     print(
         f'Converted and over-written entities: {len(watson_data["entities"])}')
 
@@ -87,6 +90,24 @@ def main(hf: str, watson: str, output: str, indent: int, fuzzy_match: bool, skil
         json.dump(watson_data, outfile, indent=indent)
         print(f'Wrote output Watson workspace to: {output}')
         
+def cleanse_entity_synonym_case_and_duplicates(watson_data: dict) -> dict:
+  for i in range(len(watson_data["entities"])):
+    for j in range(len(watson_data["entities"][i]["values"])):
+      diff = 0
+      candidate_list = []
+      candidate_set = {}
+      for synonym in watson_data["entities"][i]["values"][j]["synonyms"]:
+        assert(isinstance(synonym,str))
+        candidate_list.append(synonym.lower())
+      candidate_set = set(candidate_list)
+      diff = len(candidate_list) - len(candidate_set)
+      if diff > 0:
+        print(f'Found {diff} case duplicates for entity: {watson_data["entities"][i]["entity"]} value: {watson_data["entities"][i]["values"][j]["value"]}')
+        watson_data["entities"][i]["values"][j]["synonyms"] = list(candidate_set)
+      else:
+        watson_data["entities"][i]["values"][j]["synonyms"] = candidate_list
+  return watson_data
+       
         
 def validate_nlu_compatible_names(hf_data: dict, re_nlu_name_format: re):  
   """Validates names against a provided regex for the target nlu
