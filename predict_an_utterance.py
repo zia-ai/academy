@@ -50,6 +50,7 @@ def main(input: str, username: str, password: int, namespace: bool, playbook: st
         
     # determine which intents to analyse        
     response_dict = predict(headers, input, namespace, playbook)
+    print(f'Returned {len(response_dict["matches"])} matches')
     
     # dump entities
     if 'entityMatches' in response_dict.keys():
@@ -64,7 +65,7 @@ def main(input: str, username: str, password: int, namespace: bool, playbook: st
         try:
             metadata = intent_full['metadata']
         except KeyError:
-            continue
+            pass
         print(f'{intent["score"]:.2f} {"-".join(intent["hierarchyNames"])} {metadata}')       
         i = i+1
          
@@ -107,17 +108,7 @@ def get_intent(headers: str, sentence: str, namespace: str, playbook: str, inten
     '''Get the metdata for the intent needed'''
     payload = {
         "namespace": namespace,
-        "playbook_id": playbook,
-        "format": 7, # Humanfirst JSON
-        "format_options": {
-            "hierarchical_intent_name_disabled": False,
-            "hierarchical_delimiter": "-",
-            "zip_encoding": False,
-            "hierarchical_follow_up": False,
-            "include_negative_phrases": False
-        },
-        "intent_ids": [ # this doesn't appear to work for us - doesn't return the intent-id passed - having to filter instead
-        ]
+        "playbook_id": playbook
     }
 
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/{intent_id}'
@@ -130,7 +121,6 @@ def get_intent(headers: str, sentence: str, namespace: str, playbook: str, inten
         quit()
     return response.json()
 
-"/v1alpha1/workspaces/{namespace}/{playbook_id}/intents/{id}"
 def get_intent_metadata_from_workspace(headers: str, sentence: str, namespace: str, playbook: str, intent_id: str) -> dict:
     '''Get the metdata for the intent needed'''
     payload = {
