@@ -57,9 +57,14 @@ def main(input: str, username: str, password: int, namespace: bool, playbook: st
     
     i =0
     for intent in response_dict['matches']:
+        intent_full = get_intent(headers, input, namespace, playbook, intent['id'])
         if i >= 3:
             break
-        metadata = json.dumps(get_intent_metadata(headers, input, namespace, playbook, intent['id']),indent=2)
+        metadata = {}
+        try:
+            metadata = intent_full['metadata']
+        except KeyError:
+            continue
         print(f'{intent["score"]:.2f} {"-".join(intent["hierarchyNames"])} {metadata}')       
         i = i+1
          
@@ -98,7 +103,35 @@ def authorize(username: str, password: str) -> dict:
     # print('Retrieved idToken and added to headers')
     return headers
 
-def get_intent_metadata(headers: str, sentence: str, namespace: str, playbook: str, intent_id: str) -> dict:
+def get_intent(headers: str, sentence: str, namespace: str, playbook: str, intent_id: str) -> dict:
+    '''Get the metdata for the intent needed'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook,
+        "format": 7, # Humanfirst JSON
+        "format_options": {
+            "hierarchical_intent_name_disabled": False,
+            "hierarchical_delimiter": "-",
+            "zip_encoding": False,
+            "hierarchical_follow_up": False,
+            "include_negative_phrases": False
+        },
+        "intent_ids": [ # this doesn't appear to work for us - doesn't return the intent-id passed - having to filter instead
+        ]
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/{intent_id}'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    if response.status_code != 200:
+        print("Did not get a 200 response")
+        print(response.status_code)
+        print(response.text)
+        quit()
+    return response.json()
+
+"/v1alpha1/workspaces/{namespace}/{playbook_id}/intents/{id}"
+def get_intent_metadata_from_workspace(headers: str, sentence: str, namespace: str, playbook: str, intent_id: str) -> dict:
     '''Get the metdata for the intent needed'''
     payload = {
         "namespace": namespace,
