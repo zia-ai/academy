@@ -24,7 +24,6 @@
 # standard imports
 import requests
 import json
-import base64
 
 # third party imports
 import click
