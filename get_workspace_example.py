@@ -2,22 +2,15 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# MAKE SURE NLU IS TRAINED IN TARGET WORKSPACE
 #
 # export HF_PASSWORD=<password>
 #
-# python predict_utterance.py
-# -i "Yo! It's going to need to be a new shipping address as my circumstances have changed"
+# python get_workspace_example
 # -u <username>
 # -p $HF_PASSWORD
-# -b playbook-id
+# -n <namepspace>
+# -b <playbook-id>
 #
-# To use with bearer token on on-prem
-# HF_BEARER=`hf auth print-access-token`
-# or
-# HF_BEARER=`zia auth print-access-token`
-#
-# python predict_utterance.py --bearer $HF_BEARER -i "Utterance"
 #
 # *****************************************************************************
 
@@ -28,7 +21,6 @@ import base64
 
 # third party imports
 import click
-
 
 @click.command()
 @click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
@@ -55,18 +47,20 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
         outputdir = outputdir + '/'
                
     workspace_info = get_playbook_info(headers, namespace, playbook)   
-        
-    with open(f'{outputdir}{namespace}-{playbook}-info.json','w') as file_out:
+    
+    workspace_info_out = f'{outputdir}{namespace}-{playbook}-info.json'    
+    with open(workspace_info_out,'w') as file_out:
         file_out.write(json.dumps(workspace_info,indent=2))      
+        print(f'Wrote workspace info to: {workspace_info_out}')
 
     workspace = get_playbook(headers, namespace, playbook)
 
-    with open(f'{outputdir}{namespace}-{playbook}.json','w') as file_out:
+    workspace_out = f'{outputdir}{namespace}-{playbook}.json'
+    with open(workspace_out,'w') as file_out:
         file_out.write(json.dumps(workspace,indent=2))      
-    
+        print(f'Wrote workspace to:      {workspace_out}')
         
-    with open(f'{outputdir}{namespace}-{playbook}.json','w') as file_out:
-        file_out.write(json.dumps(workspace,indent=2))        
+          
 
 def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns metadata of playbook'''

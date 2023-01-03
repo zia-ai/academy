@@ -10,7 +10,8 @@
 # -i "Yo! It's going to need to be a new shipping address as my circumstances have changed"
 # -u <username>
 # -p $HF_PASSWORD
-# -b playbook-id
+# -n <namepspace>
+# -b <playbook-id>
 #
 # To use with bearer token on on-prem
 # HF_BEARER=`hf auth print-access-token` 
