@@ -10,7 +10,8 @@
 # -i "Yo! It's going to need to be a new shipping address as my circumstances have changed"
 # -u <username>
 # -p $HF_PASSWORD
-# -b playbook-id
+# -n <namepspace>
+# -b <playbook-id>
 #
 # To use with bearer token on on-prem
 # HF_BEARER=`hf auth print-access-token` 
@@ -35,7 +36,9 @@ import click
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
-def main(input: str, username: str, password: int, namespace: bool, playbook: str, bearertoken: str):
+@click.option('-v', '--verbose',is_flag=True,default=False,help='Increase logging level')
+@click.option('-m', '--maxresults',type=int,default=3,help='Maximum number of classes per utterance to display')
+def main(input: str, username: str, password: int, namespace: bool, playbook: str, bearertoken: str, verbose: bool, maxresults: int):
 
     # check which authorization method using
     if bearertoken == '':
@@ -46,38 +49,39 @@ def main(input: str, username: str, password: int, namespace: bool, playbook: st
     else:
         headers = get_headers(bearertoken)
         
-    # determine which intents to analyse        
+    # get the prediction
     response_dict = predict(headers, input, namespace, playbook)
-    top3 = get_top_n_intents(3, response_dict)
+    print("")
+    print(f'Predict end point matches returned: {len(response_dict["matches"])}')
+    
+    
+    # cycle through the intents returned and also retreive metadata and display
+    i =0
+    for intent in response_dict['matches']:
+        intent_full = get_intent(headers, input, namespace, playbook, intent['id'])
+        if i >= maxresults:
+            break
+        metadata = {}
+        try:
+            metadata = intent_full['metadata']
+        except KeyError:
+            pass
+        # example of joining names to get fully qualified name
+        print(f'{intent["score"]:.2f} {"-".join(intent["hierarchyNames"]):30} {metadata}')       
+        i = i+1
+    
+    # any entities entities
     print("")
     if 'entityMatches' in response_dict.keys():
-        print(json.dumps(response_dict['entityMatches'],indent=2))
-    for intent in top3:
-        print(f'{extract_score(response_dict, intent)} {intent}')
-    print("")
-    # print(json.dumps(response_dict["matches"],indent=2))
-    # print(json.dumps(response_dict["hierMatches"],indent=2))
-
-
-def get_top_n_intents(comparison: int, response_dict: dict) -> list:
-    '''Find the top n intents from the prediciton to do word weight analysis on'''
-    intents = []
-    for i in range(comparison):
-        if i < len(response_dict['matches']):
-            intents.append(response_dict['matches'][i]['name'])
-        else:
-            break
-    return intents
-  
-
-def extract_score(response_dict: dict, target_intent: str) -> int:
-    '''Extract the score for a certain intent from the lowest match level from predict json'''
-    if 'matches' in response_dict.keys():
-        for match in response_dict['matches']:
-            if match['name'] == target_intent:
-                score = round(match['score'],2)
-                return score
-    return 0
+        print("Entity matches:")
+        for entity in response_dict['entityMatches']:
+            print(f'@{entity["entity"]["key"]}:{entity["entity"]["value"]} start: {entity["span"]["start"]} end: {entity["span"]["end"]}')
+    else:
+        print("No entities detected:")
+        
+    # if verbose dump the whole predict response
+    if verbose:
+        print(json.dumps(response_dict,indent=2))
 
 def get_headers(bearer_token: str) -> dict:
     bearer_string = f'Bearer {bearer_token}'
@@ -110,6 +114,23 @@ def authorize(username: str, password: str) -> dict:
     headers = get_headers(idToken)
     # print('Retrieved idToken and added to headers')
     return headers
+
+def get_intent(headers: str, sentence: str, namespace: str, playbook: str, intent_id: str) -> dict:
+    '''Get the metdata for the intent needed'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/{intent_id}'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    if response.status_code != 200:
+        print("Did not get a 200 response")
+        print(response.status_code)
+        print(response.text)
+        quit()
+    return response.json()
 
 def predict(headers: str, sentence: str, namespace: str, playbook: str) -> dict:
     '''Get response_dict of matches and hier matches for an input'''
