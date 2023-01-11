@@ -35,7 +35,7 @@ def test_intent_hierarchy_numbers():
     assert(isinstance(intent,humanfirst.HFIntent))
     assert(intent.id=='intent-2')
     assert(intent.name=='payment_late')
-    assert(intent.parent_id=='intent-1')
+    assert(intent.parent_intent_id=='intent-1')
     assert(len(labelled.intents)==3)
 
 def test_create_intent_second_time():
