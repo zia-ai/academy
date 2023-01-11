@@ -21,32 +21,51 @@ import click
 
 # custom imports
 import humanfirst
+import humanfirst_apis
 
 @click.command()
 @click.option('-d','--directory',type=str,required=True,help='Directory containing your unzipped agent zip')
-def main(directory: str, filename:str):
+# @click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
+# @click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+# @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
+# @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
+# @click.option('-v', '--verbose', is_flag=True, default=False, help='Increase logging level')
+@click.option('-f', '--filename', type=str, required=True, help='Workspace file to update')
+def main(directory: str, filename: str): # username: str, password: str, namespace: str, playbook: str, verbose: bool):
     
     config = validate_agent_directory(directory)
     intents = load_intents(config["intent_dir"])
     df = pandas.json_normalize(intents)
     df = process_priorities(df)
     df = process_intent_types(df)
-    workspace = get_hf_workspace(config,filename)
     
-    print(workspace)
+    labelled_workspace = get_workspace(config,filename)
+    intent_name_index = labelled_workspace.get_intent_index(delimiter="-")
+    df["intent_id"] = df["name"].apply(map_values,args=[intent_name_index])  
+    df.apply(add_priority_tags,args=[labelled_workspace],axis=1)
+    df.apply(add_intent_type_tags,args=[labelled_workspace],axis=1)
+    write_workspace(config, filename, labelled_workspace)
     
-def get_hf_workspace(config:dict,filename:str):
-    assert(filename.endswith('.json'))
-    file = open(f'{config["directory_dir"]}{filename}',)
-    # to do this doesn't work - entities maybe?
-    json_workspace = json.load(file)
-    assert(isinstance(json_workspace,dict))
-    # workspace = humanfirst.HFWorkspace.from_json(file)
+def add_priority_tags(row:pandas.Series, labelled_workspace: humanfirst.HFWorkspace):
+    labelled_workspace.tag_intent(row["intent_id"],labelled_workspace.tag(row["priority"]))
+
+def add_intent_type_tags(row:pandas.Series, labelled_workspace: humanfirst.HFWorkspace):
+    labelled_workspace.tag_intent(row["intent_id"],labelled_workspace.tag(row["intent_type"]))
+    
+
+def get_workspace(config: dict, filename: str) -> humanfirst.HFWorkspace:
+    file_uri = f'{config["directory_dir"]}{filename}'
+    file = open(file_uri, mode="r",encoding="utf8")
+    labelled_workspace = humanfirst.HFWorkspace.from_json(file)
     file.close()
-    labelled_workspace = humanfirst.HFWorkspace()
-    for intent in json_workspace["intents"]:
-        labelled_workspace.intent()
     return labelled_workspace
+
+def write_workspace(config: dict, filename: str, labelled_workspace: humanfirst.HFWorkspace) -> humanfirst.HFWorkspace:
+    file_uri = f'{config["directory_dir"]}{filename}'
+    file_uri = file_uri.replace("in.json","out.json")
+    file = open(file_uri, mode="w",encoding="utf8")
+    labelled_workspace.write_json(file)
+    file.close()
     
 def process_intent_types(df: pandas.DataFrame) -> pandas.DataFrame:
     df["intent_type"] = df.apply(classify_intent_type,axis=1)

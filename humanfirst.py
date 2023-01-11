@@ -189,12 +189,12 @@ class HFExample:
                 self.created_at = created_at.isoformat() + 'Z'
 
         if len(intents) > 0:
-            self.intents = [HFIntentRef(intent.id)
+            self.intents = [HFIntentRef(intent.intent_id)
                             for intent in intents]
 
 
 class HFWorkspace:
-    '''Schema object for HFWorkspace - may be used to upload labelled or unlabelled data to HF Studio
+    '''Schema object for HFWorkspace - may be used to upddddddddddddddddd labelled or unlabelled data to HF Studio
 
     Validates the overall workspace and all sub objects
 
@@ -262,7 +262,38 @@ class HFWorkspace:
             parent_intent_id = last.id
 
         return last
-
+    
+    def tag_intent(self,intent_id,tag: HFTag):
+        # get the intent here
+        intent = self.intent_by_id(intent_id)
+        assert(isinstance(intent,HFIntent))
+        for i in range(len(intent.tags)):
+            assert(isinstance(intent.tags[i],HFTag))
+            if intent.tags[i] == tag.name:
+                intent.tags[i] = tag
+                self.intents_by_id[intent_id] = intent
+                print("tag_exists")
+                return tag
+        intent.tags.append(tag)
+        print("tag_appended")
+        self.intents_by_id[intent_id] = intent
+        print(intent)
+        return tag
+    
+    def get_intent_index(self, delimiter: str) -> dict:
+        # for every intent
+        # go back up it's parent hierachy by id
+        # reassemble name_or_hier
+        # concatentate
+        # in other file need to split and trim
+        # hopefully should compare.
+        intent_name_index = {}
+        
+        for intent_id in self.intents_by_id:
+            # do hierarchy here
+            intent_name_index[self.intents_by_id[intent_id].name] = intent_id
+        return intent_name_index
+        
     def intent_by_id(self, id: str) -> Optional[HFIntent]:
         '''Return a particular intent by id
         
