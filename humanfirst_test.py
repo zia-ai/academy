@@ -33,6 +33,9 @@ def test_intent_hierarchy_numbers():
         name_or_hier=['billing','billing_issues','payment_late']
     )
     assert(isinstance(intent,humanfirst.HFIntent))
+    assert(intent.id=='intent-2')
+    assert(intent.name=='payment_late')
+    assert(intent.parent_id=='intent-1')
     assert(len(labelled.intents)==3)
 
 def test_create_intent_second_time():
@@ -40,10 +43,14 @@ def test_create_intent_second_time():
     intent = labelled.intent(name_or_hier=['billing','billing_issues','payment_late'])
     assert(isinstance(intent,humanfirst.HFIntent))
     assert(intent.name=='payment_late')
+    assert(intent.id=='intent-2')
+    assert(intent.parent_intent_id=='intent-1')
     assert(len(labelled.intents)==3)
     intent = labelled.intent(name_or_hier=['billing'])
     assert(isinstance(intent,humanfirst.HFIntent))
     assert(intent.name=='billing')
+    assert(intent.id=='intent-0')
+    assert(intent.parent_intent_id==None)
     assert(len(labelled.intents)==3)
 
 

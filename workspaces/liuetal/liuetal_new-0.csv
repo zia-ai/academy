@@ -2872,7 +2872,7 @@ can you delete all events from my calendar,calendar_remove
 can you delete my shopping list,lists_remove
 can you delete that event on,calendar_remove
 can you delete the dentist appointment,calendar_remove
-can you delete the doctors appointment i had tuesday,calendar_remove
+can you delete the doctors appointment i had Tuesday,calendar_remove
 can you delete the next calendar event for which i was invited,calendar_remove
 can you delete the next event,calendar_remove
 can you delete the not so important events,calendar_remove
@@ -9884,7 +9884,7 @@ i'm tired of pandora please turn on the radio,play_radio
 i'm unhappy with tesco please help me,social_post
 i'm unhappy with this pasta please help me,social_post
 i've cancelled the order placed at mcd did it go through,takeaway_query
-i've got a meeting by tonight seven pm please mute the music for an hour,calendar_set
+i've got a meeting by tonight seven pm please mute the music for an hour,audio_volume_mute
 i've got an important meeting this sunday noon two hundred pm don't forget to remind me,calendar_set
 i've got dollars for the month how much can i spend every day this month,qa_maths
 i've heard this riff before what song stole this riff it's exactly the same,music_query
@@ -10646,7 +10646,7 @@ it was not the correct response.,general_negate
 it was not the right answer.,general_negate
 it was not what i am looking for.,general_negate
 it was not what i meant.,general_negate
-it was wonderful.,general_praise
+it was wonderful.,general_affirm
 it will be good if you yellowish the light,iot_hue_lightchange
 it would be good if my can connect peoples,general_quirky
 it would be great if can give you law consultations,general_quirky
@@ -10696,7 +10696,7 @@ it's too dark i can't even see my hands,iot_hue_lighton
 It's too dark in here,iot_hue_lighton
 it's too quiet in here,play_music
 it's wonderful work.,general_praise
-it's wonderful.,general_praise
+it's wonderful.,general_affirm
 iterate events on the note,calendar_query
 its cold outside,weather_query
 its dark in here mind turning up the light intensity,iot_hue_lightup
@@ -11034,7 +11034,7 @@ lets play checkers,play_game
 lets play chess together,play_game
 lets play pinball,play_game
 lets play poker,play_game
-Lets play tic tac toe,play_game
+lets play tic tac toe,play_game
 lets play,play_game
 lets send a tweet,social_post
 lets solve the puzzle,play_game
@@ -15982,7 +15982,7 @@ remove shop list,lists_remove
 remove shopping list,lists_remove
 remove six am alarm of whole week for future,alarm_remove
 remove soccer list from notes,lists_remove
-remove standup on Friday at ten am,calendar_remove
+remove standup on friday at ten am,calendar_remove
 remove succeeding event,calendar_remove
 remove table from furniture,lists_remove
 remove thanksgiving event from my calendar,calendar_remove
@@ -17835,7 +17835,7 @@ speak all items for to day,lists_query
 speak as loud as you can,audio_volume_up
 speak it once again please.,general_repeat
 speak it one more again please.,general_repeat
-speak louder please,audio_volume_up
+Speak louder please,audio_volume_up
 speak louder,audio_volume_up
 speak loudly,audio_volume_up
 speak more about the event,calendar_query
@@ -19090,7 +19090,7 @@ that's confirmed.,general_affirm
 that's correct.,general_affirm
 that's enough.,general_commandstop
 that's exact.,general_affirm
-that's excellent.,general_praise
+that's excellent.,general_affirm
 that's fantastic.,general_affirm
 that's good one.,general_praise
 that's good.,general_affirm
@@ -19111,7 +19111,7 @@ that's not what i said.,general_negate
 that's not what i wanted to see.,general_negate
 that's not what i was looking for.,general_negate
 that's perfect.,general_affirm
-that's wonderful.,general_praise
+that's wonderful.,general_affirm
 that's wrong.,general_negate
 thats not it please do it again.,general_negate
 the answer is confirmed.,general_affirm
@@ -20019,7 +20019,7 @@ update me on washington post,news_query
 update me with the election results,news_query
 update me,news_query
 update my calendar and delete next event,calendar_remove
-update my contacts with the new contact sam@gmail dot com,email_addcontact
+Update my contacts with the new contact sam@gmail dot com,email_addcontact
 update my inbox please,email_query
 update my list with shoes,lists_createoradd
 update my list,lists_createoradd
@@ -22979,7 +22979,6 @@ what's up in the neighbourhood,recommendation_events
 what's up today,calendar_query
 what's up with my order,takeaway_query
 what's up,general_greet
-What's up,general_quirky
 what's was the upcoming event,calendar_query
 what's worth watching,recommendation_movies
 what's your favorite color,general_quirky
@@ -23701,7 +23700,7 @@ who are the greatest guitarists of all time,qa_factoid
 who are the greatest hip hop artists,qa_factoid
 who are the last number of people i got emails from,email_query
 who are the top five all time nhl goal scorers,general_quirky
-who are you,general_quirky
+who are you,general_greet
 who are your developers,general_quirky
 who assassinated lincoln,qa_factoid
 who build the paris tower,qa_factoid
@@ -24862,7 +24861,7 @@ you have done it right appreciated.,general_praise
 you have done it right thank you so much.,general_praise
 you have done it right thank you very much.,general_praise
 you have done it right thank you.,general_praise
-you have done it right.,general_praise
+you have done it right.,general_affirm
 you have done task all wrong.,general_negate
 you have done that correctly appreciated.,general_praise
 you have done that correctly i appreciate it.,general_praise
@@ -24969,7 +24968,7 @@ you've done that right musch appreciated.,general_praise
 you've done that right thank you so much.,general_praise
 you've done that right thank you very much.,general_praise
 you've done that right thanks.,general_praise
-you've done that right.,general_praise
+you've done that right.,general_affirm
 you've done the command correcly.,general_affirm
 you've done the command right.,general_affirm
 you've done the task incorrectly.,general_negate

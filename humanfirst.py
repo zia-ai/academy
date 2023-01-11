@@ -67,18 +67,18 @@ class HFIntent:
      name:      str            name of intent that will be displayed in HF studio
      metadata:  dict           a dictionary or HFMetadata object of string only key value pairs
      tags:      list           a list of HFTag objects
-     parent_id: str, optional  a reference to the ID of the immediate parent if using hierarchy intents
+     parent_intent_id: str, optional  a reference to the ID of the immediate parent if using hierarchy intents
      '''
     id: str
     name: str
     metadata: HFMetadata = field(default_factory=dict)
     tags: List[HFTag] = field(default_factory=list)
-    parent_id: Optional[str] = None
+    parent_intent_id: Optional[str] = None
 
-    def __init__(self, id: str, name: str, metadata: HFMetadata = {}, tags: List[HFTag] = [], parent_id: Optional[str] = None):
+    def __init__(self, id: str, name: str, metadata: HFMetadata = {}, tags: List[HFTag] = [], parent_intent_id: Optional[str] = None):
         self.id = id
         self.name = name
-        self.parent_id = parent_id
+        self.parent_intent_id = parent_intent_id
         self.metadata = metadata
         self.tags = tags
 
@@ -233,9 +233,10 @@ class HFWorkspace:
                                          useful to an annotator in HF Studio                                  
         '''
         if type(name_or_hier) is not list:
+            print("not list")
             name_or_hier = [name_or_hier]
 
-        parent_id = None
+        parent_intent_id = None
         last = None
         for part in name_or_hier:
             if part == '':
@@ -249,16 +250,16 @@ class HFWorkspace:
                 # TODO: this doesn't work if you want the parent intent to have different metadata or tags to the child intent
                 # the first child intent creates the full hierarchy
                 intent = HFIntent(
-                    id=id,
+                    id=genid,
                     name=part,
-                    parent_id=parent_id,
+                    parent_intent_id=parent_intent_id,
                     metadata=metadata,
                     tags=tags,
                 )
                 self.intents[part] = intent
                 self.intents_by_id[genid] = intent
             last = self.intents[part]
-            parent_id = last.id
+            parent_intent_id = last.id
 
         return last
 
