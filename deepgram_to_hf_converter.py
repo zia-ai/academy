@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python deepgram_to_hf_converter.py -f <directory> -o <output file path>
+# python deepgram_to_hf_converter.py -f <directory> -o <output_file_path>
 #
 # *****************************************************************************
 
 # standard imports
-import pandas
+
 import random
 import json
 import click
@@ -17,6 +17,9 @@ import uuid
 import re
 from datetime import datetime,timedelta,date
 from dateutil import parser
+
+# third Party imports
+import pandas
 
 # custom imports
 import humanfirst
