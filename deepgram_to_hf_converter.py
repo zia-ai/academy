@@ -7,7 +7,6 @@
 # *****************************************************************************
 
 # standard imports
-
 import random
 import json
 import click
@@ -20,6 +19,11 @@ from dateutil import parser
 
 # third Party imports
 import pandas
+import nltk
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
 
 # custom imports
 import humanfirst
@@ -27,7 +31,8 @@ import humanfirst
 @click.command()
 @click.option('-f','--filedir',type=str,required=True,help='Directory containing Deepgram transcribed files')
 @click.option('-o','--output',type=str,required=True,help='Filepath where the HF file should be produced')
-def main(filedir: str, output: str) -> None:
+@click.option('-s','--split', is_flag=True, default=False, help='Split utterances into logical units')
+def main(filedir: str, output: str, split: bool) -> None:
     """Main Function"""
 
     convo_list = []
@@ -38,15 +43,16 @@ def main(filedir: str, output: str) -> None:
                 convo = json.load(convo_file)
                 convo_list.append(preprocess_convo(convo))
 
+
     df = pandas.json_normalize(convo_list,sep="-")
-    print(df.columns)
+    # print(df.columns)
 
     # explode the below columns
     col_list = ['results-utterances-utterance','results-utterances-start',
                 'results-utterances-end', 'results-utterances-avg_confidence',
                 'results-utterances-channel']
     df = df.explode(col_list,ignore_index=True)
-    print(df[col_list])
+    # print(df[col_list])
 
     # rename columns for ease of access
     rename_col = {
@@ -61,13 +67,25 @@ def main(filedir: str, output: str) -> None:
 
     # assign role
     df['role'] = df['results-utterances-channel'].apply(assign_role)
+    
+    if split:
+        # split the utterances into logical units
+        df[["utterance","start","end"]] = df [["utterance","start","end"]].apply(split_utterance,axis=1)
+        df = df.explode(["utterance","start","end"],ignore_index=True)
+        # print(df[["utterance","start","end"]])
+    
+    df["convo_duration"] = df["convo_duration"].apply(lambda x : round(x,3))
+    df["avg_confidence"] = df["avg_confidence"].apply(lambda x : round(x,3))
+    df["start"] = df["start"].apply(lambda x : round(x,3))
+    df["end"] = df["end"].apply(lambda x : round(x,3))
 
     # Extract metadata keys and store the corresponding items in metadata column in dataframe
     metadata_keys_to_extract = ["start","end","avg_confidence","convo_transcribed_at","convo_duration"]
     df["metadata"] = df.apply(create_metadata, args= [metadata_keys_to_extract],axis=1)
 
     # add start seconds to the created_at time 
-    df["created_at"] = df[["created_at","start"]].apply(add_seconds,axis = 1)
+    df["created_at"] = df[["created_at","start"]].apply(add_seconds,axis = 1)  
+
     df = df.sort_values(["conversation_id","created_at"]).reset_index(drop=True)
     df["idx"] = df.groupby(["conversation_id"]).cumcount()
     df = df.set_index(["conversation_id","idx"])
@@ -90,6 +108,29 @@ def main(filedir: str, output: str) -> None:
     file_out.close()
     print(f"{output} is successfully created")
 
+def split_utterance(row: pandas.Series) -> pandas.Series:
+    """Split the utterances into logical units"""
+
+    pt = nltk.tokenize.PunktSentenceTokenizer()
+    list_sentences = pt.tokenize(row["utterance"])
+    no_of_chars = 0
+    for sentence in list_sentences:
+        no_of_chars = no_of_chars + len(sentence)
+
+    # calculate individual logical unit level start and end
+    seconds_per_char = (row["end"]-row["start"])/no_of_chars
+    start = [row["start"]]
+    end = []
+    for i in range(len(list_sentences)):
+        end.append(start[i] + (seconds_per_char * len(list_sentences[i])))
+        if i+1 >= len(list_sentences):
+            break
+        start.append(end[i])
+    row["utterance"] = list_sentences
+    row["start"] = start
+    row["end"] = end
+    return row
+
 def preprocess_convo(convo: dict) -> dict:
     """Modify the struture of the data in order to get the entire utterance and its corresponding metadata"""
 
@@ -109,6 +150,12 @@ def preprocess_convo(convo: dict) -> dict:
         for key in u_dict:
             u_dict[key].append(utterance[key])
         count = count + 1
+
+    # solves call overlap issue with user and client
+    for i in range(len(u_dict["start"])-1):
+        overlap = u_dict["end"][i]-u_dict["start"][i+1]
+        u_dict["end"][i] = u_dict["end"][i] - overlap/2
+        u_dict["start"][i+1] = u_dict["start"][i+1] + overlap/2
     
     # merging the sentences that belong to a soingle utternace and storing their corresponding metadata
     i = 0
