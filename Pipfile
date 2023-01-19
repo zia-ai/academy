@@ -25,7 +25,6 @@ lxml = "*"
 pytest = "*"
 mediawikiapi = "*"
 beautifulsoup4 = "*"
-flatten-json = "*"
 
 [dev-packages]
 
