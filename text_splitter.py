@@ -2,8 +2,16 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python text_splitter.py -f <directory> -o <output_file_path>
-#
+# python text_splitter.py 
+# -filepath <unlabelled hf json> 
+# --split <text_to_split> 
+# --output <output_path> 
+# --timestamp <created_at_time> 
+# --key_id <unique_id>
+# 
+# text_to_split,created_at_time,key_id - in case of nested object start the   
+#                                        naming from root with the delimeter as 
+#                                        "-"
 # *****************************************************************************
 
 # standard imports
