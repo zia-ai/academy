@@ -50,7 +50,6 @@ def main(filepath: str, split: str, output: str, key_id: str, timestamp: str) ->
         utterances = json.load(utterance_file)
     
     df = pandas.json_normalize(utterances["examples"],sep="-")
-    # print(df.shape)
     # print(df)
 
     df["created_at"] = df[timestamp].apply(convert_timestamps)
@@ -60,6 +59,14 @@ def main(filepath: str, split: str, output: str, key_id: str, timestamp: str) ->
     df["split_text"] = df[split].apply(split_utterance,args=[pt])
     df[f"metadata-before_splitting_{split}"] = df[split].copy()
 
+    df = df.explode(["split_text"],ignore_index=True)
+    # print(df["split_text"])
+
+    df["utterance_id"] = df[key_id].copy()
+    df["idx"] = df.groupby([key_id]).cumcount()
+    df[["metadata-is_first_sentence","metadata-sentence_num"]] = df["idx"].apply(set_first_utterance_and_seq)
+    print(df[["idx","metadata-is_first_sentence","metadata-sentence_num","split_text","text"]])
+
     # Extract metadata keys and store the corresponding items in metadata column in dataframe
     metadata_keys_to_extract = []
     for i in df.columns.tolist():
@@ -68,14 +75,9 @@ def main(filepath: str, split: str, output: str, key_id: str, timestamp: str) ->
             metadata_keys_to_extract.append(i)
 
     df["metadata"] = df.apply(create_metadata, args= [metadata_keys_to_extract],axis=1)
-
-    df = df.explode(["split_text"],ignore_index=True)
-    # print(df["split_text"])
-
-    df["utterance_id"] = df[key_id].copy()
-    df["idx"] = df.groupby([key_id]).cumcount()
+  
     df = df.set_index(["utterance_id","idx"])
-    # print(df.shape)
+    print(f"Number of rows after splitting text is {df.shape[0]}")
 
     # build examples
     df = df.apply(build_examples,axis=1)
@@ -92,6 +94,13 @@ def main(filepath: str, split: str, output: str, key_id: str, timestamp: str) ->
     unlabelled.write_json(file_out)
     file_out.close()
     print(f"{output} is successfully created")
+
+def set_first_utterance_and_seq(index: int) -> list:
+    """Decides if a sentence is a first sentence or not and sets the sentence number"""
+
+    row = pandas.Series(data = [True if index == 0 else False, index+1],
+                        index = ["metadata-is_first_sentence","metadata-sentence_num"])
+    return row
 
 def convert_timestamps(datestring:str) -> datetime:
     """Convert datestring to isoformat"""
