@@ -79,18 +79,31 @@ def main(filedir: str, output: str, split: bool) -> None:
     df["start"] = df["start"].apply(lambda x : round(x,3))
     df["end"] = df["end"].apply(lambda x : round(x,3))
 
-    # Extract metadata keys and store the corresponding items in metadata column in dataframe
-    metadata_keys_to_extract = ["start","end","avg_confidence","convo_transcribed_at","convo_duration"]
-    df["metadata"] = df.apply(create_metadata, args= [metadata_keys_to_extract],axis=1)
-
     # add start seconds to the created_at time 
     df["created_at"] = df[["created_at","start"]].apply(add_seconds,axis = 1)  
+
+    # determining the first and last utterances of both client and expert
+    df_client_expert = df.groupby(["role"])
+    df_client = assign_utterance_num(df_client_expert,"client")
+    print(df_client[["conversation_id","created_at","role","utterance", 
+                     "is_first_utterance","is_last_utterance"]])
+
+    df_expert = assign_utterance_num(df_client_expert,"expert")
+    print(df_expert[["conversation_id","created_at","role","utterance", 
+                     "is_first_utterance","is_last_utterance"]])
+
+    df = pandas.concat([df_client,df_expert])
+    
+    # Extract metadata keys and store the corresponding items in metadata column in dataframe
+    metadata_keys_to_extract = ["start","end","avg_confidence","convo_transcribed_at",
+                                "is_first_utterance","is_last_utterance","convo_duration"]
+    df["metadata"] = df.apply(create_metadata, args= [metadata_keys_to_extract],axis=1)
 
     df = df.sort_values(["conversation_id","created_at"]).reset_index(drop=True)
     df["idx"] = df.groupby(["conversation_id"]).cumcount()
     df = df.set_index(["conversation_id","idx"])
 
-    print(df)
+    print(df[["created_at","role","utterance","is_first_utterance","is_last_utterance"]])
 
     # build examples
     df = df.apply(build_examples,axis=1)
@@ -107,6 +120,38 @@ def main(filedir: str, output: str, split: bool) -> None:
     unlabelled.write_json(file_out)
     file_out.close()
     print(f"{output} is successfully created")
+
+def assign_utterance_num(df_client_expert: pandas.DataFrame, role: str) -> tuple:
+    """Assigns the sentence number to the utterances"""
+
+    df = df_client_expert.get_group(role)
+    df = df.sort_values(["conversation_id","created_at"]).reset_index(drop=True)
+    df["sentence_num"] = df.groupby(["conversation_id"]).cumcount()
+    no_of_utterances_conversation_wise = (df.groupby(["conversation_id"]).size()).to_dict()
+    
+    df[["is_first_utterance",
+        "is_last_utterance"]] = df[["conversation_id",
+                                             "sentence_num",
+                                             "role"]].apply(set_first_and_last_utterance,
+                                                            args=[no_of_utterances_conversation_wise,role],
+                                                            axis=1)
+    
+    return df
+
+def set_first_and_last_utterance(row: pandas.Series, no_of_utterances: dict, role: str) -> pandas.Series:
+    """Decides if a sentence is a first sentence or last_sentence or neither"""
+    
+    is_first_utterance = False
+    is_last_utterance = False
+    for convo_id, size in no_of_utterances.items():
+        if convo_id == row.conversation_id and row.sentence_num == 0 and row.role == role:
+            is_first_utterance = True
+        if convo_id == row.conversation_id and row.sentence_num == size-1 and row.role == role:
+            is_last_utterance = True
+    row = pandas.Series(data = [is_first_utterance,is_last_utterance],
+                        index = ["is_first_utterance",
+                                 "is_last_utterance"])
+    return row
 
 def split_utterance(row: pandas.Series) -> pandas.Series:
     """Split the utterances into logical units"""
@@ -283,7 +328,7 @@ def create_metadata(row: pandas.Series, metadata_keys_to_extract: list) -> dict:
 
     return metadata
 
-def assign_role(row: pandas.Series) -> str:
+def assign_role(row: int) -> str:
     """Assign role depending on channel number 0-client/1-expert"""
 
     if row == 0:
