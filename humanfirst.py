@@ -165,11 +165,11 @@ class HFExample:
     '''
     id: str
     text: str
-    context: Optional[HFContext]
     created_at: str
     intents: List[HFIntentRef] = field(default_factory=list)
     tags: List[HFTag] = field(default_factory=list)
     metadata: HFMetadata = field(default_factory=dict)
+    context: Optional[HFContext] = None
 
     def __init__(self, text: str, id: str, created_at: Optional[datetime.datetime] = None, intents: List[HFIntent] = [], tags: List[HFTag] = [], metadata: HFMetadata = {}, context: Optional[HFContext] = None):
         self.id = id
@@ -194,7 +194,7 @@ class HFExample:
 
 
 class HFWorkspace:
-    '''Schema object for HFWorkspace - may be used to upddddddddddddddddd labelled or unlabelled data to HF Studio
+    '''Schema object for HFWorkspace - may be used to update labelled or unlabelled data to HF Studio
 
     Validates the overall workspace and all sub objects
 
@@ -275,9 +275,7 @@ class HFWorkspace:
                 print("tag_exists")
                 return tag
         intent.tags.append(tag)
-        print("tag_appended")
         self.intents_by_id[intent_id] = intent
-        print(intent)
         return tag
     
     def get_intent_index(self, delimiter: str) -> dict:
@@ -287,11 +285,14 @@ class HFWorkspace:
         # concatentate
         # in other file need to split and trim
         # hopefully should compare.
-        intent_name_index = {}
-        
+        intent_name_index = {}      
         for intent_id in self.intents_by_id:
-            # do hierarchy here
-            intent_name_index[self.intents_by_id[intent_id].name] = intent_id
+            working = self.intents_by_id[intent_id]
+            fullpath=working.name
+            while working.parent_intent_id:
+                working = self.intents_by_id[working.parent_intent_id]
+                fullpath = f'{working.name}{delimiter}{fullpath}'
+            intent_name_index[intent_id] = fullpath               
         return intent_name_index
         
     def intent_by_id(self, id: str) -> Optional[HFIntent]:
@@ -347,10 +348,16 @@ class HFWorkspace:
         self.examples[example.id] = example
 
     @staticmethod
-    def from_json(input: IO) -> 'HFWorkspace':
-        '''Read and validate a HFWorkspace object from a json file
+    def from_json(input: Union[IO,dict]) -> 'HFWorkspace':
+        '''Read and validate a HFWorkspace object from a dict of a json (from api)
+        or from a json file
         '''
-        obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True)
+        if isinstance(input,IO):
+            obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True)
+        elif isinstance(input,dict):
+            obj = HFWorkspaceJson.from_json(json.dumps(input), infer_missing=True)
+        else:
+            raise Exception(f"What is this thing of type: {type(input)}")
 
         workspace = HFWorkspace()
         workspace.intents = {intent.name: intent for intent in obj.intents}

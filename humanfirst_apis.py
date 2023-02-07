@@ -2,15 +2,7 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-#
-# export HF_PASSWORD=<password>
-#
-# python get_workspace_example
-# -u <username>
-# -p $HF_PASSWORD
-# -n <namepspace>
-# -b <playbook-id>
-#
+# example api imports
 #
 # *****************************************************************************
 
@@ -20,6 +12,67 @@ import json
 import base64
 import humanfirst
 import datetime
+
+def validate_response(response, url: str, field: str = None):
+    if response.status_code != 200:
+        raise Exception(
+            f'Did not receive 200 from url: {url} {response.status_code} {response.text}')
+    candidate = response.json()
+    if candidate:
+        if field and field in candidate.keys():
+            return candidate[field]
+        else:
+            return candidate
+    else:
+        return None
+
+def query_conversation_set(
+    headers: str,
+    namespace: str,
+    workspace: str,
+    search_text: str = "",
+    start_isodate: str = "",
+    end_isodate: str = "",
+    page_size: int = 10,
+    convsetsource: str = "",
+    nextPageToken: str = "") -> dict:
+    '''Do a search and return the big data with predicates'''
+    predicates = []
+    if search_text and search_text != '':
+        predicates.append({"inputMatch": {"text": search_text}})
+    if start_isodate and end_isodate and start_isodate != '' and end_isodate != '':
+        predicates.append(
+            {
+                "timeRange": {
+                    "start": start_isodate,
+                    "end": end_isodate
+                }
+            }
+        )
+    if convsetsource and convsetsource != "":
+        predicates.append(
+            {"conversationSet": {"conversationSetIds": [convsetsource]}})
+    # if nextPageToken and nextPageToken != "":
+    #     predicates.append({"PageTokenData":{"PageToken":nextPageToken}})
+
+    if len(predicates) == 0:
+        raise Exception(
+            f"Must have either text or start and end date predicates.  search_text: {search_text} start_isodate: {start_isodate} end_isodate: {end_isodate}")
+
+    payload = {
+        "predicates": predicates,
+        "pageSize": page_size
+    }
+    if nextPageToken and nextPageToken != "":
+        payload["page_token"]=nextPageToken
+
+    
+
+    url = f'https://api.humanfirst.ai/v1alpha1/conversations/{namespace}/{workspace}/query'
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response, url)
+
 
 def get_tags(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns tags'''
@@ -31,16 +84,7 @@ def get_tags(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload))
-    if response.status_code != 200:
-        print("Did not get a 200 response")
-        print(response.status_code)
-        print(response.text)
-        quit()
-    if "tags" in response.json().keys():
-        return response.json()["tags"]
-    else:  
-        return response.json()
-    
+    return validate_response(url, response, "tags")
 
 def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict:
     '''Returns tags'''
@@ -53,14 +97,8 @@ def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags/{tag_id}'
     response = requests.request(
         "DELETE", url, headers=headers, data=json.dumps(payload))
-    if response.status_code != 200:
-        print("Did not get a 200 response")
-        print(response.status_code)
-        print(response.text)
-        quit()
-    return response.json()
+    return validate_response(url, response)
 
-# fuck knows what the tag payload is
 def create_tag(headers: str, namespace: str, playbook: str, tag_id: str, name: str, description: str, color: str) -> dict:
     '''Returns tags'''
     payload = {
@@ -68,14 +106,14 @@ def create_tag(headers: str, namespace: str, playbook: str, tag_id: str, name: s
         "playbook_id": playbook,
         "tag_id": tag_id
     }
-    
+
     now = datetime.datetime.now()
     now = now.isoformat()
     tag = {
         "id": f'tag-{humanfirst.hash_string(name)}',
         "name": name,
         "description": description,
-        "color": color, # '#' + ''.join([random.choice('0123456789ABCDEF')
+        "color": color,  # '#' + ''.join([random.choice('0123456789ABCDEF')
         "created_at": now,
         "updated_at": now
     }
@@ -83,19 +121,7 @@ def create_tag(headers: str, namespace: str, playbook: str, tag_id: str, name: s
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags/{tag_id}'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload))
-    if response.status_code != 200:
-        print("Did not get a 200 response")
-        print(response.status_code)
-        print(response.text)
-        quit()
-    return response.json()
-
-
-# def check_response(response: any):
-# need to write this rather than cut and paste
-# check object check not null check key attrbutes
-# then check 200 and log
-    
+    return validate_response(url,response)
 
 def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns metadata of playbook'''
@@ -107,12 +133,7 @@ def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/playbooks/{namespace}/{playbook}'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload))
-    if response.status_code != 200:
-        print("Did not get a 200 response")
-        print(response.status_code)
-        print(response.text)
-        quit()
-    return response.json()
+    return validate_response(url, response)
 
 def get_playbook(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns the actual training information including where present in the workspace
@@ -137,12 +158,7 @@ def get_playbook(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/export'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload))
-    if response.status_code != 200:
-        print("Did not get a 200 response")
-        print(response.status_code)
-        print(response.text)
-        quit()
-    response = response.json()['data']
+    response = validate_response(response, url, "data")
     response = base64.b64decode(response)
     response = response.decode('utf-8')
     response_dict = json.loads(response)

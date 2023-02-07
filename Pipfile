@@ -25,6 +25,7 @@ lxml = "*"
 pytest = "*"
 mediawikiapi = "*"
 beautifulsoup4 = "*"
+scikit-learn = "*"
 
 [dev-packages]
 
