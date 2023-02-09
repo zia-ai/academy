@@ -8,6 +8,7 @@
 
 import humanfirst
 import pandas
+import json
 
 def test_load_testdata():
     dtypes={
@@ -84,3 +85,22 @@ def test_tag_color_create():
     tag = labelled.tag(tag='exclude-white',color=new_color)
     assert(tag.color==new_color)
     
+def test_write_csv():
+    workspace = "./examples/write_csv_example.json"
+    with open(workspace,mode="r",encoding="utf8") as f:
+        data = json.load(f)
+    labelled_workspace = humanfirst.HFWorkspace.from_json(data)
+    assert(isinstance(labelled_workspace,humanfirst.HFWorkspace))
+    output_file = "./examples/write_csv_example.csv"
+    labelled_workspace.write_csv(output_file)
+    df = pandas.read_csv(output_file,encoding="utf8")
+    columns = list(df.columns)
+    assert("intent_name" in columns)
+    assert("intent_id" in columns)
+    assert("text" in columns)
+    # checking if the no of examples in workspace and no of rows in csv are same
+    # assuming the parent intents don't have any examples
+    no_of_parent_intents = df["text"].isna().sum()
+    no_of_rows = df.shape[0]
+    no_of_examples = len(labelled_workspace.examples)
+    assert(no_of_rows - no_of_parent_intents == no_of_examples)

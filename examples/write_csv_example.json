@@ -1,0 +1,137 @@
+{
+   "name": "write_csv_example",
+   "intents": [
+      {
+         "id": "intent-67CTEBIAPFASFJDYY6EJ5CIS",
+         "name": "intent1",
+         "metadata": {
+            "metadata3": "value3",
+            "metadata4": "value4"
+         },
+         "created_at": "2023-02-09T11:00:32Z",
+         "updated_at": "2023-02-09T15:30:26Z"
+      },
+      {
+         "id": "intent-MM7CCI7EYNAAPL5BLYVNZIKH",
+         "name": "intent2",
+         "metadata": {
+            "metadata1": "value1",
+            "metadata2": "value2"
+         },
+         "created_at": "2023-02-09T11:01:07Z",
+         "updated_at": "2023-02-09T15:30:08Z"
+      }
+   ],
+   "examples": [
+      {
+         "id": "phrase-RGFSZBLVZFAOPCCEDX67SJB2",
+         "text": "example1",
+         "intents": [
+            {
+               "intent_id": "intent-67CTEBIAPFASFJDYY6EJ5CIS"
+            }
+         ],
+         "created_at": "2023-02-09T11:00:32Z",
+         "updated_at": "2023-02-09T15:30:26Z"
+      },
+      {
+         "id": "phrase-RN5JE4T2GVG37I2LZGZBQER7",
+         "text": "example2",
+         "intents": [
+            {
+               "intent_id": "intent-67CTEBIAPFASFJDYY6EJ5CIS"
+            }
+         ],
+         "created_at": "2023-02-09T11:00:32Z",
+         "updated_at": "2023-02-09T15:30:26Z"
+      },
+      {
+         "id": "phrase-TV5K5BM5OVDMDHWIYOLBHAZE",
+         "text": "example3",
+         "intents": [
+            {
+               "intent_id": "intent-67CTEBIAPFASFJDYY6EJ5CIS"
+            }
+         ],
+         "created_at": "2023-02-09T11:00:32Z",
+         "updated_at": "2023-02-09T15:30:26Z"
+      },
+      {
+         "id": "phrase-JISFRYBMIRC6LPYSSIHJ44FN",
+         "text": "example4",
+         "intents": [
+            {
+               "intent_id": "intent-67CTEBIAPFASFJDYY6EJ5CIS"
+            }
+         ],
+         "created_at": "2023-02-09T11:00:32Z",
+         "updated_at": "2023-02-09T15:30:26Z"
+      },
+      {
+         "id": "phrase-5EHTJSQEXZDLZI4DMPGJBIYI",
+         "text": "example5",
+         "intents": [
+            {
+               "intent_id": "intent-67CTEBIAPFASFJDYY6EJ5CIS"
+            }
+         ],
+         "created_at": "2023-02-09T11:00:32Z",
+         "updated_at": "2023-02-09T15:30:26Z"
+      },
+      {
+         "id": "phrase-GWLLPSJW2NBBVC6LSSMP5HSN",
+         "text": "example10",
+         "intents": [
+            {
+               "intent_id": "intent-MM7CCI7EYNAAPL5BLYVNZIKH"
+            }
+         ],
+         "created_at": "2023-02-09T11:01:07Z",
+         "updated_at": "2023-02-09T15:30:08Z"
+      },
+      {
+         "id": "phrase-G77GPJMV7VATZKBGWSUCJMID",
+         "text": "example6",
+         "intents": [
+            {
+               "intent_id": "intent-MM7CCI7EYNAAPL5BLYVNZIKH"
+            }
+         ],
+         "created_at": "2023-02-09T11:01:07Z",
+         "updated_at": "2023-02-09T15:30:08Z"
+      },
+      {
+         "id": "phrase-KWZK3KZ7LNHHZNOGAJK2P3XC",
+         "text": "example7",
+         "intents": [
+            {
+               "intent_id": "intent-MM7CCI7EYNAAPL5BLYVNZIKH"
+            }
+         ],
+         "created_at": "2023-02-09T11:01:07Z",
+         "updated_at": "2023-02-09T15:30:08Z"
+      },
+      {
+         "id": "phrase-VTBSY4XRKRGXZHDI6GZ2PM7P",
+         "text": "example8",
+         "intents": [
+            {
+               "intent_id": "intent-MM7CCI7EYNAAPL5BLYVNZIKH"
+            }
+         ],
+         "created_at": "2023-02-09T11:01:07Z",
+         "updated_at": "2023-02-09T15:30:08Z"
+      },
+      {
+         "id": "phrase-RHRACQGSOFCBPIY3IANBP635",
+         "text": "example9",
+         "intents": [
+            {
+               "intent_id": "intent-MM7CCI7EYNAAPL5BLYVNZIKH"
+            }
+         ],
+         "created_at": "2023-02-09T11:01:07Z",
+         "updated_at": "2023-02-09T15:30:08Z"
+      }
+   ]
+}

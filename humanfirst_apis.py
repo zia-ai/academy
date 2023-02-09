@@ -13,6 +13,7 @@ import base64
 import humanfirst
 import datetime
 
+
 def validate_response(response, url: str, field: str = None):
     if response.status_code != 200:
         raise Exception(
@@ -26,16 +27,17 @@ def validate_response(response, url: str, field: str = None):
     else:
         return None
 
+
 def query_conversation_set(
-    headers: str,
-    namespace: str,
-    workspace: str,
-    search_text: str = "",
-    start_isodate: str = "",
-    end_isodate: str = "",
-    page_size: int = 10,
-    convsetsource: str = "",
-    nextPageToken: str = "") -> dict:
+        headers: str,
+        namespace: str,
+        workspace: str,
+        search_text: str = "",
+        start_isodate: str = "",
+        end_isodate: str = "",
+        page_size: int = 10,
+        convsetsource: str = "",
+        nextPageToken: str = "") -> dict:
     '''Do a search and return the big data with predicates'''
     predicates = []
     if search_text and search_text != '':
@@ -64,9 +66,7 @@ def query_conversation_set(
         "pageSize": page_size
     }
     if nextPageToken and nextPageToken != "":
-        payload["page_token"]=nextPageToken
-
-    
+        payload["page_token"] = nextPageToken
 
     url = f'https://api.humanfirst.ai/v1alpha1/conversations/{namespace}/{workspace}/query'
     response = requests.request(
@@ -86,6 +86,7 @@ def get_tags(headers: str, namespace: str, playbook: str) -> dict:
         "GET", url, headers=headers, data=json.dumps(payload))
     return validate_response(url, response, "tags")
 
+
 def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict:
     '''Returns tags'''
     payload = {
@@ -98,6 +99,7 @@ def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict
     response = requests.request(
         "DELETE", url, headers=headers, data=json.dumps(payload))
     return validate_response(url, response)
+
 
 def create_tag(headers: str, namespace: str, playbook: str, tag_id: str, name: str, description: str, color: str) -> dict:
     '''Returns tags'''
@@ -121,7 +123,8 @@ def create_tag(headers: str, namespace: str, playbook: str, tag_id: str, name: s
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags/{tag_id}'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload))
-    return validate_response(url,response)
+    return validate_response(url, response)
+
 
 def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns metadata of playbook'''
@@ -135,7 +138,16 @@ def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
         "GET", url, headers=headers, data=json.dumps(payload))
     return validate_response(url, response)
 
-def get_playbook(headers: str, namespace: str, playbook: str) -> dict:
+
+def get_playbook(headers: str,
+                 namespace: str,
+                 playbook: str,
+                 hierarchical_delimiter="-",
+                 hierarchical_intent_name_disabled: bool = True,
+                 zip_encoding: bool = False,
+                 hierarchical_follow_up: bool = True,
+                 include_negative_phrases: bool = False
+                 ) -> dict:
     '''Returns the actual training information including where present in the workspace
     * intents
     * examples
@@ -147,11 +159,11 @@ def get_playbook(headers: str, namespace: str, playbook: str) -> dict:
         "playbook_id": playbook,
         "format": 7,
         "format_options": {
-            "hierarchical_intent_name_disabled": True,
-            "hierarchical_delimiter": "-",
-            "zip_encoding": False,
-            "hierarchical_follow_up": True,
-            "include_negative_phrases": False
+            "hierarchical_intent_name_disabled": hierarchical_intent_name_disabled,
+            "hierarchical_delimiter": hierarchical_delimiter,
+            "zip_encoding": zip_encoding,
+            "hierarchical_follow_up": hierarchical_follow_up,
+            "include_negative_phrases": include_negative_phrases
         }
     }
 
@@ -198,3 +210,16 @@ def authorize(username: str, password: str) -> dict:
     headers = get_headers(idToken)
     # print('Retrieved idToken and added to headers')
     return headers
+
+
+def process_auth(bearertoken: str = '', username: str = '', password: str = '') -> dict:
+    '''Validate which authorisation method using and return the headers'''
+
+    if bearertoken == '':
+        for arg in ['username', 'password']:
+            if arg == '':
+                raise Exception(
+                    f'If bearer token not provided, must provide username and password')
+        return authorize(username, password)
+    else:
+        return get_headers(bearertoken)

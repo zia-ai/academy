@@ -33,7 +33,7 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
     
 def process(username: str, password: int, namespace: bool, playbook: str, bearertoken: str, convsetsource: str,searchtext: str, startisodate:str, endisodate:str):
     
-    headers = process_auth(bearertoken, username, password)
+    headers = humanfirst_apis.process_auth(bearertoken, username, password)
     df = get_conversationset_df(headers, namespace, playbook, convsetsource, searchtext,startisodate,endisodate)
     df.to_csv("./data/output_csv.csv",sep=",",encoding="utf8",index=False)
     print(df)
@@ -117,16 +117,6 @@ def extract_results(results: list, intent_name_index: dict, response_json):
                 print("No idea what's up with this:")
                 print(json.dumps(result["annotatedConversation"]["conversation"]["inputs"][i],indent=2))
     return results
-    
-def process_auth(bearertoken:str = '', username:str = '', password: str = '') -> dict:
-    '''Validate which authorisation method using and return the headers'''
-    if bearertoken == '':
-        for arg in ['username','password']:
-            if arg == '':
-                raise Exception(f'If bearer token not provided, must provide username and password')
-        return humanfirst_apis.authorize(username,password)
-    else:
-        return humanfirst_apis.get_headers(bearertoken)
 
 if __name__ == '__main__':
     main()

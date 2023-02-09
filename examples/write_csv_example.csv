@@ -1,0 +1,11 @@
+intent_id,intent_name,text,intent_metadata-metadata3,intent_metadata-metadata4,intent_metadata-metadata1,intent_metadata-metadata2
+intent-67CTEBIAPFASFJDYY6EJ5CIS,intent1,example1,value3,value4,,
+intent-67CTEBIAPFASFJDYY6EJ5CIS,intent1,example2,value3,value4,,
+intent-67CTEBIAPFASFJDYY6EJ5CIS,intent1,example3,value3,value4,,
+intent-67CTEBIAPFASFJDYY6EJ5CIS,intent1,example4,value3,value4,,
+intent-67CTEBIAPFASFJDYY6EJ5CIS,intent1,example5,value3,value4,,
+intent-MM7CCI7EYNAAPL5BLYVNZIKH,intent2,example10,,,value1,value2
+intent-MM7CCI7EYNAAPL5BLYVNZIKH,intent2,example6,,,value1,value2
+intent-MM7CCI7EYNAAPL5BLYVNZIKH,intent2,example7,,,value1,value2
+intent-MM7CCI7EYNAAPL5BLYVNZIKH,intent2,example8,,,value1,value2
+intent-MM7CCI7EYNAAPL5BLYVNZIKH,intent2,example9,,,value1,value2

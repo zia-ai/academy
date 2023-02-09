@@ -13,13 +13,13 @@
 # ***************************************************************************80**************************************120
 
 import datetime
-import numpy
 import hashlib
 import json
 import random
 from typing import IO, Any, Dict, List, Optional, Union
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
+import pandas
 
 HFMetadata = Dict[str, Any]
 
@@ -294,7 +294,70 @@ class HFWorkspace:
                 fullpath = f'{working.name}{delimiter}{fullpath}'
             intent_name_index[intent_id] = fullpath               
         return intent_name_index
+    
+    def write_csv(self,output_path: str) -> None:
+        """Writes the HF Workspace to a CSV file"""
+
+        intent_name_index = self.get_intent_index(delimiter="-")
+        csv_obj = {}
+
+        # creating a overall structure for the dataframe
+        for intent_id in intent_name_index.keys():
+            obj = {
+                "intent_id": intent_id,
+                "intent_name": intent_name_index[intent_id],
+                "intent_metadata": self.intents_by_id[intent_id].metadata,
+                "text": [],
+                "text_metadata": []
+            }
+            csv_obj[intent_id] = obj
+
+        # appending all the examples and their corresponding metadata to their respective intents
+        for phrase_id in self.examples:
+            example = self.examples[phrase_id]
+            example_intent = example.intents[0].intent_id
+            csv_obj[example_intent]["text"].append(example.text)
+            csv_obj[example_intent]["text_metadata"].append(example.metadata)
+
+        # create a dataframe
+        list_obj = []
+        for intent_id in csv_obj:
+            list_obj.append(csv_obj[intent_id])
+        df = pandas.json_normalize(list_obj,sep="-")
+        df = df.explode(["text","text_metadata"],ignore_index=True)
+
+        # create seperate columns for each metadata field in text_metadata column
+        metadata_keys = self.find_all_utterance_metadata(df["text_metadata"])
+        for i in range(len(metadata_keys)):
+            metadata_keys[i] = f"text_metadata-{metadata_keys[i]}"
+
+        df_empty = pandas.DataFrame(columns=metadata_keys)
+        df = pandas.concat([df,df_empty],axis=0)
+        df = df.apply(self.write_utterance_metadata,axis=1)
+        df = df.drop(columns=["text_metadata"])
+        print(df)
         
+        df.to_csv(output_path,sep=",",encoding="utf8",index=False)
+
+    def write_utterance_metadata(self,row: pandas.Series) -> pandas.Series:
+        """Copies the text metadata values to the respective column"""
+
+        if not isinstance(row.text_metadata,float):
+            for key in row.text_metadata.keys():
+                row[f"text_metadata-{key}"] = row.text_metadata[key]
+        return row
+
+    def find_all_utterance_metadata(self,text_metadata: pandas.Series) -> list:
+        """Finds set of all the metadata keys used by all the examples"""
+
+        text_metadata = text_metadata.to_list()
+        keys = set()
+        for metadata in text_metadata:
+            if not isinstance(metadata,float):
+                keys.update(metadata.keys())
+        
+        return list(keys)
+
     def intent_by_id(self, id: str) -> Optional[HFIntent]:
         '''Return a particular intent by id
         
