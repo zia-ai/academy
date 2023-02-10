@@ -15,6 +15,8 @@ import datetime
 
 
 def validate_response(response, url: str, field: str = None):
+    if isinstance(response,str):
+        raise Exception(response)
     if response.status_code != 200:
         raise Exception(
             f'Did not receive 200 from url: {url} {response.status_code} {response.text}')
@@ -26,7 +28,6 @@ def validate_response(response, url: str, field: str = None):
             return candidate
     else:
         return None
-
 
 def query_conversation_set(
         headers: str,
@@ -84,7 +85,7 @@ def get_tags(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload))
-    return validate_response(url, response, "tags")
+    return validate_response(response, url, "tags")
 
 
 def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict:
@@ -98,7 +99,7 @@ def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags/{tag_id}'
     response = requests.request(
         "DELETE", url, headers=headers, data=json.dumps(payload))
-    return validate_response(url, response)
+    return validate_response(response, url)
 
 
 def create_tag(headers: str, namespace: str, playbook: str, tag_id: str, name: str, description: str, color: str) -> dict:
@@ -123,7 +124,7 @@ def create_tag(headers: str, namespace: str, playbook: str, tag_id: str, name: s
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags/{tag_id}'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload))
-    return validate_response(url, response)
+    return validate_response(response, url)
 
 
 def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
@@ -136,7 +137,7 @@ def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/playbooks/{namespace}/{playbook}'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload))
-    return validate_response(url, response)
+    return validate_response(response, url)
 
 
 def get_playbook(headers: str,
