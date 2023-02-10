@@ -43,7 +43,7 @@ def write_csv(username: str, password: int, namespace: bool, playbook: str, bear
     playbook_dict = humanfirst_apis.get_playbook(headers, namespace, playbook)
     labelled_workspace = humanfirst.HFWorkspace.from_json(playbook_dict)
     assert(isinstance(labelled_workspace,humanfirst.HFWorkspace))
-    output_path_json = f'{output_dir}{playbook_dict["name"]}.json'
+    output_path_json = f'{output_dir}{namespace}-{playbook_dict["name"]}.json'
     
     # Write json version
     with open(output_path_json,mode="w",encoding="utf8") as f:
@@ -51,7 +51,7 @@ def write_csv(username: str, password: int, namespace: bool, playbook: str, bear
     print(f'Wrote json version of playbook: {output_path_json}')
     
     # Write csv version
-    output_path_csv = f'{output_dir}{playbook_dict["name"]}.csv'
+    output_path_csv = f'{output_dir}{namespace}-{playbook_dict["name"]}.csv'
     labelled_workspace.write_csv(output_path_csv)
     print(f"Wrote CSV file to: {output_path_csv}")  
 

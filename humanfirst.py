@@ -296,7 +296,7 @@ class HFWorkspace:
             intent_name_index[intent_id] = fullpath               
         return intent_name_index
     
-    def write_csv(self,output_path: str,intent_metadata: bool=True, example_metadata: bool=True,delimiter: str = '-') -> None:
+    def write_csv(self,output_path: str,intent_metadata: bool=True, example_metadata: bool=True, delimiter: str = '-') -> None:
         """Writes the HF Workspace to a CSV file at the fully qualified path output_path
         Will by default include intent level and example level metdata, override using arguments"""
 
