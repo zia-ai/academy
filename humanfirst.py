@@ -13,13 +13,14 @@
 # ***************************************************************************80**************************************120
 
 import datetime
-import numpy
 import hashlib
 import json
 import random
 from typing import IO, Any, Dict, List, Optional, Union
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
+import pandas
+import copy
 
 HFMetadata = Dict[str, Any]
 
@@ -67,18 +68,18 @@ class HFIntent:
      name:      str            name of intent that will be displayed in HF studio
      metadata:  dict           a dictionary or HFMetadata object of string only key value pairs
      tags:      list           a list of HFTag objects
-     parent_id: str, optional  a reference to the ID of the immediate parent if using hierarchy intents
+     parent_intent_id: str, optional  a reference to the ID of the immediate parent if using hierarchy intents
      '''
     id: str
     name: str
     metadata: HFMetadata = field(default_factory=dict)
     tags: List[HFTag] = field(default_factory=list)
-    parent_id: Optional[str] = None
+    parent_intent_id: Optional[str] = None
 
-    def __init__(self, id: str, name: str, metadata: HFMetadata = {}, tags: List[HFTag] = [], parent_id: Optional[str] = None):
+    def __init__(self, id: str, name: str, metadata: HFMetadata = {}, tags: List[HFTag] = [], parent_intent_id: Optional[str] = None):
         self.id = id
         self.name = name
-        self.parent_id = parent_id
+        self.parent_intent_id = parent_intent_id
         self.metadata = metadata
         self.tags = tags
 
@@ -165,11 +166,11 @@ class HFExample:
     '''
     id: str
     text: str
-    context: Optional[HFContext]
     created_at: str
     intents: List[HFIntentRef] = field(default_factory=list)
     tags: List[HFTag] = field(default_factory=list)
     metadata: HFMetadata = field(default_factory=dict)
+    context: Optional[HFContext] = None
 
     def __init__(self, text: str, id: str, created_at: Optional[datetime.datetime] = None, intents: List[HFIntent] = [], tags: List[HFTag] = [], metadata: HFMetadata = {}, context: Optional[HFContext] = None):
         self.id = id
@@ -189,12 +190,12 @@ class HFExample:
                 self.created_at = created_at.isoformat() + 'Z'
 
         if len(intents) > 0:
-            self.intents = [HFIntentRef(intent.id)
+            self.intents = [HFIntentRef(intent.intent_id)
                             for intent in intents]
 
 
 class HFWorkspace:
-    '''Schema object for HFWorkspace - may be used to upload labelled or unlabelled data to HF Studio
+    '''Schema object for HFWorkspace - may be used to update labelled or unlabelled data to HF Studio
 
     Validates the overall workspace and all sub objects
 
@@ -233,9 +234,10 @@ class HFWorkspace:
                                          useful to an annotator in HF Studio                                  
         '''
         if type(name_or_hier) is not list:
+            print("not list")
             name_or_hier = [name_or_hier]
 
-        parent_id = None
+        parent_intent_id = None
         last = None
         for part in name_or_hier:
             if part == '':
@@ -249,18 +251,75 @@ class HFWorkspace:
                 # TODO: this doesn't work if you want the parent intent to have different metadata or tags to the child intent
                 # the first child intent creates the full hierarchy
                 intent = HFIntent(
-                    id=id,
+                    id=genid,
                     name=part,
-                    parent_id=parent_id,
+                    parent_intent_id=parent_intent_id,
                     metadata=metadata,
                     tags=tags,
                 )
                 self.intents[part] = intent
                 self.intents_by_id[genid] = intent
             last = self.intents[part]
-            parent_id = last.id
+            parent_intent_id = last.id
 
         return last
+    
+    def tag_intent(self,intent_id,tag: HFTag):
+        # get the intent here
+        intent = self.intent_by_id(intent_id)
+        assert(isinstance(intent,HFIntent))
+        for i in range(len(intent.tags)):
+            assert(isinstance(intent.tags[i],HFTag))
+            if intent.tags[i] == tag.name:
+                intent.tags[i] = tag
+                self.intents_by_id[intent_id] = intent
+                print("tag_exists")
+                return tag
+        intent.tags.append(tag)
+        self.intents_by_id[intent_id] = intent
+        return tag
+    
+    def get_intent_index(self, delimiter: str) -> dict:
+        # for every intent
+        # go back up it's parent hierachy by id
+        # reassemble name_or_hier
+        # concatentate
+        # in other file need to split and trim
+        # hopefully should compare.
+        intent_name_index = {}      
+        for intent_id in self.intents_by_id:
+            working = self.intents_by_id[intent_id]
+            fullpath=working.name
+            while working.parent_intent_id:
+                working = self.intents_by_id[working.parent_intent_id]
+                fullpath = f'{working.name}{delimiter}{fullpath}'
+            intent_name_index[intent_id] = fullpath               
+        return intent_name_index
+    
+    def write_csv(self,output_path: str,intent_metadata: bool=True, example_metadata: bool=True, delimiter: str = '-') -> None:
+        """Writes the HF Workspace to a CSV file at the fully qualified path output_path
+        Will by default include intent level and example level metdata, override using arguments"""
+
+        intent_name_index = self.get_intent_index(delimiter=delimiter)
+        
+        obj_list = []
+        for phrase_id in self.examples:
+            example = self.examples[phrase_id]
+            obj = {
+                "utterance": example.text,
+                "fully_qualified_intent_name": intent_name_index[example.intents[0].intent_id],
+            }
+            if intent_metadata:
+                obj["intent_metadata"] = self.intent_by_id(example.intents[0].intent_id).metadata
+            if example_metadata:
+                obj["example_metadata"] = example.metadata
+
+            obj_list.append(copy.deepcopy(obj))
+                
+        df = pandas.json_normalize(obj_list,sep=delimiter)
+        
+        df.to_csv(output_path,sep=",",encoding="utf8",index=False)
+        print(df)
 
     def intent_by_id(self, id: str) -> Optional[HFIntent]:
         '''Return a particular intent by id
@@ -315,10 +374,16 @@ class HFWorkspace:
         self.examples[example.id] = example
 
     @staticmethod
-    def from_json(input: IO) -> 'HFWorkspace':
-        '''Read and validate a HFWorkspace object from a json file
+    def from_json(input: Union[IO,dict]) -> 'HFWorkspace':
+        '''Read and validate a HFWorkspace object from a dict of a json (from api)
+        or from a json file
         '''
-        obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True)
+        if isinstance(input,IO):
+            obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True)
+        elif isinstance(input,dict):
+            obj = HFWorkspaceJson.from_json(json.dumps(input), infer_missing=True)
+        else:
+            raise Exception(f"What is this thing of type: {type(input)}")
 
         workspace = HFWorkspace()
         workspace.intents = {intent.name: intent for intent in obj.intents}

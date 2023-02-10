@@ -1,0 +1,9 @@
+{
+  "id": "d3b52b49-19f8-4aae-9e93-d854f0396764",
+  "name": "fruit",
+  "isOverridable": true,
+  "isEnum": false,
+  "isRegexp": false,
+  "automatedExpansion": false,
+  "allowFuzzyExtraction": false
+}

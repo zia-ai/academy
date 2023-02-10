@@ -1,0 +1,1915 @@
+{
+  "examples": [
+    {
+      "id": "phrase-H2CFEIMLE5GLVDN6YQVRNNTZ",
+      "text": "I greet you",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-N3UBJC3RNJG6BFZACR5ELS6P",
+      "text": "a good day",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-B4CX4S7235DCFNELGVOKVMHB",
+      "text": "greetings",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-ZOQNOYMLQNAUNM4BK4VUU5QK",
+      "text": "hello",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-5LGCKTMGWBHPZMZ6NBKG2NI2",
+      "text": "hello again",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-AQSH62IEXRAUDOGPNHQHUDL2",
+      "text": "hello hi",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-KWOMDOWSXJB7VPR5VA4YOH2M",
+      "text": "hello there",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-ZCUJAHFDABFZHP7ZGNXXGYU4",
+      "text": "hey",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-YSZRBJOSDZDKLI5GU4AUGD5Q",
+      "text": "hey there",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-MZH4FBMANNGY5MMVUCSN5H5M",
+      "text": "heya",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-ZETIB4OWYJE3LF7FMONLLB23",
+      "text": "hi",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-QNFNZHA73VEW3LBPDQOO4YHT",
+      "text": "hi there",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-U4NO5NKHF5HX5FNHCEASHE5M",
+      "text": "howdy",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-UNJZCIA34JG3NCFTRNYDSWVL",
+      "text": "just going to say hi",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-AEVA2FGK2BCMFJO7R2XGKUB7",
+      "text": "long time no see",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-AQBQWY6QBBCKTOBD77TPFWEC",
+      "text": "lovely day isn't it",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-7AT4DVLQVJMSBECH4PCZOWIK"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-K2OL2QOV65FLZCWCWU4FUKUM",
+      "text": "doesn't clash",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-OG46PIPE7FO2JKERGV6BRAYL"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-25SNXEFWV5E2TJIVLAKPLNGD",
+      "text": "otherstuff",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-OG46PIPE7FO2JKERGV6BRAYL"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-YZJNTF4ZTZFEBPLGLVA4SWED",
+      "text": "some",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-OG46PIPE7FO2JKERGV6BRAYL"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-J63AUGLRSJCX7M5C2J2BTFST",
+      "text": "that",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-OG46PIPE7FO2JKERGV6BRAYL"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-SJ3C5BBHZ5APFCYNKVKJ7Q7W",
+      "text": "too much",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-OG46PIPE7FO2JKERGV6BRAYL"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-NXMBJQH7T5GR3CQVZ5ZW5FFY",
+      "text": "anything",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-2CFNJBWWGVLWXOTQZNFTN6KN"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-VANFMQOLDFDENOJ7CZ7UUPLS",
+      "text": "goes",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-2CFNJBWWGVLWXOTQZNFTN6KN"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-PTTRSGJVMJCTXGPISI55KCDB",
+      "text": "here",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-2CFNJBWWGVLWXOTQZNFTN6KN"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-MZOTNLIAPZEVDLGCSNV5AODC",
+      "text": "no",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-2CFNJBWWGVLWXOTQZNFTN6KN"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-YHVCJL7VNFH3TDNWCIMO54HC",
+      "text": "yes",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-2CFNJBWWGVLWXOTQZNFTN6KN"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-A2CTMN5JKZAOXJNUUE537FCS",
+      "text": "blah blah",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-RW5KX4FEFNINLMALPM4A33K5"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-S4PA7B5L6FE7XMA2DLGWF7HY",
+      "text": "start a flow",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-RW5KX4FEFNINLMALPM4A33K5"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-LHTU2ZXB35F45GBI6476TQBK",
+      "text": "this is matched by free text",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-RW5KX4FEFNINLMALPM4A33K5"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-QQ46YQBXJZEOFDK2EA7YHI36",
+      "text": "this is the top level",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-RW5KX4FEFNINLMALPM4A33K5"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-564CXEBAXFHVFEK4UC3LZCCP",
+      "text": "top level",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-RW5KX4FEFNINLMALPM4A33K5"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-ZH67RGCFSJH4DMI7BUS5HQ4R",
+      "text": "I can't",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-7DUCTGZ6BVBL7HROV3NLCT6J",
+      "text": "I disagree",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-PY3UO2I4MJB3HHEOZW3WSOZ7",
+      "text": "I don't",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-JD236ISK4RGBLKI2LD3UPCXO",
+      "text": "I don't think so",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-3AND4754SFCAVL3HVGEKE36W",
+      "text": "I don't want",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-HHPBLDGTFFHLRMQ3DCKDZ4J4",
+      "text": "I don't want that",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-IA3Q2R24VBEKDERS7U64JX37",
+      "text": "I'm not",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-SEMHLE6RJNH6BLK5RAHTDWCO",
+      "text": "definitely not",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-4JZG5H4XNRCWLF4AUBJ6FCBX",
+      "text": "don't",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-CGVP4ZRE7VFG7EVQIALA3FGT",
+      "text": "don't do it",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-RZNMQ5ZYGVC3ZESBGRJOT37D",
+      "text": "na",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-AIOUFME5YBFNHAFD4NTYWL7M",
+      "text": "nah",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-VSEPMYBCRVFONGHGD3XLFSSH",
+      "text": "nah I'm good",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-LN7X7EJTEVA7XFPGGTDYKBUN",
+      "text": "never",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-B25L4EDLCJH7VIZ6YN7W3D7K",
+      "text": "no",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-DWZ3DHP7WNG5ZASR2XUBTIN2",
+      "text": "no I cannot",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-QW7PBTTCZ5CQNPX5R26J5GMP",
+      "text": "no don't",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-DRSGCSASWJA7JH67VYHPZB3U",
+      "text": "no it isn't",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-7BWR67QUHVA63BZGERKU7K6F",
+      "text": "no maybe next time",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-Z6IUUAFWTZFITHAFIAUAE2A2",
+      "text": "no never",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-6KXUCBFOYJE3PP2U2SZIPIQN",
+      "text": "no no don't",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-KERKEDRHLJCFJJ7B7I6NMMO4",
+      "text": "no not really",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-BRSRNFWOENAUDNHGBYOQBH7N",
+      "text": "no thanks",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-R5FQYRHFJNB4VH24GCYLBHEB",
+      "text": "no that's be all",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-Y3CORCL5QFE4ZDRUEBG43LKY",
+      "text": "no that's fine thank you",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-H52BIT77LRETNJSGCOUPUXKG",
+      "text": "no that's ok",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-W2L2DFHUMZGXTOV4HXONUW7M",
+      "text": "no that's okay",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-KATBTA3VMFEMTA2G4AAXCUJK",
+      "text": "no way",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-N7E6US2OZJEYVNPMKEWSU4HQ",
+      "text": "no way no",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-C5XBBEAKDVA5PNN63ULLK6C2",
+      "text": "no we are good",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-UVQSVHIQRNEUJBY3D6SKUWYI",
+      "text": "nope",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-ZP3POOCYQNGEJJRIMAP4ZZG2",
+      "text": "nope not really",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-MFQFJOR5SVHEZN3ACG7JJXCP",
+      "text": "not",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-3EZ74DMFRBGL3E5RRFNR4O2L",
+      "text": "not at all",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-RK7HO3HD2JBS5AIPIZH37R63",
+      "text": "not interested",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-TPKEM7F6URB5TEITKHBEV2FL",
+      "text": "not really",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-IVMRHSUA3NFZXPIO2OWSR5HV",
+      "text": "not right now",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-LKBIYRH6FZA3TACBLNMN2WZ2",
+      "text": "not this time",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-NXXJF4QMIFGMDDJUKWHIBQNB",
+      "text": "not today",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-D7UVZ2MS25HFXOIBHQETZPRO",
+      "text": "nothing",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-SK7AOZWVRNGB7MMMW7XIK67Q",
+      "text": "nothing else",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-5UW2KYE65NBCXFQSYVGQXK5W",
+      "text": "nothing else thanks",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-RHVTJGWHMRA2RMGLYO7SXSL7",
+      "text": "thanks but no",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-NBS6Q5JWV5ATTLSEKG3UN6KZ",
+      "text": "thanks but not this time",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-6VTYFD5HHFJFZMZJPGCK63PE"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-GB4MY5WLLJBIDIMKBKHQJBBL",
+      "text": "I agree",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-MUNKLCUS65B2VNPMWGHKHPP5",
+      "text": "I don't mind",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-JTFOLLD4MBBY3MCR4BZUIGXO",
+      "text": "I think so",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-AI3FYLUMTNCGFET7GXATJL52",
+      "text": "absolutely",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-WERWXZZ65JEQZLBS3CCHZBAE",
+      "text": "alright",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-HZ4BBRZY6BHIZEQNFSZJMCIW",
+      "text": "alright why not",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-OZ7OYG7JYZDM3NUQNFM73BZS",
+      "text": "confirm",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-UB6Y7ULU3VCYLCVNO73GUIQB",
+      "text": "do it",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-LD7X5ZWQI5HM5BWU2JWDPQOU",
+      "text": "exactly",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-Y6DFE3BDJJDMHNRONQGUILH2",
+      "text": "for sure",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-6KNPDAZVLJGMPKWTNTLOBEJE",
+      "text": "go ahead",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-AZERU7RFCVF3LLGD6O5EMXE7",
+      "text": "it looks perfect",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-6YWKWNBAKBHAFN73T6LBB4QM",
+      "text": "it's fine",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-FEKM2RBO5VBWZB4GCB6XJQPB",
+      "text": "it's okay",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-YOHPSMJSDRCELJV4QDA27ZNG",
+      "text": "of course",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-3UX22HOQHFADNNYDTLU2NTE4",
+      "text": "ok",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-N2NWM4GU25DTRIKKWHEMM6SL",
+      "text": "okay",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-WKLVB6CXS5CLLHYG54YHZNUU",
+      "text": "okay I will",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-F7PKIIAEONB3NFIKGMFTK3YZ",
+      "text": "perfect",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-GRSN4N34PNEMNLIJIOUB5XZG",
+      "text": "right",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-ZJ2UKD6NOFE6DEXTAXIRB3SM",
+      "text": "sg",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-OCEU4R5CSBHILBCADHKOZ33O",
+      "text": "sounds correct",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-IW5YIOSC2JFE7LBM3B4I5H3Z",
+      "text": "sounds good",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-6FKQRKTP6BAJHKUOXFRHUGQY",
+      "text": "sure",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-7WD3BWUV35CWZPKUMHHC2XY6",
+      "text": "sure why not",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-BL3MIMVZCRC5TOZXTEEHER2Y",
+      "text": "that one works",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-BH2FWRF6OFE55NWFQ3GHTKUJ",
+      "text": "that works",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-YFXZ5B64SJGSXFDS2XRVDNFT",
+      "text": "that's correct",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-UZF6SK7KBVAITE3WRGOYGJTI",
+      "text": "why not",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-OJ5WIDZMTBEW3HM6ZYAPSG5U",
+      "text": "yeah",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-47EAWPETFJBAZJNXIN2MGPGZ",
+      "text": "yep",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-YB3REW6GPBGY5K77ARCFWPSD",
+      "text": "yep that's ok",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-XTSWFSLRVNB77MK5GODIFJEY",
+      "text": "yep that's right",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-LUEL4IJBTBB4JKPZFVWQW7ID",
+      "text": "yes",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-65JC4CJFDBDGPILFDKBCXRUH",
+      "text": "yes I agree",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-ETFPFS3YCBBYPGDNDYI5NHXH",
+      "text": "yes I can",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-JSRYCG6BSFHHLLKOOAJOZVSG",
+      "text": "yes I do",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-N22NZSKKQJA3PEICUUFD4F7N",
+      "text": "yes please",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-PE4XY52R75EUDDDYZA2VV66N",
+      "text": "yes that's alright",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-3WUBY5QJARHNFNFSTWDG4RBK",
+      "text": "yes that't ok",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-QYL3W6SQY5D4XB6WDEXUHQEV",
+      "text": "yes you can do it",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-YKT6RS6ERBERBMUKLQJUZOJM",
+      "text": "yup",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-K67HPAXNI5BUVBE65Q3PZM2U",
+      "text": "don't do that",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-UBHKKQJUBJLFJPUYYZJIKFKO"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-QTOFOFKN2NE3LMITB2VOHC6F",
+      "text": "nah",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-UBHKKQJUBJLFJPUYYZJIKFKO"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-TFKQFS3WBJHQLP342MXH43TD",
+      "text": "negative",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-UBHKKQJUBJLFJPUYYZJIKFKO"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-MXYIXRT3EZBDPB3M2SG4NJ2K",
+      "text": "no",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-UBHKKQJUBJLFJPUYYZJIKFKO"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-Q2OH2IT3JJDOBGOELRHQPE3Y",
+      "text": "nope",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-UBHKKQJUBJLFJPUYYZJIKFKO"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-IIJ5LH3QLVGUHGK72HSY7XSQ",
+      "text": "affirmative",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-637RWG6VEFPX7HDW3RVYEYOM"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-NCRFABMSPRE4JPFZ6HVLYXFP",
+      "text": "do that",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-637RWG6VEFPX7HDW3RVYEYOM"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-CEELTRW2ZVETFCWGFA3B5LWA",
+      "text": "ok",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-637RWG6VEFPX7HDW3RVYEYOM"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-PY7OZOTKCFB2DP3JSQCRHGGE",
+      "text": "yep",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-637RWG6VEFPX7HDW3RVYEYOM"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    {
+      "id": "phrase-LYDUUTXDQ5GCJHHXICBHJEGX",
+      "text": "yes",
+      "context": null,
+      "created_at": "2023-01-11T11:18:56Z",
+      "intents": [
+        {
+          "intent_id": "intent-637RWG6VEFPX7HDW3RVYEYOM"
+        }
+      ],
+      "tags": [],
+      "metadata": {}
+    }
+  ],
+  "tags": [
+    {
+      "id": "tag-0",
+      "name": "normal",
+      "color": "#B38497"
+    },
+    {
+      "id": "tag-1",
+      "name": "highest",
+      "color": "#FDA0A4"
+    },
+    {
+      "id": "tag-2",
+      "name": "ignore",
+      "color": "#5EDA63"
+    },
+    {
+      "id": "tag-3",
+      "name": "high",
+      "color": "#B3EF78"
+    },
+    {
+      "id": "tag-4",
+      "name": "low",
+      "color": "#EFBE6B"
+    },
+    {
+      "id": "tag-5",
+      "name": "top_level",
+      "color": "#B62E2D"
+    },
+    {
+      "id": "tag-6",
+      "name": "follow_on",
+      "color": "#671EA3"
+    },
+    {
+      "id": "tag-7",
+      "name": "context",
+      "color": "#A44EDE"
+    }
+  ],
+  "intents": [
+    {
+      "id": "intent-FDV67L5BUJNXPIO75STMIDVJ",
+      "name": "Default Fallback Intent",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-0",
+          "name": "normal",
+          "color": "#B38497"
+        },
+        {
+          "id": "tag-5",
+          "name": "top_level",
+          "color": "#B62E2D"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-7AT4DVLQVJMSBECH4PCZOWIK",
+      "name": "Default Welcome Intent",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-0",
+          "name": "normal",
+          "color": "#B38497"
+        },
+        {
+          "id": "tag-5",
+          "name": "top_level",
+          "color": "#B62E2D"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-OG46PIPE7FO2JKERGV6BRAYL",
+      "name": "priority-high",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-3",
+          "name": "high",
+          "color": "#B3EF78"
+        },
+        {
+          "id": "tag-5",
+          "name": "top_level",
+          "color": "#B62E2D"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-2CFNJBWWGVLWXOTQZNFTN6KN",
+      "name": "priority-highest",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-1",
+          "name": "highest",
+          "color": "#FDA0A4"
+        },
+        {
+          "id": "tag-5",
+          "name": "top_level",
+          "color": "#B62E2D"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-DUKAP4FGNRNQ5CO35CSEPWQ2",
+      "name": "priority-ignore",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-2",
+          "name": "ignore",
+          "color": "#5EDA63"
+        },
+        {
+          "id": "tag-5",
+          "name": "top_level",
+          "color": "#B62E2D"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-YQN54FMIL5LWBMQJA73SC6LN",
+      "name": "priority-low",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-4",
+          "name": "low",
+          "color": "#EFBE6B"
+        },
+        {
+          "id": "tag-5",
+          "name": "top_level",
+          "color": "#B62E2D"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-ZG42YVQUVFKV3LDQNX6F4LP6",
+      "name": "priority-normal",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-0",
+          "name": "normal",
+          "color": "#B38497"
+        },
+        {
+          "id": "tag-5",
+          "name": "top_level",
+          "color": "#B62E2D"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-RW5KX4FEFNINLMALPM4A33K5",
+      "name": "top_level",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-0",
+          "name": "normal",
+          "color": "#B38497"
+        },
+        {
+          "id": "tag-5",
+          "name": "top_level",
+          "color": "#B62E2D"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-6VTYFD5HHFJFZMZJPGCK63PE",
+      "name": "top_level - no",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-0",
+          "name": "normal",
+          "color": "#B38497"
+        },
+        {
+          "id": "tag-6",
+          "name": "follow_on",
+          "color": "#671EA3"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-MVSLE65R5NK6VO3DUNVT7O5Q",
+      "name": "top_level - yes",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-0",
+          "name": "normal",
+          "color": "#B38497"
+        },
+        {
+          "id": "tag-6",
+          "name": "follow_on",
+          "color": "#671EA3"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-UBHKKQJUBJLFJPUYYZJIKFKO",
+      "name": "top_level-no",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-0",
+          "name": "normal",
+          "color": "#B38497"
+        },
+        {
+          "id": "tag-7",
+          "name": "context",
+          "color": "#A44EDE"
+        }
+      ],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-637RWG6VEFPX7HDW3RVYEYOM",
+      "name": "top_level-yes",
+      "metadata": {},
+      "tags": [
+        {
+          "id": "tag-0",
+          "name": "normal",
+          "color": "#B38497"
+        },
+        {
+          "id": "tag-7",
+          "name": "context",
+          "color": "#A44EDE"
+        }
+      ],
+      "parent_intent_id": null
+    }
+  ]
+}

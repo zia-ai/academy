@@ -1,3 +1,3 @@
 # versions of liuetal
-liuetal0 = original paper dataset deannotated
-liuetal1 = after retraining
+liuetal_new-0 = original paper dataset deannotated full 25k
+liuetal_new-1 = after light retraining
