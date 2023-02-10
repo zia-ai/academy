@@ -23,7 +23,7 @@ import humanfirst_apis
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
-@click.option('-o', '--output_dir', type=str, default="./", help='Output file path')
+@click.option('-o', '--output_dir', type=str, default="./data", help='Output file path')
 
 def main(username: str, password: int, namespace: bool, playbook: str, bearertoken: str, output_dir: str) -> None:
     """Main Function"""
@@ -31,20 +31,29 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
     write_csv(username,password,namespace,playbook,bearertoken,output_dir)
     
 def write_csv(username: str, password: int, namespace: bool, playbook: str, bearertoken: str, output_dir: str) -> None:
-    """Writes the HF workspace to a CSV file and stores it in the output path"""
+    """Writes the HF workspace to a CSV file and stores it in the output path
+    CSV will contain intent_id, intent_name, for every example
+    along with any intent level and utterance level metadata as columns"""
+    
+    if not output_dir.endswith('/'):
+        output_dir = output_dir + '/'
 
+    # Download playbook as json
     headers = humanfirst_apis.process_auth(bearertoken, username, password)
     playbook_dict = humanfirst_apis.get_playbook(headers, namespace, playbook)
     labelled_workspace = humanfirst.HFWorkspace.from_json(playbook_dict)
     assert(isinstance(labelled_workspace,humanfirst.HFWorkspace))
-    print("Got playbook and parsed it")
-    output_path_json = join(output_dir,playbook_dict["name"]+".json")
+    output_path_json = f'{output_dir}{playbook_dict["name"]}.json'
+    
+    # Write json version
     with open(output_path_json,mode="w",encoding="utf8") as f:
         json.dump(playbook_dict,f,indent=3)
-    print(f"Workspace is stored at {output_path_json}")
-    output_path_csv = join(output_dir,playbook_dict["name"]+".csv")
+    print(f'Wrote json version of playbook: {output_path_json}')
+    
+    # Write csv version
+    output_path_csv = f'{output_dir}{playbook_dict["name"]}.csv'
     labelled_workspace.write_csv(output_path_csv)
-    print(f"CSV file is stored at {output_path_csv}")  
+    print(f"Wrote CSV file to: {output_path_csv}")  
 
 if __name__ == '__main__':
     main()

@@ -6,9 +6,11 @@
 #
 # ***************************************************************************80**************************************120
 
+import os
 import humanfirst
 import pandas
 import json
+import numpy
 
 def test_load_testdata():
     dtypes={
@@ -86,7 +88,11 @@ def test_tag_color_create():
     assert(tag.color==new_color)
     
 def test_write_csv():
+    # delete output file so can sure we are testing fresh each time
+    if os.path.exists("./examples/write_csv_example.csv"):
+        os.remove("./examples/write_csv_example.csv")
     workspace = "./examples/write_csv_example.json"
+    
     with open(workspace,mode="r",encoding="utf8") as f:
         data = json.load(f)
     labelled_workspace = humanfirst.HFWorkspace.from_json(data)
@@ -94,13 +100,38 @@ def test_write_csv():
     output_file = "./examples/write_csv_example.csv"
     labelled_workspace.write_csv(output_file)
     df = pandas.read_csv(output_file,encoding="utf8")
+    
+    # Check column names
+    columns_should_be = []
+    # utterance and full name
+    columns_should_be.extend(["utterance","fully_qualified_intent_name"]) 
+    # four different intent keys
+    columns_should_be.extend(["intent_metadata-intent_metadata1","intent_metadata-intent_metadata2","intent_metadata-intent_metadata3","intent_metadata-intent_metadata4"])
+    # two different metadata keys
+    columns_should_be.extend(["example_metadata-example_metadata1","example_metadata-example_metadata2"])
+    columns_should_be.sort()
+    
     columns = list(df.columns)
-    assert("intent_name" in columns)
-    assert("intent_id" in columns)
-    assert("text" in columns)
-    # checking if the no of examples in workspace and no of rows in csv are same
-    # assuming the parent intents don't have any examples
-    no_of_parent_intents = df["text"].isna().sum()
-    no_of_rows = df.shape[0]
-    no_of_examples = len(labelled_workspace.examples)
-    assert(no_of_rows - no_of_parent_intents == no_of_examples)
+    columns.sort()
+    
+    assert(columns==columns_should_be)
+    
+    # Check intent level values
+    assert(list(df["intent_metadata-intent_metadata1"].unique())==[numpy.nan,'value1','value5'])
+    assert(df[df["intent_metadata-intent_metadata1"]=='value1'].shape[0]==5)
+    assert(df[df["intent_metadata-intent_metadata1"]=='value5'].shape[0]==1)
+    assert(df[df["intent_metadata-intent_metadata1"].isna()].shape[0]==5)
+    
+    assert(list(df["intent_metadata-intent_metadata2"].unique())==[numpy.nan,'value2','value6'])
+    assert(df[df["intent_metadata-intent_metadata2"]=='value2'].shape[0]==5)
+    assert(df[df["intent_metadata-intent_metadata2"]=='value6'].shape[0]==1)
+    assert(df[df["intent_metadata-intent_metadata2"].isna()].shape[0]==5)
+    
+    # Check example level values
+    assert(list(df["example_metadata-example_metadata1"].unique())==['valueA',numpy.nan])
+    assert(df[df["example_metadata-example_metadata1"]=='valueA'].shape[0]==1)
+    assert(df[df["example_metadata-example_metadata1"].isna()].shape[0]==10)
+
+    
+
+    

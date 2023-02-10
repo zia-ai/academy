@@ -3,20 +3,30 @@
    "intents": [
       {
          "id": "intent-67CTEBIAPFASFJDYY6EJ5CIS",
-         "name": "intent1",
+         "name": "intent2_additional_values",
          "metadata": {
-            "metadata3": "value3",
-            "metadata4": "value4"
+            "intent_metadata3": "value3",
+            "intent_metadata4": "value4"
          },
          "created_at": "2023-02-09T11:00:32Z",
          "updated_at": "2023-02-09T15:30:26Z"
       },
       {
          "id": "intent-MM7CCI7EYNAAPL5BLYVNZIKH",
-         "name": "intent2",
+         "name": "intent1_initial_keys",
          "metadata": {
-            "metadata1": "value1",
-            "metadata2": "value2"
+            "intent_metadata1": "value1",
+            "intent_metadata2": "value2"
+         },
+         "created_at": "2023-02-09T11:01:07Z",
+         "updated_at": "2023-02-09T15:30:08Z"
+      },
+      {
+         "id": "intent-MM7CCI7EYNAAPL5BLYVNBCAD",
+         "name": "intent3_same_as_initial_keys",
+         "metadata": {
+            "intent_metadata1": "value5",
+            "intent_metadata2": "value6"
          },
          "created_at": "2023-02-09T11:01:07Z",
          "updated_at": "2023-02-09T15:30:08Z"
@@ -31,6 +41,10 @@
                "intent_id": "intent-67CTEBIAPFASFJDYY6EJ5CIS"
             }
          ],
+         "metadata": {
+            "example_metadata1": "valueA",
+            "example_metadata2": "valueB"
+         },
          "created_at": "2023-02-09T11:00:32Z",
          "updated_at": "2023-02-09T15:30:26Z"
       },
@@ -128,6 +142,17 @@
          "intents": [
             {
                "intent_id": "intent-MM7CCI7EYNAAPL5BLYVNZIKH"
+            }
+         ],
+         "created_at": "2023-02-09T11:01:07Z",
+         "updated_at": "2023-02-09T15:30:08Z"
+      },
+      {
+         "id": "phrase-RHRACQGSOFCBPIY3IANBP638",
+         "text": "example11",
+         "intents": [
+            {
+               "intent_id": "intent-MM7CCI7EYNAAPL5BLYVNBCAD"
             }
          ],
          "created_at": "2023-02-09T11:01:07Z",
