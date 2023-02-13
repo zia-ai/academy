@@ -126,6 +126,17 @@ def create_tag(headers: str, namespace: str, playbook: str, tag_id: str, name: s
         "POST", url, headers=headers, data=json.dumps(payload))
     return validate_response(response, url)
 
+def list_playbooks(headers: str, namespace: str = "") -> dict:
+    '''Returns list of all playbooks for an organisation
+    Note namepsace parameter doesn't appear to provide filtering'''
+    payload = {
+        "namespace": namespace
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/playbooks'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response, url, "playbooks")
 
 def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns metadata of playbook'''
