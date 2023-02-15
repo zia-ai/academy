@@ -52,8 +52,78 @@ class HFTag:
         if color and color != '':
             self.color = color
         else:
-            self.color = '#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+            self.color = '#' + \
+                ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
 
+
+@dataclass_json
+@dataclass
+class HFTagFilter:
+    '''Schema object for HF Tag Filter
+
+    Validates the format of a tag filter
+    of types include|exclude
+
+    Provide lists of tags to filter as comma delimited strings or lists
+
+    Parameters
+    ----------
+    include: [],
+    exclude: [],
+    '''
+    include: list
+    exclude: list
+
+    def __init__(self, include: list = [], exclude: list = []):
+        self.include = include
+        self.exclude = exclude
+
+@dataclass_json
+@dataclass
+class HFTagFilters:
+    intent: HFTagFilter
+    utterance: HFTagFilter
+
+    def __init__(self):
+        """Provide skeleton tag filter object
+        tags can be provided as a comma delimited string
+        or an extracted list
+        """
+        self.intent = HFTagFilter() 
+        self.utterance = HFTagFilter()
+
+    def set_tag_filter(self, level: str, tag_type: str, tags: Union[list,str]):
+        accepted_levels = ["intent","utterance"]
+        if not level in accepted_levels :
+            raise InvalidFilterLevel(f"Accepted levels are {accepted_levels} level was: {level}")
+        accepted_types = ["include","exclude"]
+        if not tag_type in accepted_types :
+            raise InvalidFilterType(f"Accepted tag_types are {accepted_types} tag_type was: {tag_type}")
+        tags = self.validate_tag_list_format(tags)
+        tag_filter = getattr(self,level)
+        setattr(tag_filter,tag_type,tags)
+        setattr(self,"level",tag_filter)
+
+    def validate_tag_list_format(self,tags: Union[list,str]) -> list:
+        if tags == []:
+            return []
+        if tags == "":
+            return []
+        if isinstance(tags, str):
+            try:
+                tags = tags.split(",")
+                assert (isinstance(tags, list))
+                assert (len(tags) > 0)
+            except Exception as e:
+                raise InvalidTagFilterListFormat(
+                    f"Couldn't parse -g --tags filters - please make sure a quoted string with a comma separated list of tag names : {e}")
+            return tags
+        if isinstance(tags,list):
+            return tags
+            # could have a tag validate function here, but that would need to check if have a labelled workspace to check against
+        raise InvalidTagFilterListFormat(
+            f"Did not recognise type of tags argument passed {tags} {type(tags)}"
+        )
 
 @dataclass_json
 @dataclass
@@ -111,13 +181,15 @@ class HFContext:
             if type in ['conversation']:
                 self.type = type
             else:
-                raise Exception ('Only "conversation" document type is currently supported')
+                raise Exception(
+                    'Only "conversation" document type is currently supported')
         if role and role != '':
-            if role in ['expert','client']:
+            if role in ['expert', 'client']:
                 self.role = role
             else:
-                raise Exception ('Only "conversation" document with roles of "client" or "expert" are currently supported')
-    
+                raise Exception(
+                    'Only "conversation" document with roles of "client" or "expert" are currently supported')
+
 
 @dataclass_json
 @dataclass
@@ -204,13 +276,12 @@ class HFWorkspace:
     Attributes
     ----------
     TODO:
-    
+
     '''
     intents: Dict[str, HFIntent]
     intents_by_id: Dict[str, HFIntent]
     examples: Dict[str, HFExample]
     tags: Dict[str, HFTag]
-    
 
     def __init__(self):
         self.intents = {}
@@ -263,13 +334,13 @@ class HFWorkspace:
             parent_intent_id = last.id
 
         return last
-    
-    def tag_intent(self,intent_id,tag: HFTag):
+
+    def tag_intent(self, intent_id, tag: HFTag):
         # get the intent here
         intent = self.intent_by_id(intent_id)
-        assert(isinstance(intent,HFIntent))
+        assert (isinstance(intent, HFIntent))
         for i in range(len(intent.tags)):
-            assert(isinstance(intent.tags[i],HFTag))
+            assert (isinstance(intent.tags[i], HFTag))
             if intent.tags[i] == tag.name:
                 intent.tags[i] = tag
                 self.intents_by_id[intent_id] = intent
@@ -278,7 +349,7 @@ class HFWorkspace:
         intent.tags.append(tag)
         self.intents_by_id[intent_id] = intent
         return tag
-    
+
     def get_intent_index(self, delimiter: str) -> dict:
         # for every intent
         # go back up it's parent hierachy by id
@@ -286,44 +357,108 @@ class HFWorkspace:
         # concatentate
         # in other file need to split and trim
         # hopefully should compare.
-        intent_name_index = {}      
+        intent_name_index = {}
         for intent_id in self.intents_by_id:
             working = self.intents_by_id[intent_id]
-            fullpath=working.name
+            fullpath = working.name
             while working.parent_intent_id:
                 working = self.intents_by_id[working.parent_intent_id]
                 fullpath = f'{working.name}{delimiter}{fullpath}'
-            intent_name_index[intent_id] = fullpath               
+            intent_name_index[intent_id] = fullpath
         return intent_name_index
-    
-    def write_csv(self,output_path: str,intent_metadata: bool=True, example_metadata: bool=True, delimiter: str = '-') -> None:
+
+    def write_csv(self, output_path: str, 
+                  intent_metadata: bool = True, 
+                  example_metadata: bool = True, 
+                  tags: bool = True, 
+                  delimiter: str = '-', 
+                  tag_filters:HFTagFilters = None) -> None:
         """Writes the HF Workspace to a CSV file at the fully qualified path output_path
-        Will by default include intent level and example level metdata, override using arguments"""
+        Will by default include intent level metadata, example level metdata and tags override using arguments
+        Optionally will filter to only export certain tags"""
 
         intent_name_index = self.get_intent_index(delimiter=delimiter)
-        
+
         obj_list = []
         for phrase_id in self.examples:
             example = self.examples[phrase_id]
+            top_intent = example.intents[0].intent_id
             obj = {
                 "utterance": example.text,
                 "fully_qualified_intent_name": intent_name_index[example.intents[0].intent_id],
             }
+            
+            # intent level
             if intent_metadata:
-                obj["intent_metadata"] = self.intent_by_id(example.intents[0].intent_id).metadata
+                obj["intent_metadata"] = self.intent_by_id(top_intent).metadata
+            if tags:
+                tag_obj = {}
+                for tag in self.intent_by_id(top_intent).tags:
+                    tag_obj[tag.name] = True
+                obj["intent_tags"] = tag_obj
+                
+            # example level
             if example_metadata:
                 obj["example_metadata"] = example.metadata
+            if tags:
+                tag_obj = {}
+                for tag in example.tags:
+                    tag_obj[tag.name] = True
+                obj["example_tags"] = tag_obj
 
             obj_list.append(copy.deepcopy(obj))
-                
-        df = pandas.json_normalize(obj_list,sep=delimiter)
-        
-        df.to_csv(output_path,sep=",",encoding="utf8",index=False)
+
+        df = pandas.json_normalize(obj_list, sep=delimiter)
+        print(f'df0 {df.shape}')
+    
+        if tag_filters:
+            filtered_df = pandas.DataFrame()
+
+            # include utterances
+            if len(tag_filters.utterance.include) > 0:
+                for tag_name in tag_filters.utterance.include:
+                    column_name = f'example_tags{delimiter}{tag_name}'
+                    if column_name in df.columns.to_list():
+                        filtered_df = pandas.concat([filtered_df,df[df[column_name]==True]])
+            else:
+                filtered_df = df
+            print(f'fi0 {filtered_df.shape}')
+
+            # exclude utterances
+            for tag_name in tag_filters.utterance.exclude:
+                column_name = f'example_tags{delimiter}{tag_name}'
+                if column_name in filtered_df.columns.to_list():
+                    filtered_df = filtered_df[filtered_df[column_name]!=True]
+            print(f'fi0 {filtered_df.shape}')
+                    
+            final_df = pandas.DataFrame()
+            
+            # include intents
+            if len(tag_filters.intent.include) > 0:
+                for tag_name in tag_filters.intent.include:
+                    column_name = f'intent_tags{delimiter}{tag_name}'
+                    if column_name in filtered_df.columns.to_list():
+                        final_df = pandas.concat([final_df,filtered_df[filtered_df[column_name]==True]])
+            else:
+                final_df = filtered_df
+            print(f'fa0 {final_df.shape}')
+            
+            # exclude intents
+            for tag_name in tag_filters.intent.exclude:
+                column_name = f'intent_tags{delimiter}{tag_name}'
+                if column_name in final_df.columns.to_list():
+                    final_df = final_df[final_df[column_name]!=True]
+            print(f'fa0 {final_df.shape}')
+                                               
+            df = final_df
+            
+        df.to_csv(output_path, sep=",", encoding="utf8", index=False)
         print(df)
+        
 
     def intent_by_id(self, id: str) -> Optional[HFIntent]:
         '''Return a particular intent by id
-        
+
         Parameters
         ----------
         id: str   id to return
@@ -367,21 +502,22 @@ class HFWorkspace:
     def add_example(self, example: HFExample):
         '''Add an example to the workspace based on an example created elsewhere using the HFExample constructor
         '''
-        assert (isinstance(example, HFExample))          
+        assert (isinstance(example, HFExample))
         if example.id is None:
             raise Exception(
                 'All examples must have an id to be included in a workspace?')
         self.examples[example.id] = example
 
     @staticmethod
-    def from_json(input: Union[IO,dict]) -> 'HFWorkspace':
+    def from_json(input: Union[IO, dict]) -> 'HFWorkspace':
         '''Read and validate a HFWorkspace object from a dict of a json (from api)
         or from a json file
         '''
-        if isinstance(input,IO):
+        if isinstance(input, IO):
             obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True)
-        elif isinstance(input,dict):
-            obj = HFWorkspaceJson.from_json(json.dumps(input), infer_missing=True)
+        elif isinstance(input, dict):
+            obj = HFWorkspaceJson.from_json(
+                json.dumps(input), infer_missing=True)
         else:
             raise Exception(f"What is this thing of type: {type(input)}")
 
@@ -437,3 +573,10 @@ def hash_string(s: str, prefix: Optional[str] = None) -> str:
         return f'{prefix}-{hexdigest[0:20]}'
     else:
         return f'{hexdigest[0:20]}'
+
+class InvalidFilterLevel(Exception):
+    """Exception raised when tag filter value is invalid"""
+class InvalidFilterType(Exception):
+    """Exception raised when tag filter type is invalid"""
+class InvalidTagFilterListFormat(Exception):
+    """Exception raised when tag filter list is invalid"""

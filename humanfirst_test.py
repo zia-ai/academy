@@ -6,6 +6,7 @@
 #
 # ***************************************************************************80**************************************120
 
+import pytest
 import os
 import humanfirst
 import pandas
@@ -131,7 +132,42 @@ def test_write_csv():
     assert(list(df["example_metadata-example_metadata1"].unique())==['valueA',numpy.nan])
     assert(df[df["example_metadata-example_metadata1"]=='valueA'].shape[0]==1)
     assert(df[df["example_metadata-example_metadata1"].isna()].shape[0]==10)
-
     
+def test_tag_filter_validation():
+    tag_filters = humanfirst.HFTagFilters()
+    assert(tag_filters.validate_tag_list_format(["test-regression","test-analyst"])==["test-regression","test-analyst"])
+    assert(tag_filters.validate_tag_list_format("test-regression,test-analyst")==["test-regression","test-analyst"])
 
+def test_tag_filters():
+    tag_filters = humanfirst.HFTagFilters()
+    assert(isinstance(tag_filters.intent,humanfirst.HFTagFilter))
+    assert(isinstance(tag_filters.utterance,humanfirst.HFTagFilter))
+    
+    # check we can set the list of values
+    tag_filters.set_tag_filter("intent","exclude",["test-regression","test-analyst"])
+    assert(isinstance(tag_filters.intent.exclude,list))
+    assert(tag_filters.intent.exclude[0]=="test-regression")
+    assert(tag_filters.intent.exclude[1]=="test-analyst")
+    assert(len(tag_filters.intent.exclude)==2)
+    
+    # Check we can access like a list
+    tag_filters.intent.exclude.pop(0)
+    assert(len(tag_filters.intent.exclude)==1)
+    assert(tag_filters.intent.exclude[0]=="test-analyst")
+    
+    # Check if we set the other tag_type we don't lose the other already set data
+    tag_filters.set_tag_filter("intent","include",["release-1.0.1","release-1.0.2","release-1.0.3"])
+    assert(tag_filters.intent.exclude[0]=="test-analyst")
+    assert(tag_filters.intent.include[1]=="release-1.0.2")
+    
+    # check validates on tag level
+    with pytest.raises(humanfirst.InvalidFilterLevel) as e:
+        tag_filters.set_tag_filter("workspace","exclude",["test-regression","test-analyst"])
+        assert str(e.value) == "Accepted levels are ['intent', 'utterance'] level was: workspace"
+        
+    # check validates on tag type       
+    with pytest.raises(humanfirst.InvalidFilterType) as e:
+        tag_filters.set_tag_filter("intent","both",["test-regression","test-analyst"])
+        assert str(e.value) == "Accepted types are ['incldue', 'exclude'] level was: both"
+        
     
