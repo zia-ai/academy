@@ -408,6 +408,7 @@ class HFWorkspace:
 
             obj_list.append(copy.deepcopy(obj))
 
+
         df = pandas.json_normalize(obj_list, sep=delimiter)
         print(f'df0 {df.shape}')
     
@@ -422,6 +423,7 @@ class HFWorkspace:
                         filtered_df = pandas.concat([filtered_df,df[df[column_name]==True]])
             else:
                 filtered_df = df
+            filtered_df = filtered_df.drop_duplicates()
             print(f'fi0 {filtered_df.shape}')
 
             # exclude utterances
@@ -429,8 +431,9 @@ class HFWorkspace:
                 column_name = f'example_tags{delimiter}{tag_name}'
                 if column_name in filtered_df.columns.to_list():
                     filtered_df = filtered_df[filtered_df[column_name]!=True]
+            filtered_df = filtered_df.drop_duplicates()
             print(f'fi0 {filtered_df.shape}')
-                    
+
             final_df = pandas.DataFrame()
             
             # include intents
@@ -441,17 +444,20 @@ class HFWorkspace:
                         final_df = pandas.concat([final_df,filtered_df[filtered_df[column_name]==True]])
             else:
                 final_df = filtered_df
+            final_df = final_df.drop_duplicates()
             print(f'fa0 {final_df.shape}')
-            
+
             # exclude intents
             for tag_name in tag_filters.intent.exclude:
                 column_name = f'intent_tags{delimiter}{tag_name}'
                 if column_name in final_df.columns.to_list():
                     final_df = final_df[final_df[column_name]!=True]
+            final_df = final_df.drop_duplicates()
             print(f'fa0 {final_df.shape}')
                                                
             df = final_df
-            
+
+        df = df.sort_values(["fully_qualified_intent_name"],ignore_index=True)
         df.to_csv(output_path, sep=",", encoding="utf8", index=False)
         print(df)
         
