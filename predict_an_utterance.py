@@ -58,11 +58,13 @@ def main(input: str, username: str, password: int, namespace: bool, playbook: st
     print(f'modelId:    {response_dict["modelId"]}')
     print(f'revisionId: {response_dict["revisionId"]}')
     
+    # print(json.dumps(humanfirst_apis.get_revisions(headers,namespace,playbook),indent=2))
+    # print(json.dumps(humanfirst_apis.get_nlu_engine(headers,namespace,playbook,nlu_id="nlu-RGS26OMK55H3ZKGSAMSBAKC6"),indent=2))
     
     # cycle through the intents returned and also retreive metadata and display
     i =0
     for intent in response_dict['matches']:
-        intent_full = humanfirst_apis.get_intent(headers, input, namespace, playbook, intent['id'])
+        intent_full = humanfirst_apis.get_intent(headers, namespace, playbook, intent['id'])
         if i >= maxresults:
             break
         metadata = {}
@@ -82,9 +84,7 @@ def main(input: str, username: str, password: int, namespace: bool, playbook: st
             print(f'@{entity["entity"]["key"]}:{entity["entity"]["value"]} start: {entity["span"]["start"]} end: {entity["span"]["end"]}')
     else:
         print("No entities detected:")
-        
-    
-        
+               
     # if verbose dump the whole predict response
     if verbose:
         print(json.dumps(response_dict,indent=2))

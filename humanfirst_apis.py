@@ -201,7 +201,7 @@ def get_playbook(headers: str,
     response_dict = json.loads(response)
     return response_dict
 
-def get_intent(headers: str, sentence: str, namespace: str, playbook: str, intent_id: str) -> dict:
+def get_intent(headers: str, namespace: str, playbook: str, intent_id: str) -> dict:
     '''Get the metdata for the intent needed'''
     payload = {
         "namespace": namespace,
@@ -213,14 +213,75 @@ def get_intent(headers: str, sentence: str, namespace: str, playbook: str, inten
         "GET", url, headers=headers, data=json.dumps(payload))
     return validate_response(response,url)
 
+def get_revisions(headers: str, namespace: str, playbook: str,) -> dict:
+    '''Get revisions for the namespace and playbook'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/revisions'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url,"revisions")
+
+def get_models(headers: str, namespace: str) -> dict:
+    '''Get available models for a namespace
+    NOTE: THIS IS NOT nlu-id!'''
+    payload = {}
+
+    url = f'https://api.humanfirst.ai/v1alpha1/models'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    models = validate_response(response,url,"models")
+    namespace_models = []
+    for model in models:
+        print(model)
+        if model["namespace"] == namespace:
+            namespace_models.append(model)
+    return namespace_models
+
+def get_nlu_engines(headers: str, namespace: str, playbook: str) -> dict:
+    '''Get nlu engines for the for the namespace and playbook'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/playbooks/{namespace}/{playbook}/nlu_engines'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url,"nluEngines")
+
+def get_nlu_engine(headers: str, namespace: str, playbook: str, nlu_id: str) -> dict:
+    '''Get nlu engine for the for the namespace and playbook'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook,
+        "nlu_id": nlu_id
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/playbooks/{namespace}/{playbook}/nlu_engines/{nlu_id}'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url)
+
 def predict(headers: str, sentence: str, namespace: str, playbook: str, modelId: str = None, revisionId: str = None) -> dict:
     '''Get response_dict of matches and hier matches for an input
-    optionally specify which model and revision ID you want the prediction from'''
+    optionally specify which model and revision ID you want the prediction from
+    modelId probably better know as nlu-id
+    revisionId probably better known as run_id 
+    but it needs to be the run_id of the model job not revisions which is showing export job
+    TODO: update when updated'''
     payload = {
         "namespace": "string",
         "playbook_id": "string",
         "input_utterance": sentence
     }
+    
+    if modelId or revisionId:
+        if not modelId or not revisionId:
+            raise Exception("If either specified both modelId and revisionId are required")
     
     if modelId:
         payload["modelId"] = modelId
@@ -234,7 +295,8 @@ def predict(headers: str, sentence: str, namespace: str, playbook: str, modelId:
     return validate_response(response,url)
 
 def batchPredict(headers: str, sentences: list, namespace: str, playbook: str) -> dict:
-    '''Get response_dict of matches and hier matches for a batch of sentences'''
+    '''Get response_dict of matches and hier matches for a batch of sentences
+    TODO: model version changes'''
     print(f'Analysing {len(sentences)} sentences')
     payload = {
         "namespace": "string",
