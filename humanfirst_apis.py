@@ -87,6 +87,19 @@ def get_tags(headers: str, namespace: str, playbook: str) -> dict:
         "GET", url, headers=headers, data=json.dumps(payload))
     return validate_response(response, url, "tags")
 
+def get_plan(headers: str, namespace: str, playbook: str) -> dict:
+    '''Returns plan information'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response, url, "tags")
+
+
 
 def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict:
     '''Returns tags'''
@@ -188,6 +201,52 @@ def get_playbook(headers: str,
     response_dict = json.loads(response)
     return response_dict
 
+def get_intent(headers: str, sentence: str, namespace: str, playbook: str, intent_id: str) -> dict:
+    '''Get the metdata for the intent needed'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/{intent_id}'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url)
+
+def predict(headers: str, sentence: str, namespace: str, playbook: str, modelId: str = None, revisionId: str = None) -> dict:
+    '''Get response_dict of matches and hier matches for an input
+    optionally specify which model and revision ID you want the prediction from'''
+    payload = {
+        "namespace": "string",
+        "playbook_id": "string",
+        "input_utterance": sentence
+    }
+    
+    if modelId:
+        payload["modelId"] = modelId
+    if revisionId:        
+        payload["revisionId"] = modelId
+
+    url = f'https://api.humanfirst.ai/v1alpha1/nlu/predict/{namespace}/{playbook}'
+
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url)
+
+def batchPredict(headers: str, sentences: list, namespace: str, playbook: str) -> dict:
+    '''Get response_dict of matches and hier matches for a batch of sentences'''
+    print(f'Analysing {len(sentences)} sentences')
+    payload = {
+        "namespace": "string",
+        "playbook_id": "string",
+        "input_utterances": sentences
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/nlu/predict/{namespace}/{playbook}/batch'
+
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url,"predictions")
 
 def get_headers(bearer_token: str) -> dict:
     bearer_string = f'Bearer {bearer_token}'
@@ -197,7 +256,6 @@ def get_headers(bearer_token: str) -> dict:
         'Authorization': bearer_string
     }
     return headers
-
 
 def authorize(username: str, password: str) -> dict:
     '''Get bearer token for a username and password'''
