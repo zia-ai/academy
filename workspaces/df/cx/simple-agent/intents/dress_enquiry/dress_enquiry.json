@@ -1,0 +1,12 @@
+{
+  "name": "38213ddd-65f2-4e3c-b0aa-9afdf12a3229",
+  "displayName": "dress_enquiry",
+  "parameters": [ {
+    "id": "brand",
+    "entityType": "@brand"
+  }, {
+    "id": "garment",
+    "entityType": "@garment"
+  } ],
+  "priority": 500000
+}

@@ -1,0 +1,129 @@
+{
+  "name": "7024bf55-ab81-4a80-8885-82aabb0a6a38",
+  "displayName": "dress_enquiry_with_positive_feedback",
+  "testCaseConversationTurns": [ {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "i want to buy a dress"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "triggeredIntent": {
+        "name": "dress_enquiry"
+      },
+      "currentPage": {
+        "name": "dress enquiry",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "dress_enquiry" ]
+      }, {
+        "text": [ "I would like to get some more information regarding you choice of clothing." ]
+      } ]
+    }
+  }, {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "yes"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "triggeredIntent": {
+        "name": "yes"
+      },
+      "currentPage": {
+        "name": "dress_info",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "What specific garment are you looking for? we sell - jeans, boots, jackets and shoes" ]
+      } ]
+    }
+  }, {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "jeans"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "sessionParameters": {
+        "garment": "jeans"
+      },
+      "currentPage": {
+        "name": "dress_info",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "what brand are you looking for?" ]
+      } ]
+    }
+  }, {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "guess"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "sessionParameters": {
+        "brand": "guess",
+        "garment": "jeans"
+      },
+      "currentPage": {
+        "name": "feedback",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "we sell jeans in guess" ]
+      }, {
+        "text": [ "Kindly provide your feedback" ]
+      } ]
+    }
+  }, {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "You are useful"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "sessionParameters": {
+        "brand": "guess",
+        "garment": "jeans"
+      },
+      "currentPage": {
+        "name": "End Session",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "Thank you for feedback" ]
+      } ]
+    }
+  } ],
+  "creationTime": {
+    "seconds": 1675161370,
+    "nanos": 320058000
+  },
+  "testConfig": {
+    "flow": "Default Start Flow",
+    "page": "Start Page"
+  }
+}

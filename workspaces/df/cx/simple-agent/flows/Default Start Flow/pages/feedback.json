@@ -1,0 +1,85 @@
+{
+  "name": "5129069a-362e-4b01-b1fe-5cb50e54a4c3",
+  "displayName": "feedback",
+  "form": {
+  
+  },
+  "entryFulfillment": {
+    "messages": [ {
+      "text": {
+        "text": [ "Kindly provide your feedback" ]
+      },
+      "languageCode": "en"
+    } ]
+  },
+  "transitionRoutes": [ {
+    "intent": "background-my_name_is",
+    "triggerFulfillment": {
+    
+    },
+    "targetPage": "garment",
+    "name": "ef191723-b154-4b6d-b092-5aca092f05f7"
+  }, {
+    "intent": "feedback-that_was_very_helpful",
+    "condition": "true",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "Thank you very much for your feedback. That means the world to us." ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "targetPage": "End Session",
+    "name": "20ed634e-a734-4cd4-8067-9737fa521fb1"
+  }, {
+    "intent": "feedback-upset_dave-frustration",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "i am sorry you are frustrated" ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "targetPage": "End Session",
+    "name": "260a0af4-d809-483a-8bfc-b95da0183c2f"
+  }, {
+    "intent": "feedback-upset_dave-other_upset",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "I am sorry about that" ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "targetPage": "End Session",
+    "name": "9a75af0d-db97-4d30-9277-576cb85523f6"
+  }, {
+    "intent": "feedback-upset_dave-upset",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "I am sorry you are upset" ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "targetPage": "End Session",
+    "name": "711d49f6-2b45-498b-82da-3ca47dc94fd0"
+  } ],
+  "eventHandlers": [ {
+    "targetPage": "End Session",
+    "event": "sys.no-match-default",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "Thank you for feedback" ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "name": "25700361-9168-4c51-97c5-6e831561a361"
+  } ]
+}

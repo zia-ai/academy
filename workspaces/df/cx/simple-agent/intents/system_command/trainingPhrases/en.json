@@ -1,0 +1,26 @@
+{
+  "trainingPhrases": [ {
+    "parts": [ {
+      "text": "welcomedata33",
+      "parameterId": "welcome_command",
+      "auto": true
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "welcomedata31",
+      "parameterId": "welcome_command",
+      "auto": true
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "thumbs_up_command",
+      "parameterId": "thumbs_up_command"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  } ]
+}

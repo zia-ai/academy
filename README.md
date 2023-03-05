@@ -3,7 +3,7 @@
 ## Ubuntu
 
 ### build a ubuntu machine to run this
-* `docker build . --build-arg password=<password> timezone=America/Montreal -t hf-workbench:latest -n `
+* `docker build . --build-arg password=<password> --build-arg timezone=America/Montreal -t hf-workbench:latest --no-cache `
 Assuming your source folder cross projects is ~whatever/source then project ~whatever/source/hf/repo (Map your volumes as you wish)
 This is bash (go fish or not)
 * `docker create --name hf-workbench0 -v "$(builtin cd ../..;pwd):/home/ubuntu/source/" -t -i hf-workbench bash`

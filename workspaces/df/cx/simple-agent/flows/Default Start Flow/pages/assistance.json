@@ -1,0 +1,37 @@
+{
+  "name": "d783653c-e84e-4a95-91d1-547d7380e5fc",
+  "displayName": "assistance",
+  "form": {
+  
+  },
+  "entryFulfillment": {
+    "messages": [ {
+      "text": {
+        "text": [ "How can i assist you today?" ]
+      },
+      "languageCode": "en"
+    } ]
+  },
+  "transitionRoutes": [ {
+    "intent": "dress_enquiry",
+    "condition": "true",
+    "triggerFulfillment": {
+    
+    },
+    "targetPage": "dress enquiry",
+    "name": "4d6b2d1a-83c5-4f9e-b76b-c369b9ad144b"
+  } ],
+  "eventHandlers": [ {
+    "targetPage": "End Session",
+    "event": "sys.no-match-1",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "Sorry, we do not provide any such service" ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "name": "016ed036-9687-455d-a340-068ea226d936"
+  } ]
+}

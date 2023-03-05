@@ -1,0 +1,12 @@
+{
+  "name": "991345ce-44e2-4133-b6f1-0bed34de5204",
+  "displayName": "system_command",
+  "parameters": [ {
+    "id": "welcome_command",
+    "entityType": "@welcome_command"
+  }, {
+    "id": "thumbs_up_command",
+    "entityType": "@thumbs_up_command"
+  } ],
+  "priority": 500000
+}

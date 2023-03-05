@@ -1,0 +1,51 @@
+{
+  "name": "b8b7a1b3-ff0c-408b-9a3a-7d5eb3350691",
+  "displayName": "dress_info",
+  "form": {
+    "parameters": [ {
+      "displayName": "garment",
+      "required": true,
+      "entityType": "@garment",
+      "fillBehavior": {
+        "initialPromptFulfillment": {
+          "messages": [ {
+            "text": {
+              "text": [ "What specific garment are you looking for? we sell - jeans, boots, jackets and shoes" ]
+            },
+            "languageCode": "en"
+          } ]
+        }
+      }
+    }, {
+      "displayName": "brand",
+      "required": true,
+      "entityType": "@brand",
+      "fillBehavior": {
+        "initialPromptFulfillment": {
+          "messages": [ {
+            "text": {
+              "text": [ "what brand are you looking for?" ]
+            },
+            "languageCode": "en"
+          } ]
+        }
+      }
+    } ]
+  },
+  "entryFulfillment": {
+  
+  },
+  "transitionRoutes": [ {
+    "condition": "$page.params.status = FINAL",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "we sell $session.params.garment in $session.params.brand" ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "targetPage": "feedback",
+    "name": "abf73345-c86b-4473-b51a-7b5ca381c5de"
+  } ]
+}

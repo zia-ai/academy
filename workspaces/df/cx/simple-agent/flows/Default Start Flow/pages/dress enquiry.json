@@ -1,0 +1,42 @@
+{
+  "name": "5bc67950-b5ea-4672-bda4-fc424d04e663",
+  "displayName": "dress enquiry",
+  "form": {
+  
+  },
+  "entryFulfillment": {
+    "messages": [ {
+      "text": {
+        "text": [ "I would like to get some more information regarding you choice of clothing." ]
+      },
+      "languageCode": "en"
+    } ]
+  },
+  "transitionRoutes": [ {
+    "intent": "no",
+    "condition": "true",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "Sorry, those information is required. Since you cannot provide any additional information, we cannot assist you further." ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "targetPage": "feedback",
+    "name": "55a8cd59-12f8-4144-b94f-e515a1308c38"
+  } ],
+  "eventHandlers": [ {
+    "targetPage": "Current Page",
+    "event": "sys.no-match-default",
+    "triggerFulfillment": {
+      "messages": [ {
+        "text": {
+          "text": [ "Sorry I am looking for a yes or no here" ]
+        },
+        "languageCode": "en"
+      } ]
+    },
+    "name": "4119dd2b-1adb-4f22-8e1d-4d9c229887dd"
+  } ]
+}

@@ -1,0 +1,90 @@
+{
+  "trainingPhrases": [ {
+    "parts": [ {
+      "text": "I am looking to buy some dresses"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I heard you have nice collection of "
+    }, {
+      "text": "jackets",
+      "parameterId": "garment"
+    }, {
+      "text": "?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I like "
+    }, {
+      "text": "Calvin Klein",
+      "parameterId": "brand"
+    }, {
+      "text": " branded dresses? do you sell them?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I would to buy "
+    }, {
+      "text": "Michael Kors",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "jackets",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Looking for clothes"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "can i purchase "
+    }, {
+      "text": "shoes",
+      "parameterId": "garment"
+    }, {
+      "text": " from you?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "do you sell "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": "?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "do you sell garments?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "do you sell "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    }, {
+      "text": "?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  } ]
+}

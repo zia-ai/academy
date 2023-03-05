@@ -1,0 +1,12 @@
+{
+  "name": "d48f002f-efb2-432a-a4ff-e00c87b76a78",
+  "displayName": "shopping_issues-more_information_on_item",
+  "parameters": [ {
+    "id": "garment",
+    "entityType": "@garment"
+  }, {
+    "id": "brand",
+    "entityType": "@brand"
+  } ],
+  "priority": 500000
+}

@@ -1,0 +1,63 @@
+{
+  "trainingPhrases": [ {
+    "parts": [ {
+      "text": "Can you tell me your return policy?  I like to buy and return a lot of stuff."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hello, I would like to know what the refund policy is because I am thinking of purchasing something"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hello, I would like to know what the return policy is as I am looking to purchase something"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hello, I would like to know what the return policy is as I would like to order something soon"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hello, I'm thinking of purchasing something and wanted to know what your return policy is."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi there, I'm considering making a purchase but am wondering what your return policy is?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi! Can you tell me about the return policy? I was thinking of buying a few things, but I want to make sure that I can return them if they don't fit."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'm thinking about buying something but I want to know what your return policy is first"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "What is the refund policy you guys offer? I'm interested in making a purchase, but I want to know what kind of assurance you all offer there."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "what is the return policy? I am thinking of buying things and just wanna know it"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  } ]
+}
