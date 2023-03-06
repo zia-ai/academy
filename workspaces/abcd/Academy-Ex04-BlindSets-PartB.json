@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
   "intents": [
     {
       "id": "intent-2NZXJYLGG5NXDGZLQAKVW3OU",

@@ -50,7 +50,7 @@ def process(filename: str):
     print(f'accuracy:  {accuracy_score(df["Intent Name"],df["Top Match Intent Name"])}') 
     print(f'balanced_accuracy_score:  {balanced_accuracy_score(df["Intent Name"],df["Top Match Intent Name"],)}') 
     
-    print('Through combined - should be same as above)
+    print('Through combined - should be same as above')
     print(precision_recall_fscore_support(df["Intent Name"],df["Top Match Intent Name"],average="macro",zero_division="warn"))
 
     print('Full classification report by intent - should match with HF NLU tab')
