@@ -25,6 +25,14 @@
     },
     "targetPage": "feedback",
     "name": "55a8cd59-12f8-4144-b94f-e515a1308c38"
+  }, {
+    "intent": "yes",
+    "condition": "true",
+    "triggerFulfillment": {
+    
+    },
+    "targetPage": "dress_info",
+    "name": "984a6a44-a1d8-4d52-a725-b7b8ce74421e"
   } ],
   "eventHandlers": [ {
     "targetPage": "Current Page",
