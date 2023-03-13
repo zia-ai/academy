@@ -1,31 +1,37 @@
 {
   "trainingPhrases": [ {
     "parts": [ {
-      "text": "cant give info"
+      "text": "Sure"
     } ],
     "repeatCount": 1,
     "languageCode": "en"
   }, {
     "parts": [ {
-      "text": "never"
+      "text": "cool"
     } ],
     "repeatCount": 1,
     "languageCode": "en"
   }, {
     "parts": [ {
-      "text": "nope"
+      "text": "hell yeah"
     } ],
     "repeatCount": 1,
     "languageCode": "en"
   }, {
     "parts": [ {
-      "text": "not needed"
+      "text": "yeah"
     } ],
     "repeatCount": 1,
     "languageCode": "en"
   }, {
     "parts": [ {
-      "text": "not required"
+      "text": "yep"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "yes"
     } ],
     "repeatCount": 1,
     "languageCode": "en"

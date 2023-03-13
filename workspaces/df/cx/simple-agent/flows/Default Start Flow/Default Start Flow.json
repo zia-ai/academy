@@ -111,18 +111,6 @@
     },
     "targetPage": "Current Page",
     "name": "380acc55-e85b-40af-bdd9-2380b6ff4ec8"
-  }, {
-    "intent": "yes",
-    "triggerFulfillment": {
-      "messages": [ {
-        "text": {
-          "text": [ "yes" ]
-        },
-        "languageCode": "en"
-      } ]
-    },
-    "targetPage": "dress_info",
-    "name": "cea3bc48-6ea0-4db6-a304-52b077f53372"
   } ],
   "eventHandlers": [ {
     "targetPage": "Current Page",
