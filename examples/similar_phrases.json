@@ -1,0 +1,318 @@
+{
+  "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+  "name": "duplicate-testing-changes",
+  "examples": [
+    {
+      "id": "phrase-BNGS3GR7FJHKVG3OCNLLX6KD",
+      "text": "I'm going to sainsburies",
+      "intents": [
+        {
+          "intent_id": "intent-FRWVQBH5QBAZ3NMSR6LB2J3R"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:54Z",
+      "updated_at": "2023-03-08T20:34:47Z"
+    },
+    {
+      "id": "phrase-UQFABT7AZJGCNBSPX3DGODWB",
+      "text": "bread and milke",
+      "intents": [
+        {
+          "intent_id": "intent-FRWVQBH5QBAZ3NMSR6LB2J3R"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:54Z",
+      "updated_at": "2023-03-08T20:34:47Z"
+    },
+    {
+      "id": "phrase-FSGHQ7HE65BZBBIFLW5ULUP5",
+      "text": "going shopping for nood",
+      "intents": [
+        {
+          "intent_id": "intent-FRWVQBH5QBAZ3NMSR6LB2J3R"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:54Z",
+      "updated_at": "2023-03-08T20:34:47Z"
+    },
+    {
+      "id": "phrase-LJLE5X52ABCBHKITALVCCHVR",
+      "text": "need somet things",
+      "intents": [
+        {
+          "intent_id": "intent-FRWVQBH5QBAZ3NMSR6LB2J3R"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:54Z",
+      "updated_at": "2023-03-08T20:34:47Z"
+    },
+    {
+      "id": "phrase-VKIZHA5B5ZGV3ATBI53DZ3KG",
+      "text": "please get basics",
+      "intents": [
+        {
+          "intent_id": "intent-FRWVQBH5QBAZ3NMSR6LB2J3R"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:54Z",
+      "updated_at": "2023-03-08T20:34:47Z"
+    },
+    {
+      "id": "phrase-VYCFQCYOJZK3PFR67GXFFILX",
+      "text": "this is identical",
+      "intents": [
+        {
+          "intent_id": "intent-FRWVQBH5QBAZ3NMSR6LB2J3R"
+        }
+      ],
+      "source": {},
+      "created_at": "2023-03-08T20:33:54Z",
+      "updated_at": "2023-03-08T20:34:47Z"
+    },
+    {
+      "id": "phrase-TBGQCCI4GFH5HKBAZ4BODS2B",
+      "text": "I hate it when they spill things",
+      "intents": [
+        {
+          "intent_id": "intent-QPAKVTO42FC7ROHEILDPFVKM"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:59Z",
+      "updated_at": "2023-03-08T20:34:59Z"
+    },
+    {
+      "id": "phrase-CRASPSH3JVANFONOCGF5ZBFN",
+      "text": "The kids have left the tap running",
+      "intents": [
+        {
+          "intent_id": "intent-QPAKVTO42FC7ROHEILDPFVKM"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:59Z",
+      "updated_at": "2023-03-08T20:34:59Z"
+    },
+    {
+      "id": "phrase-I4WWBPZQCJES7GUXUE6FRLCX",
+      "text": "can someone find a mop",
+      "intents": [
+        {
+          "intent_id": "intent-QPAKVTO42FC7ROHEILDPFVKM"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:59Z",
+      "updated_at": "2023-03-08T20:34:59Z"
+    },
+    {
+      "id": "phrase-INBPNX6PWFLEDPTKKIEEMOYJ",
+      "text": "same but for a question mark?",
+      "intents": [
+        {
+          "intent_id": "intent-QPAKVTO42FC7ROHEILDPFVKM"
+        }
+      ],
+      "source": {},
+      "created_at": "2023-03-08T20:33:59Z",
+      "updated_at": "2023-03-08T20:34:59Z"
+    },
+    {
+      "id": "phrase-MYCAKSJ7V5AHPBWUGEWA6DJO",
+      "text": "there is water all over the kitchen",
+      "intents": [
+        {
+          "intent_id": "intent-QPAKVTO42FC7ROHEILDPFVKM"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:59Z",
+      "updated_at": "2023-03-08T20:34:59Z"
+    },
+    {
+      "id": "phrase-FIPCQDYMVVHLNC7WJGOG6H2R",
+      "text": "why are my feet wet",
+      "intents": [
+        {
+          "intent_id": "intent-QPAKVTO42FC7ROHEILDPFVKM"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:59Z",
+      "updated_at": "2023-03-08T20:34:59Z"
+    },
+    {
+      "id": "phrase-NW26GFJATZB7HNLE6NS4SMTC",
+      "text": "Can you keep it down over there",
+      "intents": [
+        {
+          "intent_id": "intent-5SM7IROJTFDVRDIN62JD5BHR"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:38Z",
+      "updated_at": "2023-03-08T20:35:14Z"
+    },
+    {
+      "id": "phrase-WQI5G2UDG5CJLGJNJZGFHJUQ",
+      "text": "I can't hear myself think",
+      "intents": [
+        {
+          "intent_id": "intent-5SM7IROJTFDVRDIN62JD5BHR"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:38Z",
+      "updated_at": "2023-03-08T20:35:14Z"
+    },
+    {
+      "id": "phrase-U4K2IJU7FVCVBPFOUKMTR3ZI",
+      "text": "PLEASE be quiet",
+      "intents": [
+        {
+          "intent_id": "intent-5SM7IROJTFDVRDIN62JD5BHR"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:38Z",
+      "updated_at": "2023-03-08T20:35:14Z"
+    },
+    {
+      "id": "phrase-AKYWKBWPLVFY5EUVE6IVNIGK",
+      "text": "Shutup!",
+      "intents": [
+        {
+          "intent_id": "intent-5SM7IROJTFDVRDIN62JD5BHR"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:38Z",
+      "updated_at": "2023-03-08T20:35:14Z"
+    },
+    {
+      "id": "phrase-LJH2XJPITRF6HNCQAWAEK5F5",
+      "text": "What on earth is going on.",
+      "intents": [
+        {
+          "intent_id": "intent-5SM7IROJTFDVRDIN62JD5BHR"
+        }
+      ],
+      "created_at": "2023-03-08T20:33:38Z",
+      "updated_at": "2023-03-08T20:35:14Z"
+    },
+    {
+      "id": "phrase-UGNMW5I6I5KF3DJA54DVLIZF",
+      "text": "same but for a question mark",
+      "intents": [
+        {
+          "intent_id": "intent-5SM7IROJTFDVRDIN62JD5BHR"
+        }
+      ],
+      "source": {},
+      "created_at": "2023-03-08T20:33:38Z",
+      "updated_at": "2023-03-08T20:35:14Z"
+    },
+    {
+      "id": "phrase-YNCAWBIXKZDLVP5ZCUGCJQ3E",
+      "text": "Can you please explain why you did that?",
+      "intents": [
+        {
+          "intent_id": "intent-3AY5LJJXXFFWFOBJ55YWXHXU"
+        }
+      ],
+      "created_at": "2023-03-08T20:34:15Z",
+      "updated_at": "2023-03-08T20:35:24Z"
+    },
+    {
+      "id": "phrase-3FRDXQ6BAZBHZHXU3WIRVEQB",
+      "text": "I can't see why you'd want to do that",
+      "intents": [
+        {
+          "intent_id": "intent-3AY5LJJXXFFWFOBJ55YWXHXU"
+        }
+      ],
+      "created_at": "2023-03-08T20:34:15Z",
+      "updated_at": "2023-03-08T20:35:24Z"
+    },
+    {
+      "id": "phrase-PPNO5CGBLVCOVFLW4X4UIROB",
+      "text": "WHY!",
+      "intents": [
+        {
+          "intent_id": "intent-3AY5LJJXXFFWFOBJ55YWXHXU"
+        }
+      ],
+      "created_at": "2023-03-08T20:34:15Z",
+      "updated_at": "2023-03-08T20:35:24Z"
+    },
+    {
+      "id": "phrase-RHH7DBHRZRDDJL3VIQTGRFBY",
+      "text": "What are you doing!",
+      "intents": [
+        {
+          "intent_id": "intent-3AY5LJJXXFFWFOBJ55YWXHXU"
+        }
+      ],
+      "created_at": "2023-03-08T20:34:15Z",
+      "updated_at": "2023-03-08T20:35:24Z"
+    },
+    {
+      "id": "phrase-64I6GMR6ZFGVLPXPFAC2G2WN",
+      "text": "Why on earth would you do that",
+      "intents": [
+        {
+          "intent_id": "intent-3AY5LJJXXFFWFOBJ55YWXHXU"
+        }
+      ],
+      "created_at": "2023-03-08T20:34:15Z",
+      "updated_at": "2023-03-08T20:35:24Z"
+    },
+    {
+      "id": "phrase-NQCWYOB5AFIF7K3AAE2IAUP5",
+      "text": "this is identical",
+      "intents": [
+        {
+          "intent_id": "intent-3AY5LJJXXFFWFOBJ55YWXHXU"
+        }
+      ],
+      "source": {},
+      "created_at": "2023-03-08T20:34:15Z",
+      "updated_at": "2023-03-08T20:35:24Z"
+    }
+  ],
+  "intents": [
+    {
+      "id": "intent-V3TQBNFT6NK7ZFMKWH6BTX3L",
+      "name": "intentA",
+      "source": {},
+      "created_at": "2023-03-08T20:23:22Z",
+      "updated_at": "2023-03-08T20:33:27Z"
+    },
+    {
+      "id": "intent-NAU7J6DDJRPFLOTJCWCN4IUW",
+      "name": "intentB",
+      "source": {},
+      "created_at": "2023-03-08T20:23:28Z",
+      "updated_at": "2023-03-08T20:33:27Z"
+    },
+    {
+      "id": "intent-FRWVQBH5QBAZ3NMSR6LB2J3R",
+      "name": "subintent1",
+      "parent_intent_id": "intent-V3TQBNFT6NK7ZFMKWH6BTX3L",
+      "created_at": "2023-03-08T20:33:54Z",
+      "updated_at": "2023-03-08T20:34:47Z"
+    },
+    {
+      "id": "intent-QPAKVTO42FC7ROHEILDPFVKM",
+      "name": "subintent2",
+      "parent_intent_id": "intent-V3TQBNFT6NK7ZFMKWH6BTX3L",
+      "created_at": "2023-03-08T20:33:59Z",
+      "updated_at": "2023-03-08T20:34:59Z"
+    },
+    {
+      "id": "intent-5SM7IROJTFDVRDIN62JD5BHR",
+      "name": "subintent3",
+      "parent_intent_id": "intent-NAU7J6DDJRPFLOTJCWCN4IUW",
+      "created_at": "2023-03-08T20:33:38Z",
+      "updated_at": "2023-03-08T20:35:14Z"
+    },
+    {
+      "id": "intent-3AY5LJJXXFFWFOBJ55YWXHXU",
+      "name": "subintent4",
+      "parent_intent_id": "intent-NAU7J6DDJRPFLOTJCWCN4IUW",
+      "created_at": "2023-03-08T20:34:15Z",
+      "updated_at": "2023-03-08T20:35:24Z"
+    }
+  ]
+}

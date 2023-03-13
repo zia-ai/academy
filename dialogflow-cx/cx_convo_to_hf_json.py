@@ -7,7 +7,6 @@
 # *****************************************************************************
 
 # standard imports
-import pandas
 import json
 from dateutil import parser
 import numpy
@@ -15,6 +14,7 @@ import sys
 sys.path.insert(1,"/home/ubuntu/source/academy")
 
 # 3rd party imports
+import pandas
 import click
 
 # custom imports
