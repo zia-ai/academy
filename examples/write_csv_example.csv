@@ -1,12 +1,12 @@
 utterance,fully_qualified_intent_name,intent_metadata-intent_metadata3,intent_metadata-intent_metadata4,example_metadata-example_metadata1,example_metadata-example_metadata2,intent_metadata-intent_metadata1,intent_metadata-intent_metadata2
-example1,intent2_additional_values,value3,value4,valueA,valueB,,
-example2,intent2_additional_values,value3,value4,,,,
-example3,intent2_additional_values,value3,value4,,,,
-example4,intent2_additional_values,value3,value4,,,,
-example5,intent2_additional_values,value3,value4,,,,
 example10,intent1_initial_keys,,,,,value1,value2
 example6,intent1_initial_keys,,,,,value1,value2
 example7,intent1_initial_keys,,,,,value1,value2
 example8,intent1_initial_keys,,,,,value1,value2
 example9,intent1_initial_keys,,,,,value1,value2
+example1,intent2_additional_values,value3,value4,valueA,valueB,,
+example2,intent2_additional_values,value3,value4,,,,
+example3,intent2_additional_values,value3,value4,,,,
+example4,intent2_additional_values,value3,value4,,,,
+example5,intent2_additional_values,value3,value4,,,,
 example11,intent3_same_as_initial_keys,,,,,value5,value6
