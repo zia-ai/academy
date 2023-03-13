@@ -58,7 +58,7 @@ def cleanse_text(text: str) -> str:
     '''Remove punctuations and spaces'''
 
     # remove punctuations
-    text = re.sub(r'[^\w]','',text)
+    text = re.sub(r'\W','',text)
 
     # to lower case
     text = text.lower()
