@@ -1,0 +1,122 @@
+{
+  "name": "32681074-56fe-45a4-9a66-3f8df14a7729",
+  "displayName": "dress_enquiry_with_unmatched_feedback",
+  "testCaseConversationTurns": [ {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "hi"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "triggeredIntent": {
+        "name": "Default Welcome Intent"
+      },
+      "currentPage": {
+        "name": "assistance",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "Greetings" ]
+      }, {
+        "text": [ "How can i assist you today?" ]
+      } ]
+    }
+  }, {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "I am looking to buy a dress"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "triggeredIntent": {
+        "name": "dress_enquiry"
+      },
+      "currentPage": {
+        "name": "dress enquiry",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "I would like to get some more information regarding you choice of clothing." ]
+      } ]
+    }
+  }, {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "i want a red one"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "currentPage": {
+        "name": "dress enquiry",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "Sorry I am looking for a yes or no here" ]
+      }, {
+        "text": [ "I would like to get some more information regarding you choice of clothing." ]
+      } ]
+    }
+  }, {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "no"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "triggeredIntent": {
+        "name": "no"
+      },
+      "currentPage": {
+        "name": "feedback",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "Sorry, those information is required. Since you cannot provide any additional information, we cannot assist you further." ]
+      }, {
+        "text": [ "Kindly provide your feedback" ]
+      } ]
+    }
+  }, {
+    "userInput": {
+      "isWebhookEnabled": true,
+      "input": {
+        "text": {
+          "text": "You are not useful to me"
+        },
+        "languageCode": "en"
+      }
+    },
+    "virtualAgentOutput": {
+      "currentPage": {
+        "name": "End Session",
+        "flow": "Default Start Flow"
+      },
+      "textResponses": [ {
+        "text": [ "Thank you for feedback" ]
+      } ]
+    }
+  } ],
+  "creationTime": {
+    "seconds": 1675158445,
+    "nanos": 572776000
+  },
+  "testConfig": {
+    "flow": "Default Start Flow"
+  }
+}

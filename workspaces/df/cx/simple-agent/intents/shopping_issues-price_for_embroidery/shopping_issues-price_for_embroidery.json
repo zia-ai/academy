@@ -1,0 +1,12 @@
+{
+  "name": "ff1e8b0f-c3d1-468c-9dad-b28c58ef080b",
+  "displayName": "shopping_issues-price_for_embroidery",
+  "parameters": [ {
+    "id": "brand",
+    "entityType": "@brand"
+  }, {
+    "id": "garment",
+    "entityType": "@garment"
+  } ],
+  "priority": 500000
+}

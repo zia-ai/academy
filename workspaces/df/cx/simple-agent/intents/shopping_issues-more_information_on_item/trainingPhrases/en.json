@@ -1,0 +1,488 @@
+{
+  "trainingPhrases": [ {
+    "parts": [ {
+      "text": "Calvin Kelin "
+    }, {
+      "text": "Jeans",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Calvin Klein",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    }, {
+      "text": " and a "
+    }, {
+      "text": "Guess",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "jacket",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Calvin Klein",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    }, {
+      "text": ", they are $74"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Do you have "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    }, {
+      "text": " with ripped holes"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hello I have a question about the "
+    }, {
+      "text": "Guess",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": "."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi I have a question about a "
+    }, {
+      "text": "jacket",
+      "parameterId": "garment"
+    }, {
+      "text": " you have on your site"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi I have a question about a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " I am looking at."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi I have a question about a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " you have on your site"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi I was looking at a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " and have a question"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi there - there's a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " I'm thinking about ordering but I wanted to get some more information first"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi! I was considering buying a pair of "
+    }, {
+      "text": "Guess",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " but needed some information"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi! I was looking at a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " and would like some information on it please"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi, I recently ordered a pair of "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    }, {
+      "text": " from your website"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi, I would like to now more about some "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " I want to buy"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi, I'd like some information about a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": "."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi. I have a question about some "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " on your site"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi. I would like to know more about a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " I'm looking at."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I am looking to buy some "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I was wondering if you have details about a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " im looking at."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'd like some more information about this item"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'd like to get more information on the "
+    }, {
+      "text": "Guess",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": "."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'd like to know more about a pair of "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'm looking at a pair of Guess "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " that I might buy, but would like to know a little more about them."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'm looking for some information about a pair of "
+    }, {
+      "text": "shoes",
+      "parameterId": "garment"
+    }, {
+      "text": " on your site."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'm thinking about buying a pair of your "
+    }, {
+      "text": "Guess",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " and I would like some more info about them."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'm thinking about buying thses "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Is the color of the "
+    }, {
+      "text": "boot",
+      "parameterId": "garment"
+    }, {
+      "text": " actually brown or is it black?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "hi i am reall interested in these "
+    }, {
+      "text": "calvin klein",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "hi i love these "
+    }, {
+      "text": "calvin klein",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "hi, i am trying to find out more about "
+    }, {
+      "text": "guess",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    }, {
+      "text": " you have for $49"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "i am looking for a particular style of "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "i am thinking about buying a pair of "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "i am thinking about buying "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " and i have a quetsion"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "i would like to know if the "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    }, {
+      "text": " are dark blue or black."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "i'm hoping to get a little more info on some "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " before i buy them"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "more information on item"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "ok the "
+    }, {
+      "text": "Michael Kors",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "the site doesnt' say if these "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " are waterproof? are they waterproof?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "wondering about the durability and longevity of these "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": " before taking the plunge"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "would like to add a pair of "
+    }, {
+      "text": "guess",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "would like to know more a product i am thinking about buying. are the "
+    }, {
+      "text": "jeans",
+      "parameterId": "garment"
+    }, {
+      "text": " dark blue or black? they are a pair of "
+    }, {
+      "text": "calvin klein",
+      "parameterId": "brand"
+    }, {
+      "text": " jeans"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  } ]
+}

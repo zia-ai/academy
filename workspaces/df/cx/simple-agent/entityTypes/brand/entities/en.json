@@ -1,0 +1,15 @@
+{
+  "entities": [ {
+    "value": "calvin_klein",
+    "synonyms": [ "calvin_klein", "Calvin Klein", "Calvin Kline", "Calvin klein", "calvin klein" ],
+    "languageCode": "en"
+  }, {
+    "value": "guess",
+    "synonyms": [ "guess" ],
+    "languageCode": "en"
+  }, {
+    "value": "michael_kors",
+    "synonyms": [ "michael_kors", "Michael Kors", "Michael_Kors" ],
+    "languageCode": "en"
+  } ]
+}

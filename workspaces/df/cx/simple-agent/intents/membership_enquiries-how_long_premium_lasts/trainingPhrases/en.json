@@ -1,0 +1,57 @@
+{
+  "trainingPhrases": [ {
+    "parts": [ {
+      "text": "Can you tell me how long premium membership lasts after someone gets it?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hello I wanted to know how long a premium membership lasts?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hello, could you tell me how long the premium membership lasts?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I was wondering if you could tell me how long a premium membership lasts. I want make some gift purchases while in my membership period."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I would like to know how long a premium membership lasts. I just bought one and I need to know how long I'll have these amazing benefits"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I'm wondering specifically how long the premium membership lasts for once you get it."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "hi.....i am curious about how long a premium membership lasts. I have plans for buying a couple of things and I was curious about that particular membership."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "how long does a premium membership last?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "how long premium membership lasts for."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  } ]
+}

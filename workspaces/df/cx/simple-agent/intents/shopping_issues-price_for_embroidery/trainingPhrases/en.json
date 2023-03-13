@@ -1,0 +1,102 @@
+{
+  "trainingPhrases": [ {
+    "parts": [ {
+      "text": "Hello, I am curious on how much it would cost to stitch my name in a pair of "
+    }, {
+      "text": "Michael Kors",
+      "parameterId": "brand"
+    }, {
+      "text": " "
+    }, {
+      "text": "boots",
+      "parameterId": "garment"
+    }, {
+      "text": "."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hello, I was wondering what is the price of stitching my name to one of your items?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi there, I was wondering how much it would cost to have my name stitched on an item I was thinking of ordering."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi! I'm wondering what the price would be to have my name stitched on one of my items!"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Hi, I am thinking of buying an item and would like to know the price of adding my name to one of the items."
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "How much is it to stitch my name to an item?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "How much would it cost to get custome stitching done?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I am thinking about getting my name stitched onto a "
+    }, {
+      "text": "jacket",
+      "parameterId": "garment"
+    }, {
+      "text": ". Can you tell me how much that will cost?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I was curious about getting my name embroidered onto an item and how much it would cost"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I was thinking of buying a Tommy Hilfiger shirt for my brother and I was wondering how much it would cost to get a name stitched on there?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "I would like to know the price of stitching my name onto one of your items?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "What is the price of stitching my name to one of my items?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "Yes i would like to know the price of stitching my name one ite?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  }, {
+    "parts": [ {
+      "text": "how much is it to stitch my name to one of my items?"
+    } ],
+    "repeatCount": 1,
+    "languageCode": "en"
+  } ]
+}

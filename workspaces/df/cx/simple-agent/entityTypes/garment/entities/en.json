@@ -1,0 +1,19 @@
+{
+  "entities": [ {
+    "value": "boots",
+    "synonyms": [ "boots", "boot" ],
+    "languageCode": "en"
+  }, {
+    "value": "jacket",
+    "synonyms": [ "jacket", "jackets" ],
+    "languageCode": "en"
+  }, {
+    "value": "jeans",
+    "synonyms": [ "jeans" ],
+    "languageCode": "en"
+  }, {
+    "value": "shoes",
+    "synonyms": [ "shoes", "shoe" ],
+    "languageCode": "en"
+  } ]
+}
