@@ -118,18 +118,18 @@ def test_write_csv():
     assert(columns==columns_should_be)
     
     # Check intent level values
-    assert(list(df["intent_metadata-intent_metadata1"].unique())==[numpy.nan,'value1','value5'])
+    assert(list(df["intent_metadata-intent_metadata1"].unique())==['value1',numpy.nan,'value5'])
     assert(df[df["intent_metadata-intent_metadata1"]=='value1'].shape[0]==5)
     assert(df[df["intent_metadata-intent_metadata1"]=='value5'].shape[0]==1)
     assert(df[df["intent_metadata-intent_metadata1"].isna()].shape[0]==5)
     
-    assert(list(df["intent_metadata-intent_metadata2"].unique())==[numpy.nan,'value2','value6'])
+    assert(list(df["intent_metadata-intent_metadata2"].unique())==['value2',numpy.nan,'value6'])
     assert(df[df["intent_metadata-intent_metadata2"]=='value2'].shape[0]==5)
     assert(df[df["intent_metadata-intent_metadata2"]=='value6'].shape[0]==1)
     assert(df[df["intent_metadata-intent_metadata2"].isna()].shape[0]==5)
     
     # Check example level values
-    assert(list(df["example_metadata-example_metadata1"].unique())==['valueA',numpy.nan])
+    assert(list(df["example_metadata-example_metadata1"].unique())==[numpy.nan,'valueA'])
     assert(df[df["example_metadata-example_metadata1"]=='valueA'].shape[0]==1)
     assert(df[df["example_metadata-example_metadata1"].isna()].shape[0]==10)
     
