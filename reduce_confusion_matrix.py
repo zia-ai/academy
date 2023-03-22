@@ -26,13 +26,14 @@ import humanfirst_apis
 @click.command()
 @click.option('-m', '--top_mispredictions', type=int, default=5, help='Number of top mispredictions')
 @click.option('-f', '--filedir', type=str, default='./data', help='All the files from evaluations gets extracted at this directory')
+@click.option('-o', '--output_filepath', type=str, default='./data/reduced_confusion_matrix.csv', help='Output filepath for reduced confusion matrix')
 @click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
 @click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-e', '--evaluation_id', type=str, required=True, help='HumanFirst evaluation id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with if not providing username/password')
-def main(filedir: str, top_mispredictions: int, username: str, password: int, namespace: bool, playbook: str, bearertoken: str, evaluation_id: str) -> None:
+def main(filedir: str, output_filepath: str, top_mispredictions: int, username: str, password: int, namespace: bool, playbook: str, bearertoken: str, evaluation_id: str) -> None:
     '''Main function'''
 
     if not isdir(filedir):
@@ -44,9 +45,9 @@ def main(filedir: str, top_mispredictions: int, username: str, password: int, na
     z.extractall(filedir)
     
     phrases_filename = join(filedir,"phrases.csv")
-    process(phrases_filename, top_mispredictions)
+    process(phrases_filename, output_filepath, top_mispredictions)
 
-def process(phrases_filename: str, top_mispredictions: int) -> None:
+def process(phrases_filename: str, output_filepath: str, top_mispredictions: int) -> None:
     '''Controls the script flow'''
 
     # validate file path
@@ -72,7 +73,8 @@ def process(phrases_filename: str, top_mispredictions: int) -> None:
     print("Reduced Confusion Matrix")
     print(reduced_matrix)
     print(f"\nPercentage of confusions represented by the matrix: {round((reduced_matrix.loc['Total']['Total']/total_mispredictions)*100,2)} %")
-    
+    reduced_matrix.to_csv(output_filepath,sep=",",encoding="utf8")
+    print(f"\nReduced confusion matrix is stored at {output_filepath}")
     # determine top intent pairs that are most confused
     sorted_intent_pairs = find_top_intent_pair(reduced_matrix, total_mispredictions)
     summarize_top_intent_pair(sorted_intent_pairs, top_mispredictions, total_mispredictions)
