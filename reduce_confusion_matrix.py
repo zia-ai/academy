@@ -8,9 +8,11 @@
 
 # standard imports
 import heapq
+from os.path import isfile
 
 # third party imports
 import pandas
+import numpy
 import click
 from sklearn.metrics import confusion_matrix
 
@@ -23,34 +25,56 @@ from sklearn.metrics import confusion_matrix
 def main(phrases_filename: str, top_mispredictions: int) -> None:
     '''Main function'''
 
-    reduce_confusion_matrix(phrases_filename, top_mispredictions)
+    process(phrases_filename, top_mispredictions)
 
-def reduce_confusion_matrix(phrases_filename: str, top_mispredictions: int) -> None:
-    '''Reduces Confusion matrix'''
+def process(phrases_filename: str, top_mispredictions: int) -> None:
+    '''Controls the script flow'''
+
+    # validate file path
+    if (not isfile(phrases_filename)) or (phrases_filename.split('.')[-1] != 'csv'):
+        raise Exception("Incorrect file path or not a CSV file")
+    
+    # read phrases file
     df = pandas.read_csv(phrases_filename)
+    labels = sorted(list(set(df["Intent Name"])))
+    print(f"Total Number of intents: {len(labels)}")
     
     # summarise
     print('Summary of df')
-    print(df[["Intent Name","Result Type"]].groupby(["Result Type"]).count())
+    print(df[["Labelled Phrase","Result Type"]].groupby(["Result Type"]).count())
+    total_mispredictions = df[["Labelled Phrase","Result Type"]].groupby(["Result Type"]).count().loc["Fail"]["Labelled Phrase"]
 
     # create confusion matrix
-    labels = sorted(list(set(df["Intent Name"])))
-    print(f"Total Number of intents: {len(labels)}")
     matrix = confusion_matrix(df["Intent Name"],df["Top Match Intent Name"],labels = labels)
+
+    # reduce confusion matrix
+    reduced_matrix = reduce_confusion_matrix(matrix, labels, top_mispredictions)
+    print("\nTrue positives are replaced with 0\n")
+    print("Reduced Confusion Matrix")
+    print(reduced_matrix)
+    print(f"\nPercentage of confusions represented by the matrix: {round((reduced_matrix.loc['Total']['Total']/total_mispredictions)*100,2)} %")
+    
+    # determine top intent pairs that are most confused
+    sorted_intent_pairs = find_top_intent_pair(reduced_matrix, total_mispredictions)
+    summarize_top_intent_pair(sorted_intent_pairs, top_mispredictions, total_mispredictions)
+
+def reduce_confusion_matrix(matrix: numpy.matrix, labels: list, top_mispredictions: int) -> None:
+    '''Reduces Confusion matrix'''
+
+    # edge cases
+    no_of_matrix_cells = len(labels) * len(labels)
+    if top_mispredictions <= 0 or top_mispredictions > no_of_matrix_cells:
+        raise Exception(f"Top mispredictions should be > 0 and less than or equal to {no_of_matrix_cells}")
     
     # replace true positives to 0 and sum all the incorrect predictions
-    total_mispredictions = 0
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
             if i == j:
                 matrix[i][j] = 0
-            else:
-                total_mispredictions = total_mispredictions + matrix[i][j]
-    print("\nTrue positives are replaced with 0\n")
-    
+
     # confusion matrix into dataframe
     df_matrix = pandas.DataFrame(data=matrix,index=labels,columns=labels)
-
+    
     # get the list of top mispredictions e.g. top 10 largest number of incorrect predictions
     top_mispredictions_list = (heapq.nlargest(top_mispredictions,matrix.max(1)))
 
@@ -72,16 +96,15 @@ def reduce_confusion_matrix(phrases_filename: str, top_mispredictions: int) -> N
     
     # reorder Total row as last row
     reorder_list = list(reduced_matrix.index)
-    del reorder_list[0]
+    reorder_list.remove("Total")
     reorder_list.append("Total")
     reduced_matrix = reduced_matrix.reindex(reorder_list)
 
-    print("Reduced Confusion Matrix")
-    print(reduced_matrix)
+    return reduced_matrix
 
-    print(f"\nPercentage of confusions represented by the matrix: {round((reduced_matrix.loc['Total']['Total']/total_mispredictions)*100,2)} %")
+def find_top_intent_pair(reduced_matrix: pandas.DataFrame, total_mispredictions: int) -> list:
+    '''determine top intent pair the model is getting confused'''
 
-    # determine top intent pair the model is getting confused
     pair = {}
     for row in reduced_matrix.iterrows():
         if row[0] != "Total":
@@ -97,18 +120,23 @@ def reduce_confusion_matrix(phrases_filename: str, top_mispredictions: int) -> N
                          pair[key] = row[1][index]
     pair_percentage = {}
     for key in pair.keys():
-        pair_percentage[key] = round((pair[key]/total_mispredictions)*100,2)
-    sorted_pair = sorted(pair_percentage.items(), key=lambda x:x[1],reverse=True)
-    
+        pair_percentage[key] = [pair[key],round((pair[key]/total_mispredictions)*100,2)]
+    sorted_pair = sorted(pair_percentage.items(), key=lambda x:x[1][1],reverse=True)
+
+    return sorted_pair
+
+def summarize_top_intent_pair(sorted_pair: list, top_mispredictions: int, total_mispredictions: int) -> None:
+    '''Summarizes about top confused intent pairs'''
+
     count = 0
     sum_of_x_pair_mispredictions = 0
     print(f"\nPercentage of confusions for the top {top_mispredictions} pairs(Intent Pair----Sum of Confusion----Confusion %)")
     for pair_tuple in sorted_pair:
-        print(f"{pair_tuple[0]:80} {pair[pair_tuple[0]]:25} {pair_tuple[1]:20}%")
+        print(f"{pair_tuple[0]:80} {pair_tuple[1][0]:25} {pair_tuple[1][1]:20}%")
         if count >= top_mispredictions:
             break
         count = count+1
-        sum_of_x_pair_mispredictions = sum_of_x_pair_mispredictions + pair[pair_tuple[0]]
+        sum_of_x_pair_mispredictions = sum_of_x_pair_mispredictions + pair_tuple[1][0]
     print(f"\nSum of mispredictions between all of the above intent-pairs: {sum_of_x_pair_mispredictions}")
     print(f"Percentage of confusion: {round((sum_of_x_pair_mispredictions/total_mispredictions)*100,2)} %")
 
