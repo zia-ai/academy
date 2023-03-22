@@ -25,7 +25,6 @@ def check_reduce_confusion_matrix(confusion_matrix: numpy.matrix, labels: list, 
             output_reduced_matrix = reduce_confusion_matrix.reduce_confusion_matrix(confusion_matrix,labels,top_mispredictions)
     else:
         output_reduced_matrix = reduce_confusion_matrix.reduce_confusion_matrix(confusion_matrix,labels,top_mispredictions)
-        output_reduced_matrix.to_csv(f"./examples/reduced_confusion_matrix_{top_mispredictions}.csv",sep=",",encoding="utf8")
         actual_reduced_matrix = pandas.read_csv(f'./examples/reduced_confusion_matrix_{top_mispredictions}.csv',index_col=0)
         assert(isinstance(output_reduced_matrix,pandas.DataFrame))
         assert(output_reduced_matrix.equals(actual_reduced_matrix))
