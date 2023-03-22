@@ -8,7 +8,8 @@
 
 # standard imports
 import heapq
-from os.path import isfile
+from os.path import isfile, isdir, join
+import zipfile, io
 
 # third party imports
 import pandas
@@ -16,15 +17,33 @@ import numpy
 import click
 from sklearn.metrics import confusion_matrix
 
+# custom imports
+import humanfirst_apis
+
 # Typical phrases.csv from HF contains
 # Labelled Phrase,Detected Phrase,Intent Id,Intent Name,Top Match Intent Id,Top Match Intent Name,Top Match Score,Entropy,Uncertainty,Margin Score,Result Type
 
 @click.command()
 @click.option('-m', '--top_mispredictions', type=int, default=5, help='Number of top mispredictions')
-@click.option('-f', '--phrases_filename', type=str, default='./data/phrases.csv', help='Phrases')
-def main(phrases_filename: str, top_mispredictions: int) -> None:
+@click.option('-f', '--filedir', type=str, default='./data', help='All the files from evaluations gets extracted at this directory')
+@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
+@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
+@click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
+@click.option('-e', '--evaluation_id', type=str, required=True, help='HumanFirst evaluation id')
+@click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with if not providing username/password')
+def main(filedir: str, top_mispredictions: int, username: str, password: int, namespace: bool, playbook: str, bearertoken: str, evaluation_id: str) -> None:
     '''Main function'''
 
+    if not isdir(filedir):
+        raise Exception(f"{filedir} is not a directory")
+    
+    headers = humanfirst_apis.process_auth(bearertoken, username, password)
+    response = humanfirst_apis.get_evaluation_zip(headers,namespace,playbook, evaluation_id)
+    z = zipfile.ZipFile(io.BytesIO(response.content))
+    z.extractall(filedir)
+    
+    phrases_filename = join(filedir,"phrases.csv")
     process(phrases_filename, top_mispredictions)
 
 def process(phrases_filename: str, top_mispredictions: int) -> None:

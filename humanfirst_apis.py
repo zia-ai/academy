@@ -29,6 +29,19 @@ def validate_response(response, url: str, field: str = None):
     else:
         return None
 
+def get_evaluation_zip(headers: str, namespace: str, playbook: str, evaluation_id: str) -> dict:
+    '''Get the metdata for the intent needed'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/evaluations/{evaluation_id}/report.zip'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+
+    return response
+
 def query_conversation_set(
         headers: str,
         namespace: str,
