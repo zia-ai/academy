@@ -149,7 +149,7 @@ def find_top_intent_pair(reduced_matrix: pandas.DataFrame, total_mispredictions:
 def summarize_top_intent_pair(sorted_pair: list, top_mispredictions: int, total_mispredictions: int) -> None:
     '''Summarizes about top confused intent pairs'''
 
-    count = 0
+    count = 1
     sum_of_x_pair_mispredictions = 0
     print(f"\nPercentage of confusions for the top {top_mispredictions} pairs(Intent Pair----Sum of Confusion----Confusion %)")
     for pair_tuple in sorted_pair:
