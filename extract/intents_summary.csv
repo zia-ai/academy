@@ -1,0 +1,52 @@
+Intent ID,Intent Name,Precision,Recall,F1,Phrase Count,True Positives,False Positives,False Negatives
+intent-A3JTXRUZ4FNXNCFU2MUOE5BP,search_issue / search_is_fixed,0.833333,0.937500,0.882353,16,15,3,1
+intent-ECQCIOMRG5JLBDGU5K62NCXN,feedback / upset,1.000000,1.000000,1.000000,40,40,0,0
+intent-KZACIBBOHFKZXCUDQ7HJEP7O,search_issue / search_problem,0.794118,0.870968,0.830769,31,27,7,4
+intent-P6ZL4R5CVJN53BW4C4BZI2O4,shipping_issues / query return policy,1.000000,1.000000,1.000000,14,14,0,0
+intent-Y67J3GU7K5IRHKT5GWLUFI5F,shopping_issues,0.000000,0.000000,0.000000,0,0,0,0
+intent-YJ6TPL3SCNNDVLGE7LLGPR6I,technical_issues / website_is_slow,0.964286,1.000000,0.981818,27,27,1,0
+intent-YMZW73NMCVPITDDYNEQ7ICLK,login_issues / two_factor_problem,1.000000,1.000000,1.000000,47,47,0,0
+intent-PPFCDKB7LNMK7JONGKQ77ZC4,conversational / ok,0.947368,1.000000,0.972973,18,18,1,0
+intent-XDSCN2IA4ZMXBHMSLXKYXJD7,shopping_issues / always_out_of_stock,1.000000,1.000000,1.000000,15,15,0,0
+intent-2OCSU3CW65JCLMLXIF5OKDLO,search_issue / no_search_results,0.909091,0.967742,0.937500,31,30,3,1
+intent-5ADK7SJFZFLX7NIZCX4XDAXK,shopping_issues / price_for_embroidery ,1.000000,1.000000,1.000000,18,18,0,0
+intent-C34LVHBH5NL2RPGY7QZWK2LE,technical_issues / promo_code_issue,1.000000,1.000000,1.000000,19,19,0,0
+intent-CWKKR2LFJVIAFNOP3KMVKZP5,shipping_issues,0.000000,0.000000,0.000000,0,0,0,0
+intent-DEO3LIIWAVIY3D3R3P72WQSX,membership_enquiries / upgrade_account,1.000000,0.857143,0.923077,14,12,0,2
+intent-H7YP2A6XY5MXVLVLCNHKNMVE,membership_enquiries / how_long_premium_lasts,1.000000,1.000000,1.000000,13,13,0,0
+intent-UOHJQD5Q5FIIVKDBA3BRT7ZL,change_details,0.000000,0.000000,0.000000,0,0,0,0
+intent-BEWQK3T3E5KLJA35NGFSZOOM,membership_enquiries / what_happens_if_late_with_payment,1.000000,1.000000,1.000000,20,20,0,0
+intent-O3KV4TFKRBOHXNQ6RQF6YE3S,search_issue / search_is_slow,1.000000,0.789474,0.882353,19,15,0,4
+intent-V7JAQWH6ZZKI7JO26Q5U7I6C,search_issue / unrelated_search_results,0.941176,0.888889,0.914286,18,16,1,2
+intent-VEMN55ZGWNKPXDBBM63NNI7A,shipping_issues / confirm_shipping_address,1.000000,1.000000,1.000000,25,25,0,0
+intent-VKCA7C4E7VM6NFEARZQZVEQZ,login_issues / forgot_password,0.981818,0.981818,0.981818,55,54,1,1
+intent-XGOGSYRARNOCFJPMHKTLWF3B,feedback,0.000000,0.000000,0.000000,0,0,0,0
+intent-ZFK5H4EUPFPQXBBAR7VWEJZY,technical_issues / its_fixed,1.000000,0.982759,0.991304,58,57,0,1
+intent-2MG6WMIFBRISNO3WCEUS2ICE,background,0.000000,0.000000,0.000000,0,0,0,0
+intent-56J4FTQEHRMWPJ75RUXYVJYJ,membership_enquiries / subscription_status,1.000000,1.000000,1.000000,19,19,0,0
+intent-BMXMJY77YFINZCTUREB3S2BL,login_issues,0.000000,0.000000,0.000000,0,0,0,0
+intent-GCLZTX5OBFK3BP4GN6NVMUAE,shipping_issues / order_status,1.000000,1.000000,1.000000,19,19,0,0
+intent-KDBNSXIRZZJI3MJRZHNNBPJG,membership_enquiries / pay_subscription_fee,0.937500,1.000000,0.967742,15,15,1,0
+intent-NL3C7S32H5O2NIEYCHIFRD4D,login_issues / cant_login,0.900000,0.964286,0.931035,28,27,3,1
+intent-Q3TGCDX6NFPUPKVG67UJN7NW,shopping_issues / more_information_on_item,1.000000,1.000000,1.000000,43,43,0,0
+intent-SL5O3DXBVFLHHLTYN3255XWX,feedback / that_was_very_helpful,1.000000,0.941176,0.969697,17,16,0,1
+intent-3K32FTARXVIGHMY4WU7H2PZN,membership_enquiries / when_is_annual_fee_due,1.000000,1.000000,1.000000,16,16,0,0
+intent-4YJQ4FYJDJOPDK5QZGGP2CBU,search_issue,0.000000,0.000000,0.000000,0,0,0,0
+intent-CIVL2DGBENK3ZGWEUVCMGG5Z,shipping_issues / upgrade_shipping_to_overnight,1.000000,1.000000,1.000000,17,17,0,0
+intent-5TJGD6UYEVKS5NGBMM33T7LL,background / my_name_is,1.000000,1.000000,1.000000,21,21,0,0
+intent-5XDSWI24UVM5ZNHGPGVBX7AQ,technical_issues,0.000000,0.000000,0.000000,0,0,0,0
+intent-6ONU6LQMLRKLZD3FQVAA7QGF,technical_issues / i_have_an_issue,1.000000,0.916667,0.956522,24,22,0,2
+intent-DYAHN633UZME5P2QMU7Q7LBF,conversational / greeting,1.000000,1.000000,1.000000,14,14,0,0
+intent-FN66EHLXSVNVHOO2HRTKTLSL,shipping_issues / shipping_cost_issue,1.000000,1.000000,1.000000,20,20,0,0
+intent-J776DVMMCRMCXH3NIP4DR7AI,root,0.000000,0.000000,0.000000,0,0,0,0
+intent-QUFXGNWUMNNYTGXDAT7RHZRA,technical_issues / rejected_credit_card,1.000000,1.000000,1.000000,21,21,0,0
+intent-2T3JZAZADNN2NPHLDXO5QC3A,membership_enquiries / subscription_added_by_mistake,1.000000,1.000000,1.000000,16,16,0,0
+intent-5QWMUBGEMFJMRDYGJ57YEWAY,shopping_issues / missing_credit_on_account,1.000000,1.000000,1.000000,14,14,0,0
+intent-5YYBEHTUOVIKNNVRDTDS4KCV,shipping_issues / do_i_qualify_for_free_shipping,1.000000,1.000000,1.000000,16,16,0,0
+intent-KWSSEHOALNII7B6OL5ALYSPG,login_issues / forgot_username,0.951219,0.928571,0.939759,42,39,2,3
+intent-MMI4H7MXYNPJNHQO5E2EKZQZ,shipping_issues / manage_shipping_details,1.000000,1.000000,1.000000,24,24,0,0
+intent-NAUOHGZMNVMKZHMIE3XSLM4G,change_details / change_phone_number,1.000000,1.000000,1.000000,21,21,0,0
+intent-OOEYKE4PNBOOJHE3NS3K3M6R,membership_enquiries,0.000000,0.000000,0.000000,0,0,0,0
+intent-PAL5J7ZE6ZKNJPLBBRRMIOTQ,shopping_issues / collection_release_date,1.000000,1.000000,1.000000,21,21,0,0
+intent-Z3J5MUA3ZRI2FBMBPFMJHPR2,membership_enquiries / membership_level_benefits,1.000000,1.000000,1.000000,38,38,0,0
+intent-ZOTNY2SQQJPZBHWM47G5XBMI,conversational,0.000000,0.000000,0.000000,0,0,0,0
