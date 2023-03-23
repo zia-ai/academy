@@ -16,9 +16,8 @@ import pandas
 import numpy
 import click
 from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
-import squarify
 import plotly.express as px
+import flask
 
 # custom imports
 import humanfirst_apis
@@ -158,7 +157,7 @@ def summarize_top_intent_pair(sorted_pair: list, top_mispredictions: int, total_
     sorted_pair_list_of_dicts = []
     for pair_tuple in sorted_pair:
         pair_dict = {}
-        print(f"{pair_tuple[0]:80} {pair_tuple[1][0]:25} {pair_tuple[1][1]:20}%")
+        print(f"{pair_tuple[0]:100} {pair_tuple[1][0]:25} {pair_tuple[1][1]:20}%")
         pair_dict["labels"] = pair_tuple[0]
         pair_dict["values"] = pair_tuple[1][1]
         sorted_pair_list_of_dicts.append(pair_dict)
@@ -170,11 +169,20 @@ def summarize_top_intent_pair(sorted_pair: list, top_mispredictions: int, total_
     print(f"Percentage of confusion: {round((sum_of_x_pair_mispredictions/total_mispredictions)*100,2)} %")
     
     df = pandas.json_normalize(data=sorted_pair_list_of_dicts)
-    fig = px.treemap(df, path=['labels'],values='values', width=1600, height=800)
+    fig = px.treemap(df, path=['labels'],values='values', width=800, height=400)
     fig.update_layout(
         margin = dict(t=50, l=25, r=25, b=25))
     fig.update_traces(hovertemplate='Confused_intent_pair=%{label}<br>Percentage of confusion=%{value}%<extra></extra>')
-    fig.show()
+
+    # Create a Flask app
+    app = flask.Flask(__name__)
+
+    # Define a route for the chart
+    @app.route('/')
+    def chart():
+        return fig.to_html(include_plotlyjs='cdn')
+    
+    app.run(port=8080)
 
 if __name__ == '__main__':
     main()
