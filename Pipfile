@@ -29,7 +29,7 @@ scikit-learn = "*"
 google-cloud-dialogflow-cx = "1.18.0"
 ratelimit = "*"
 plotly="*"
-flask="*"
+kaleido="*"
 
 [dev-packages]
 

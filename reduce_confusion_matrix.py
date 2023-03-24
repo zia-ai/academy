@@ -29,13 +29,14 @@ import humanfirst_apis
 @click.option('-m', '--top_mispredictions', type=int, default=5, help='Number of top mispredictions')
 @click.option('-f', '--filedir', type=str, default='./data', help='All the files from evaluations gets extracted at this directory')
 @click.option('-o', '--output_filepath', type=str, default='./data/reduced_confusion_matrix.csv', help='Output filepath for reduced confusion matrix')
+@click.option('-c', '--output_chart', type=str, default='./data/confusion_chart.png', help='Output filepath for confusion chart')
 @click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
 @click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-e', '--evaluation_id', type=str, required=True, help='HumanFirst evaluation id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with if not providing username/password')
-def main(filedir: str, output_filepath: str, top_mispredictions: int, username: str, password: int, namespace: bool, playbook: str, bearertoken: str, evaluation_id: str) -> None:
+def main(filedir: str, output_filepath: str, output_chart: str, top_mispredictions: int, username: str, password: int, namespace: bool, playbook: str, bearertoken: str, evaluation_id: str) -> None:
     '''Main function'''
 
     if not isdir(filedir):
@@ -47,9 +48,9 @@ def main(filedir: str, output_filepath: str, top_mispredictions: int, username: 
     z.extractall(filedir)
     
     phrases_filename = join(filedir,"phrases.csv")
-    process(phrases_filename, output_filepath, top_mispredictions)
+    process(phrases_filename, output_filepath, output_chart, top_mispredictions)
 
-def process(phrases_filename: str, output_filepath: str, top_mispredictions: int) -> None:
+def process(phrases_filename: str, output_filepath: str, output_chart: str, top_mispredictions: int) -> None:
     '''Controls the script flow'''
 
     # validate file path
@@ -79,7 +80,7 @@ def process(phrases_filename: str, output_filepath: str, top_mispredictions: int
     print(f"\nReduced confusion matrix is stored at {output_filepath}")
     # determine top intent pairs that are most confused
     sorted_intent_pairs = find_top_intent_pair(reduced_matrix, total_mispredictions)
-    summarize_top_intent_pair(sorted_intent_pairs, top_mispredictions, total_mispredictions)
+    summarize_top_intent_pair(sorted_intent_pairs, output_chart, top_mispredictions, total_mispredictions)
 
 def reduce_confusion_matrix(matrix: numpy.matrix, labels: list, top_mispredictions: int) -> None:
     '''Reduces Confusion matrix'''
@@ -148,41 +149,48 @@ def find_top_intent_pair(reduced_matrix: pandas.DataFrame, total_mispredictions:
 
     return sorted_pair
 
-def summarize_top_intent_pair(sorted_pair: list, top_mispredictions: int, total_mispredictions: int) -> None:
+def summarize_top_intent_pair(sorted_pair: list, output_chart: str, top_mispredictions: int, total_mispredictions: int) -> None:
     '''Summarizes about top confused intent pairs'''
 
-    count = 1
+    count = 0
     sum_of_x_pair_mispredictions = 0
     print(f"\nPercentage of confusions for the top {top_mispredictions} pairs(Intent Pair----Sum of Confusion----Confusion %)")
     sorted_pair_list_of_dicts = []
+    other = {
+        "labels":"other",
+        "values": 0
+    }
     for pair_tuple in sorted_pair:
+        if count >= top_mispredictions:
+            other["values"] = other["values"] + pair_tuple[1][1]
+            continue
         pair_dict = {}
-        print(f"{pair_tuple[0]:100} {pair_tuple[1][0]:25} {pair_tuple[1][1]:20}%")
+        print(f"{pair_tuple[0]:100} {pair_tuple[1][0]:20} {pair_tuple[1][1]:20}%")
         pair_dict["labels"] = pair_tuple[0]
         pair_dict["values"] = pair_tuple[1][1]
         sorted_pair_list_of_dicts.append(pair_dict)
-        if count >= top_mispredictions:
-            break
         count = count+1
         sum_of_x_pair_mispredictions = sum_of_x_pair_mispredictions + pair_tuple[1][0]
+    sorted_pair_list_of_dicts.append(other)
     print(f"\nSum of mispredictions between all of the above intent-pairs: {sum_of_x_pair_mispredictions}")
     print(f"Percentage of confusion: {round((sum_of_x_pair_mispredictions/total_mispredictions)*100,2)} %")
     
     df = pandas.json_normalize(data=sorted_pair_list_of_dicts)
-    fig = px.treemap(df, path=['labels'],values='values', width=800, height=400)
-    fig.update_layout(
-        margin = dict(t=50, l=25, r=25, b=25))
-    fig.update_traces(hovertemplate='Confused_intent_pair=%{label}<br>Percentage of confusion=%{value}%<extra></extra>')
-
-    # Create a Flask app
-    app = flask.Flask(__name__)
-
-    # Define a route for the chart
-    @app.route('/')
-    def chart():
-        return fig.to_html(include_plotlyjs='cdn')
-    
-    app.run(port=8080)
+    fig = px.treemap(df,path=['labels'],values='values', width=5616, height=3744)
+    fig.update_layout(margin = dict(t=40, l=0, r=0, b=0),
+                      title={
+                            'text': '<b>Confused intent pairs along with their percentage of confusion</b>',
+                            'font':{'size':100},
+                            'x':0.0,
+                            'xanchor': 'left',
+                            'yanchor': 'top'
+                    }
+                )
+    fig.update_traces(texttemplate="<b>%{label}<br>%{value}%</b>",
+                      textfont= dict(size=50),
+                      hovertemplate='Confused_intent_pair=%{label}<br>Percentage of confusion=%{value}%',
+                      marker_line_width = 0)
+    fig.write_image(output_chart)
 
 if __name__ == '__main__':
     main()
