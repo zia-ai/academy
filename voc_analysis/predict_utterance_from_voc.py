@@ -33,16 +33,15 @@ import voc_helper
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 @click.option('-c', '--chunk', type=int, default=500, help='size of maximum chunk to send to batch predict')
-@click.option('-h', '--confidence_threshold', type=int, default=0.7, help='size of maximum chunk to send to batch predict')
 def main(input_filename: str, output_filename: str, review_col:  str,
          username: str, password: int, namespace: bool, playbook: str, 
-         bearertoken: str, chunk: int, confidence_threshold: int) -> None:
+         bearertoken: str, chunk: int) -> None:
     
     pt = nltk.tokenize.PunktSentenceTokenizer()
-    load_file(input_filename, output_filename, review_col, pt, username, password, namespace, playbook, bearertoken, chunk, confidence_threshold)
+    load_file(input_filename, output_filename, review_col, pt, username, password, namespace, playbook, bearertoken, chunk)
 
 def load_file(input_filename: str, output_filename: str, review_col: str, pt: nltk.tokenize.PunktSentenceTokenizer,
-              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, chunk: int, confidence_threshold:  int) -> None:
+              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, chunk: int) -> None:
 
     # convert csv to dataframe
     df = voc_helper.get_df_from_input(input_filename, review_col)
