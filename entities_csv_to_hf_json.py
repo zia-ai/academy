@@ -5,7 +5,8 @@
 # python entities_csv_to_hf_json.py
 #
 # Converts Entities CSV to HF JSON
-# CSV first column          - entity name
+# CSV format
+#     first column          - entity name
 #     second column         - key value
 #     rest of the columns   - synonyms
 #
