@@ -30,7 +30,7 @@ import voc_helper
 
 @click.command()
 @click.option('-f','--input_filename',type=str,required=True,help='Prediction file produced by predict_utterance_from_voc.py')
-@click.option('-o','--output_filename',type=str,default='',help='Output File')
+@click.option('-o','--output_filename',type=str,default='',help='Output JSON File')
 @click.option('-r','--review_col',type=str,required=True,help='Column name of the user review')
 @click.option('-t','--review_time_col',type=str,required=True,help='Column name of review time')
 @click.option('-d', '--document_id_col', type=str, required=True, help='Document id of the review')
@@ -45,9 +45,11 @@ def load_file(input_filename: str, output_filename: str, review_col: str, review
 
     # check if all reviews have review time
     df = df.apply(check_time_and_assign_convo_id,args=[review_time_col, document_id_col],axis=1)
+    df_doc = df[["conversation_id", "parent_intent","child_intent"]].set_index(["conversation_id", "parent_intent"],drop=True)
+    # print(df_doc)
 
     unlabelled_workspace = humanfirst.HFWorkspace()        
-    df.apply(parse_utterances,axis=1,args=[unlabelled_workspace,review_col,review_time_col])
+    df.apply(parse_utterances,axis=1,args=[unlabelled_workspace,review_col,review_time_col,df_doc])
 
     if output_filename == '':
         filename_split = input_filename.split('/')
@@ -61,16 +63,16 @@ def load_file(input_filename: str, output_filename: str, review_col: str, review
 def check_time_and_assign_convo_id(row: pandas.Series, review_time_col: str, document_id_col: str) -> pandas.Series:
     '''if nan replace it with current time and also assign conversation_id'''
 
-    row['conversation_id'] = str({row[document_id_col]})
+    row['conversation_id'] = str(row[document_id_col])
     if pandas.isna(row[review_time_col]):
         row[review_time_col] = str(datetime.datetime.now())
     return row
 
-def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.HFWorkspace, review_col: str, review_time_col: str) -> None:
+def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.HFWorkspace, review_col: str, review_time_col: str, df_doc: pandas.DataFrame) -> None:
     '''parse a single utterance to an example'''
 
     row[review_time_col] = (parser.parse(row[review_time_col]) + timedelta(seconds=row['seq'])).isoformat()
-    metadata = create_metadata(row,review_col)
+    metadata = create_metadata(row,review_col,df_doc)
 
     # Will load these as conversations where it is only the client speaking
     context = humanfirst.HFContext(row['conversation_id'],'conversation','client')
@@ -89,7 +91,7 @@ def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.HFWork
     # add to the unlabelled_workspace
     unlabelled_workspace.add_example(example)
 
-def create_metadata(row: pandas.Series, review_col: str) -> dict:
+def create_metadata(row: pandas.Series, review_col: str, df_doc: pandas.DataFrame) -> dict:
     '''Creates metadata'''
 
     metadata = {
@@ -106,14 +108,17 @@ def create_metadata(row: pandas.Series, review_col: str) -> dict:
                 metadata[index] = str(value)
             if index == 'seq':
                 metadata[index] = str(value+1)
-            if index == 'parent_intent':
-                if value == 'background':
-                    if row["child_intent"] in  ["seniors","parents_with_kids","disabled_illness_condition"]:
-                        metadata[f"background-{row['child_intent']}"] = "True"
-                    else:
-                        metadata["background-others"] = "True"
-                else:
-                    metadata["background-others"] = "True"
+            # if index == 'parent_intent':
+            #     if value == 'background':
+            #         if row["child_intent"] in  ["seniors","parents_with_kids","disabled_illness_condition"]:
+            #             metadata[f"background-{row['child_intent']}"] = "True"
+            #         else:
+            #             metadata["background-others"] = "True"
+            #     else:
+            #         metadata["background-others"] = "True"
+    if "aspects_negative" in df_doc.loc[row["conversation_id"]].index:
+        print(df_doc.loc[row["conversation_id"],"aspects_negative"]["child_intent"].to_list())
+    quit()
 
     return metadata
 
