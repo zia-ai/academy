@@ -34,22 +34,24 @@ import voc_helper
 @click.option('-r','--review_col',type=str,required=True,help='Column name of the user review')
 @click.option('-t','--review_time_col',type=str,required=True,help='Column name of review time')
 @click.option('-d', '--document_id_col', type=str, required=True, help='Document id of the review')
-def main(input_filename: str, output_filename: str, review_col:  str, review_time_col: str, document_id_col: str) -> None:
+@click.option('-s', '--sentence_split', is_flag=True, default=False, help='Splits sentences into utterances')
+def main(input_filename: str, output_filename: str, review_col:  str, review_time_col: str, document_id_col: str, sentence_split: bool) -> None:
     
     pt = nltk.tokenize.PunktSentenceTokenizer()
-    load_file(input_filename, output_filename, review_col, review_time_col, document_id_col, pt)
+    load_file(input_filename, output_filename, review_col, review_time_col, document_id_col, sentence_split, pt)
 
-def load_file(input_filename: str, output_filename: str, review_col: str, review_time_col: str, document_id_col: str, pt: nltk.tokenize.PunktSentenceTokenizer) -> None:
+def load_file(input_filename: str, output_filename: str, review_col: str, review_time_col: str, document_id_col: str, sentence_split: bool, pt: nltk.tokenize.PunktSentenceTokenizer) -> None:
 
     # convert csv to dataframe
     df = voc_helper.get_df_from_input(input_filename, review_col)
 
     # check if all reviews have review time
-    df = df.apply(check_time,args=[review_time_col, document_id_col],axis=1)
-
+    df = df.apply(check_time_and_assign_convo_id,args=[review_time_col, document_id_col],axis=1)
+    
     # split each review into segments
-    print('Using punkt to segement the reviews')
-    df = voc_helper.sentence_split_and_explode(df, pt, review_col)
+    if sentence_split:
+        print('Using punkt to segement the reviews')
+        df = voc_helper.sentence_split_and_explode(df, pt, review_col)
 
     unlabelled_workspace = humanfirst.HFWorkspace()        
     df.apply(parse_utterances,axis=1,args=[unlabelled_workspace,review_col,review_time_col])
@@ -63,10 +65,10 @@ def load_file(input_filename: str, output_filename: str, review_col: str, review
         unlabelled_workspace.write_json(file_out)
     print(f'Unlabelled json is saved at {output_filename}')
 
-def check_time(row: pandas.Series, review_time_col: str, document_id_col: str) -> pandas.Series:
+def check_time_and_assign_convo_id(row: pandas.Series, review_time_col: str, document_id_col: str) -> pandas.Series:
     '''if nan replace it with current time and also assign conversation_id'''
 
-    row['conversation_id'] = row[document_id_col]
+    row['conversation_id'] = str(row[document_id_col])
     if pandas.isna(row[review_time_col]):
         row[review_time_col] = str(datetime.datetime.now())
     return row
@@ -102,7 +104,7 @@ def create_metadata(row: pandas.Series, review_col: str) -> dict:
     # HFMetadata values must be strings
     for index, value in row.items():
         if not pandas.isna(value):
-            if index not in ['utterance','seq',review_col,'conversation_id']:
+            if index not in ['utterance','seq',review_col,'conversation_id','fully_qualified_intent_name','confidence','parent_intent','child_intent']:
                 metadata[index] = str(value)
             if index == 'seq':
                 metadata[index] = str(value+1)

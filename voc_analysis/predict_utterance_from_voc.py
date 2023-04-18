@@ -13,6 +13,7 @@ sys.path.insert(1,"/home/ubuntu/source/academy")
 
 # third party imports
 import click
+import pandas
 import nltk
 try:
     nltk.data.find('tokenizers/punkt')
@@ -32,16 +33,18 @@ import voc_helper
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
+@click.option('-h', '--background', is_flag=True, default=False, help='Adds background info to the CSV')
+@click.option('-d', '--doc_col_id', type=str, default='Survey ID', help='Document ID Column Name')
 @click.option('-c', '--chunk', type=int, default=500, help='size of maximum chunk to send to batch predict')
 def main(input_filename: str, output_filename: str, review_col:  str,
          username: str, password: int, namespace: bool, playbook: str, 
-         bearertoken: str, chunk: int) -> None:
+         background: bool, bearertoken: str, doc_col_id: str, chunk: int) -> None:
     
     pt = nltk.tokenize.PunktSentenceTokenizer()
-    load_file(input_filename, output_filename, review_col, pt, username, password, namespace, playbook, bearertoken, chunk)
+    load_file(input_filename, output_filename, review_col, pt, username, password, namespace, playbook, bearertoken, background, doc_col_id, chunk)
 
 def load_file(input_filename: str, output_filename: str, review_col: str, pt: nltk.tokenize.PunktSentenceTokenizer,
-              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, chunk: int) -> None:
+              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, background: bool, doc_col_id: str, chunk: int) -> None:
 
     # convert csv to dataframe
     df = voc_helper.get_df_from_input(input_filename, review_col)
@@ -86,6 +89,11 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
     df['parent_intent'] = parent_intents
     df['child_intent'] = child_intents
 
+    if background:
+        df_doc = df[[doc_col_id, "parent_intent","child_intent"]].set_index([doc_col_id, "parent_intent"],drop=True)
+        df_doc.sort_index(inplace=True)
+        df = df.apply(assign_background_child_intent,args=[df_doc,doc_col_id],axis=1)
+    
     if output_filename == '':
         filename_split = input_filename.split('/')
         filename_split[-1] = "voc_predictions.csv"
@@ -94,6 +102,26 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
     df.to_csv(output_filename, index=False, encoding='utf8')
     print(f'VOC predictions CSV is saved at {output_filename}')
 
+def assign_background_child_intent(row: pandas.Series, df_doc: pandas.DataFrame, doc_col_id: str) -> pandas.Series:
+    '''Splits the child intents into seniors, parents, disabled, and others'''
+
+    row["background-seniors"] = False
+    row["background-parents_and_families"] = False
+    row["background-disabled_illness_condition"] = False
+    row["background-others"] = False
+    
+    count = 0
+    if "background" in df_doc.loc[row[doc_col_id]].index:
+        for background_child in df_doc.loc[row[doc_col_id],"background"]["child_intent"].to_list():
+            if background_child in ["seniors","parents_and_families","disabled_illness_condition"]:
+                row[f"background-{background_child}"] = True
+                count = count + 1
+        if count == 0:
+           row["background-others"] = True
+    else:
+        row["background-others"] = True
+    
+    return row
 
 if __name__ == '__main__':
     main()

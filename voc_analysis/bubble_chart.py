@@ -2,16 +2,22 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python ./voc_analysis/bubble_chart.py -i ./data/voc_predictions.csv -c 0.35 -p 3 -d "Survey ID"
+# python ./voc_analysis/bubble_chart.py 
+#   -i ./data/voc_predictions.csv  
+#   -c 0.35 
+#   -p 3
+#   -d "Survey ID"
 #
 # *****************************************************************************
 
-import click
+# standard imports
 import os
-import pandas
 import random
+
+# 3rd party imports
+import click
+import pandas
 import matplotlib.pyplot as plt
-import json
 
 @click.command()
 @click.option('-i', '--input', type=str, required=True, help='Input File produced by predict_uuterance_from_voc.py script')
@@ -40,8 +46,8 @@ def plot_bubble_chart(df_tickets: pandas.DataFrame,scale: int,output: str) -> No
     ax = plt.subplot()
     ax.spines.right.set_visible(False)
     ax.spines.top.set_visible(False)
-    ax.set_xlim(left=1.0)
     ax.set_xlim(right=-0.1)
+    ax.set_xlim(left=1.0)
     ax.set_ylim(bottom=0.0)
     ax.set_ylim(top=1.1)
     plt.scatter('normalized_avg_digital_nps', 'normalized_avg_detractor_score', data=df_tickets,linewidths=0,s='count_of_utterance',alpha=0.5,color='color')
