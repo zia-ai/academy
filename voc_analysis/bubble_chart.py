@@ -64,7 +64,7 @@ def plot_bubble_chart(df_tickets: pandas.DataFrame,scale: int,output: str) -> No
             xalign='right'
             yalign='top'
         label = str(row.name).replace("aspects_negative","AN")
-        plt.annotate(label, xy=(row['normalized_avg_digital_nps'], row["normalized_avg_detractor_score"]), size=8, verticalalignment=yalign ,horizontalalignment=xalign)
+        plt.annotate(label, xy=(row['normalized_avg_digital_nps'], row["normalized_avg_detractor_score"]), size=8, verticalalignment=yalign ,horizontalalignment=xalign,rotation=-45, rotation_mode='anchor')
         i = i + 1
     
     plt.savefig(output)
