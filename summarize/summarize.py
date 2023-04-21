@@ -8,6 +8,8 @@
 
 # standard imports
 import json
+import os
+from os.path import exists
 from datetime import datetime
 from datetime import timedelta
 import sys
@@ -45,15 +47,27 @@ def process(input_filepath: str, output_filepath: str, openai_api_key: str):
 
     # Summarization of every conversation
     summarized_conversations = []
+    list_of_summary_paths = []
+
     for index in indices:
         example_df = df.loc[index]
 
         # get the conversation as client-expert dialogue
         conversation = get_conversation(example_df)
 
-        print(f"Calling OpenAI to summarize conversation - {index}")
-        summary = summarize(conversation)
-        print(f"Conversation - {index} is summarized")
+        summary_path = f"{input_filepath.split('.json')[0]}_conversation_{index}_summary.txt"
+        list_of_summary_paths.append(summary_path)
+        if not exists(summary_path):
+            print(f"Summary for conversation ID {index} doesn't exists in the path {summary_path}")
+            summary = call_api(index,conversation,summary_path)
+        
+        else:
+            print(f"Summary for conversation ID {index} already exists\nReading the summary from file {summary_path}")
+            with open(summary_path, mode="r", encoding = "utf8") as f:
+                summary = f.read()
+                if summary == "":
+                    print(f"Summary file {summary_path} is empty for conversation ID {index}")
+                    summary = call_api(index,conversation,summary_path)
 
         # parsing through the summary(openai response) to get individual utterances
         summary_turns = summary.split("\n")
@@ -76,15 +90,31 @@ def process(input_filepath: str, output_filepath: str, openai_api_key: str):
 
     # convert the summaries into unlabelled HF format
     unlabelled_workspace = humanfirst.HFWorkspace()        
-    summarized_conversations_df.apply(parse_utterances,axis=1,args=[unlabelled_workspace])
+    summarized_conversations_df = summarized_conversations_df.apply(parse_utterances,axis=1,args=[unlabelled_workspace])
 
     if output_filepath == '':
         filename_split = input_filepath.split('.json')
-        output_filepath = "_summarized.json".join(filename_split)
+        output_filepath_json = "_summarized.json".join(filename_split)
+
+    output_filepath_csv = ".csv".join(output_filepath_json.split('.json'))
+    summarized_conversations_df.to_csv(output_filepath_csv,sep=",",encoding="utf8")
+    print(f'Unlabelled CSV is saved at {output_filepath_csv}')
             
-    with open(output_filepath, 'w', encoding='utf8') as file_out:
+    with open(output_filepath_json, 'w', encoding='utf8') as file_out:
         unlabelled_workspace.write_json(file_out)
-    print(f'Unlabelled json is saved at {output_filepath}')
+    print(f'Unlabelled json is saved at {output_filepath_json}')
+
+def call_api(index: str, conversation: str, summary_path: str) -> str:
+    '''Call OpenAI API for summarization'''
+
+    print(f"Calling OpenAI to summarize conversation - {index}")
+    summary = summarize(conversation)
+    print(f"Conversation - {index} is summarized")
+    with open(summary_path, mode="w", encoding = "utf8") as f:
+        f.write(summary)
+    print(f"Summary is saved at {summary_path}")
+
+    return summary
 
 def summarize(text) -> str:
     '''Summarizes single conversation using prompt'''
@@ -99,7 +129,7 @@ def summarize(text) -> str:
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
-        temperature=0.9,
+        temperature=0.0,
         max_tokens=256,
         top_p=1,                # default value
         best_of=1,              # default value
@@ -141,6 +171,7 @@ def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.HFWork
 
     # add to the unlabelled_workspace
     unlabelled_workspace.add_example(example)
+    return row
 
 if __name__=="__main__":
     main()
