@@ -2,7 +2,15 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python predict_utterance_from_voc.py
+# python ./voc_analysis/predict_utterance_from_voc.py 
+#        -f ./data/voc.csv 
+#        -r "Reason for Score Comment" 
+#        -d "Survey ID" 
+#        -u <hf username> 
+#        -p <hf password> 
+#        -n <namepsace> 
+#        -b <playbook id>
+#        --background
 #
 # *****************************************************************************
 

@@ -2,7 +2,12 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python voc_csv_to_hf_unlabelled.py
+# python ./voc_analysis/voc_csv_to_hf_unlabelled.py 
+#        -f ./data/voc.csv
+#        -r "Reason for Score Comment" 
+#        -t "Responsedate" 
+#        -d "Survey ID" 
+#        --sentence_split
 #
 # *****************************************************************************
 

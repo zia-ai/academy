@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 
 @click.command()
 @click.option('-i', '--input', type=str, required=True, help='Input File produced by predict_uuterance_from_voc.py script')
-@click.option('-o', '--output', type=str, default='./data/scattery.png', help='Output path where the produced bubble chart should be stored')
+@click.option('-o', '--output', type=str, default='', help='Output path where the produced bubble chart should be stored')
 @click.option('-d', '--document_id_col', type=str, required=True, help='Document id of the review')
 @click.option('-p', '--scale', type=int, default = 3, help='Scales the bubble size')
 @click.option('-c', '--confidence', type=float, default=0.35, help='Confidence clip to label an utterance')
@@ -35,7 +35,11 @@ def main(input: str, output: str, confidence: float, scale: int, document_id_col
     df_tickets = calc_scores_for_plotting(confidence,
                                         document_id_col,
                                         df)
+    if output == '':
+        output = f"{input.split('.csv')[0]}_bubble_chart.png"
+
     plot_bubble_chart(df_tickets, scale, output)
+    print(f"Bubble chart is saved at {output}")
 
 def plot_bubble_chart(df_tickets: pandas.DataFrame,scale: int,output: str) -> None:
     '''Produces bubble chart'''
@@ -55,16 +59,17 @@ def plot_bubble_chart(df_tickets: pandas.DataFrame,scale: int,output: str) -> No
     plt.ylabel("Churn risk indicators score", size=10)
     plt.title("Aspects most likely to cause issues", size=12)
 
+    avg_nps = df_tickets["normalized_avg_digital_nps"].mean()
     i = 0
     for key, row in df_tickets.iterrows():
-        if i % 2 == 0:
+        if  row["normalized_avg_digital_nps"] < avg_nps:
             xalign='left'
             yalign='bottom'
         else: 
             xalign='right'
             yalign='top'
         label = str(row.name).replace("aspects_negative","AN")
-        plt.annotate(label, xy=(row['normalized_avg_digital_nps'], row["normalized_avg_detractor_score"]), size=8, verticalalignment=yalign ,horizontalalignment=xalign,rotation=-45, rotation_mode='anchor')
+        plt.annotate(label, xy=(row['normalized_avg_digital_nps'], row["normalized_avg_detractor_score"]), size=8, verticalalignment=yalign ,horizontalalignment=xalign)
         i = i + 1
     
     plt.savefig(output)
