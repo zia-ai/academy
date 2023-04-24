@@ -8,16 +8,21 @@
 
 # standard imports
 import json
-import os
 from os.path import exists
 from datetime import datetime
 from datetime import timedelta
+import os
+from pathlib import Path
 import sys
-sys.path.insert(1,'/home/ubuntu/source/academy')
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+hf_module_path = str(Path(dir_path).parent)
+sys.path.insert(1,hf_module_path)
 
 # 3rd party imports
 import openai
 import pandas
+import numpy
 import click
 
 # custome imports
@@ -48,8 +53,10 @@ def process(input_filepath: str, output_filepath: str, openai_api_key: str):
     # Summarization of every conversation
     summarized_conversations = []
     list_of_summary_paths = []
-
-    for index in indices:
+    len_of_indices = len(indices)
+    i=0
+    while i<len_of_indices:
+        index = indices[i]
         example_df = df.loc[index]
 
         # get the conversation as client-expert dialogue
@@ -57,17 +64,24 @@ def process(input_filepath: str, output_filepath: str, openai_api_key: str):
 
         summary_path = f"{input_filepath.split('.json')[0]}_conversation_{index}_summary.txt"
         list_of_summary_paths.append(summary_path)
-        if not exists(summary_path):
-            print(f"Summary for conversation ID {index} doesn't exists in the path {summary_path}")
-            summary = call_api(index,conversation,summary_path)
-        
-        else:
-            print(f"Summary for conversation ID {index} already exists\nReading the summary from file {summary_path}")
-            with open(summary_path, mode="r", encoding = "utf8") as f:
-                summary = f.read()
-                if summary == "":
-                    print(f"Summary file {summary_path} is empty for conversation ID {index}")
-                    summary = call_api(index,conversation,summary_path)
+        try:
+            if not exists(summary_path):
+                print(f"Summary for conversation ID {index} doesn't exists in the path {summary_path}")
+                summary = call_api(index,conversation,summary_path)
+
+            else:
+                print(f"Summary for conversation ID {index} already exists\nReading the summary from file {summary_path}")
+                with open(summary_path, mode="r", encoding = "utf8") as f:
+                    summary = f.read()
+                    if summary == "":
+                        print(f"Summary file {summary_path} is empty for conversation ID {index}")
+                        summary = call_api(index,conversation,summary_path)
+                 
+            i=i+1
+        except Exception as e:
+            print(f"Error upon calling API - {e}")
+            print(f"Retrying API call for conversation - {index}")
+            continue
 
         # parsing through the summary(openai response) to get individual utterances
         summary_turns = summary.split("\n")
@@ -85,6 +99,12 @@ def process(input_filepath: str, output_filepath: str, openai_api_key: str):
 
     summarized_conversations_df = pandas.json_normalize(data=summarized_conversations)
     summarized_conversations_df = summarized_conversations_df.explode(["text","seq"])
+
+    summarized_conversations_df['first_convo_step'] = summarized_conversations_df['seq'] == 1
+    summarized_conversations_df['seq_max'] = summarized_conversations_df.groupby(["id"])['seq'].transform(numpy.max)
+    summarized_conversations_df['final_convo_step'] = summarized_conversations_df['seq'] == summarized_conversations_df['seq_max']
+    summarized_conversations_df.drop(columns=['seq_max'],axis=1,inplace=True)
+
     summarized_conversations_df.set_index(["id","seq"],drop=True,inplace=True)
     print(summarized_conversations_df["text"])
 
@@ -119,31 +139,36 @@ def call_api(index: str, conversation: str, summary_path: str) -> str:
 def summarize(text) -> str:
     '''Summarizes single conversation using prompt'''
 
-    prompt = f"""Here is a transcription of conversation between customer and agent working for a online clothes retailer who offers a subscription model, a website, and ships products to people. Please summarize the exchange in a few bullet points, making sure to convey the full meaning of the conversation. Pretend that you are summarizing this in order to keep a record of the reasons customer having this conversation, and in order to improve on the internal processes of the company. Use  the following format "- Short summary of what was discussed". The summary should clearly indicate what the customer wanted, and how the agent managed to provide help, if they did.
+    prompt = f"""Here is a transcript of a conversation between customer and agent working for a online clothes retailer. The clothes retailer has a wesbite which offers a subscription model and ships clothing items to customers. Please summarize the exchange in a few bullet points making sure to convey the full meaning of the conversation. Pay particular intention for the issue causing the customer to have this conversation and whether the conversation ended with the customer's issue being solved. Use the following format "- Short summary of what was discussed".
+
     Transcription begins:
     {text}
     End of transcription.
     Summary:
     -"""
     
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages =  [
+            {"role": "user", "content": prompt}
+        ],
         temperature=0.0,
         max_tokens=256,
         top_p=1,                # default value
-        best_of=1,              # default value
         frequency_penalty=0.0,  # default value
         presence_penalty=0.0    # default value
     )
-    return response.choices[0].text
+    return response.choices[0].message.content
 
 def get_conversation(example_df: pandas.DataFrame) -> str:
-    '''Converts the conversations in HF format to client-expert dialogue'''
+    '''Converts the conversations in HF format to customer-agent dialogue'''
 
     utterances = []
     for key, row in example_df.iterrows():
-        utterances.append(f'{row["context-role"]}: {row["text"]}')
+        if row["context-role"] == "client":
+            utterances.append(f'Customer: {row["text"]}')
+        else:
+            utterances.append(f'Agent: {row["text"]}')
     return "\n".join(utterances)
 
 def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.HFWorkspace) -> None:
@@ -152,7 +177,9 @@ def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.HFWork
     row["created_at"] = (row["created_at"] + timedelta(seconds=row.name[1])).isoformat()
     metadata = {
         "abcd_id": str(row.name[0]),
-        "conversation_step": str(row.name[1])
+        "conversation_step": str(row.name[1]),
+        "first_conversation_step": str(row["first_convo_step"]),
+        "final_conversation_step": str(row["final_convo_step"])
     }
 
     # Will load these as conversations where it is only the client speaking
