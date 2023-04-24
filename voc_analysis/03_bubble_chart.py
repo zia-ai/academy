@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python ./voc_analysis/bubble_chart.py 
+# python ./voc_analysis/03_bubble_chart.py 
 #   -i ./data/voc_predictions.csv  
 #   -c 0.35 
 #   -p 3

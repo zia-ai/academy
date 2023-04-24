@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python ./voc_analysis/voc_csv_to_hf_unlabelled.py 
+# python ./voc_analysis/01_voc_csv_to_hf_unlabelled.py 
 #        -f ./data/voc.csv
 #        -r "Reason for Score Comment" 
 #        -t "Responsedate" 
@@ -12,12 +12,16 @@
 # *****************************************************************************
 
 # standard imports
-import os
 import datetime
 from dateutil import parser
 from datetime import timedelta  
+import os
+from pathlib import Path
 import sys
-sys.path.insert(1,"/home/ubuntu/source/academy")
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+hf_module_path = str(Path(dir_path).parent)
+sys.path.insert(1,hf_module_path)
 
 # third party imports
 import pandas

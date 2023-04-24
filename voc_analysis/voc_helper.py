@@ -8,8 +8,12 @@
 
 # standard imports
 import os
+from pathlib import Path
 import sys
-sys.path.insert(1,"/home/ubuntu/source/academy")
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+hf_module_path = str(Path(dir_path).parent)
+sys.path.insert(1,hf_module_path)
 
 # third party imports
 import pandas

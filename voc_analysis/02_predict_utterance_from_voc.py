@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python ./voc_analysis/predict_utterance_from_voc.py 
+# python ./voc_analysis/02_predict_utterance_from_voc.py 
 #        -f ./data/voc.csv 
 #        -r "Reason for Score Comment" 
 #        -d "Survey ID" 
@@ -16,8 +16,13 @@
 
 # standard imports
 import json
+import os
+from pathlib import Path
 import sys
-sys.path.insert(1,"/home/ubuntu/source/academy")
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+hf_module_path = str(Path(dir_path).parent)
+sys.path.insert(1,hf_module_path)
 
 # third party imports
 import click
