@@ -4,7 +4,7 @@
 #
 # python ./voc_analysis/02_predict_utterance_from_voc.py 
 #        -f ./data/voc.csv 
-#        -r "Reason for Score Comment" 
+#        -r <review col name>
 #        -d "Survey ID" 
 #        -u <hf username> 
 #        -p <hf password> 

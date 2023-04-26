@@ -4,7 +4,7 @@
 #
 # python ./voc_analysis/01_voc_csv_to_hf_unlabelled.py 
 #        -f ./data/voc.csv
-#        -r "Reason for Score Comment" 
+#        -r <review col name> 
 #        -t "Responsedate" 
 #        -d "Survey ID" 
 #        --sentence_split
