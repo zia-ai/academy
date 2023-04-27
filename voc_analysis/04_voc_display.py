@@ -30,7 +30,7 @@ except LookupError:
     nltk.download('punkt')
 
 @click.command()
-@click.option('-i', '--input', type=str, required=True,help='Input File')
+@click.option('-i', '--input', type=str, required=True,help='Input File - output from predict script')
 @click.option('-o', '--output', type=str, default='',help='Output File - .html extension')
 @click.option('-r', '--review_col', type=str, required=True, help='Review Column name')
 @click.option('-g', '--generate', type=int, default='10', help='Generate this number')
