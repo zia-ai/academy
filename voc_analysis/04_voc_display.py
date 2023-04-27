@@ -1,23 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
-#
-# Reloads a random number (-g) of surveys and then calls HF batchPredict
-# to label them and displays in displacy
 #  
 # python3 ./voc_analysis/04_voc_display.py -i ./data/voc.csv 
 #         -r <review col name> 
 #         -g 10
-#         -u <hf username> 
-#         -p <hf password> 
-#         -n <namepsace> 
-#         -b <playbook id>
 #         -t <title to be diplayed on top of each doc>
+#         -l <background filter - filters seniors, disablled, and parents>
+#         -m <match string - Considers documents with specific strings in them>
 #
 # *****************************************************************************
 
 # standard imports
 import random
+import re
+import os
 
 # custom imports
 import spacy
@@ -32,73 +29,110 @@ try:
 except LookupError:
     nltk.download('punkt')
 
-# third party imports
-import voc_helper
-import humanfirst_apis
-
-
 @click.command()
 @click.option('-i', '--input', type=str, required=True,help='Input File')
 @click.option('-o', '--output', type=str, default='',help='Output File - .html extension')
 @click.option('-r', '--review_col', type=str, required=True, help='Review Column name')
 @click.option('-g', '--generate', type=int, default='10', help='Generate this number')
-@click.option('-k', '--document_id', type=str, default="", help='Specific Document ID')
 @click.option('-d', '--document_id_col', type=str, default="Survey ID", help='Document id of the review')
 @click.option('-t', '--title', type=str, required=True, help='Title to be displayed on top of each document')
-@click.option('-u', '--username', type=str, required=True, help='HumanFirst username')
-@click.option('-p', '--password', type=str, required=True, help='HumanFirst password')
-@click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
-@click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id of format playbook-<GUID>')
+@click.option('-m', '--match_string', type=str, default='', help='Only those documents containing this string should be taken into account')
+@click.option('-l','--background', is_flag=True, default=False, help='Filter documents given only by seniors, families and disabled persons')
 @click.option('-s', '--style', type=click.Choice(['span', 'ent'], case_sensitive=False), default='ent',help='two different annotation styles for displacy')
 @click.option('-c', '--confidence', type=float, default=0.35, help='Confidecnce clip to label an utterance')
 
-def main(input: str, output: str, review_col: str, generate: int, document_id: str, document_id_col: str, title: str, username: str, password: str, style: str, namespace: str, playbook: str, confidence: float):
+def main(input: str, output: str, review_col: str, generate: int, document_id_col: str, title: str, match_string: str, background: bool, style: str, confidence: float):
     '''Main function'''
 
-    process(input, output, review_col, generate, document_id, document_id_col, title, username, password, style, namespace, playbook, confidence)
+    process(input, output, review_col, generate, document_id_col, title, match_string, background, style, confidence)
     
-def process(input: str, output: str, review_col: str, generate: int, document_id: str, document_id_col: str, title: str, username: str, password: str, style: str, namespace: str, playbook: str, confidence: float):
+def process(input: str, output: str, review_col: str, generate: int, document_id_col: str, title: str, match_string: str, background: bool, style: str, confidence: float):
+    '''Produces HTML file'''
 
-    # get headeres with authorization token in.
-    headers = humanfirst_apis.process_auth(username=username, password=password)
-
-    # load from csv to pandas
-    df = voc_helper.get_df_from_input(input,review_col)
-
-    df[document_id_col] = df[document_id_col].astype(str)
-    df.set_index([document_id_col],drop=True,inplace=True)
-    
-    if document_id == "":
-        if df.shape[0] >= generate:
-            df = df.sample(generate)
-        else:
-            print(f"Given number of samples {generate} is greater than number of non-empty documents ({df.shape[0]}) available")
-            quit()
-    else:
-        df = df.loc[[document_id]]
-
+    if not os.path.exists(input):
+        print("Couldn't find file at the location you provided: {input}")
+        quit()
+    df = pandas.read_csv(input,encoding='utf8')
     assert isinstance(df,pandas.DataFrame)
 
-    ids = list(df.index)
-    pt = nltk.tokenize.PunktSentenceTokenizer()
+    # converts the type of document id to string in case if it is in int type
+    df[document_id_col] = df[document_id_col].astype(str)
 
+    df.set_index([document_id_col],drop=True,inplace=True)
+
+    docs_background_ids=[]
+    # Filter documents given only by seniors, families and disabled persons
+    if background:
+
+        # remove all the document that contains only background-others intent
+        docs_background_ids = list(set(df.loc[~((df["background-seniors"]==True) | (df["background-parents_and_families"]==True) | (df["background-disabled_illness_condition"]==True))].index))
+        df.drop(labels=docs_background_ids,inplace=True,axis=0)
+        
+        # confidence clip for background
+        docs_background_ids = list(set(df.index))
+        ids_below_confidence_threshold_for_background = []
+        for id in docs_background_ids:
+            df_doc = df.loc[id]
+            if isinstance(df_doc["fully_qualified_intent_name"],str):
+                df_doc_intents = [df_doc["fully_qualified_intent_name"]]
+                df_doc_confidence = [df_doc["confidence"]]
+            else:
+                df_doc_intents = df_doc["fully_qualified_intent_name"].tolist()
+                df_doc_confidence = df_doc["confidence"].tolist()
+            
+            below_threshold_count = 0
+            no_of_background = 0
+            for i, intent_name in enumerate(df_doc_intents):
+                if intent_name in ["background-seniors","background-parents_and_families","background-disabled_illness_condition"]:
+                    no_of_background = no_of_background + 1
+                    if df_doc_confidence[i] < confidence:
+                        below_threshold_count = below_threshold_count + 1
+            
+            if no_of_background == below_threshold_count:
+                ids_below_confidence_threshold_for_background.append(id)
+        
+        df.drop(labels=ids_below_confidence_threshold_for_background,inplace=True,axis=0)        
+
+    # Takes only those documents that contain the match_string
+    if match_string != "":
+        df["has_matched_string"] = df[review_col].apply(lambda x: True if re.findall(fr"\b{match_string.lower()}\b",x.lower()) else False)
+        unmatched_string_ids =list(set(df.loc[df["has_matched_string"]==False].index))
+        if unmatched_string_ids:
+            df.drop(labels=unmatched_string_ids,inplace=True,axis=0)
+
+    # randomly generate samples
+    samplings_ids = list(set(df.index))
+    if len(samplings_ids) > generate:
+        sampling_ids = random.sample(samplings_ids,generate)
+        df = df[df.index.isin(sampling_ids)]
+    assert isinstance(df,pandas.DataFrame)
+
+    ids = sorted(list(set(df.index)))
     nlp = spacy.load("en_core_web_lg")
     docs = []
     names = set()
     colors = {}
-    print(ids)
     for d in ids:
-        row = df.loc[d]
+
+        df_doc = df.loc[d]
         print(f'Working on Document id: {d}')
-        print(row[review_col])
 
-        sentences = pt.tokenize(row[review_col])
-        
-        response_dict = humanfirst_apis.batchPredict(headers=headers,sentences=sentences,namespace=namespace,playbook=playbook)
+        if isinstance(df_doc[review_col],str):
+            review = df_doc[review_col]
+            sentences = [df_doc["utterance"]]
+            confidences = [df_doc["confidence"]]
+            intent_names = [df_doc["fully_qualified_intent_name"]]
+        else:
+            review = df_doc[review_col].unique()[0]
+            sentences = df_doc["utterance"].to_list()
+            confidences = df_doc["confidence"].to_list()
+            intent_names = df_doc["fully_qualified_intent_name"].to_list()
 
-        doc = nlp(row[review_col])
+        doc = nlp(review)
         assert isinstance(doc,spacy.tokens.doc.Doc)
-        doc.user_data["title"] = build_title(row, title)
+
+        doc.user_data["title"] = f"{title} {d}"
+
         show_tokens = {}
         for i,t in enumerate(doc):
             show_tokens[i]=t
@@ -109,18 +143,13 @@ def process(input: str, output: str, review_col: str, generate: int, document_id
         for i, sent in enumerate(sentences):
             print(f'sentence: {i} - {sent}')
             matcher = PhraseMatcher(nlp.vocab)
-
-            hierarchy =  response_dict[i]['matches'][0]['hierarchyNames']
-            intent_name = f"#{hierarchy[0]}"
-            for index in range(1,len(hierarchy)):
-                intent_name = f'{intent_name}-{hierarchy[index]}'
-            if response_dict[i]['matches'][0]['score'] < confidence:
-                print(f"Neglecting this sentence since predicted confidence {response_dict[i]['matches'][0]['score']} is lower than the threshold {confidence}")
+            
+            if confidences[i] < confidence:
+                print(f"Neglecting this sentence since predicted confidence {confidences[i]} is lower than the threshold {confidence}")
                 continue
 
-            matcher.add(intent_name, [nlp(sent)])
+            matcher.add(intent_names[i], [nlp(sent)])
             matches = matcher(doc)
-            print(matches)
             if matches:
                 for j in range(len(matches)):
                     print('Have matches')
@@ -131,18 +160,18 @@ def process(input: str, output: str, review_col: str, generate: int, document_id
                     end = matches[j][2]
                     if start < token_pointer:
                         continue
-                    print(f'start: {start} end: {end} name:{intent_name}')
-                    span = Span(doc, start, end, intent_name)
+                    print(f'start: {start} end: {end} name:{intent_names[i]}')
+                    span = Span(doc, start, end, intent_names[i])
                     
-                    names.add(intent_name)
+                    names.add(intent_names[i])
                     spans.append(span)
 
                     # give the label a color if it doesn't have one
-                    if intent_name in colors.keys():
+                    if intent_names[i] in colors.keys():
                         print('Color assigned')
                     else:
-                        colors[intent_name] = '#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-                        print(f'Random color generated for {str(intent_name)}')
+                        colors[intent_names[i]] = '#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+                        print(f'Random color generated for {str(intent_names[i])}')
                         print(colors)
                     token_pointer = end
 
@@ -154,7 +183,11 @@ def process(input: str, output: str, review_col: str, generate: int, document_id
 
     # Create a html file
     if output == '':
-        file_out_name = f"{input.split('.csv')[0]}-{generate}-docs.html"
+        if match_string != '':
+            file_out_name = f"{input.split('.csv')[0]}_{len(ids)}_{match_string}.html"
+        else:
+            file_out_name = f"{input.split('.csv')[0]}_{len(ids)}.html"
+
     else:
         file_out_name = output
 

@@ -27,5 +27,5 @@
 
 ## View the documents in HTML with sentences matched to their corresponding intent
  - Documents can be viewed by running the script 04_voc_display.py in a HTML page
-   - Before running the script, make sure the model is ready.
- - The script produces a HTML file consisting of documents with each sentence in a document matched with the corresponding intent they represent 
+   - Before running the script, run 02_predict_utternace_from_voc.py with background filter
+ - The script produces a HTML file consisting of documents with each sentence in a document matched with the corresponding intent they represent
