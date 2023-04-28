@@ -12,4 +12,8 @@ hf-linux-amd64
 onprem/*
 *.zip
 *.gz
+aws/*
+ic/*
+.env
+output.txt
 
