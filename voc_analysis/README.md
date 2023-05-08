@@ -24,3 +24,8 @@
     - create new intents in the negative aspects
     - Again make batch predict
  - Create charts for the prediction csv as per your needs. For example, Issues faced by different group of people - visualising the top issues for VoC for Disabled, Parents with Kids and Seniors, compared to other groups not identifying in their feedback, i.e if we particularly wanted to understand what affected those groups without asking an age question
+
+## View the documents in HTML with sentences matched to their corresponding intent
+ - Documents can be viewed by running the script 04_voc_display.py in a HTML page
+   - Before running the script, run 02_predict_utternace_from_voc.py with background filter
+ - The script produces a HTML file consisting of documents with each sentence in a document matched with the corresponding intent they represent
