@@ -94,12 +94,14 @@ def process(input_filepath: str, output_filepath: str, openai_api_key: str, num_
     how_issue_resolved = []
     action_taken = []
     hindrance = []
+    large_convo_id = []
 
     for output in parallelization_output:
         key_reason_for_calling.extend(output[0])
         action_taken.extend(output[1])
         hindrance.extend(output[2])
         how_issue_resolved.extend(output[3])
+        large_convo_id.extend(output[4])
 
     df = {
         "issue": pandas.json_normalize(data=key_reason_for_calling),
@@ -137,7 +139,7 @@ def process(input_filepath: str, output_filepath: str, openai_api_key: str, num_
     
     logging.info(f'Total duration to run the script- {time.strftime("%H:%M:%S", time.gmtime(perf_counter() - START_TIME))}')
 
-def summarization(input: list) -> dict:
+def summarization(input: list) -> list:
     '''Summarization'''
 
     df = input[0]
@@ -150,6 +152,7 @@ def summarization(input: list) -> dict:
     action_taken = []
     hindrance = []
     how_issue_resolved = []
+    large_convo_id = []
 
     list_of_summary_paths = []
     len_of_indices = len(indices)
@@ -180,11 +183,16 @@ def summarization(input: list) -> dict:
             i=i+1
         except Exception as e:
             logging.error(f"Error upon calling API - {e}")
-            sec = 5
-            logging.info(f"Waiting for {sec} seconds")
-            time.sleep(sec)
-            logging.info(f"Retrying API call for conversation - {index}")
-            continue
+            if f"{e}".find("4097") != -1:
+                large_convo_id.append(index)
+                print(f"Large Conversation ID: {index}")
+                i=i+1
+                continue
+            else:
+                sec = 5
+                time.sleep(sec)
+                logging.info(f"Retrying API call for conversation - {index}")
+                continue
 
         # parsing through the summary(openai response) to get individual utterances
         summary_turns = summary.split("\n")
@@ -252,13 +260,15 @@ def summarization(input: list) -> dict:
         key_reason_for_calling.append(key_reason_for_calling_dict)
         how_issue_resolved.append(how_issue_resolved_dict)
     
-    return [key_reason_for_calling, action_taken, hindrance, how_issue_resolved]
+    return [key_reason_for_calling, action_taken, hindrance, how_issue_resolved, large_convo_id]
 
 def call_api(index: str, conversation: str, summary_path: str) -> str:
     '''Call OpenAI API for summarization'''
 
     logging.info(f"Calling OpenAI to summarize conversation - {index}")
-    summary = summarize(conversation)
+    summary, total_tokens = summarize(conversation)
+    if int(total_tokens) >= 4097:
+        raise Exception(f"Total number of tokens {total_tokens} exceed 4097. It should be within this limit")
     logging.info(f"Conversation - {index} is summarized")
     with open(summary_path, mode="w", encoding = "utf8") as f:
         f.write(summary)
@@ -266,7 +276,7 @@ def call_api(index: str, conversation: str, summary_path: str) -> str:
 
     return summary
 
-def summarize(text) -> str:
+def summarize(text) -> tuple:
     '''Summarizes single conversation using prompt'''
 
     prompt = f"""The following is a transcription of an audio conversation between a customer of an online fashion retailer and a customer service agent.
@@ -302,7 +312,7 @@ def summarize(text) -> str:
         frequency_penalty=0.0,  # default value
         presence_penalty=0.0    # default value
     )
-    return response.choices[0].message.content
+    return response.choices[0].message.content, response.usage.total_tokens
 
 def get_conversation(example_df: pandas.DataFrame) -> str:
     '''Converts the conversations in HF format to customer-agent dialogue'''
