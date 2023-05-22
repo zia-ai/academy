@@ -262,7 +262,7 @@ class HFExample:
                 self.created_at = created_at.isoformat() + 'Z'
 
         if len(intents) > 0:
-            self.intents = [HFIntentRef(intent.intent_id)
+            self.intents = [HFIntentRef(intent.id)
                             for intent in intents]
 
 
@@ -542,6 +542,7 @@ class HFWorkspace:
         sorted_examples = list(self.examples.values())
         sorted_examples.sort(key=lambda ex: ex.created_at)
         workspace = {
+            "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
             "examples": [ex.to_dict() for ex in sorted_examples],
         }
 
