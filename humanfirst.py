@@ -262,7 +262,7 @@ class HFExample:
                 self.created_at = created_at.isoformat() + 'Z'
 
         if len(intents) > 0:
-            self.intents = [HFIntentRef(intent.intent_id)
+            self.intents = [HFIntentRef(intent.id)
                             for intent in intents]
 
 

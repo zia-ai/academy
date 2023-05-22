@@ -25,8 +25,11 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
     # check playbook
     print(humanfirst_apis.get_playbook_info(headers, namespace, playbook))
     
+    # get integrations
+    print(humanfirst_apis.get_integrations(headers,namespace))
+    
     print("ATHORISED")
-    print(humanfirst_apis.trigger_kfold_eval(headers, namespace, playbook, num_folds))
+    # print(humanfirst_apis.trigger_kfold_eval(headers, namespace, playbook, num_folds))
 
 if __name__ == '__main__':
     main()

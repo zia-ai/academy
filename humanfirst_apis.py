@@ -436,3 +436,42 @@ def trigger_kfold_eval(headers: str, namespace: str, playbook: str, num_folds: i
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload))
     return validate_response(response,url)
+
+def get_integrations(headers: str, namespace: str):
+    '''Runs a kfold evaluation with the default NLU engine and the passed number of folds'''
+    payload = {
+        "namespace": namespace
+    }   
+
+    url = f'https://api.humanfirst.ai/v1alpha1/integrations/{namespace}'
+    
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url)
+
+def trigger_import_from_integration(headers: str, namespace: str, playbook: str, num_folds: int):
+    '''Runs a kfold evaluation with the default NLU engine and the passed number of folds'''
+    payload = {
+        "namespace": namespace,
+        "playbook": playbook,
+        "k_fold": {
+            "num_folds": num_folds
+        } 
+    }
+    # additional in protobuf
+    # intent_tag_predicate
+    # - intent level filters
+    # nlu_id 
+    #  - "Optional unique identifier of the NLU engine to use in the workspace."
+    #  - "If none specified, the workspace's default configured NLU engine will be used."
+    # evaluation_preset_id 
+    # - "If specified, the evaluation parameters will be overridden by the parameters of the given preset id, discarding any current values."
+    # k_fold.phrase_tag_predicate
+    # - utterance level filters
+    
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/evaluations'
+    
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url)
