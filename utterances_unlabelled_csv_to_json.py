@@ -7,12 +7,14 @@
 # *****************************************************************************
 
 # standard imports
-import pandas
 import uuid
-import click
 import humanfirst
 from datetime import datetime
 from typing import Union
+
+# 3rd party imports
+import pandas
+import click
 
 @click.command()
 @click.option('-f','--filename',type=str,required=True,help='Input File')
