@@ -17,8 +17,8 @@ import pandas
 import click
 
 @click.command()
-@click.option('-f','--filename',type=str,required=True,help='Input File')
-@click.option('-m','--metadata_keys',type=str,required=True,help='Metadata key list')
+@click.option('-f','--filename',type=str,required=True,help='Input File Path')
+@click.option('-m','--metadata_keys',type=str,required=True,help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')
 @click.option('-u','--utterance_col',type=str,required=True,help='Column name containing utterances')
 def main(filename: str, metadata_keys: str, utterance_col: str):
 
