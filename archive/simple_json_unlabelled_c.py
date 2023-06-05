@@ -74,7 +74,7 @@ def main(filename: str, cleanse: bool, voice: bool, head: int):
     df['utterance'] = df['Response']
     df['role'] = 'client'
     
-    # join on the prompt dataw
+    # join on the prompt data
     df = pandas.concat([df,df_prompt])
     print(f'after concat        : {df.shape}')
     df = df.sort_values(['external_id','created_at'],ignore_index=True)
