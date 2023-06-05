@@ -49,23 +49,27 @@ import voc_helper
 @click.option('-h', '--background', is_flag=True, default=False, help='Adds background info to the CSV')
 @click.option('-d', '--doc_col_id', type=str, default='Survey ID', help='Document ID Column Name')
 @click.option('-c', '--chunk', type=int, default=500, help='size of maximum chunk to send to batch predict')
+@click.option('-s', '--sentencize', type=bool, required=False, default=True, help='whether to sentencize the review_col or not')
 def main(input_filename: str, output_filename: str, review_col:  str,
          username: str, password: int, namespace: bool, playbook: str, 
-         background: bool, bearertoken: str, doc_col_id: str, chunk: int) -> None:
+         background: bool, bearertoken: str, doc_col_id: str, chunk: int, sentencize: bool) -> None:
     
     pt = nltk.tokenize.PunktSentenceTokenizer()
-    load_file(input_filename, output_filename, review_col, pt, username, password, namespace, playbook, bearertoken, background, doc_col_id, chunk)
+    load_file(input_filename, output_filename, review_col, pt, username, password, namespace, playbook, bearertoken, background, doc_col_id, chunk, sentencize)
 
 def load_file(input_filename: str, output_filename: str, review_col: str, pt: nltk.tokenize.PunktSentenceTokenizer,
-              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, background: bool, doc_col_id: str, chunk: int) -> None:
+              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, background: bool, doc_col_id: str, chunk: int, sentencize: bool) -> None:
 
     # convert csv to dataframe
     df = voc_helper.get_df_from_input(input_filename, review_col)
 
     # split each review into segments
-    print('Using punkt to segement the reviews')
-    df = voc_helper.sentence_split_and_explode(df, pt, review_col)
-    print(f'Shape after using punkt {df.shape}')
+    if sentencize:
+        print('Using punkt to segement the reviews')
+        df = voc_helper.sentence_split_and_explode(df, pt, review_col)
+        print(f'Shape after using punkt {df.shape}')
+    else:
+        df['utterance'] = df[review_col]
 
     headers = humanfirst_apis.process_auth(username=username, password=password)
     # predict = humanfirst_apis.predict(headers=headers,namespace=namespace,playbook=playbook,sentence="The refund was not too hard to organise, but I do not like substitution without consultation.")
