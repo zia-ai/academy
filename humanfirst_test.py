@@ -12,6 +12,7 @@ import humanfirst
 import pandas
 import json
 import numpy
+import simple_json_labelled
 
 def test_load_testdata():
     dtypes={
@@ -132,7 +133,26 @@ def test_write_csv():
     assert(list(df["example_metadata-example_metadata1"].unique())==[numpy.nan,'valueA'])
     assert(df[df["example_metadata-example_metadata1"]=='valueA'].shape[0]==1)
     assert(df[df["example_metadata-example_metadata1"].isna()].shape[0]==10)
+
+def test_write_json():
+    # delete output file so can sure we are testing fresh each time
+    output_file = "./examples/json_model_example_output.json"
+    if os.path.exists(output_file):
+        os.remove(output_file)
+    input_file = "./examples/json_model_example.json"
+    input_json = json.loads(open(input_file,'r',encoding='utf8').read())
     
+    simple_json_labelled.process(input_json,input_file)
+    assert(os.path.isfile(output_file))
+    
+def test_read_json():
+    input_file = "./examples/json_model_example_output.json"
+    workspace = humanfirst.HFWorkspace()
+    json_input = json.loads(open(input_file,'r',encoding='utf8').read())
+    workspace = workspace.from_json(json_input)
+    intent_index = workspace.get_intent_index("-")
+    assert(list(intent_index.values()) == ["GROUP1","GROUP1-GROUP1_EN_INJURED_AT_THE_ZOO","GROUP2","GROUP2-GROUP2_DREADFULLY_INJURED"])
+
 def test_tag_filter_validation():
     tag_filters = humanfirst.HFTagFilters()
     assert(tag_filters.validate_tag_list_format(["test-regression","test-analyst"])==["test-regression","test-analyst"])
