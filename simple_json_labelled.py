@@ -30,7 +30,7 @@ def process(input_json: dict, filename: str):
     intent_names = list(input_json.keys())
     for name in intent_names:
                
-        # get the group from the intent name or whereevet
+        # get the group from the intent name or where-ever
         assert(isinstance(name,str))
         group = name.split('_')[0]
              
