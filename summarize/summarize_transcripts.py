@@ -3,7 +3,32 @@
 # ***************************************************************************80
 #
 # python ./summarize/summarize_transcripts.py
+# 
+# This script summarizes transcripts/conversations within 
+# 4k token context window (prompt + completion).
+# 
+# This uses gpt-3.5-turbo model.
+# 
+# Accepts 
+#  - Conversations/Transcripts in HumanFirst Dataformat
+#  - Openai API Key
+#  - Number of cores to use for parallelization (optional)
+#  - Number fo conversations to summarize (optional)
+#  - File path of server log (optional)
 #
+# Prompt format:
+# """
+# <contents of prompt1.txt file>
+# 
+# <conversation/transcript>
+# 
+# <contents of prompt2.txt file>
+# """
+# 
+# Parallelization of API calls helps to summarize large number of transcripts
+#   
+# Saves the summary of each transcript as an individual text file
+# 
 # *****************************************************************************
 
 # standard imports

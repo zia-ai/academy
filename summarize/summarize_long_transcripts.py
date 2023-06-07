@@ -3,6 +3,56 @@
 # ***************************************************************************80
 #
 # python ./summarize/summarize_long_transcripts.py
+# 
+# This script summarizes transcripts/conversations that exceeds the 4k token 
+# context window (prompt + completion).
+# 
+# This script is executed only after executing summarize_transcripts.py script.
+# 
+# This uses gpt-3.5-turbo model.
+# 
+# Accepts 
+#  - Conversations/Transcripts in HumanFirst Dataformat
+#  - Openai API Key
+#  - Text file containing ids of large conversations/transcripts
+#    (one of the output of summarize_transcripts.py) 
+#  - Number of cores to use for parallelization (optional)
+#  - Number of conversations to summarize (optional)
+#  - File path of server log (optional)
+# 
+# Prompt format:
+# 
+# Conversations are split into segments - each segment not exceeding 1800 tokens
+# First segment of a conversation is summarized using the folloing prompt format:
+# 
+# """
+# <contents of prompt1.txt file>
+# 
+# <first segment of conversation/transcript>
+# 
+# <contents of prompt2.txt file>
+# """
+# 
+# Rest of the segments of a conversation is processed using the following prompt
+# format:
+# 
+# """
+# <contents of prompt3.txt file>
+# 
+# <output of the last openai api call 
+# - containing the info extracted from the previous segments of the conversation>
+# 
+# <contents of prompt4.txt file>
+# 
+# <current segment of conversation/transcript>
+# 
+# <contents of prompt5.txt file>
+# """
+# 
+# Parallelization of API calls helps to summarize large number of transcripts
+#   
+# Saves the summary of each transcript, along with the summaries after 
+# processing each segment as an individual text file.
 #
 # *****************************************************************************
 

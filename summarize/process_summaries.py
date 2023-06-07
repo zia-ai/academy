@@ -3,6 +3,24 @@
 # ***************************************************************************80
 #
 # python ./summarize/process_summaries.py
+# 
+# This script 
+#  - reads all the summaries
+#  - process all the summaries
+#  - converts the summaries to HF JSON format
+# 
+# This script is executed only after executing 
+# summarize_transcripts.py / summarize_long_transcripts.py scripts.
+# 
+# Accepts
+#  - Directory containing all the summaries text file
+#  - Number of cores to use for parallelization(optional)
+#  - File path of server log (optional)
+# 
+# Parallelization of API calls helps to summarize large number of transcripts
+#   
+# Saves the summary of each transcript, along with the summaries after 
+# processing each segment as an individual text file.
 #
 # *****************************************************************************
 
