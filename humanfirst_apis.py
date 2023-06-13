@@ -215,7 +215,7 @@ def get_playbook(headers: str,
     return response_dict
 
 def get_intents(headers: str, namespace: str, playbook: str) -> dict:
-    '''Get the metdata for the intent needed'''
+    '''Get all the intents in a workspace'''
     payload = {
         "namespace": namespace,
         "playbook_id": playbook
