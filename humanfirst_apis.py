@@ -214,6 +214,18 @@ def get_playbook(headers: str,
     response_dict = json.loads(response)
     return response_dict
 
+def get_intents(headers: str, namespace: str, playbook: str) -> dict:
+    '''Get the metdata for the intent needed'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload))
+    return validate_response(response,url,"intents")
+
 def get_intent(headers: str, namespace: str, playbook: str, intent_id: str) -> dict:
     '''Get the metdata for the intent needed'''
     payload = {
