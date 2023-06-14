@@ -4,20 +4,21 @@
 #  Code Language:   python
 #  Script:          upload_files_to_hf.py
 #  Imports:         re, json, click, requests, requests_toolbelt
-#  Functions:       main(), upload_multipart(), check_status(), replace(), 
+#  Functions:       main(), upload_multipart(), check_status(), replace(),
 #                   delete_file(), get_conversion_set_id(), get_conversion_source_id()
 #  Description:     Upload files to HumanFirst
 #
 # **********************************************************************************************************************
-    
+
 # standard imports
 import re
 import json
 
-# third party imports     
+# third party imports
 import requests
 import requests_toolbelt
 import click
+
 
 @click.command()
 @click.option('-u', '--username', type=str, required=True, help='HumanFirst username')
@@ -26,8 +27,7 @@ import click
 @click.option('-h', '--filepath', type=str, required=True, help='file to upload to HumanFirst')
 @click.option('-b', '--upload_name', type=str, required=True, help='name assigned to the uploaded file to HumanFirst')
 @click.option('-s', '--convoset', type=str, required=True, help='Conversation set name / data folder name')
-@click.option('-f','--force', is_flag=True, default=False, help='Prevents runtime user input')
-
+@click.option('-f', '--force', is_flag=True, default=False, help='Prevents runtime user input')
 def main(username: str, password: str, namespace: str, filepath: str, convoset: str, upload_name: str, force: bool) -> None:
     """Main function - Pre-step: initially create the data folder and manually upload the file.
                        Only then a conversation source id gets generated.
@@ -37,58 +37,59 @@ def main(username: str, password: str, namespace: str, filepath: str, convoset: 
 
     username: str
         HumanFirst username
-    
+
     password: str
         HumanFirst password
-    
+
     namespace: str
         HumanFirst namespace
-    
+
     filepath: str
         file to upload to HumanFirst
-    
+
     convoset: str
         Conversation set name / data folder name
-    
+
     upload_name: str
         name assigned to the uploaded file to HumanFirst
 
     force: bool
         Prevents runtime user input
-    
+
     Returns
     -------
 
     None
     """
-    headers = authorize(username,password)
+    headers = authorize(username, password)
     conversation_set_id, conversation_source_id = get_conversion_set_id(headers, namespace, convoset)
     upload_multipart(headers, namespace, conversation_source_id, filepath, upload_name, force)
+
 
 def upload_multipart(headers: dict, namespace: str, conversation_source_id: str, filepath: str, upload_name: str, force: bool) -> None:
     """Uploads multipart/form-data to HumanFirst
 
     Parameters
     ----------
-    
+
     headers: dict
         headers containing content-type and authorization bearer token
 
     namespace: str
         HumanFirst namespace
-    
+
     filepath: str
         file to upload to HumanFirst
-    
+
     conversation_source_id: str
         conversation source id
-    
+
     upload_name: str
         name assigned to the uploaded file to HumanFirst
 
     force: bool
         Prevents runtime user input
-    
+
     Returns
     -------
 
@@ -102,13 +103,15 @@ def upload_multipart(headers: dict, namespace: str, conversation_source_id: str,
             'file': (upload_name, upload_file, 'application/json')}
     )
     # This is the magic bit - you must set the content type to include the boundary information
-    # multipart encoder makes working these out easier    
+    # multipart encoder makes working these out easier
     headers["Content-Type"] = payload.content_type
     response = requests.request("POST", url, headers=headers, data=payload)
     check_status(response, headers, namespace, conversation_source_id, filepath, upload_name, force)
     upload_file.close()
 
-def check_status(response: requests.models.Response, headers:str, namespace: str, conversation_source_id: str, filepath: str, upload_name: str, force: bool) -> None:
+
+def check_status(response: requests.models.Response, headers: str, namespace: str,
+                 conversation_source_id: str, filepath: str, upload_name: str, force: bool) -> None:
     """Checks the status of the file upload API call response
 
     Parameters
@@ -119,22 +122,22 @@ def check_status(response: requests.models.Response, headers:str, namespace: str
 
     headers: dict
         headers containing content-type and authorization bearer token
-        
+
     namespace: str
         HumanFirst namespace
-    
+
     filepath: str
         file to upload to HumanFirst
-    
+
     conversation_source_id: str
         conversation source id
-    
+
     upload_name: str
         name assigned to the uploaded file to HumanFirst
 
     force: bool
         Prevents runtime user input
-    
+
     Returns
     -------
 
@@ -142,9 +145,9 @@ def check_status(response: requests.models.Response, headers:str, namespace: str
     """
     if response.status_code != 201:
         if response.text:
-            if re.sub("\n$","",response.text) == "file already exists":
+            if re.sub("\n$", "", response.text) == "file already exists":
                 print("File already exists")
-                if force == True:
+                if force is True:
                     replace(headers, namespace, conversation_source_id, filepath, upload_name, force)
                 else:
                     user_choice = input("1. Replace exisiting file\n2. Upload the file with new name\n3. Quit\nEnter your choice: ")
@@ -164,56 +167,58 @@ def check_status(response: requests.models.Response, headers:str, namespace: str
     else:
         print(f"{filepath} uploaded successfully to HumanFirst")
 
+
 def replace(headers: str, namespace: str, conversation_source_id: str, filepath: str, upload_name: str, force: bool) -> None:
     """Replaces the exisitng file with the new file in HumanFirst
-    
+
     Parameters
     ----------
-    
+
     headers: dict
         headers containing content-type and authorization bearer token
-        
+
     namespace: str
         HumanFirst namespace
-    
+
     filepath: str
         file to upload to HumanFirst
-    
+
     conversation_source_id: str
         conversation source id
-    
+
     upload_name: str
         name assigned to the uploaded file to HumanFirst
 
     force: bool
         Prevents runtime user input
-    
+
     Returns
     -------
 
     None
     """
-    delete_file(headers, namespace, conversation_source_id,upload_name)
+    delete_file(headers, namespace, conversation_source_id, upload_name)
     upload_multipart(headers, namespace, conversation_source_id, filepath, upload_name, force)
+
 
 def delete_file(headers: str, namespace: str, conversation_source_id: str, filename: str) -> None:
     """Deletes data file in HumanFirst
-    
+
     Parameters
     ----------
-    
+
     headers: dict
         headers containing content-type and authorization bearer tokene
-        
+
     namespace: str
         HumanFirst namespace
-    
+
     conversation_source_id: str
         conversation source id
-    
+
     filename: str
         name of the file to be deleted in HumanFirst
-    
+
     Returns
     -------
 
@@ -221,27 +226,28 @@ def delete_file(headers: str, namespace: str, conversation_source_id: str, filen
     """
     url = f"https://api.humanfirst.ai/v1alpha1/files/{namespace}/{conversation_source_id}/{filename}"
     payload = {}
-    response = requests.request("DELETE", url, headers=headers, data = payload)
+    response = requests.request("DELETE", url, headers=headers, data=payload)
     if response.status_code == 200:
         print(f"Deleted {filename} successfully")
     else:
         raise Exception(f"Deleting existing file unsuccessful. \n Got {response.status_code} response.")
+
 
 def get_conversion_set_id(headers: str, namespace: str, convoset: str) -> tuple:
     """Lookup a conversation set id and conversation source id in a namespace based on its name
 
     Parameters
     ----------
-    
+
     headers: dict
         headers containing content-type and authorization bearer token
-        
+
     namespace: str
         HumanFirst namespace
-    
+
     convoset: str
         Conversation set name / data folder name
-    
+
     Returns
     -------
 
@@ -249,9 +255,9 @@ def get_conversion_set_id(headers: str, namespace: str, convoset: str) -> tuple:
         conversation set id and conversation source id
     """
 
-    payload={}
+    payload = {}
     url = f"https://api.humanfirst.ai/v1alpha1/conversation_sets?namespace={namespace}"
-    response = requests.request("GET", url, headers=headers,data=payload)
+    response = requests.request("GET", url, headers=headers, data=payload)
     if response.status_code != 200:
         print(f"Got {response.status_code} Response")
         quit()
@@ -266,35 +272,36 @@ def get_conversion_set_id(headers: str, namespace: str, convoset: str) -> tuple:
             break
     return conversation_set_id, conversation_source_id
 
+
 def get_conversion_source_id(headers: str, namespace: str, convoset: str) -> str:
-    """Lookup a conversation source id in a namespace based on its name. 
-    This is not ideal for getting the conversation source id because 
+    """Lookup a conversation source id in a namespace based on its name.
+    This is not ideal for getting the conversation source id because
     it never updates conversation source name, even after updating it in the HumanFirst console.
-    Hence finding the conversation source id using the data folder name becomes difficult. 
-    Conversation sets get the updated name of the data folder. 
+    Hence finding the conversation source id using the data folder name becomes difficult.
+    Conversation sets get the updated name of the data folder.
     Hence it is better to use conversation sets than conversation sources.
-    
+
     Parameters
     ----------
-    
+
     headers: dict
         headers containing content-type and authorization bearer token
-        
+
     namespace: str
         HumanFirst namespace
-    
+
     convoset: str
         Conversation set name / data folder name
-    
+
     Returns
     -------
 
     conversation_source_id : str
         conversation source id
     """
-    payload={}
+    payload = {}
     url = f"https://api.humanfirst.ai/v1alpha1/conversation_sources?namespace={namespace}"
-    response = requests.request("GET", url, headers=headers,data=payload)
+    response = requests.request("GET", url, headers=headers, data=payload)
     if response.status_code != 200:
         print(f"Got {response.status_code} Response")
         quit()
@@ -307,18 +314,19 @@ def get_conversion_source_id(headers: str, namespace: str, convoset: str) -> str
             break
     return conversation_source_id
 
+
 def authorize(username: str, password: str) -> dict:
     """Get bearer token for a username and password
-    
+
     Parameters
     ----------
 
     username: str
         HumanFirst username
-    
+
     password: str
         HumanFirst password
-    
+
     Returns
     -------
 
@@ -340,9 +348,10 @@ def authorize(username: str, password: str) -> dict:
     if auth_response.status_code != 200:
         raise Exception(f'Not authorised, google returned {auth_response.status_code} {auth_response.json()}')
     idToken = auth_response.json()['idToken']
-    headers['Authorization'] = f'Bearer {idToken}'   
+    headers['Authorization'] = f'Bearer {idToken}'
     # print('Retrieved idToken and added to headers')
     return headers
+
 
 if __name__ == "__main__":
     main()
