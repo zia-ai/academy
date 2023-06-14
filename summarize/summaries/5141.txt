@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer inquiring about how to access their account after losing their phone with 2-factor authentication.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is the client's concern about the status of their subscription after receiving an email stating that it was removed.

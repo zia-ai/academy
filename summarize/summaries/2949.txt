@@ -1,1 +1,0 @@
-The main call driver is a client checking the status of their account and missing credits from a promotional package.

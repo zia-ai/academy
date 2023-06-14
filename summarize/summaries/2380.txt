@@ -1,1 +1,0 @@
-The main call driver from this transcript is a problem with the client's order and a need to check on the status and payment method.

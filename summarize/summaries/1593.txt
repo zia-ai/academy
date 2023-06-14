@@ -1,1 +1,0 @@
-The main call driver from this transcript is a concern about an extra fee on the client's order and a request to check the status of the order.

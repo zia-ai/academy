@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer reporting a charge that has not been reversed after completing a return.

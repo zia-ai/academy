@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client who forgot their password and needs assistance in resetting it.

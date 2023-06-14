@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer having issues accessing their account due to two-factor authentication.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer needing help logging into their account due to a corrupted password file.

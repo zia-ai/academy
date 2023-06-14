@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer requesting assistance with resetting their two-factor authentication code to access their purchase history on the online fashion retailer's website.

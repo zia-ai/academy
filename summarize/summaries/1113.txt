@@ -1,1 +1,0 @@
-The main call driver is a customer inquiring about an unknown subscription added to their account and requesting it to be removed.

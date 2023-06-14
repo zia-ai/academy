@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer having trouble placing an order due to an invalid credit card.

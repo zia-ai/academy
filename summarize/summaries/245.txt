@@ -1,1 +1,0 @@
-The main call driver is a customer inquiry about the status of their order that has not been received after three weeks.

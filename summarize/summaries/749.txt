@@ -1,1 +1,0 @@
-The main call driver from this transcript is the client's need to reset their account's 2FA after losing their phone.

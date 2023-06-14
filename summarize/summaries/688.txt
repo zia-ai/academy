@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer reporting multiple instances of items being out of stock on the retailer's website.

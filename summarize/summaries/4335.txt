@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer who lost their phone and cannot access their online fashion retailer account due to two-factor authentication. They need assistance resetting their authentication and accessing their account.

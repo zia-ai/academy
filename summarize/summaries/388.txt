@@ -1,1 +1,0 @@
-The main call driver from this transcript is a query about whether the client's subscription covers free shipping to another country.

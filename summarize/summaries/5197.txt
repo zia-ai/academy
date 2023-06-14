@@ -1,1 +1,0 @@
-The main call driver is the client's inquiry about the availability of a specific item (Calvin Klein shirt) that is currently out of stock.

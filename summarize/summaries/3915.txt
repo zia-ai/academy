@@ -1,1 +1,0 @@
-The main call driver is the client's inquiry about the availability of a specific item (Tommy Hilfiger shirt) that is always out of stock.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is a billing issue - the client was charged for a purchase they did not make.

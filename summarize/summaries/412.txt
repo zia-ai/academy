@@ -1,1 +1,0 @@
-The main call driver from this transcript is checking on the status of an order and changing the payment method.

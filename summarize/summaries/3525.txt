@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer inquiring about checking the status of an order and needing assistance accessing their account due to losing their phone with two-factor authentication set up.

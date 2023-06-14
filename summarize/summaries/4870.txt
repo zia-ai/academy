@@ -1,1 +1,0 @@
-The main call driver from this transcript is a request to change the shipping on an order to a cheaper option due to financial constraints caused by the COVID-19 pandemic.

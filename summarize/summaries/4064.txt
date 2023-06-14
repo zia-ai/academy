@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client needing to pay for their subscription bill to keep it active.

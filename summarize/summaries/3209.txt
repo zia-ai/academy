@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client inquiring about the validity of a promo code received via email.

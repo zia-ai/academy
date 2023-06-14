@@ -1,1 +1,0 @@
-The main call driver from this transcript is a request to remove an item from an order due to it being the wrong size.

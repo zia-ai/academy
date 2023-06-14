@@ -1,1 +1,0 @@
-The main call driver from this transcript is checking the order status and resolving the issue of losing the phone used for two-factor authentication.

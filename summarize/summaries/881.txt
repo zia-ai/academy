@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client trying to pay their bill to renew their premium subscription service.

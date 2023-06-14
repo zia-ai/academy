@@ -1,1 +1,0 @@
-The main call driver from this transcript is a billing issue related to a charge that was not reversed after the client returned an item.

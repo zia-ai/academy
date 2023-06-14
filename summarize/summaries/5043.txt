@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer inquiry about an error in the shipping cost of an order.

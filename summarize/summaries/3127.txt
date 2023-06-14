@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer checking on their order and verifying that the items they received match their order.

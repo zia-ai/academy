@@ -1,1 +1,0 @@
-The main call driver from this transcript is the client's inability to sign into their account due to the loss of their phone and inability to receive the text for 2FA.

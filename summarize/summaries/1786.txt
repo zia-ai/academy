@@ -1,1 +1,0 @@
-The main call driver from this transcript is a problem with entering a promo code that is being reported by the client.

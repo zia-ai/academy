@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer inquiring about the shipping status of their order and requesting for it to be resent.

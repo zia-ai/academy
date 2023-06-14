@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer who cannot access their online fashion retailer account due to losing their password and phone for two-factor authentication.

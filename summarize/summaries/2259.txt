@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer trying to place an order for a shirt that is out of stock.

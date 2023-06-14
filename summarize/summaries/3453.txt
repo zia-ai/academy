@@ -1,1 +1,0 @@
-The main call driver from this transcript is a dispute over a charge for an order that the client claims was never purchased.

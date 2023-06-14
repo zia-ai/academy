@@ -1,1 +1,0 @@
-The main call driver from this transcript is checking on an order status and requesting to cancel or get a refund due to high shipping costs.

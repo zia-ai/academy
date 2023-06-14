@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer needing assistance with turning off two-factor authentication on their account after losing their phone.

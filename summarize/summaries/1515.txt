@@ -1,1 +1,0 @@
-The main call driver from this transcript is the client's request for assistance with accessing their online account and checking the status of their order.

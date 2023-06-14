@@ -1,1 +1,0 @@
-The main call driver from this transcript is assisting the client with resetting their 2FA (two-factor authentication) for their online fashion retailer account.

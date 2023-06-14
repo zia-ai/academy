@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client checking the status of their subscription and previous payment with an online fashion retailer.

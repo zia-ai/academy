@@ -1,1 +1,0 @@
-The main call driver is the client's inquiry about the release date of the spring collection for their new job.

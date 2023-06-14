@@ -1,1 +1,0 @@
-The main call driver from this transcript is a request to delay shipping to avoid paying shipping fees.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer who cannot log in to their online shopping history due to losing their phone for 2-step authentication.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client seeking more information about a product (a Guess shirt).

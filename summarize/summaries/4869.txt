@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer requesting a refund for an unauthorized charge for a premium subscription.

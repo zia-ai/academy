@@ -1,1 +1,0 @@
-The main call driver from this transcript is checking the status of an order and resolving an issue with the order confirmation email showing two items instead of one.

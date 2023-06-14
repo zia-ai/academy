@@ -1,1 +1,0 @@
-The main call driver from this transcript is a request to review and potentially reduce the shipping cost for an order that has already been placed and is out for delivery.

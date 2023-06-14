@@ -1,1 +1,0 @@
-The main call driver from this transcript is checking the status of the client's account and verifying their eligibility for benefits and membership level.

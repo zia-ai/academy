@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client needing help with changing their payment method for a subscription service.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is checking the status of an order and addressing a discrepancy in the delivery time.

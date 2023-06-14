@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer needing help accessing their account due to losing their phone and being unable to complete authentication.

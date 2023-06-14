@@ -1,1 +1,0 @@
-The main call driver is the client's request to check their account status and to be refunded for an unwanted subscription.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer requesting assistance with resetting their password in order to check the status of an order.

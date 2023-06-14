@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer inquiry about the cost of items ordered and a discrepancy between the original cost seen and the cost shown in the email received.

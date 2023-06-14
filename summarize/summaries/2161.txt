@@ -1,1 +1,0 @@
-The main call driver from this transcript is helping the client access their account by resetting their password.

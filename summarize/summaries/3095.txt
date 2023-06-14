@@ -1,1 +1,0 @@
-The main call driver from this transcript is an inquiry about the stock status of a specific item (Guess shirt) that the client wanted to purchase but was showing as out of stock.

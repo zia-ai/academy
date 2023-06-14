@@ -1,1 +1,0 @@
-The main call driver from this transcript is checking the status of the client's subscription and making a payment for the amount due.

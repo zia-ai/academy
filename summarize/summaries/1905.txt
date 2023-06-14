@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer inquiry about a specific product (jeans from the brand Guess) and whether it has a specific design feature (ripped holes).

@@ -1,1 +1,0 @@
-The main call driver from this transcript is checking the shipping status of an order that has not been received after 9 days.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client inquiring about the current status of their account and wanting to make a payment.

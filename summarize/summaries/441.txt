@@ -1,1 +1,0 @@
-The main call driver from this transcript is a return and checking on the payment method.

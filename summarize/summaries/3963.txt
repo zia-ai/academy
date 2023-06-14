@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer inquiry regarding a discrepancy between the items ordered and the items received in an email confirmation.

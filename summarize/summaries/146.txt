@@ -1,1 +1,0 @@
-The main call driver from this transcript is a missing order and the client's inquiry about its status and the possibility of it being resent.

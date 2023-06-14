@@ -1,1 +1,0 @@
-The main call driver from this transcript is the client's request for help in accessing their shopping history due to forgetting their password.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is a customer requesting to have an out of stock item delivered to them when it becomes available again.

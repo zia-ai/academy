@@ -1,1 +1,0 @@
-The main call driver from this transcript is a client inquiring about the due date for their subscription payment and how to make the payment.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is a request to check on the order status and remove the shipping cost.

@@ -1,1 +1,0 @@
-The main call driver from this transcript is the client's need to access their account after losing their phone and being unable to complete two-factor authentication.

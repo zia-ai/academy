@@ -1,1 +1,0 @@
-The main call driver is a customer reporting an issue with a promo code not working.

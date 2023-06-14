@@ -1,1 +1,0 @@
-The main call driver from this transcript is a request for cancellation and refund of an item from an order due to picking the wrong size.

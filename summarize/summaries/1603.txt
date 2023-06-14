@@ -1,1 +1,0 @@
-The main call driver from this transcript is a technical issue with the client's cart not updating and not allowing them to add items.

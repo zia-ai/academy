@@ -1,1 +1,0 @@
-The main call driver from this transcript is the client experiencing slow website performance while trying to make a purchase.
