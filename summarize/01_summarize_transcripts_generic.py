@@ -132,7 +132,7 @@ def process(input_filepath: str, openai_api_key: str, num_cores: int, prompt: st
     df = df[["prompt_line","skip","completed"]]
     assert(isinstance(df,pandas.DataFrame))
     
-    # join all the prompt_lines together into the conversation text using the index level 0
+    # join all the prompt_lines together into the conversation text by the context-context_id, skip and whether completed
     df = df.groupby(["context-context_id","skip","completed"])['prompt_line'].apply('\n'.join).reset_index()
     df.set_index("context-context_id",inplace=True,drop=False)
     df.rename(columns={"prompt_line":"conversation"},inplace=True)
@@ -154,6 +154,8 @@ def process(input_filepath: str, openai_api_key: str, num_cores: int, prompt: st
    
     # add the output location for the file
     df['summary_path'] = output_file_path + df['context-context_id'] + ".txt"
+    
+    print(df)
         
     # parallelization
     p = Pool(num_cores)
