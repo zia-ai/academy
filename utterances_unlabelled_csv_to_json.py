@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python # pylint: disable=missing-module-docstring
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
@@ -8,7 +8,6 @@
 
 # standard imports
 import uuid
-import humanfirst
 from datetime import datetime
 from typing import Union
 
@@ -16,12 +15,16 @@ from typing import Union
 import pandas
 import click
 
+# custom imports
+import humanfirst
+
 
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
-@click.option('-m', '--metadata_keys', type=str, required=True, help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')
+@click.option('-m', '--metadata_keys', type=str, required=True, help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')  # pylint: disable=line-too-long
 @click.option('-u', '--utterance_col', type=str, required=True, help='Column name containing utterances')
-def main(filename: str, metadata_keys: str, utterance_col: str):
+def main(filename: str, metadata_keys: str, utterance_col: str) -> None:
+    """Main Function"""
 
     # read the input csv
     df = pandas.read_csv(filename, encoding='utf8')
@@ -75,4 +78,4 @@ def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract: l
 
 
 if __name__ == '__main__':
-    main()
+    main() # pylint: disable=no-value-for-parameter
