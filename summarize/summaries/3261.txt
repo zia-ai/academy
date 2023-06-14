@@ -1,0 +1,1 @@
+The main call driver from this transcript is a payment issue related to the client's primary payment method not being correct.

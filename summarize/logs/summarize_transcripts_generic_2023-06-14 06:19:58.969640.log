@@ -1,0 +1,53 @@
+14-Jun-23 06:19:58 - root - 21083 - INFO -- Logging to: /home/ubuntu/source/hf/academy/summarize/./logs/summarize_transcripts_generic_2023-06-14 06:19:58.969640.log
+14-Jun-23 06:19:58 - root - 21083 - INFO -- Prompt is: 
+ Delimited by three backticks is a conversation between a Client of online fashion retailer and one of it's Expert customer service agents.
+
+```
+{{ conversation }}
+```
+What is the main call driver from this transcript?
+14-Jun-23 06:20:01 - root - 21083 - INFO -- In this run are going to process this many context_ids: 4
+14-Jun-23 06:20:01 - root - 21083 - INFO -- First up to 10: ['3843', '2270', '4353', '394']
+14-Jun-23 06:20:02 - root - 21083 - INFO -- Mean input tokens is 240.75
+14-Jun-23 06:20:02 - root - 21083 - INFO -- Output tokens is 500
+14-Jun-23 06:20:02 - root - 21083 - INFO -- Per second rate is max 2.02
+14-Jun-23 06:20:02 - root - 21125 - INFO -- Calling OpenAI to summarize conversation - 2270
+14-Jun-23 06:20:02 - root - 21124 - INFO -- Calling OpenAI to summarize conversation - 394
+14-Jun-23 06:20:02 - openai - 21124 - DEBUG -- message='Request to OpenAI API' method=post path=https://api.openai.com/v1/chat/completions
+14-Jun-23 06:20:02 - openai - 21124 - DEBUG -- api_version=None data='{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Delimited by three backticks is a conversation between a Client of online fashion retailer and one of it\'s Expert customer service agents.\\n\\n```\\nexpert: Hi, thank you for contacting Acme today. How can I help you?\\nclient: Yes, can you please tell me what the different membership levels are?\\nexpert: Sure! Can I get your first name to better address you first?\\nclient: Alessandro Phoenix\\nexpert: Thanks Alessandro.\\nexpert: Searching the FAQ pages ...\\nexpert: System Action: search membership\\nexpert: So, we have 3 membership levels. Bronze, Silver, and Gold.\\nclient: I am thinking of buying your most expensive item\\nclient: I am a Gold member\\nexpert: Ok, great. Did you have a specific question about an item?\\nexpert: Can I help you with something else?\\nclient: No, I am good\\nclient: thanks\\nexpert: Excellent. Have a great day!\\nclient: you to\\nexpert: Thanks. Bye now!\\n```\\nWhat is the main call driver from this transcript?"}], "temperature": 0.0, "max_tokens": 500, "top_p": 1, "frequency_penalty": 0.0, "presence_penalty": 0.0}' message='Post details'
+14-Jun-23 06:20:02 - urllib3.util.retry - 21124 - DEBUG -- Converted retries value: 2 -> Retry(total=2, connect=None, read=None, redirect=None, status=None)
+14-Jun-23 06:20:02 - urllib3.connectionpool - 21124 - DEBUG -- Starting new HTTPS connection (1): api.openai.com:443
+14-Jun-23 06:20:02 - openai - 21125 - DEBUG -- message='Request to OpenAI API' method=post path=https://api.openai.com/v1/chat/completions
+14-Jun-23 06:20:02 - openai - 21125 - DEBUG -- api_version=None data='{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Delimited by three backticks is a conversation between a Client of online fashion retailer and one of it\'s Expert customer service agents.\\n\\n```\\nexpert: Welcome to AcmeBrands. How may I help?\\nclient: Yes, thanks. I\'m going to need new clothes for a job I start in spring. Do you know when the spring collection comes out?\\nexpert: Sure. Let me check that for you.\\nexpert: Searching the FAQ pages ...\\nexpert: System Action: search timing\\nexpert: FAQ answer related to timing (question1) was selected.\\nexpert: The collections come out the third day of the month for the corresponding season.\\nexpert: The spring collection comes out April 3rd\\nclient: Oh, perfect timing, I\'m so excited!\\nexpert: Great! Good luck with the new job.\\nexpert: Anything else I can help with?\\nclient: Thanks!\\nclient: No, that was all I needed today, have a great day :)\\n```\\nWhat is the main call driver from this transcript?"}], "temperature": 0.0, "max_tokens": 500, "top_p": 1, "frequency_penalty": 0.0, "presence_penalty": 0.0}' message='Post details'
+14-Jun-23 06:20:02 - urllib3.util.retry - 21125 - DEBUG -- Converted retries value: 2 -> Retry(total=2, connect=None, read=None, redirect=None, status=None)
+14-Jun-23 06:20:02 - urllib3.connectionpool - 21125 - DEBUG -- Starting new HTTPS connection (1): api.openai.com:443
+14-Jun-23 06:20:03 - urllib3.connectionpool - 21124 - DEBUG -- https://api.openai.com:443 "POST /v1/chat/completions HTTP/1.1" 200 None
+14-Jun-23 06:20:03 - openai - 21124 - DEBUG -- message='OpenAI API response' path=https://api.openai.com/v1/chat/completions processing_ms=1013 request_id=c754976f7ee245c2c24a20de2d9df98f response_code=200
+14-Jun-23 06:20:03 - root - 21124 - INFO -- Total tokens for conversation id 394 is 240
+14-Jun-23 06:20:03 - root - 21124 - INFO -- Conversation - 394 is summarized
+14-Jun-23 06:20:03 - root - 21124 - INFO -- Summary is saved at /home/ubuntu/source/hf/academy/summarize/summaries/394.txt
+14-Jun-23 06:20:03 - root - 21124 - INFO -- Took 1.3807469559978927 seconds
+14-Jun-23 06:20:03 - root - 21124 - INFO -- Calling OpenAI to summarize conversation - 4353
+14-Jun-23 06:20:03 - openai - 21124 - DEBUG -- message='Request to OpenAI API' method=post path=https://api.openai.com/v1/chat/completions
+14-Jun-23 06:20:03 - openai - 21124 - DEBUG -- api_version=None data='{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Delimited by three backticks is a conversation between a Client of online fashion retailer and one of it\'s Expert customer service agents.\\n\\n```\\nexpert: hello, how can I help you?\\nclient: Im really upset because I was charge for an order and I never made it\\nexpert: Sure, I\'d be happy to assist. May I have your name please?\\nclient: My name is Rodriguez Domingo\\nclient: thanks\\nexpert: Account has been pulled up for Rodriguez Domingo.\\nexpert: may I have your username, email address and order ID please?\\nclient: Email Address: rdomingo605@email.com\\nclient: Username: rdomingo605\\nclient: Order ID: 0967659795\\nexpert: Purchase validation in progress ...\\nexpert: Querying the system for an answer ...\\nexpert: Thank you and your membership level?\\nclient: Its a Gold membership\\nexpert: Great, since you\'re a gold member, I\'ll go ahead and refund you since you never made that purchase\\nclient: Ok thanks a lot\\nexpert: Order has been updated with give credit.\\nclient: so the total amount was $54\\nexpert: A refund has been made for the amount of $54.\\nexpert: No problem, that has been taken care of! Sorry for the mix up - is there anything else I can help you with?\\nclient: No problem\\nclient: I understand\\nexpert: Have a great day! Thanks for chatting!\\nclient: that sort of mistakes happen\\n```\\nWhat is the main call driver from this transcript?"}], "temperature": 0.0, "max_tokens": 500, "top_p": 1, "frequency_penalty": 0.0, "presence_penalty": 0.0}' message='Post details'
+14-Jun-23 06:20:03 - urllib3.connectionpool - 21125 - DEBUG -- https://api.openai.com:443 "POST /v1/chat/completions HTTP/1.1" 200 None
+14-Jun-23 06:20:03 - openai - 21125 - DEBUG -- message='OpenAI API response' path=https://api.openai.com/v1/chat/completions processing_ms=1239 request_id=66858cd26756b3563b1ad761d2898e86 response_code=200
+14-Jun-23 06:20:03 - root - 21125 - INFO -- Total tokens for conversation id 2270 is 236
+14-Jun-23 06:20:03 - root - 21125 - INFO -- Conversation - 2270 is summarized
+14-Jun-23 06:20:03 - root - 21125 - INFO -- Summary is saved at /home/ubuntu/source/hf/academy/summarize/summaries/2270.txt
+14-Jun-23 06:20:03 - root - 21125 - INFO -- Took 1.6160504520012182 seconds
+14-Jun-23 06:20:03 - root - 21125 - INFO -- Calling OpenAI to summarize conversation - 3843
+14-Jun-23 06:20:03 - openai - 21125 - DEBUG -- message='Request to OpenAI API' method=post path=https://api.openai.com/v1/chat/completions
+14-Jun-23 06:20:03 - openai - 21125 - DEBUG -- api_version=None data='{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Delimited by three backticks is a conversation between a Client of online fashion retailer and one of it\'s Expert customer service agents.\\n\\n```\\nclient: Hi\\nexpert: Welcome to AcmeBrands. How may I help?\\nclient: I need to check the status of my order but I forgot my username  :(\\nexpert: OK. I can help.\\nexpert: May I have your full name or account ID\\nclient: Nornan Bouchard\\nexpert: Account has been pulled up for Nornan Bouchard.\\nexpert: OK. I have pulled up your account.\\nexpert: I need your zip code now and phone number\\nclient: 96836\\nclient: 6815321375\\nexpert: Identity verification in progress ...\\nexpert: What is your email address?\\nexpert: Hello?\\nclient: nb387165@email.com\\nexpert: Identity verification in progress ...\\nexpert: Thanks.\\nexpert: Your user ID is nbouchard1\\nexpert: Anything else?\\nclient: Thats all\\nclient: thank you\\nexpert: You\'re welcome!\\n```\\nWhat is the main call driver from this transcript?"}], "temperature": 0.0, "max_tokens": 500, "top_p": 1, "frequency_penalty": 0.0, "presence_penalty": 0.0}' message='Post details'
+14-Jun-23 06:20:04 - urllib3.connectionpool - 21124 - DEBUG -- https://api.openai.com:443 "POST /v1/chat/completions HTTP/1.1" 200 None
+14-Jun-23 06:20:04 - openai - 21124 - DEBUG -- message='OpenAI API response' path=https://api.openai.com/v1/chat/completions processing_ms=1022 request_id=8d9a18dac9b311df4af04836772e837f response_code=200
+14-Jun-23 06:20:04 - root - 21124 - INFO -- Total tokens for conversation id 4353 is 340
+14-Jun-23 06:20:04 - root - 21124 - INFO -- Conversation - 4353 is summarized
+14-Jun-23 06:20:04 - root - 21124 - INFO -- Summary is saved at /home/ubuntu/source/hf/academy/summarize/summaries/4353.txt
+14-Jun-23 06:20:04 - root - 21124 - INFO -- Took 1.204583899998397 seconds
+14-Jun-23 06:20:05 - urllib3.connectionpool - 21125 - DEBUG -- https://api.openai.com:443 "POST /v1/chat/completions HTTP/1.1" 200 None
+14-Jun-23 06:20:05 - openai - 21125 - DEBUG -- message='OpenAI API response' path=https://api.openai.com/v1/chat/completions processing_ms=1399 request_id=f233965488b440c02c3e3e23001da1ac response_code=200
+14-Jun-23 06:20:05 - root - 21125 - INFO -- Total tokens for conversation id 3843 is 263
+14-Jun-23 06:20:05 - root - 21125 - INFO -- Conversation - 3843 is summarized
+14-Jun-23 06:20:05 - root - 21125 - INFO -- Summary is saved at /home/ubuntu/source/hf/academy/summarize/summaries/3843.txt
+14-Jun-23 06:20:05 - root - 21125 - INFO -- Took 1.6973328059975756 seconds

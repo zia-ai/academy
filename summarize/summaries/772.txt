@@ -1,0 +1,1 @@
+The main call driver from this transcript is an issue with the email confirmation stating that the client ordered two items instead of one.

@@ -1,0 +1,1 @@
+The main call driver from this transcript is a customer requesting assistance with accessing their shopping history on the retailer's website due to being unable to log in and not having access to the phone used for two-factor authentication.

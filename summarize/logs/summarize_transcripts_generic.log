@@ -1,0 +1,18 @@
+14-Jun-23 05:55:37 - root - 7147 - INFO -- Logging to: /home/ubuntu/source/hf/academy/summarize/./logs/summarize_transcripts_generic.log
+14-Jun-23 05:55:37 - root - 7147 - INFO -- Prompt is: 
+ Delimited by three backticks is a conversation between a Client of online fashion retailer and one of it's Expert customer service agents.
+
+```
+{{ conversation }}
+```
+What is the main call driver from this transcript?
+14-Jun-23 05:55:40 - root - 7147 - INFO -- ContextIds to process are: []
+14-Jun-23 05:55:40 - root - 7147 - INFO -- Mean input tokens is nan
+14-Jun-23 05:55:40 - root - 7147 - INFO -- Output tokens is 200
+14-Jun-23 05:55:40 - root - 7147 - INFO -- Per second rate is max nan
+14-Jun-23 05:55:40 - root - 7204 - INFO -- Calling OpenAI to summarize conversation - None
+14-Jun-23 05:55:40 - root - 7203 - INFO -- Calling OpenAI to summarize conversation - None
+14-Jun-23 05:55:40 - root - 7203 - INFO -- Total tokens for conversation id None is 0
+14-Jun-23 05:55:40 - root - 7203 - INFO -- Conversation - None is summarized
+14-Jun-23 05:55:40 - root - 7204 - INFO -- Total tokens for conversation id None is 0
+14-Jun-23 05:55:40 - root - 7204 - INFO -- Conversation - None is summarized

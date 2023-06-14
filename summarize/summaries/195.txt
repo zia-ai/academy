@@ -1,0 +1,1 @@
+The main call driver from this transcript is the client's inability to access their account due to not having their phone needed for two-factor authentication and not knowing their account ID or password.

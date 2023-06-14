@@ -1,0 +1,1 @@
+The main call driver from this transcript is the client's issue with logging in to their account after losing their phone that was linked to the account.

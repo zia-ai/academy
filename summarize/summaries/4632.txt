@@ -1,0 +1,1 @@
+The main call driver from this transcript is a customer who lost access to their account due to losing the phone used for two-factor authentication and needs assistance resetting it.

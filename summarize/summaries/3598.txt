@@ -1,0 +1,1 @@
+The main call driver from this transcript is checking the order status and resolving the issue of high shipping cost by canceling the order.

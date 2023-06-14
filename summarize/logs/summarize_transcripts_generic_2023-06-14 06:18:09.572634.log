@@ -1,0 +1,31 @@
+14-Jun-23 06:18:09 - root - 19947 - INFO -- Logging to: /home/ubuntu/source/hf/academy/summarize/./logs/summarize_transcripts_generic_2023-06-14 06:18:09.572634.log
+14-Jun-23 06:18:09 - root - 19947 - INFO -- Prompt is: 
+ Delimited by three backticks is a conversation between a Client of online fashion retailer and one of it's Expert customer service agents.
+
+```
+{{ conversation }}
+```
+What is the main call driver from this transcript?
+14-Jun-23 06:18:12 - root - 19947 - INFO -- In this run are going to process this many context_ids: 4
+14-Jun-23 06:18:12 - root - 19947 - INFO -- First up to 10: ['5074', '2092', '3148', '2853']
+14-Jun-23 06:18:12 - root - 19947 - INFO -- Mean input tokens is 344.0
+14-Jun-23 06:18:12 - root - 19947 - INFO -- Output tokens is 500
+14-Jun-23 06:18:12 - root - 19947 - INFO -- Per second rate is max 1.78
+14-Jun-23 06:18:12 - root - 20003 - INFO -- Calling OpenAI to summarize conversation - 3148
+14-Jun-23 06:18:12 - root - 20002 - INFO -- Calling OpenAI to summarize conversation - 2092
+14-Jun-23 06:18:14 - root - 20002 - INFO -- Total tokens for conversation id 2092 is 315
+14-Jun-23 06:18:14 - root - 20002 - INFO -- Conversation - 2092 is summarized
+14-Jun-23 06:18:14 - root - 20002 - INFO -- Summary is saved at /home/ubuntu/source/hf/academy/summarize/summaries/2092.txt
+14-Jun-23 06:18:14 - root - 20002 - INFO -- Took 1.5606327200002852 seconds
+14-Jun-23 06:18:14 - root - 20002 - INFO -- Calling OpenAI to summarize conversation - 2853
+14-Jun-23 06:18:14 - root - 20003 - INFO -- Total tokens for conversation id 3148 is 404
+14-Jun-23 06:18:14 - root - 20003 - INFO -- Conversation - 3148 is summarized
+14-Jun-23 06:18:14 - root - 20003 - INFO -- Summary is saved at /home/ubuntu/source/hf/academy/summarize/summaries/3148.txt
+14-Jun-23 06:18:14 - root - 20003 - INFO -- Took 1.7479305810047663 seconds
+14-Jun-23 06:18:14 - root - 20003 - INFO -- Calling OpenAI to summarize conversation - 5074
+14-Jun-23 06:18:16 - root - 20003 - INFO -- Total tokens for conversation id 5074 is 270
+14-Jun-23 06:18:16 - root - 20003 - INFO -- Conversation - 5074 is summarized
+14-Jun-23 06:18:16 - root - 20003 - INFO -- Summary is saved at /home/ubuntu/source/hf/academy/summarize/summaries/5074.txt
+14-Jun-23 06:18:16 - root - 20003 - INFO -- Took 1.7781721419960377 seconds
+14-Jun-23 06:18:44 - openai - 20002 - INFO -- error_code=None error_message='That model is currently overloaded with other requests. You can retry your request, or contact us through our help center at help.openai.com if the error persists. (Please include the request ID ac88b708c837f2026d3701fd147274f4 in your message.)' error_param=None error_type=server_error message='OpenAI API error received' stream_error=False
+14-Jun-23 06:18:44 - root - 20002 - ERROR -- Exception for 2853 is That model is currently overloaded with other requests. You can retry your request, or contact us through our help center at help.openai.com if the error persists. (Please include the request ID ac88b708c837f2026d3701fd147274f4 in your message.)

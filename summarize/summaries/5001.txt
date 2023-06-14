@@ -1,0 +1,1 @@
+The main call driver from this transcript is the client's request for assistance in accessing their shopping history due to losing their phone for two-factor authentication.

@@ -1,0 +1,1 @@
+The main call driver is the client's question about the arrival date of the fall collection.

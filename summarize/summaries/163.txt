@@ -1,0 +1,1 @@
+The main call driver from this transcript is assisting the client in accessing their account by recovering their forgotten username.
