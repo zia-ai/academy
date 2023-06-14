@@ -20,7 +20,9 @@ import click
 @click.option('-f','--filename',type=str,required=True,help='Input File Path')
 @click.option('-m','--metadata_keys',type=str,required=True,help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')
 @click.option('-u','--utterance_col',type=str,required=True,help='Column name containing utterances')
-def main(filename: str, metadata_keys: str, utterance_col: str):
+@click.option('-r','--role_col',type=str,required=True,help='Column name roles')
+@click.option('-i','--id_col',type=str,required=True,help='Column name ids')
+def main(filename: str, metadata_keys: str, utterance_col: str, role_col: str, id_col: str):
 
     # read the input csv
     df = pandas.read_csv(filename,encoding='utf8') 
@@ -30,7 +32,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str):
     df['metadata'] = df.apply(create_metadata,args=[metadata_keys],axis=1)
 
     # build examples
-    df = df.apply(build_examples,args=[utterance_col],axis=1)
+    df = df.apply(build_examples,args=[utterance_col,role_col,id_col],axis=1)
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
@@ -46,17 +48,22 @@ def main(filename: str, metadata_keys: str, utterance_col: str):
     unlabelled.write_json(file_out)
     file_out.close()
 
-def build_examples(row: pandas.Series, utterance_col: str):
+def build_examples(row: pandas.Series, utterance_col: str, role_col: str, id_col: str):
     '''Build the examples'''
 
     # build examples
     example = humanfirst.HFExample(
-        text=row[utterance_col],
+        text=str(row[utterance_col]),
         id=f'example-{uuid.uuid4()}',
         created_at=datetime.now().isoformat(),
         intents=[], # no intents as unlabelled
         tags=[], # recommend uploading metadata for unlabelled and tags for labelled
-        metadata=row['metadata']
+        metadata=row['metadata'],
+        context=humanfirst.HFContext(
+            str(row[id_col]), # any ID can be used recommend a hash of the text which is repeatable or the external conversation id if there is one.
+            'conversation', # the type of document
+            str(row[role_col]) # the speakers role in the conversations
+        )
     )
     row['example'] = example
     return row

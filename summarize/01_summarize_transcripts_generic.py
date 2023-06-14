@@ -24,9 +24,9 @@ import tiktoken
 @click.command()
 @click.option('-i','--input_filepath',type=str,required=True,help='Path containing HF Unlabelled conversations in json format')
 @click.option('-a','--openai_api_key',type=str,required=True,help='OpenAI API key')
-@click.option('-p','--prompt',type=str,default='abcd_example_prompt.txt',help='location of prompt file to read' )
+@click.option('-p','--prompt',type=str,default='./prompts/abcd_example_prompt.txt',help='location of prompt file to read' )
 @click.option('-t','--tokens',type=int,default=500,help='Tokens to reserve for output')
-@click.option('-n','--num_cores',type=int,default=8,help='Number of cores for parallelisation')
+@click.option('-n','--num_cores',type=int,default=2,help='Number of cores for parallelisation')
 @click.option('-s','--sample_size',type=int,default=0,help='Number of conversations to sample')
 @click.option('-l','--log_file_path',type=str,default='./logs',help='Server log file path')
 @click.option('-o','--output_file_path',type=str,default='./summaries',help='Summaries output file path')
@@ -52,7 +52,7 @@ def process(input_filepath: str, openai_api_key: str, num_cores: int, prompt: st
 
     # logging config
     if log_file_path.startswith("./"):
-        log_file_path = f'{dir_path}{log_file_path}/summarize_transcripts_generic_{datetime.datetime.now()}.log'
+        log_file_path = f'{dir_path}{log_file_path}/summarize_transcripts_generic_{datetime.datetime.now().isoformat()}.log'
     logging.basicConfig(
         filename=log_file_path, 
         filemode='w',
@@ -60,8 +60,9 @@ def process(input_filepath: str, openai_api_key: str, num_cores: int, prompt: st
         format='%(asctime)s - %(name)s - %(process)d - %(levelname)s -- %(message)s', datefmt='%d-%b-%y %H:%M:%S')
     logging.info(f"Logging to: {log_file_path}")
     
-       
     # get prompt
+    if prompt.startswith("./"):
+        prompt = prompt[2:]
     prompt = open(f'{dir_path}{prompt}',mode="r",encoding="utf8").read()
     logging.info(f"Prompt is: \n {prompt}")
 
@@ -70,9 +71,11 @@ def process(input_filepath: str, openai_api_key: str, num_cores: int, prompt: st
     # load input data
     with open(input_filepath,mode="r",encoding="utf8") as f:
         data = json.load(f)
-    df = pandas.json_normalize(data=data["examples"],sep="-")
+    df = pandas.json_normalize(data=data["examples"],sep="-",)
     
-    
+    # enforce id is string
+    df["context-context_id"] = df["context-context_id"].astype(str)
+        
     # give a sequence number to each utterance
     df = df.sort_values(["context-context_id","created_at"])
     df['seq'] = df.groupby("context-context_id").cumcount()
@@ -145,14 +148,13 @@ def process(input_filepath: str, openai_api_key: str, num_cores: int, prompt: st
     in_and_out_tokens = mean_input + tokens
     per_second = 1500 / in_and_out_tokens
     logging.info(f'Per second rate is max {per_second:.2f}')
-    
-    
+        
     # max_tokens
     df['max_tokens'] = tokens
    
     # add the output location for the file
     df['summary_path'] = output_file_path + df['context-context_id'] + ".txt"
-    
+        
     # parallelization
     p = Pool(num_cores)
     dfs = numpy.array_split(df,num_cores)
@@ -205,7 +207,7 @@ def call_api(row: pandas.Series) -> pandas.Series:
 
     logging.info(f'Summary is saved at {row["summary_path"]}')
     END_TIME = perf_counter()
-    logging.info(f'Took {END_TIME-START_TIME} seconds')
+    logging.info(f'Took {END_TIME-START_TIME:.2f} seconds')
     return row
 
 def summarize(prompt: str, tokens: int) -> str:
