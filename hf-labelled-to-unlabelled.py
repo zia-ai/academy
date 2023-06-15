@@ -11,24 +11,26 @@
 
 # standard imports
 import json
-from os.path import isfile 
+from os.path import isfile
 
 # 3rd party imports
 import click
 
+
 @click.command()
-@click.option('-f','--filepath',type=str,required=True,help='HF labelled json file path')
-@click.option('-o','--output_filepath',type=str,default='',help='HF unlabelled json file path')
-def main(filepath: str, output_filepath: str)->None:
+@click.option('-f', '--filepath', type=str, required=True, help='HF labelled json file path')
+@click.option('-o', '--output_filepath', type=str, default='', help='HF unlabelled json file path')
+def main(filepath: str, output_filepath: str) -> None:
     '''Main Function'''
 
-    process(filepath,output_filepath)
+    process(filepath, output_filepath)
+
 
 def process(filepath: str, output_filepath: str) -> None:
     '''Convert labelled to unlabelled file'''
 
     if isfile(filepath):
-        with open(filepath, mode="r",encoding="utf8") as f:
+        with open(filepath, mode="r", encoding="utf8") as f:
             data = json.load(f)
     else:
         raise Exception(f"{filepath} does not exist")
@@ -46,9 +48,10 @@ def process(filepath: str, output_filepath: str) -> None:
         output_filepath = filepath.split("/")
         output_filepath[-1] = "unlabelled.json"
         output_filepath = '/'.join(output_filepath)
-    
-    with open(output_filepath, mode="w",encoding="utf8") as f:
-        json.dump(data,f,indent=3)
+
+    with open(output_filepath, mode="w", encoding="utf8") as f:
+        json.dump(data, f, indent=3)
+
 
 def delete_intent_ids_from_examples(examples: list) -> list:
     '''deletes intent ids from examples'''
@@ -56,8 +59,9 @@ def delete_intent_ids_from_examples(examples: list) -> list:
     for i in range(len(examples)):
         if "intents" in examples[i].keys():
             del examples[i]["intents"]
-    
+
     return examples
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     main()
