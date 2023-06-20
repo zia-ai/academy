@@ -1,14 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python # pylint: disable=missing-module-docstring
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python utterances_unlabelled_csv_to_json.py 
+# python utterances_unlabelled_csv_to_json.py
 #
 # *****************************************************************************
 
 # standard imports
 import uuid
-import humanfirst
 from datetime import datetime
 from typing import Union
 
@@ -16,23 +15,26 @@ from typing import Union
 import pandas
 import click
 
+# custom imports
+import humanfirst
+
+
 @click.command()
-@click.option('-f','--filename',type=str,required=True,help='Input File Path')
-@click.option('-m','--metadata_keys',type=str,required=True,help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')
-@click.option('-u','--utterance_col',type=str,required=True,help='Column name containing utterances')
-@click.option('-r','--role_col',type=str,required=True,help='Column name roles')
-@click.option('-i','--id_col',type=str,required=True,help='Column name ids')
-def main(filename: str, metadata_keys: str, utterance_col: str, role_col: str, id_col: str):
+@click.option('-f', '--filename', type=str, required=True, help='Input File Path')
+@click.option('-m', '--metadata_keys', type=str, required=True, help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')  # pylint: disable=line-too-long
+@click.option('-u', '--utterance_col', type=str, required=True, help='Column name containing utterances')
+def main(filename: str, metadata_keys: str, utterance_col: str) -> None:
+    """Main Function"""
 
     # read the input csv
-    df = pandas.read_csv(filename,encoding='utf8') 
+    df = pandas.read_csv(filename, encoding='utf8')
     metadata_keys = metadata_keys.split(",")
 
     # create metadata object per utterance
-    df['metadata'] = df.apply(create_metadata,args=[metadata_keys],axis=1)
+    df['metadata'] = df.apply(create_metadata, args=[metadata_keys], axis=1)
 
     # build examples
-    df = df.apply(build_examples,args=[utterance_col,role_col,id_col],axis=1)
+    df = df.apply(build_examples, args=[utterance_col], axis=1)
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
@@ -43,39 +45,37 @@ def main(filename: str, metadata_keys: str, utterance_col: str, role_col: str, i
         unlabelled.add_example(example)
 
     # write to output
-    filename_out = filename.replace('.csv','.json')
-    file_out = open(filename_out,mode='w',encoding='utf8')
+    filename_out = filename.replace('.csv', '.json')
+    file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
 
-def build_examples(row: pandas.Series, utterance_col: str, role_col: str, id_col: str):
+
+def build_examples(row: pandas.Series, utterance_col: str):
     '''Build the examples'''
 
     # build examples
     example = humanfirst.HFExample(
-        text=str(row[utterance_col]),
+        text=row[utterance_col],
         id=f'example-{uuid.uuid4()}',
         created_at=datetime.now().isoformat(),
-        intents=[], # no intents as unlabelled
-        tags=[], # recommend uploading metadata for unlabelled and tags for labelled
-        metadata=row['metadata'],
-        context=humanfirst.HFContext(
-            str(row[id_col]), # any ID can be used recommend a hash of the text which is repeatable or the external conversation id if there is one.
-            'conversation', # the type of document
-            str(row[role_col]) # the speakers role in the conversations
-        )
+        intents=[],  # no intents as unlabelled
+        tags=[],  # recommend uploading metadata for unlabelled and tags for labelled
+        metadata=row['metadata']
     )
     row['example'] = example
     return row
-    
+
+
 def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract: list) -> dict:
     '''Build the HF metadata object for the pandas line using the column names passed'''
-    
+
     metadata = {}
     for key in metadata_keys_to_extract:
         metadata[key] = str(row[key])
 
     return metadata
 
+
 if __name__ == '__main__':
-    main()
+    main() # pylint: disable=no-value-for-parameter
