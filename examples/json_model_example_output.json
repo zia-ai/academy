@@ -4,7 +4,7 @@
     {
       "id": "example-id-12431234",
       "text": "I was dreadfully mauled at the zoo",
-      "created_at": "2023-06-05T14:26:07.672736Z",
+      "created_at": "2023-06-05T14:26:07+00:00",
       "intents": [
         {
           "intent_id": "intent-1"
@@ -17,7 +17,7 @@
     {
       "id": "example-id-12431235",
       "text": "The boa constrictor ate my icecream",
-      "created_at": "2023-06-05T14:26:07.672757Z",
+      "created_at": "2023-06-05T14:26:08+00:00",
       "intents": [
         {
           "intent_id": "intent-1"
@@ -30,7 +30,7 @@
     {
       "id": "example-id-12431236",
       "text": "A piano fell from great height on me",
-      "created_at": "2023-06-05T14:26:07.672767Z",
+      "created_at": "2023-06-05T14:26:09+00:00",
       "intents": [
         {
           "intent_id": "intent-3"
@@ -43,7 +43,7 @@
     {
       "id": "example-id-12431237",
       "text": "A box labelled ACME exploded in my face",
-      "created_at": "2023-06-05T14:26:07.672771Z",
+      "created_at": "2023-06-05T14:26:10+00:00",
       "intents": [
         {
           "intent_id": "intent-3"
