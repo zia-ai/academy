@@ -1,10 +1,10 @@
 #!/usr/bin/env python # pylint: disable=missing-module-docstring
 # -*- coding: utf-8 -*-
-# ***************************************************************************80
+# *********************************************************************************************************************
 #
 # python csv_to_json_labelled.py
 #
-# *****************************************************************************
+# *********************************************************************************************************************
 
 # standard imports
 import uuid
@@ -28,9 +28,9 @@ import humanfirst
               help='Utterance Metadata Colums: "metadata_col_1,metadata_col_2,...,metadata_col_n"')
 @click.option('-u', '--utterance_col', type=str, required=True,
               help='Column name containing utterances')
-@click.option('-i', '--intent_col', type=str, required=False, default='',
+@click.option('-i', '--intent_col', type=str, required=True,
               help='Column name containing the label name for the intent')
-@click.option('-r', '--response_col', type=str, required=True,
+@click.option('-r', '--response_col', type=str, required=False, default="",
               help='Intent Metadta Columns (often response) "metadata_col_1,metadata_col_2,...,metadata_col_n"')
 @click.option('-s', '--strip', type=str, required=False, default='',
               help='Strip char and replace with single space')
