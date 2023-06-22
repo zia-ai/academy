@@ -34,7 +34,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str) -> None:
     df['metadata'] = df.apply(create_metadata, args=[metadata_keys], axis=1)
 
     # build examples
-    df = df.apply(build_examples, args=[utterance_col], axis=1)
+    df = df.apply(build_examples, args=[utterance_col,"profession"], axis=1)
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
@@ -51,7 +51,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str) -> None:
     file_out.close()
 
 
-def build_examples(row: pandas.Series, utterance_col: str):
+def build_examples(row: pandas.Series, utterance_col: str, context_id_sub: str):
     '''Build the examples'''
 
     # build examples
@@ -61,7 +61,8 @@ def build_examples(row: pandas.Series, utterance_col: str):
         created_at=datetime.now().isoformat(),
         intents=[],  # no intents as unlabelled
         tags=[],  # recommend uploading metadata for unlabelled and tags for labelled
-        metadata=row['metadata']
+        metadata=row['metadata'],
+        context=humanfirst.HFContext(f'{row[context_id_sub]}-{uuid.uuid4()}',"conversation","client")
     )
     row['example'] = example
     return row
