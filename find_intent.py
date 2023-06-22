@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python # pylint: disable=missing-module-docstring
 # -*- coding: utf-8 -*-
-# ***************************************************************************80
+# *********************************************************************************************************************
 #
-# python find_intent.py 
-# -u <username> 
+# python find_intent.py
+# -u <username>
 # -p <password>
 # -n <namespace>
 # -b <playbook>
@@ -12,11 +12,14 @@
 # Lists all workspaces in an organisation and then searches it for an id found
 # example use is to find the intent mentioned in an error of the workspace
 #
-# *****************************************************************************
+# *********************************************************************************************************************
 
-import humanfirst_apis
+# 3rd party imports
 import click
 import pandas
+
+# custom imports
+import humanfirst_apis
 
 @click.command()
 @click.option('-u', '--username', type=str, default='', help='HumanFirst username')
@@ -25,6 +28,7 @@ import pandas
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-i','--intent_id', type=str, required=True, help='Intentid to search for')
 def main(username: str, password: int, namespace: str, playbook: str,intent_id: str):
+    """Main Function"""
     headers = humanfirst_apis.process_auth("",username,password)
     intents = humanfirst_apis.get_intents(headers, namespace, playbook)
     df = pandas.json_normalize(intents)
@@ -32,8 +36,8 @@ def main(username: str, password: int, namespace: str, playbook: str,intent_id: 
     df_with_parents = df[df["parentId"]==intent_id]
     print(df_with_parents[["name","parentId"]])
     try:
-        print(df.loc[intent_id,["name","parendId"]])
+        print(df.loc[intent_id,["name","parentId"]])
     except KeyError:
         print("Did not find intent")
 if __name__ == '__main__':
-    main()
+    main() # pylint: disable=no-value-for-parameter
