@@ -1,10 +1,10 @@
 #!/usr/bin/env python # pylint: disable=missing-module-docstring
 # -*- coding: utf-8 -*-
-# ***************************************************************************80
+# *********************************************************************************************************************
 #
-# python utterances_unlabelled_csv_to_json.py
+# python csv_to_json_unlabelled.py
 #
-# *****************************************************************************
+# *********************************************************************************************************************
 
 # standard imports
 import uuid
@@ -17,7 +17,6 @@ import click
 
 # custom imports
 import humanfirst
-
 
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
