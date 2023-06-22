@@ -4,6 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pylint = "*"
+git-pylint-commit-hook = "*"
 numpy = "*"
 pandas = "*"
 click = "*"
@@ -31,6 +33,7 @@ ratelimit = "*"
 plotly="*"
 kaleido="*"
 openai="*"
+tiktoken="*"
 
 [dev-packages]
 
