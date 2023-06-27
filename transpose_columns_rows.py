@@ -23,14 +23,21 @@ import pandas
 def main(file: str, delimiter: str, encoding: str, example_index_start: int) -> None:
     '''Main Function'''
     df = pandas.read_csv(file, delimiter=delimiter, encoding=encoding)
+    assert isinstance(df,pandas.DataFrame)
     df = df.fillna('')
     utterance_columns = df.columns[example_index_start:].to_list()
     df = df.apply(join_utterance_columns, args=[utterance_columns], axis=1)
     df.drop(columns=utterance_columns, inplace=True)
     df = df.explode("utterances")
+
+    # clear out any columns that have no values or all the same value in
+    for column in df.columns:
+        if df[column].nunique() <= 1:
+            df.drop(columns=[column],inplace=True)
+            print(f'Dropped {column}')
+
     file_out_name = file.replace('.csv', '_output.csv')
     df.to_csv(file_out_name, index=False, header=True, encoding='utf8')
-
 
 def join_utterance_columns(row: pandas.Series, utterance_columns: list) -> pandas.Series:
     ''' Joins the utterance columsn into a list which can be exploded'''

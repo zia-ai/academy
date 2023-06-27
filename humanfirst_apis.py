@@ -10,16 +10,29 @@
 import requests
 import json
 import base64
-import humanfirst
 import datetime
 
+# third party imports
+import numpy
 
-def validate_response(response, url: str, field: str = None):
-    if isinstance(response,str):
-        raise Exception(response)
-    if response.status_code != 200:
-        raise Exception(
-            f'Did not receive 200 from url: {url} {response.status_code} {response.text}')
+# custom imports
+import humanfirst
+
+class HFAPIException(Exception):
+    def __init__(self, url:str, response, payload: dict = None):
+        if payload = None:
+            payload = {}
+        self.url = url
+        self.response = response
+        self.payload = payload
+        self.message = f'Did not receive 200 from url: {url} {self.response.status_code} {self.response.text}'
+        super().__init__(self.message)
+
+def validate_response(response, url: str, field: str = None, payload: dict = {}):
+    if isinstance(response,str) or response.status_code != 200:
+        print(payload)
+        raise HFAPIException(url=url,payload=payload,response=response)
+    
     candidate = response.json()
     if candidate:
         if field and field in candidate.keys():
@@ -298,6 +311,7 @@ def predict(headers: str, sentence: str, namespace: str, playbook: str, modelId:
     revisionId probably better known as run_id 
     but it needs to be the run_id of the model job not revisions which is showing export job
     TODO: update when updated'''
+        
     payload = {
         "namespace": "string",
         "playbook_id": "string",
@@ -333,7 +347,7 @@ def batchPredict(headers: str, sentences: list, namespace: str, playbook: str) -
 
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload))
-    return validate_response(response,url,"predictions")
+    return validate_response(response,url,"predictions",payload=payload)
 
 def get_headers(bearer_token: str) -> dict:
     bearer_string = f'Bearer {bearer_token}'
