@@ -27,6 +27,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str) -> None:
 
     # read the input csv
     df = pandas.read_csv(filename, encoding='utf8')
+    df.fillna('',inplace=True)
     metadata_keys = metadata_keys.split(",")
 
     # create metadata object per utterance
