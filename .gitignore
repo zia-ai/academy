@@ -11,6 +11,8 @@ summarize/workspaces/*
 !summarize/workspaces/.gitignore
 summarize/summaries/*
 !summarize/summaries/.gitignore
+summarize/prompts/*
+!summarize/prompts/.gitignore
 hf
 zia
 hf-linux-amd64
