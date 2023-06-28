@@ -7,33 +7,126 @@
 # *********************************************************************************************************************
 
 # standard imports
-import uuid
+import json
 from datetime import datetime
 from typing import Union
 
 # 3rd party imports
 import pandas
+import numpy
 import click
+from dateutil import parser
 
 # custom imports
 import humanfirst
 
+
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
-@click.option('-m', '--metadata_keys', type=str, required=True, help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')  # pylint: disable=line-too-long
-@click.option('-u', '--utterance_col', type=str, required=True, help='Column name containing utterances')
-def main(filename: str, metadata_keys: str, utterance_col: str) -> None:
+@click.option('-m', '--metadata_keys', type=str, required=True,
+              help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')
+@click.option('-u', '--utterance_col', type=str, required=True,
+              help='Column name containing utterances')
+@click.option('-d', '--delimiter', type=str, required=False, default=",",
+              help='Delimiter for the csv file')
+@click.option('-c', '--convo_id_col', type=str, required=False, default='',
+              help='If conversations which is the id otherwise utterances and defaults to hash of utterance_col')
+@click.option('-t', '--created_at_col', type=str, required=False, default='',
+              help='If there is a created date for utterance otherwise defaults to now')
+@click.option('-r', '--role_col', type=str, required=False, default='',
+              help='Which column the role in ')
+@click.option('-p', '--role_mapper', type=str, required=False, default='',
+              help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert}"')
+def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
+         convo_id_col: str, created_at_col: str, role_col: str, role_mapper: str) -> None:
     """Main Function"""
-
-    # read the input csv
-    df = pandas.read_csv(filename, encoding='utf8')
+    
+    # calculate columns
     metadata_keys = metadata_keys.split(",")
+    used_cols = metadata_keys
+    assert isinstance(used_cols,list)
+    for col in [utterance_col, convo_id_col, created_at_col, role_col]:
+        if col != '':
+            used_cols.append(col)
 
-    # create metadata object per utterance
-    df['metadata'] = df.apply(create_metadata, args=[metadata_keys], axis=1)
+    # read the input csv only for the columns we care about - all as strings
+    df = pandas.read_csv(filename, encoding='utf8',usecols=used_cols, dtype=str, delimiter=delimiter)
+    assert isinstance(df,pandas.DataFrame)
+    df.fillna('', inplace=True)
+    
+    assert isinstance(metadata_keys, list)
+
+    # assume role all to start with and overwrite later
+    df['role'] = 'client'
+
+    # if convos index them
+    if convo_id_col != '':
+
+        # must have created_at date if convo index
+        if created_at_col == '':
+            raise KeyError(
+                'Must have created_at_col to sort the data if convo_id_col is present and these are conversations')
+        df.sort_values([convo_id_col, created_at_col], inplace=True)
+
+        # check whether have any column clashes
+        if created_at_col == 'created_at':
+            created_at_col = 'created_at_input'
+            df.rename(columns={'created_at': created_at_col}, inplace=True)
+
+        # parse dates
+        df['created_at'] = df[created_at_col].apply(parser.parse)
+
+        # check roles
+        if role_col == '':
+            raise KeyError('Must have role_col if conv')
+
+        # work out role mapper
+        if role_mapper == '':
+            print('Warning no role mapper')
+        roles = role_mapper.split(',')
+        print(roles)
+        role_mapper = {}
+        for role in roles:
+            pair = role.split(':')
+            role_mapper[pair[0]] = pair[1]
+        print(json.dumps(role_mapper, indent=2))
+
+        # produce roles
+        df['role'] = df[role_col].apply(translate_roles, args=[role_mapper])
+        print(df[['role',role_col,convo_id_col]].groupby(['role',role_col]).count())
+
+        # index the speakers
+        df['idx'] = df.groupby([convo_id_col]).cumcount()
+        df['idx_max'] = df.groupby([convo_id_col])[
+            'idx'].transform(numpy.max)
+
+        # This info lets you filter for the first or last thing the client says
+        # this is very useful in boot strapping bot design
+        df['idx_client'] = df.groupby(
+            [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
+        df['first_customer_utt'] = df['idx_client'] == 0
+        df['second_customer_utt'] = df['idx_client'] == 1
+        df['idx_client_max'] = df.groupby([convo_id_col])[
+            'idx_client'].transform(numpy.max)
+        df['final_customer_utt'] = df['idx_client'] == df['idx_client_max']
+
+        # make sure convo id on the metadata as well for summarisation linking
+        metadata_keys.append(convo_id_col)
+
+        # extend metadata_keys to indexed fields for conversations.
+        # generated custom indexing fields
+        metadata_keys.extend(
+            ['idx', 'first_customer_utt', 'second_customer_utt', 'final_customer_utt'])
+
+    # build metadata for utterances or conversations
+    dict_of_file_level_values = {'loaded_date': datetime.now(
+    ).isoformat(), 'script_name': 'csv_to_json_unlaballed.py'}
+    df['metadata'] = df.apply(create_metadata, args=[
+                              metadata_keys, dict_of_file_level_values], axis=1)
 
     # build examples
-    df = df.apply(build_examples, args=[utterance_col], axis=1)
+    df = df.apply(build_examples, args=[
+                  utterance_col, convo_id_col, created_at_col], axis=1)
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
@@ -50,31 +143,66 @@ def main(filename: str, metadata_keys: str, utterance_col: str) -> None:
     file_out.close()
 
 
-def build_examples(row: pandas.Series, utterance_col: str):
+def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '', created_at_col: str = ''):
     '''Build the examples'''
+
+    # if utterances use the hash of the utterance for an id
+    if convo_id_col == '':
+        external_id = humanfirst.hash_string(row[utterance_col], 'example')
+        context = None
+    # if convos use the convo id and sequence
+    else:
+        external_id = f'example-{row[convo_id_col]}-{row["idx"]}'
+        context = humanfirst.HFContext(
+            context_id=external_id,
+            type='conversation',
+            role=row["role"]
+        )
+
+    # created_at
+    if created_at_col == '':
+        created_at = datetime.now().isoformat()
+    else:
+        created_at = row[created_at_col]
 
     # build examples
     example = humanfirst.HFExample(
         text=row[utterance_col],
-        id=f'example-{uuid.uuid4()}',
-        created_at=datetime.now().isoformat(),
+        id=external_id,
+        created_at=created_at,
         intents=[],  # no intents as unlabelled
         tags=[],  # recommend uploading metadata for unlabelled and tags for labelled
-        metadata=row['metadata']
+        metadata=row['metadata'],
+        context=context
     )
     row['example'] = example
     return row
 
 
-def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract: list) -> dict:
+def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract:
+    list, dict_of_values: dict = None) -> dict:
     '''Build the HF metadata object for the pandas line using the column names passed'''
 
-    metadata = {}
+    if dict_of_values is None:
+        metadata = {}
+    else:
+        assert isinstance(dict_of_values, dict)
+        metadata = dict_of_values
+
     for key in metadata_keys_to_extract:
         metadata[key] = str(row[key])
 
     return metadata
 
 
+def translate_roles(role: str, mapper: dict) -> str:
+    '''Translates abcd to hf role mapping'''
+    try:
+        return mapper[role]
+    except KeyError as exc:
+        if "*" in mapper.keys():
+            return mapper["*"]
+        raise KeyError(f'Couldn\'t locate role: "{role}" in role mapping') from exc
+
 if __name__ == '__main__':
-    main() # pylint: disable=no-value-for-parameter
+    main()  # pylint: disable=no-value-for-parameter
