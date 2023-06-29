@@ -37,27 +37,45 @@ import humanfirst
               help='Which column the role in ')
 @click.option('-p', '--role_mapper', type=str, required=False, default='',
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert}"')
+@click.option('--filtering', type=str, required=False, default='', help='column:value,column:value')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, role_col: str, role_mapper: str) -> None:
+         convo_id_col: str, created_at_col: str, role_col: str, role_mapper: str, filtering: str) -> None:
     """Main Function"""
-    
+
     # calculate columns
     metadata_keys = metadata_keys.split(",")
-    used_cols = metadata_keys
-    assert isinstance(used_cols,list)
+    used_cols = list(metadata_keys)
+    assert isinstance(used_cols, list)
     for col in [utterance_col, convo_id_col, created_at_col, role_col]:
         if col != '':
             used_cols.append(col)
 
     # read the input csv only for the columns we care about - all as strings
-    df = pandas.read_csv(filename, encoding='utf8',usecols=used_cols, dtype=str, delimiter=delimiter)
-    assert isinstance(df,pandas.DataFrame)
+    df = pandas.read_csv(filename, encoding='utf8',
+                         usecols=used_cols, dtype=str, delimiter=delimiter)
+    assert isinstance(df, pandas.DataFrame)
     df.fillna('', inplace=True)
-    
+
     assert isinstance(metadata_keys, list)
 
     # assume role all to start with and overwrite later
     df['role'] = 'client'
+
+    # filtering
+    if filtering != '':
+        print(f'Before filtering: {df.shape[0]}')
+        filters = filtering.split(',')
+        print(filters)
+        filtering = {}
+        for filt in filters:
+            pair = filt.split(':')
+            filtering[pair[0]] = pair[1]
+        print('Filtering on:')
+        print(filtering)
+        assert isinstance(filtering, dict)
+        for key, value in filtering.items():
+            df = df[df[key] == value]
+        print(f'After filtering: {df.shape[0]}')
 
     # if convos index them
     if convo_id_col != '':
@@ -81,11 +99,13 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             raise KeyError('Must have role_col if conv')
 
         # work out role mapper
+        assert isinstance(role_mapper, str)
         if role_mapper == '':
             print('Warning no role mapper')
         roles = role_mapper.split(',')
         print(roles)
         role_mapper = {}
+        assert isinstance(role_mapper, dict)
         for role in roles:
             pair = role.split(':')
             role_mapper[pair[0]] = pair[1]
@@ -93,7 +113,8 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
         # produce roles
         df['role'] = df[role_col].apply(translate_roles, args=[role_mapper])
-        print(df[['role',role_col,convo_id_col]].groupby(['role',role_col]).count())
+        print(df[['role', role_col, convo_id_col]].groupby(
+            ['role', role_col]).count())
 
         # index the speakers
         df['idx'] = df.groupby([convo_id_col]).cumcount()
@@ -117,10 +138,13 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         # generated custom indexing fields
         metadata_keys.extend(
             ['idx', 'first_customer_utt', 'second_customer_utt', 'final_customer_utt'])
+        
 
     # build metadata for utterances or conversations
     dict_of_file_level_values = {'loaded_date': datetime.now(
     ).isoformat(), 'script_name': 'csv_to_json_unlaballed.py'}
+    print(metadata_keys)
+    print(dict_of_file_level_values)
     df['metadata'] = df.apply(create_metadata, args=[
                               metadata_keys, dict_of_file_level_values], axis=1)
 
@@ -154,7 +178,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
     else:
         external_id = f'example-{row[convo_id_col]}-{row["idx"]}'
         context = humanfirst.HFContext(
-            context_id=external_id,
+            context_id=row[convo_id_col],
             type='conversation',
             role=row["role"]
         )
@@ -180,7 +204,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
 
 
 def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract:
-    list, dict_of_values: dict = None) -> dict:
+                    list, dict_of_values: dict = None) -> dict:
     '''Build the HF metadata object for the pandas line using the column names passed'''
 
     if dict_of_values is None:
@@ -202,7 +226,9 @@ def translate_roles(role: str, mapper: dict) -> str:
     except KeyError as exc:
         if "*" in mapper.keys():
             return mapper["*"]
-        raise KeyError(f'Couldn\'t locate role: "{role}" in role mapping') from exc
+        raise KeyError(
+            f'Couldn\'t locate role: "{role}" in role mapping') from exc
+
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
