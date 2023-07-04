@@ -22,13 +22,20 @@ import click
 import tiktoken
 
 
+class OpenAITooManyTokens(Exception):
+    """Thrown if input data too large before calling the relevant model"""
+
+    def __init__(self, tokens: int, limit: int):
+        self.message = f'Data tokens {tokens} exceeds OpenAI model limit {limit}'
+        super().__init__(self.message)
+
 @click.command()
 @click.option('-i', '--input_filepath', type=str, required=True,
               help='Path containing HF Unlabelled conversations in json format')
 @click.option('-a', '--openai_api_key', type=str, required=True, help='OpenAI API key')
 @click.option('-p', '--prompt', type=str, default='./prompts/abcd_example_prompt.txt',
               help='location of prompt file to read')
-@click.option('-t', '--tokens', type=int, default=500, help='Tokens to reserve for output')
+@click.option('-t', '--output_tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
 @click.option('-s', '--sample_size', type=int, default=0, help='Number of conversations to sample')
 @click.option('-l', '--log_file_path', type=str, default='./logs', help='Server log file path')
@@ -36,13 +43,13 @@ import tiktoken
 @click.option('-r', '--rewrite', is_flag=True, type=bool, default=False,
               help='If present will rewrite (overwrite) all previous summaries')
 @click.option('-d', '--dummy', is_flag=True, type=bool, default=False, help='Skip the actual openai call')
-@click.option('-v', '--verbose', is_flag=True, type=bool, default=False, 
+@click.option('-v', '--verbose', is_flag=True, type=bool, default=False,
               help='Set logging level to DEBUG otherwise INFO')
 def main(input_filepath: str,
          openai_api_key: str,
          num_cores: int,
          prompt: str,
-         tokens: int,
+         output_tokens: int,
          sample_size: str,
          log_file_path: str,
          output_file_path: str,
@@ -50,7 +57,7 @@ def main(input_filepath: str,
          dummy: bool,
          verbose: bool) -> None:
     '''Main Function'''
-    process(input_filepath, openai_api_key, num_cores, prompt, tokens,
+    process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
             sample_size, log_file_path, output_file_path, rewrite, dummy, verbose)
 
 
@@ -58,7 +65,7 @@ def process(input_filepath: str,
             openai_api_key: str,
             num_cores: int,
             prompt: str,
-            tokens: int,
+            output_tokens: int,
             sample_size: str,
             log_file_path: str,
             output_file_path: str,
@@ -172,18 +179,21 @@ def process(input_filepath: str,
     df['prompt'] = df['conversation'].apply(
         merge_prompt_and_convo, args=[prompt])
 
-    # estimate the tokens
-    df['tokens'] = df["prompt"].apply(
-        count_tokens, args=[tiktoken.encoding_for_model("gpt-3.5-turbo")])
+    # estimate the tokens - use the 4k one, and then bump up if needed with factor of safety
+    df['tokens'] = df["prompt"].apply(count_tokens,
+                                      args=[tiktoken.encoding_for_model("gpt-3.5-turbo")])
     mean_input = df["tokens"].mean()
-    logging.info(f'Mean input tokens is {mean_input}')
-    logging.info(f'Output tokens is {tokens}')
-    in_and_out_tokens = mean_input + tokens
+    logging.info('Mean input tokens is: %s',mean_input)
+    logging.info('Output tokens is:  %s',output_tokens)
+    in_and_out_tokens = mean_input + output_tokens
     per_second = 1500 / in_and_out_tokens
     logging.info('Per second rate is max %2f', per_second)
 
+    # work out model for each row
+    df['model'] = df['tokens'].apply(calculate_which_model,args=[output_tokens])
+
     # max_tokens
-    df['max_tokens'] = tokens
+    df['max_tokens'] = output_tokens
 
     # add the output location for the file
     df['summary_path'] = output_file_path + df['context-context_id'] + ".txt"
@@ -227,46 +237,62 @@ def call_api(row: pandas.Series) -> pandas.Series:
     '''Call OpenAI API for summarization'''
 
     start_time = perf_counter()
-    logging.info(f"Calling OpenAI to summarize conversation - {row.name}")
+    logging.info("Calling OpenAI model %s to summarize conversation: %s",row["model"],row.name)
 
     row["summary"] = ''
     row["total_tokens"] = 0
     if not row["skip"]:
         try:
-            row["summary"], row["total_tokens"] = summarize(
-                row["prompt"], row["max_tokens"])
-        except Exception as e:
-            logging.error(f'Exception for {row.name} is {e}')
+            row = summarize(row, output_tokens=row["max_tokens"])
+        except Exception as e: # pylint: disable=broad-except
+            logging.error('Exception for %s is %s',row.name,e)
             return row["summary"]
 
-    logging.info('Total tokens for conversation id %s is %s', row.name, row["total_tokens"])
-    logging.info(f'Conversation - {row.name} is summarized')
+    logging.info('Total tokens for conversation id %s is %s',
+                 row.name, row["total_tokens"])
+    logging.info('Conversation - %s is summarized',row.name)
 
     # write the file to output
     with open(row["summary_path"], mode="w", encoding="utf8") as file:
         file.write(row["summary"])
 
-    logging.info(f'Summary is saved at {row["summary_path"]}')
+    logging.info('Summary is saved at: %s',row["summary_path"])
     end_time = perf_counter()
-    logging.info(f'Took {end_time-start_time:.2f} seconds')
+    logging.info('Took %.2f seconds',end_time-start_time)
     return row
 
 
-def summarize(prompt: str, tokens: int) -> str:
+def calculate_which_model(tokens: int, output_tokens: int) -> str:
+    '''Works out which model for data line based on tokens'''
+
+    # dec to bin conversion gives margin of error
+    if tokens + output_tokens < 4000:
+        return "gpt-3.5-turbo"
+    elif tokens + output_tokens < 16000:
+        return "gpt-3.5-turbo-16k"
+    elif tokens + output_tokens < 32000:
+        return "gpt-4-32k"
+    else:
+        raise OpenAITooManyTokens(tokens + output_tokens, 32000)
+
+
+def summarize(row: pandas.Series, output_tokens: int) -> str:
     '''Summarizes single conversation using prompt'''
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model=row["model"],
         messages=[
-            {"role": "user", "content": prompt}
+            {"role": "user", "content": row["prompt"]}
         ],
         temperature=0.0,
-        max_tokens=tokens,
+        max_tokens=output_tokens,
         top_p=1,
         frequency_penalty=0.0,
         presence_penalty=0.0
     )
-    return response.choices[0].message.content + "\n", response.usage.total_tokens
+    row["summary"] = response.choices[0].message.content + "\n"
+    row["total_tokens"] = response.usage.total_tokens
+    return row
 
 
 def count_tokens(text: str, encoding):

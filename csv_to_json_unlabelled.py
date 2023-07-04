@@ -37,9 +37,11 @@ import humanfirst
               help='Which column the role in ')
 @click.option('-p', '--role_mapper', type=str, required=False, default='',
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert}"')
+@click.option('-e', '--encoding', type=str, required=False, default='utf8',
+              help='Input CSV encoding')
 @click.option('--filtering', type=str, required=False, default='', help='column:value,column:value')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, role_col: str, role_mapper: str, filtering: str) -> None:
+         convo_id_col: str, created_at_col: str, role_col: str, role_mapper: str, encoding: str, filtering: str) -> None:
     """Main Function"""
 
     # calculate columns
@@ -51,7 +53,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             used_cols.append(col)
 
     # read the input csv only for the columns we care about - all as strings
-    df = pandas.read_csv(filename, encoding='utf8',
+    df = pandas.read_csv(filename, encoding=encoding,
                          usecols=used_cols, dtype=str, delimiter=delimiter)
     assert isinstance(df, pandas.DataFrame)
     df.fillna('', inplace=True)
