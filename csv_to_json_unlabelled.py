@@ -1,4 +1,4 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
+1#!/usr/bin/env python # pylint: disable=missing-module-docstring
 # -*- coding: utf-8 -*-
 # *********************************************************************************************************************
 #
@@ -8,7 +8,7 @@
 
 # standard imports
 import json
-from datetime import datetime
+import datetime
 from typing import Union
 
 # 3rd party imports
@@ -16,6 +16,7 @@ import pandas
 import numpy
 import click
 from dateutil import parser
+import tqdm 
 
 # custom imports
 import humanfirst
@@ -23,7 +24,7 @@ import humanfirst
 
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
-@click.option('-m', '--metadata_keys', type=str, required=True,
+@click.option('-m', '--metadata_keys', type=str, required=False, default='',
               help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')
 @click.option('-u', '--utterance_col', type=str, required=True,
               help='Column name containing utterances')
@@ -33,6 +34,8 @@ import humanfirst
               help='If conversations which is the id otherwise utterances and defaults to hash of utterance_col')
 @click.option('-t', '--created_at_col', type=str, required=False, default='',
               help='If there is a created date for utterance otherwise defaults to now')
+@click.option('-x', '--unix_date', is_flag=True, type=bool, required=False, default=False,
+              help='If created_at column is in unix epoch format')
 @click.option('-r', '--role_col', type=str, required=False, default='',
               help='Which column the role in ')
 @click.option('-p', '--role_mapper', type=str, required=False, default='',
@@ -41,12 +44,16 @@ import humanfirst
               help='Input CSV encoding')
 @click.option('--filtering', type=str, required=False, default='', help='column:value,column:value')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, role_col: str, role_mapper: str, encoding: str, filtering: str) -> None:
+         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
+         role_mapper: str, encoding: str, filtering: str) -> None:
     """Main Function"""
 
     # calculate columns
-    metadata_keys = metadata_keys.split(",")
-    used_cols = list(metadata_keys)
+    if metadata_keys == '':
+        metadata_keys = []
+    else:
+        metadata_keys = list(metadata_keys.split(","))
+    used_cols = metadata_keys
     assert isinstance(used_cols, list)
     for col in [utterance_col, convo_id_col, created_at_col, role_col]:
         if col != '':
@@ -94,7 +101,12 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             df.rename(columns={'created_at': created_at_col}, inplace=True)
 
         # parse dates
-        df['created_at'] = df[created_at_col].apply(parser.parse)
+        if unix_date:
+            df[created_at_col] = df[created_at_col].astype(float)
+            df['created_at'] = df[created_at_col].apply(datetime.datetime.fromtimestamp)
+            print(df)
+        else:
+            df['created_at'] = df[created_at_col].apply(parser.parse)
 
         # check roles
         if role_col == '':
@@ -103,14 +115,19 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         # work out role mapper
         assert isinstance(role_mapper, str)
         if role_mapper == '':
-            print('Warning no role mapper')
-        roles = role_mapper.split(',')
-        print(roles)
-        role_mapper = {}
-        assert isinstance(role_mapper, dict)
-        for role in roles:
-            pair = role.split(':')
-            role_mapper[pair[0]] = pair[1]
+            print('Warning no role mapper using defaults')
+            role_mapper = {
+                'client':'client',
+                'expert':'expert'
+            }
+        else:
+            roles = role_mapper.split(',')
+            print(roles)
+            role_mapper = {}
+            assert isinstance(role_mapper, dict)
+            for role in roles:
+                pair = role.split(':')
+                role_mapper[pair[0]] = pair[1]
         print(json.dumps(role_mapper, indent=2))
 
         # produce roles
@@ -140,10 +157,9 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         # generated custom indexing fields
         metadata_keys.extend(
             ['idx', 'first_customer_utt', 'second_customer_utt', 'final_customer_utt'])
-        
 
     # build metadata for utterances or conversations
-    dict_of_file_level_values = {'loaded_date': datetime.now(
+    dict_of_file_level_values = {'loaded_date': datetime.datetime.now(
     ).isoformat(), 'script_name': 'csv_to_json_unlaballed.py'}
     print(metadata_keys)
     print(dict_of_file_level_values)
@@ -151,8 +167,12 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
                               metadata_keys, dict_of_file_level_values], axis=1)
 
     # build examples
-    df = df.apply(build_examples, args=[
-                  utterance_col, convo_id_col, created_at_col], axis=1)
+    print("Commencing build examples")
+    tqdm.tqdm.pandas()
+    df = df.progress_apply(build_examples, args=[
+                  utterance_col, convo_id_col, "created_at"], axis=1)
+    
+    print("Commencing write")
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
@@ -176,6 +196,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
     if convo_id_col == '':
         external_id = humanfirst.hash_string(row[utterance_col], 'example')
         context = None
+
     # if convos use the convo id and sequence
     else:
         external_id = f'example-{row[convo_id_col]}-{row["idx"]}'
@@ -187,7 +208,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
 
     # created_at
     if created_at_col == '':
-        created_at = datetime.now().isoformat()
+        created_at = datetime.datetime.now().isoformat()
     else:
         created_at = row[created_at_col]
 
@@ -203,7 +224,6 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
     )
     row['example'] = example
     return row
-
 
 def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract:
                     list, dict_of_values: dict = None) -> dict:
