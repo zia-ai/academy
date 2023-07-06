@@ -1,4 +1,4 @@
-1#!/usr/bin/env python # pylint: disable=missing-module-docstring
+#!/usr/bin/env python # pylint: disable=missing-module-docstring
 # -*- coding: utf-8 -*-
 # *********************************************************************************************************************
 #
@@ -16,11 +16,10 @@ import pandas
 import numpy
 import click
 from dateutil import parser
-import tqdm 
+import tqdm
 
 # custom imports
 import humanfirst
-
 
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
@@ -169,24 +168,25 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     # build examples
     print("Commencing build examples")
     tqdm.tqdm.pandas()
-    df = df.progress_apply(build_examples, args=[
-                  utterance_col, convo_id_col, "created_at"], axis=1)
-    
-    print("Commencing write")
+    df = df.progress_apply(build_examples,
+                           args=[utterance_col, convo_id_col, "created_at"], axis=1)
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
     unlabelled = humanfirst.HFWorkspace()
 
     # add the examples to workspace
+    print("Adding examples to workpsace")
     for example in df['example']:
         unlabelled.add_example(example)
 
     # write to output
+    print("Commencing write")
     filename_out = filename.replace('.csv', '.json')
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
+    print(f"Write complete to {filename_out}")
 
 
 def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '', created_at_col: str = ''):
