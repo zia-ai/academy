@@ -6,4 +6,4 @@ Delimited by three backticks is a online chat conversation between a "client" of
 
 Was the client's issue fully resolved?
 
-Please give your answer as a Yes, No, or Unclear
+Please give your answer as Yes, No, or Unclear
