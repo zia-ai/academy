@@ -252,9 +252,10 @@ def call_api(row: pandas.Series) -> pandas.Series:
                  row.name, row["total_tokens"])
     logging.info('Conversation - %s is summarized',row.name)
 
-    # write the file to output
-    with open(row["summary_path"], mode="w", encoding="utf8") as file:
-        file.write(row["summary"])
+    # write the file to output if not in dummy mode
+    if not row["skip"]:
+        with open(row["summary_path"], mode="w", encoding="utf8") as file:
+            file.write(row["summary"])
 
     logging.info('Summary is saved at: %s',row["summary_path"])
     end_time = perf_counter()
