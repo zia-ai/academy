@@ -1,6 +1,0 @@
-Delimited by three backticks is a conversation between a Client of online fashion retailer and one of it's Expert customer service agents.
-
-```
-{{ conversation }}
-```
-What is the main call driver from this transcript?

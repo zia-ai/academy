@@ -24,6 +24,24 @@ import copy
 
 HFMetadata = Dict[str, Any]
 
+class HFIncompatibleOptionException(Exception):
+    """When parameters passed are incompatible"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
+class HFMissingCredentialsException(Exception):
+    """When can't locate assumed credentials"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
+class HFMapperException(Exception):
+    """When a mapping can't be resolved"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
 
 @dataclass_json
 @dataclass
