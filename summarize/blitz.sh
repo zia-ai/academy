@@ -1,5 +1,6 @@
 #!/bin/bash
 SCRIPT_PATH=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
-echo $SCRIPT_PATH
-rm $SCRIPT_PATH/logs/*.log
-rm $SCRIPT_PATH/summaries/*.txt
+LOG_PATH=$SCRIPT_PATH/logs
+SUMMARIES_PATH=$SCRIPT_PATH/summaries
+find "${LOG_PATH}" -name "*.log" -delete
+find "${SUMMARIES_PATH}" -name "*.txt" -delete
