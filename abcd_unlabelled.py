@@ -72,28 +72,43 @@ performance_log = []
 @click.option('-t', '--translation', default='', type=str,
               help='Translate into this language code using google translate')
 @click.option('-o', '--source', default='en', type=str, help='Source language of input file')
-def main(input_file: str, unlabelled: str, sample: int, anonymize: bool, translation: str, source: str):
+@click.option('-d', '--abcd_id', default=0, type=int, required=False,
+              help='Filter for just this abcd_id')
+@click.option('-l', '--include_actions', is_flag=True, default=False, type=bool, required=False,
+              help='Include system actions')
+def main(input_file: str, unlabelled: str, sample: int, anonymize: bool, translation: str, source: str, abcd_id: int, include_actions: bool):
     '''Main function'''
-    process(input_file, unlabelled, sample, anonymize, translation, source)
+    process(input_file, unlabelled, sample, anonymize, translation, source, abcd_id, include_actions)
 
-
-def process(input_file: str, unlabelled: str, sample: int, anonymize: bool, translation: str, source: str):
+def process(input_file: str, unlabelled: str, sample: int, anonymize: bool,
+            translation: str, source: str, abcd_id: int, include_actions: bool):
     '''Process the file'''
     perf_log('Begin')
 
     # load data
     tqdm.tqdm.pandas()
-    df = load_data_file(input_file)
+    df = load_data_file(input_file, abcd_id)
 
     # allow sampling for a smaller subset of conversations
     df = df if sample == 0 else df.sample(sample)
 
     # explode the original abcd column to abcd_role and utterance
     df = df.explode(['original']).reset_index(drop=True)
+    
+    # at this point should all b in order
+    print(df)
+    print(df.loc[0,:])
+    
     df = pandas.concat([df, pandas.DataFrame(
         df['original'].tolist(), columns=['abcd_role', 'utterance'])], axis=1)
+    print(df)
     df['idx'] = df.groupby('abcd_id').cumcount()
+    print(df)
     perf_log('Exploded original rows')
+    if not include_actions:
+        perf_log(f'Before removing actions: {df.shape}')
+        df = df[df["abcd_role"]!="action"]
+        perf_log(f'After removing actions: {df.shape}')
 
     # index the speakers
     df['idx_max'] = df.groupby(["abcd_id"])['idx'].transform(numpy.max)
@@ -222,7 +237,7 @@ def create_metadata(row: pandas.Series, keys_to_extract: list) -> pandas.Series:
     return row
 
 
-def load_data_file(input_file: str) -> pandas.DataFrame:
+def load_data_file(input_file: str, abcd_id: int) -> pandas.DataFrame:
     '''Read abcd input file and return a data frame'''
     # load abcd file to memory
     file_in = open(input_file, 'r', encoding='utf8')
@@ -235,11 +250,22 @@ def load_data_file(input_file: str) -> pandas.DataFrame:
 
     # removed delexed objects which are output from paper model rather than inputs.
     without_delexed = 0
+    filtered_allset = []
     for i in range(len(allset)):  # pylint: disable=consider-using-enumerate
         try:
             del allset[i]['delexed']
         except KeyError:
             without_delexed = 0 + without_delexed
+            
+        # if we need to trin to just one record
+        if abcd_id > 0 and abcd_id == allset[i]["convo_id"]:
+            print(abcd_id)
+            filtered_allset.append(allset[i])
+            print(json.dumps(allset[i],indent=2))
+    if len(filtered_allset) == 1:
+        allset = filtered_allset
+            
+                
     perf_log("Records that couldn't have delexed removed: " +
              str(without_delexed))
 
