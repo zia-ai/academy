@@ -57,9 +57,12 @@ def write_coverage_csv(username: str,
     
     if not output_path.endswith('/'):
         output_path = output_path + '/'
+        
+    output_file_uri = f'{output_path}{playbook_dict["name"]}'
 
-    df.to_csv(f'{output_path}{playbook_dict["name"]}', sep=separator, encoding="utf8", index=False)
+    df.to_csv(output_file_uri, sep=separator, encoding="utf8", index=False)
     print(df)
+    print(f'Wrote to: {output_file_uri}')
 
 def get_conversationset_df(
         headers: dict,
@@ -106,7 +109,7 @@ def get_conversationset_df(
             end_isodate=endisodate,
             convsetsource=convsetsource,
             page_size=page_size,
-            nextPageToken=response_json["nextPageToken"]
+            next_page_token=response_json["nextPageToken"]
         )
         assert (isinstance(response_json, dict))
         if not "results" in response_json.keys() and "totalCount" in response_json.keys():
