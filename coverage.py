@@ -58,7 +58,10 @@ def write_coverage_csv(username: str,
     if not output_path.endswith('/'):
         output_path = output_path + '/'
         
-    output_file_uri = f'{output_path}{playbook_dict["name"]}'
+    workspace_name = str(playbook_dict["name"]).replace(" ","_")
+    workspace_name = workspace_name.replace("-","_")
+        
+    output_file_uri = f'{output_path}{workspace_name}.csv'
 
     df.to_csv(output_file_uri, sep=separator, encoding="utf8", index=False)
     print(df)
