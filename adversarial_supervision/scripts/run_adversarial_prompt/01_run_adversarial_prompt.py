@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80*************************************120
 #
-# python ./adversarial_outbound_supervision/01_run_adversarial_prompt.py                 # pylint: disable=invalid-name
+# python ./adversarial_supervision\
+#         /scripts\
+#         /run_adversarial_prompt\
+#         /01_run_adversarial_prompt.py                                                 # pylint: disable=invalid-name
 #
 # *********************************************************************************************************************
 
@@ -19,51 +22,59 @@ import click
 
 
 @click.command()
-@click.option('-r', '--results', type=str, default="./adversarial_outbound_supervision/results/",
+@click.option('-r', '--results', type=str, default="./adversarial_supervision/results/",
               help='folder path where results are stored')
 @click.option('-a', '--openai_api_key', type=str, required=True, help='OpenAI API key')
-@click.option('-p', '--prompt', type=str, required=True, help='location of prompt file to read')
+@click.option('-p', '--prompt', type=str, default="./adversarial_supervision/prompt/",
+              help='folder containing adversarial prompt and list of customer utterances')
 @click.option('-t', '--tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
-@click.option('-c', '--count', type=int, default=5, help='Number of conversations to sample')
 def main(results: str,
          openai_api_key: str,
          num_cores: int,
          prompt: str,
-         tokens: int,
-         count: str) -> None:
+         tokens: int) -> None:
     '''Main Function'''
-    process(results, openai_api_key, num_cores, prompt, tokens, count)
+    process(results, openai_api_key, num_cores, prompt, tokens)
 
 
 def process(results: str,
             openai_api_key: str,
             num_cores: int,
             prompt: str,
-            tokens: int,
-            count: str) -> None:
+            tokens: int) -> None:
     '''Run prompt'''
 
     openai.api_key = openai_api_key
 
-    with open(prompt, mode="r",encoding="utf8") as f:
+    prompt_path = join(prompt,"adversarial_base_prompt.txt")
+    customer_utterances_path = join(prompt,"list_of_customer_utterances.txt")
+
+    with open(prompt_path, mode="r",encoding="utf8") as f:
         prompt_text = f.read()
 
-    print(f"Prompt: {prompt_text}")
+    with open(customer_utterances_path, mode="r",encoding="utf8") as f:
+        list_of_customer_utterances = f.read()
+        list_of_customer_utterances = list_of_customer_utterances.split("\n")
+        list_of_customer_utterances = [utterance.strip() for utterance in list_of_customer_utterances]
+
+    print(f"Prompt: \n{prompt_text}")
 
     prompt_list = []
 
     i = 0
-    while i<count:
+    while i<len(list_of_customer_utterances):
+        full_prompt = prompt_text.replace(r"{{text}}",list_of_customer_utterances[i])
         prompt_list.append({
-            "prompt": prompt_text, 
+            "prompt": full_prompt, 
             "max_tokens": tokens 
         })
         i = i+1
 
     df = pandas.json_normalize(data=prompt_list)
 
-    print(df)
+    with pandas.option_context('display.max_colwidth', 150,):
+        print(df)
 
     # parallelization
     pool = Pool(num_cores)
@@ -76,13 +87,18 @@ def process(results: str,
     # enforce this column is string
     df["completion"] = df["completion"].astype(str)
 
-    output= prompt.split("/")[-1]
+    output= prompt_path.split("/")[-1]
     output= output.replace(".txt", "_results.csv")
     output= join(results,output)
-
-    print(df["completion"])
+    print()
+    with pandas.option_context('display.max_colwidth', 150,):
+        print(df["completion"])
     df.to_csv(output, sep=",", encoding="utf8", index=False)
 
+    completion = df["completion"].unique().tolist()
+    output_text = output.replace(".csv",".txt")
+    with open(output_text,mode="w",encoding="utf8") as f:
+        f.write("\n\n".join(completion))
 
 def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
     '''Parallelise dataframe processing'''
@@ -96,6 +112,7 @@ def call_api(row: pandas.Series) -> pandas.Series:
 
     row["completion"] = re.sub(r'^"*','',row["completion"])
     row["completion"] = re.sub(r'"*$','',row["completion"])
+    row["completion"] = row["completion"].strip(" ")
     return row
 
 

@@ -2,15 +2,17 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80*************************************120
 #
-# python ./adversarial_outbound_supervision/01_run_adversarial_supervision_prompt.py     # pylint: disable=invalid-name
+# python ./adversarial_supervision\
+#         /scripts\
+#         /run_adversarial_supervision_prompt\
+#         /02_4_prompt_completion.py                                                    # pylint: disable=invalid-name
 #
 # *********************************************************************************************************************
 
 # standard imports
 from multiprocessing import Pool
 import re
-from  os.path import exists, join
-import os
+from  os.path import join
 
 # 3rd party imports
 import openai
@@ -20,10 +22,11 @@ import click
 
 
 @click.command()
-@click.option('-r', '--results', type=str, default="./adversarial_outbound_supervision/results/",
-              help='folders path having CSV files containing results of working/non-working adversarial prompt')
+@click.option('-r', '--results', type=str, default="./adversarial_supervision/results/",
+              help='folders path having CSV files containing results of adversarial prompt')
 @click.option('-a', '--openai_api_key', type=str, required=True, help='OpenAI API key')
-@click.option('-p', '--prompt', type=str, required=True, help='location of prompt file to read')
+@click.option('-p', '--prompt', type=str, default="./adversarial_supervision/prompt/",
+              help='folder containing adversarial prompt and list of customer utterances')
 @click.option('-t', '--tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
 def main(results: str,
@@ -44,35 +47,21 @@ def process(results: str,
 
     openai.api_key = openai_api_key
 
-    df_list = []
-    for _, _, filenames in os.walk(results):
-        for file in filenames:
-            path = join(results,file)
-            if exists(path) and file != "adversarial_supervision_results.csv":
-                df_list.append(pandas.read_csv(path,sep=",",encoding="utf8"))
+    result_path = join(results,"adversarial_base_prompt_results.csv")
 
-    df = pandas.concat(df_list)
+    df = pandas.read_csv(result_path,sep=",",encoding="utf8")
 
-    examples_to_verify = df["completion"].unique().tolist()
+    df["max_tokens"] = tokens
 
-    with open(prompt, mode="r",encoding="utf8") as f:
+    prompt_path = join(prompt,"adversarial_supervision_prompt4.txt")
+
+    with open(prompt_path, mode="r",encoding="utf8") as f:
         prompt_text = f.read()
 
     print(f"Prompt: \n{prompt_text}")
     print()
 
-    prompt_list = []
-
-    i = 0
-    while i<len(examples_to_verify):
-        replaced_prompt = prompt_text.replace(r"{{text}}",examples_to_verify[i])
-        prompt_list.append({
-            "prompt": replaced_prompt, 
-            "max_tokens": tokens 
-        })
-        i = i+1
-
-    df = pandas.json_normalize(data=prompt_list)
+    df["adversarial_supervision_prompt"] = df.apply(create_adversarial_supervision_prompt, args=[prompt_text],axis=1)
 
     # parallelization
     pool = Pool(num_cores)
@@ -85,9 +74,21 @@ def process(results: str,
     # enforce column is string
     df["whether_offensive"] = df["whether_offensive"].astype(str)
 
-    output=join(results,"adversarial_supervision_results.csv")
-    print(df[["prompt","whether_offensive"]])
+    output_file_name = prompt_path.split("/")[-1]
+    output_file_name = output_file_name.replace(".txt","_results.csv")
+    output=join(results,output_file_name)
+    with pandas.option_context('display.max_colwidth', 150,):
+        print(df[["completion","whether_offensive"]])
     df.to_csv(output, sep=",", encoding="utf8", index=False)
+
+
+def create_adversarial_supervision_prompt(row: pandas.Series, prompt: str) -> None:
+    """Add prompt+completion to the adversarial supervision prompt"""
+
+    prompt = prompt.replace(r"{{prompt}}",row["prompt"])
+    prompt = prompt.replace(r"{{completion}}",row["completion"])
+    # print(prompt)
+    return prompt
 
 
 def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
@@ -98,7 +99,7 @@ def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
 def call_api(row: pandas.Series) -> pandas.Series:
     '''Call OpenAI API for summarization'''
 
-    row["whether_offensive"], row["total_tokens"] = summarize(row["prompt"], row["max_tokens"])
+    row["whether_offensive"], row["total_tokens"] = summarize(row["adversarial_supervision_prompt"], row["max_tokens"])
 
     row["whether_offensive"] = re.sub(r'^"*','',row["whether_offensive"])
     row["whether_offensive"] = re.sub(r'"*$','',row["whether_offensive"])
@@ -110,11 +111,11 @@ def summarize(prompt: str, tokens: int) -> str:
     '''Summarizes single conversation using prompt'''
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-0301",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "user", "content": prompt}
         ],
-        temperature=1.0,
+        temperature=0.0,
         max_tokens=tokens,
         top_p=1,
         frequency_penalty=0.0,
