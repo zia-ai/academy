@@ -27,46 +27,62 @@ class UnrecognisedEnvironmentException(Exception):
 class UnscuccessfulAPICallException(Exception):
     """This happens when an API call goes unsuccessful"""
 
+class EmptyResponseException(Exception):
+    """This happens when a response generated is empty"""
+
 @click.command()
-@click.option('-f', '--folder_path', type=str, default="./adversarial_supervision/dataset",
-              help='file containing adversarial examples')
+@click.option('-f', '--text_folder_path', type=str, default="./adversarial_supervision/dataset",
+              help='folder containing adversarial examples')
+@click.option('-r', '--reply_folder_path', type=str, required=True,
+              help='folder where all the replies are stored')
 @click.option('-u','--username' ,type=str,required=True,help='username of HTTP endpoint in Node-RED')
 @click.option('-p','--password' ,type=str,required=True,help='password of HTTP endpoint in Node-RED')
 @click.option('-e','--env' ,type=click.Choice(['dev', 'prod']),default='dev',help='Dev or prod to update')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
 @click.option('-s','--sample',type=int,default=4,help='n text to sample from dataset')
-def main(folder_path: str, username: str, password: str, env:str, num_cores:int, sample: int) -> None:
+def main(text_folder_path: str,
+         reply_folder_path: str,
+         username: str,
+         password: str,
+         env:str,
+         num_cores:int,
+         sample: int) -> None:
     '''Main Function'''
 
-    process(folder_path, username, password, env, num_cores, sample)
+    process(text_folder_path, reply_folder_path, username, password, env, num_cores, sample)
 
 
-def process(folder_path: str, username: str, password: str, env:str, num_cores:int, sample: int) -> None:
+def process(text_folder_path: str,
+            reply_folder_path: str,
+            username: str,
+            password: str,
+            env:str,
+            num_cores:int,
+            sample: int) -> None:
     '''Evaluate adversarial examples'''
 
-    reply_folder_path = "./adversarial_supervision/replies"
-
     # combine both train and test data into single dataframe
-    train_filepath = join(folder_path,"train.parquet")
-    test_filepath = join(folder_path,"test.parquet")
+    train_filepath = join(text_folder_path,"train.parquet")
+    test_filepath = join(text_folder_path,"test.parquet")
 
     df_train = pandas.read_parquet(train_filepath)
     df_test = pandas.read_parquet(test_filepath)
 
     df = pandas.concat([df_train,df_test],ignore_index=True)
 
+    # prints basic info about the data
     print(df.columns)
     print(df.shape)
     print(df)
     print(df.groupby("label").count())
 
+    # set the url depending on which system is being used - dev | prod
     if env == 'dev':
         url = "https://elb.devvending.com/api/predict"
     elif env == 'prod':
         url = "https://elb.cwrtvending.com/api/predict"
     else:
         raise UnrecognisedEnvironmentException('Unrecognised environment')
-    print(f'Attempting to update: {url}')
 
     # set the api
     df["url"] = url
@@ -75,7 +91,7 @@ def process(folder_path: str, username: str, password: str, env:str, num_cores:i
     # GUIDs are read from a text file if it was already present otherwise it creates them and
     # writes it into a text file. This is because it helps in comparing the results of utterances
     # in multiple runs
-    guid_filepath = join(folder_path,"guid.txt")
+    guid_filepath = join(text_folder_path,"guid.txt")
 
     if exists(guid_filepath):
         with open(guid_filepath,mode="r",encoding="utf8") as f:
@@ -102,38 +118,41 @@ def process(folder_path: str, username: str, password: str, env:str, num_cores:i
     # reply path
     df["reply_path"] = df["id"].apply(lambda x: join(reply_folder_path,f"{x}.txt"))
 
-    # get all the completed files
+    # get all the ids and corresponding text which are used to generate response
     completed_text_ids, completed_texts = get_completed_text_ids(reply_folder_path)
+    uncompleted_text_ids = list(set(guid_list) - set(completed_text_ids))
+
     df.set_index("id",inplace=True, drop=True)
 
-    uncompleted_text_ids = list(set(guid_list) - set(completed_text_ids))
-    # print(completed_text_ids)
     uncompleted_df = df.loc[uncompleted_text_ids]
+    uncompleted_df["response"] = ""
+    uncompleted_df["completed"] = False
+
     completed_df = df.loc[completed_text_ids]
     completed_df["response"] = completed_texts
+    completed_df["completed"] = True
 
-    # print(df.shape[0])
+    df = pandas.concat([completed_df,uncompleted_df])
 
     # sample n number of rows from dataset
-    uncompleted_df = uncompleted_df if sample > uncompleted_df.shape[0] else uncompleted_df.sample(sample)
+    df = df if sample > df.shape[0] else df.sample(sample)
 
-    print(df[["text","label"]])
+    print(df[["text","label","completed"]])
 
     # parallelization
     pool = Pool(num_cores)
-    dfs = numpy.array_split(uncompleted_df, num_cores)
+    dfs = numpy.array_split(df, num_cores)
     pool_results = pool.map(parallelise_calls, dfs)
     pool.close()
     pool.join()
-    uncompleted_df = pandas.concat(pool_results)
+    df = pandas.concat(pool_results)
 
-    df = pandas.concat([completed_df,uncompleted_df])
     df.drop(columns=["username","password"],inplace=True)
     print(df)
 
-    df.to_csv(join(folder_path,f"final_result_{datetime.now().isoformat()}.csv"),sep=",",index=True)
-
-    # TODO - to check if all responses have been received
+    # write the final result with the timestamp
+    df.to_csv(join(reply_folder_path,f"final_result_{datetime.now().isoformat()}.csv"),sep=",",index=True)
+    print(f"Results are stored in {reply_folder_path}")
 
 
 def get_completed_text_ids(output_file_path: str) -> pandas.DataFrame:
@@ -161,28 +180,34 @@ def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
 def send_text(row: pandas.Series) -> pandas.Series:
     """Send text to Charlie"""
 
-    data = {
-        "id": row.name,
-        "text": row.text
-    }
+    if not row["completed"]:
+        data = {
+            "id": row.name,
+            "text": row.text
+        }
 
-    response  = requests.post(url=row.url, # pylint: disable=missing-timeout
-                              auth=(row.username,row.password),
-                              json=data)
+        response  = requests.post(url=row.url, # pylint: disable=missing-timeout
+                                auth=(row.username,row.password),
+                                json=data)
 
-    try:
-        if response.status_code != 200:
-            raise UnscuccessfulAPICallException(
-                f"Status Code :{response.status_code} \n\nResponse:\n\n{response.json()}")
+        try:
+            if response.status_code != 200:
+                raise UnscuccessfulAPICallException(
+                    f"Status Code :{response.status_code} \n\nResponse:\n\n{response.json()}")
 
-        # Writing to text file
-        with open(row["reply_path"],mode="w",encoding="utf-8") as f:
-            f.write(response.text)
-        row["response"] = response.text
+            text = response.text.strip()
+            if text == "":
+                raise EmptyResponseException(f"Empty response generated for the text - {row.text}")
 
-    except UnscuccessfulAPICallException as e:
-        print(f"Rerunning {row.name} due to {e}")
-        row = send_text(row) # rerun the text
+            # Writing to text file
+            with open(row["reply_path"],mode="w",encoding="utf-8") as f:
+                f.write(text)
+            row["response"] = text
+            row["completed"] = True
+
+        except (UnscuccessfulAPICallException, EmptyResponseException) as e:
+            print(f"Rerunning {row.name} due to {e}")
+            row = send_text(row) # rerun the text
 
     return row
 
