@@ -26,6 +26,9 @@ import pandas
 import nltk
 
 # custom imports
+dir_path = os.path.dirname(os.path.realpath(__file__))
+hf_module_path = str(Path(dir_path).parent)
+sys.path.insert(1, hf_module_path)
 import humanfirst_apis
 import voc_helper
 
@@ -74,6 +77,8 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
         print(f'Shape after using punkt {df.shape}')
     else:
         df['utterance'] = df[review_col]
+        
+    df['utterance'].fillna('',inplace=True)
 
     headers = humanfirst_apis.process_auth(username=username, password=password)
     # predict = humanfirst_apis.predict(headers=headers,namespace=namespace,playbook=playbook,
