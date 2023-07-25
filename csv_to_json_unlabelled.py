@@ -47,7 +47,6 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          role_mapper: str, encoding: str, filtering: str) -> None:
     """Main Function"""
 
-    # calculate columns
     if metadata_keys == '':
         metadata_keys = []
     else:

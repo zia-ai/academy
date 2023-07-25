@@ -16,8 +16,6 @@ import requests
 
 # constants
 TIMEOUT = 5
-
-
 class HFAPIResponseValidationException(Exception):
     """When response validation fails"""
 
@@ -348,6 +346,7 @@ def predict(headers: str, sentence: str, namespace: str, playbook: str,
     revision_id probably better known as run_id 
     but it needs to be the run_id of the model job not revisions which is showing export job
     TODO: update when updated'''
+
     payload = {
         "namespace": "string",
         "playbook_id": "string",
