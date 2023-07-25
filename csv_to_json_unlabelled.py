@@ -47,6 +47,11 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          role_mapper: str, encoding: str, filtering: str) -> None:
     """Main Function"""
 
+    excel = False
+    if filename.endswith('.xlsx'):
+        print("Processing excel")
+        excel = True
+
     if metadata_keys == '':
         metadata_keys = []
     else:
@@ -58,8 +63,11 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             used_cols.append(col)
 
     # read the input csv only for the columns we care about - all as strings
-    df = pandas.read_csv(filename, encoding=encoding,
-                         usecols=used_cols, dtype=str, delimiter=delimiter)
+    if not excel:
+        df = pandas.read_csv(filename, encoding=encoding,
+                            usecols=used_cols, dtype=str, delimiter=delimiter)
+    else:
+        df = pandas.read_excel(filename, usecols=used_cols, dtype=str)
     assert isinstance(df, pandas.DataFrame)
     df.fillna('', inplace=True)
 
@@ -181,7 +189,8 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
     # write to output
     print("Commencing write")
-    filename_out = filename.replace('.csv', '.json')
+    for ending in ['.csv','.xlsx']:
+        filename_out = filename.replace(ending, '.json')
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
