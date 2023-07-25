@@ -38,6 +38,8 @@ class OpenAITooManyTokens(Exception):
 @click.option('-t', '--output_tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
 @click.option('-s', '--sample_size', type=int, default=0, help='Number of conversations to sample')
+@click.option('-m', '--model_override', default='', type=str, required=False,
+              help='Use this model name')
 @click.option('-l', '--log_file_path', type=str, default='./logs', help='Server log file path')
 @click.option('-o', '--output_file_path', type=str, default='./summaries', help='Summaries output file path')
 @click.option('-r', '--rewrite', is_flag=True, type=bool, default=False,
@@ -45,12 +47,14 @@ class OpenAITooManyTokens(Exception):
 @click.option('-d', '--dummy', is_flag=True, type=bool, default=False, help='Skip the actual openai call')
 @click.option('-v', '--verbose', is_flag=True, type=bool, default=False,
               help='Set logging level to DEBUG otherwise INFO')
+
 def main(input_filepath: str,
          openai_api_key: str,
          num_cores: int,
          prompt: str,
          output_tokens: int,
          sample_size: str,
+         model_override: str,
          log_file_path: str,
          output_file_path: str,
          rewrite: bool,
@@ -58,7 +62,7 @@ def main(input_filepath: str,
          verbose: bool) -> None:
     '''Main Function'''
     process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
-            sample_size, log_file_path, output_file_path, rewrite, dummy, verbose)
+            sample_size, model_override, log_file_path, output_file_path, rewrite, dummy, verbose)
 
 
 def process(input_filepath: str,
@@ -67,6 +71,7 @@ def process(input_filepath: str,
             prompt: str,
             output_tokens: int,
             sample_size: str,
+            model_override: str,
             log_file_path: str,
             output_file_path: str,
             rewrite: bool,
@@ -190,7 +195,10 @@ def process(input_filepath: str,
     logging.info('Per second rate is max %2f', per_second)
 
     # work out model for each row
-    df['model'] = df['tokens'].apply(calculate_which_model,args=[output_tokens])
+    if model_override != '':
+        df['model'] = model_override
+    else:
+        df['model'] = df['tokens'].apply(calculate_which_model,args=[output_tokens])
 
     # max_tokens
     df['max_tokens'] = output_tokens

@@ -1,3 +1,4 @@
 *
 !.gitignore
-!abcd_example_prompt.txt
+!abcd_*
+

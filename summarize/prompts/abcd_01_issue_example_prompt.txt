@@ -1,0 +1,9 @@
+Delimited by three backticks is a online chat conversation between a "client" of an online fashion retailer and one of it's "expert" customer service agents.
+
+```
+{{ conversation }}
+```
+
+What is the key issue causing the client to contact the fashion retailer?
+
+Please give your answer as a single line starting with "-"
