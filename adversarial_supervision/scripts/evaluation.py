@@ -20,6 +20,7 @@ import pandas
 import numpy
 import click
 import requests
+from googletrans import Translator
 
 class UnrecognisedEnvironmentException(Exception):
     """This happens when entered environmenis neither dev nor prod"""
@@ -135,7 +136,7 @@ def process(text_folder_path: str,
     df = pandas.concat([completed_df,uncompleted_df])
 
     # sample n number of rows from dataset
-    df = df if sample > df.shape[0] else df.sample(sample)
+    df = df if sample >= df.shape[0] else df.sample(sample)
 
     print(df[["text","label","completed"]])
 
@@ -150,10 +151,24 @@ def process(text_folder_path: str,
     df.drop(columns=["username","password"],inplace=True)
     print(df)
 
+    translator = Translator()
+
+    df["translated_text"] = df["text"].apply(translate_to_english,args=[translator])
+    df["translated_response"] = df["response"].apply(translate_to_english,args=[translator])
+
     # write the final result with the timestamp
-    df.to_csv(join(reply_folder_path,f"final_result_{datetime.now().isoformat()}.csv"),sep=",",index=True)
+    df.to_csv(join(reply_folder_path,
+                   f"final_result_{datetime.now().isoformat()}.csv"),
+                   sep=",",
+                   index=True,
+                   encoding="utf8")
     print(f"Results are stored in {reply_folder_path}")
 
+
+def translate_to_english(text: str, translator: Translator) -> str:
+    """Translates text to english"""
+
+    return translator.translate(text).text
 
 def get_completed_text_ids(output_file_path: str) -> pandas.DataFrame:
     '''Find ids that have already been created'''
