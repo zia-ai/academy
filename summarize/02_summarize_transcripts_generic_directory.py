@@ -71,11 +71,15 @@ def main(summaries_dir: str, workspaces_dir: str):
         # add example to workspace
         unlabelled.add_example(example)
 
-    print(f'Processed {len(unlabelled.examples)} examples')
-
-    # write to output
+    print(f'Processed {len(unlabelled.examples)} examples')  
+    # work out a file name
+    output_file_candidate = summaries_dir.strip("./")
+    output_file_candidate = "_".join(output_file_candidate.split("/"))
     workspaces_dir = check_directory(dir_path, workspaces_dir)
-    output_file_name = f'{workspaces_dir}summaries.json'
+    output_file_name = f'{workspaces_dir}{output_file_candidate}.json'
+    print(output_file_name)
+    
+    # write to filename
     file_out = open(f'{output_file_name}', mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     print(f'Wrote to {output_file_name}')

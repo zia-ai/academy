@@ -13,6 +13,9 @@ requests = "*"
 requests-toolbelt = "*"
 autopep8 = "*"
 dataclasses-json = "*"
+transformers="*"
+tensorflow="*"
+tensorflow-hub="*"
 datasets = "*"
 nltk = "*"
 spacy = "*"
@@ -34,6 +37,7 @@ plotly="*"
 kaleido="*"
 openai="*"
 tiktoken="*"
+tdqm="*"
 
 [dev-packages]
 

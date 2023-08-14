@@ -24,6 +24,24 @@ import copy
 
 HFMetadata = Dict[str, Any]
 
+class HFIncompatibleOptionException(Exception):
+    """When parameters passed are incompatible"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
+class HFMissingCredentialsException(Exception):
+    """When can't locate assumed credentials"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
+class HFMapperException(Exception):
+    """When a mapping can't be resolved"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
 
 @dataclass_json
 @dataclass
@@ -47,7 +65,7 @@ class HFTag:
     color: Optional[str] = None
 
     def __init__(self, id: str, name: str, color: Optional[str] = None):
-        self.id = id
+        self.id = id # pylint: disable=redefined-builtin
         self.name = name
         if color and color != '':
             self.color = color
@@ -265,6 +283,8 @@ class HFExample:
         self.tags = tags
         self.metadata = metadata
         self.context = context
+        if self.context is None:
+            self.context = {}
 
         if created_at is not None:
             if isinstance(created_at, str):
@@ -284,6 +304,7 @@ class HFExample:
                                 for intent in intents]
             else:
                 raise Exception("Intents can be provided as a list of HFIntentRef, HFIntent or str (intent_id) objects only")
+            
 
 
 class HFWorkspace:
@@ -540,9 +561,9 @@ class HFWorkspace:
         or from a json file
         '''
         if isinstance(input, IO):
-            obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True)
+            obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True) # pylint: disable=no-member
         elif isinstance(input, dict):
-            obj = HFWorkspaceJson.from_json(
+            obj = HFWorkspaceJson.from_json( # pylint: disable=no-member
                 json.dumps(input), infer_missing=True)
         else:
             raise Exception(f"What is this thing of type: {type(input)}")
