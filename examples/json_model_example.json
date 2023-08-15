@@ -1,0 +1,14 @@
+{
+    "GROUP1_EN_INJURED_AT_THE_ZOO":{
+        "EN": {
+            "example-id-12431234": "I was dreadfully mauled at the zoo",
+            "example-id-12431235": "The boa constrictor ate my icecream"
+        }        
+    },
+    "GROUP2_DREADFULLY_INJURED":{
+        "EN": {
+            "example-id-12431236": "A piano fell from great height on me",
+            "example-id-12431237": "A box labelled ACME exploded in my face"
+        }        
+    }
+}

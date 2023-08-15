@@ -1,0 +1,87 @@
+{
+  "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+  "examples": [
+    {
+      "id": "example-id-12431234",
+      "text": "I was dreadfully mauled at the zoo",
+      "created_at": "2023-06-05T14:26:07+00:00",
+      "intents": [
+        {
+          "intent_id": "intent-1"
+        }
+      ],
+      "tags": [],
+      "metadata": {},
+      "context": {}
+    },
+    {
+      "id": "example-id-12431235",
+      "text": "The boa constrictor ate my icecream",
+      "created_at": "2023-06-05T14:26:08+00:00",
+      "intents": [
+        {
+          "intent_id": "intent-1"
+        }
+      ],
+      "tags": [],
+      "metadata": {},
+      "context": {}
+    },
+    {
+      "id": "example-id-12431236",
+      "text": "A piano fell from great height on me",
+      "created_at": "2023-06-05T14:26:09+00:00",
+      "intents": [
+        {
+          "intent_id": "intent-3"
+        }
+      ],
+      "tags": [],
+      "metadata": {},
+      "context": {}
+    },
+    {
+      "id": "example-id-12431237",
+      "text": "A box labelled ACME exploded in my face",
+      "created_at": "2023-06-05T14:26:10+00:00",
+      "intents": [
+        {
+          "intent_id": "intent-3"
+        }
+      ],
+      "tags": [],
+      "metadata": {},
+      "context": {}
+    }
+  ],
+  "intents": [
+    {
+      "id": "intent-0",
+      "name": "GROUP1",
+      "metadata": {},
+      "tags": [],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-1",
+      "name": "GROUP1_EN_INJURED_AT_THE_ZOO",
+      "metadata": {},
+      "tags": [],
+      "parent_intent_id": "intent-0"
+    },
+    {
+      "id": "intent-2",
+      "name": "GROUP2",
+      "metadata": {},
+      "tags": [],
+      "parent_intent_id": null
+    },
+    {
+      "id": "intent-3",
+      "name": "GROUP2_DREADFULLY_INJURED",
+      "metadata": {},
+      "tags": [],
+      "parent_intent_id": "intent-2"
+    }
+  ]
+}
