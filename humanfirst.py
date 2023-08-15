@@ -41,6 +41,12 @@ class HFMapperException(Exception):
     def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
+        
+class HFOutputFileMustBeDifferent(Exception):
+    """When the output file name is the same as the input file name"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
 
 
 @dataclass_json
@@ -346,7 +352,7 @@ class HFWorkspace:
                                          useful to an annotator in HF Studio                                  
         '''
         if type(name_or_hier) is not list:
-            print("not list")
+            # print("not list")
             name_or_hier = [name_or_hier]
 
         parent_intent_id = None
