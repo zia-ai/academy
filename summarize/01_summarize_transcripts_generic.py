@@ -29,6 +29,7 @@ class OpenAITooManyTokens(Exception):
         self.message = f'Data tokens {tokens} exceeds OpenAI model limit {limit}'
         super().__init__(self.message)
 
+
 @click.command()
 @click.option('-i', '--input_filepath', type=str, required=True,
               help='Path containing HF Unlabelled conversations in json format')
@@ -47,7 +48,8 @@ class OpenAITooManyTokens(Exception):
 @click.option('-d', '--dummy', is_flag=True, type=bool, default=False, help='Skip the actual openai call')
 @click.option('-v', '--verbose', is_flag=True, type=bool, default=False,
               help='Set logging level to DEBUG otherwise INFO')
-
+@click.option('-o', '--omitrole', is_flag=True, type=bool, required=False, default=False,
+              help='Omit role where conversation is only one utterance by the client')
 def main(input_filepath: str,
          openai_api_key: str,
          num_cores: int,
@@ -59,10 +61,11 @@ def main(input_filepath: str,
          output_file_path: str,
          rewrite: bool,
          dummy: bool,
-         verbose: bool) -> None:
+         verbose: bool,
+         omitrole: bool) -> None:
     '''Main Function'''
     process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
-            sample_size, model_override, log_file_path, output_file_path, rewrite, dummy, verbose)
+            sample_size, model_override, log_file_path, output_file_path, rewrite, dummy, verbose, omitrole)
 
 
 def process(input_filepath: str,
@@ -76,7 +79,8 @@ def process(input_filepath: str,
             output_file_path: str,
             rewrite: bool,
             dummy: bool,
-            verbose: bool):
+            verbose: bool,
+            omitrole: bool):
     '''Summarization of Conversations'''
 
     # set log level
@@ -167,7 +171,10 @@ def process(input_filepath: str,
     # here we are going to use a generic client|expert HF standard but that is perhaps not optimum
     # print(df.loc["1000",["text","metadata-abcd_role","context-role"]])
     # build the conversation line for prompt
-    df["prompt_line"] = df["context-role"] + ": " + df["text"]
+    if not omitrole:
+        df["prompt_line"] = df["context-role"] + ": " + df["text"]
+    else:
+        df["prompt_line"] = df["text"]
 
     # reduce our data frame just to the data we need
     df = df[["prompt_line", "skip", "completed"]]
@@ -188,8 +195,8 @@ def process(input_filepath: str,
     df['tokens'] = df["prompt"].apply(count_tokens,
                                       args=[tiktoken.encoding_for_model("gpt-3.5-turbo")])
     mean_input = df["tokens"].mean()
-    logging.info('Mean input tokens is: %s',mean_input)
-    logging.info('Output tokens is:  %s',output_tokens)
+    logging.info('Mean input tokens is: %s', mean_input)
+    logging.info('Output tokens is:  %s', output_tokens)
     in_and_out_tokens = mean_input + output_tokens
     per_second = 1500 / in_and_out_tokens
     logging.info('Per second rate is max %2f', per_second)
@@ -198,13 +205,17 @@ def process(input_filepath: str,
     if model_override != '':
         df['model'] = model_override
     else:
-        df['model'] = df['tokens'].apply(calculate_which_model,args=[output_tokens])
+        df['model'] = df['tokens'].apply(
+            calculate_which_model, args=[output_tokens])
 
     # max_tokens
     df['max_tokens'] = output_tokens
 
     # add the output location for the file
     df['summary_path'] = output_file_path + df['context-context_id'] + ".txt"
+
+    # verbose setting
+    df["verbose"] = verbose
 
     print(df)
 
@@ -245,29 +256,32 @@ def call_api(row: pandas.Series) -> pandas.Series:
     '''Call OpenAI API for summarization'''
 
     start_time = perf_counter()
-    logging.info("Calling OpenAI model %s to summarize conversation: %s",row["model"],row.name)
+    logging.info(
+        "Calling OpenAI model %s to summarize conversation: %s", row["model"], row.name)
+    if row["verbose"]:
+        logging.info("Prompt: %s", row["prompt"])
 
     row["summary"] = ''
     row["total_tokens"] = 0
     if not row["skip"]:
         try:
             row = summarize(row, output_tokens=row["max_tokens"])
-        except Exception as e: # pylint: disable=broad-except
-            logging.error('Exception for %s is %s',row.name,e)
+        except Exception as e:  # pylint: disable=broad-except
+            logging.error('Exception for %s is %s', row.name, e)
             return row["summary"]
 
     logging.info('Total tokens for conversation id %s is %s',
                  row.name, row["total_tokens"])
-    logging.info('Conversation - %s is summarized',row.name)
+    logging.info('Conversation - %s is summarized', row.name)
 
     # write the file to output if not in dummy mode
     if not row["skip"]:
         with open(row["summary_path"], mode="w", encoding="utf8") as file:
             file.write(row["summary"])
 
-    logging.info('Summary is saved at: %s',row["summary_path"])
+    logging.info('Summary is saved at: %s', row["summary_path"])
     end_time = perf_counter()
-    logging.info('Took %.2f seconds',end_time-start_time)
+    logging.info('Took %.2f seconds', end_time-start_time)
     return row
 
 
