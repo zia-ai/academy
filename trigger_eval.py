@@ -26,7 +26,7 @@ import humanfirst_apis
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
-@click.option('-e', '--evalpresetname', type=str, default='Default Auto Evaluation Preset', 
+@click.option('-e', '--evalpresetname', type=str, default='Default Auto Evaluation Preset',
               help='The name of the evaluation preset you want to run')
 def main(username: str, password: int, namespace: bool, playbook: str, bearertoken: str, evalpresetname: str):
     '''Main'''
@@ -50,9 +50,13 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
     if evaluation_preset_id == '':
         print("Failed to find preset id")
         quit()
-        
+
     # trigger eval - no options - need
-    print(json.dumps(humanfirst_apis.trigger_preset_evaluation(headers,namespace,playbook,evaluation_preset_id),indent=2))
+    print(json.dumps(humanfirst_apis.trigger_preset_evaluation(headers,
+                                                               namespace,
+                                                               playbook,
+                                                               evaluation_preset_id),
+                     indent=2))
 
 if __name__ == '__main__':
     main() # pylint: disable=no-value-for-parameter

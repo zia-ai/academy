@@ -47,14 +47,18 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
     #       "defaultLocation": "europe-west2"
     #     }
     #   },
-    
-    # get integration workspace for an integration (i.e call HF to call Google using the integration to see what agents there are agent = integration_workspace)
-    print(json.dumps(humanfirst_apis.get_integration_workspaces(headers,namespace,integration_id="intg-OHEMFYBQONBABMMWFTGUPIEJ"),indent=2))   
+
+    # get integration workspace for an integration
+    # (i.e call HF to call Google using the integration to see what agents there are agent = integration_workspace)
+    print(json.dumps(humanfirst_apis.get_integration_workspaces(headers,
+                                                                namespace,
+                                                                integration_id="intg-OHEMFYBQONBABMMWFTGUPIEJ"),
+                     indent=2))
     # {
     #   "id": "6e13a7a7-3a69-4bec-87af-ce747eb780ee",
     #   "name": "Horribly Injured - Test Woolies - From CSV (20230420111722)"
     # },
-    
+
     blah = humanfirst_apis.trigger_import_from_integration(
         headers,
         namespace,
