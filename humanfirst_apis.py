@@ -16,6 +16,8 @@ import requests
 
 # constants
 TIMEOUT = 5
+
+
 class HFAPIResponseValidationException(Exception):
     """When response validation fails"""
 
@@ -370,7 +372,7 @@ def predict(headers: str, sentence: str, namespace: str, playbook: str,
     return validate_response(response, url)
 
 
-def batchPredict(headers: str, sentences: list, namespace: str, playbook: str) -> dict: # pylint: disable=invalid-name
+def batchPredict(headers: str, sentences: list, namespace: str, playbook: str) -> dict:  # pylint: disable=invalid-name
     '''Get response_dict of matches and hier matches for a batch of sentences
     TODO: model version changes'''
     print(f'Analysing {len(sentences)} sentences')
@@ -464,7 +466,7 @@ def get_conversion_set_list(headers: str, namespace: str) -> tuple:
         if "state" in conversation_set.keys():
             conversation_set["no_data_file_is_uploaded_since_creation"] = False
             if (("jobsStatus" in conversation_set["state"].keys()) and
-                ("jobs" in conversation_set["state"]["jobsStatus"].keys())):
+                    ("jobs" in conversation_set["state"]["jobsStatus"].keys())):
                 jobs_dict = {}
                 jobs = conversation_set["state"]["jobsStatus"]["jobs"]
                 range_end = range(len(jobs))
@@ -483,6 +485,7 @@ def get_conversion_set_list(headers: str, namespace: str) -> tuple:
 
     return conversation_set_list
 
+
 def trigger_kfold_eval(headers: str, namespace: str, playbook: str, num_folds: int):
     '''Runs a kfold evaluation with the default NLU engine and the passed number of folds'''
     payload = {
@@ -490,61 +493,148 @@ def trigger_kfold_eval(headers: str, namespace: str, playbook: str, num_folds: i
         "playbook": playbook,
         "k_fold": {
             "num_folds": num_folds
-        } 
+        }
     }
-    # additional in protobuf
-    # intent_tag_predicate
-    # - intent level filters
-    # nlu_id 
-    #  - "Optional unique identifier of the NLU engine to use in the workspace."
-    #  - "If none specified, the workspace's default configured NLU engine will be used."
-    # evaluation_preset_id 
-    # - "If specified, the evaluation parameters will be overridden by the parameters of the given preset id, discarding any current values."
-    # k_fold.phrase_tag_predicate
-    # - utterance level filters
-    
 
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/evaluations'
-    
+
     response = requests.request(
-        "POST", url, headers=headers, data=json.dumps(payload))
-    return validate_response(response,url)
+        "POST", url, headers=headers, data=json.dumps(payload),timeout=TIMEOUT)
+    return validate_response(response, url)
+
 
 def get_integrations(headers: str, namespace: str):
     '''Runs a kfold evaluation with the default NLU engine and the passed number of folds'''
     payload = {
         "namespace": namespace
-    }   
+    }
 
     url = f'https://api.humanfirst.ai/v1alpha1/integrations/{namespace}'
-    
-    response = requests.request(
-        "GET", url, headers=headers, data=json.dumps(payload))
-    return validate_response(response,url)
 
-def trigger_import_from_integration(headers: str, namespace: str, playbook: str, num_folds: int):
-    '''Runs a kfold evaluation with the default NLU engine and the passed number of folds'''
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return validate_response(response, url, "integrations")
+
+def get_integration_workspaces(headers: str, namespace: str, integration_id: str):
+    '''Get the integration workspaces for an integration'''
     payload = {
         "namespace": namespace,
-        "playbook": playbook,
-        "k_fold": {
-            "num_folds": num_folds
-        } 
+        "integration_id":integration_id
     }
-    # additional in protobuf
-    # intent_tag_predicate
-    # - intent level filters
-    # nlu_id 
-    #  - "Optional unique identifier of the NLU engine to use in the workspace."
-    #  - "If none specified, the workspace's default configured NLU engine will be used."
-    # evaluation_preset_id 
-    # - "If specified, the evaluation parameters will be overridden by the parameters of the given preset id, discarding any current values."
-    # k_fold.phrase_tag_predicate
-    # - utterance level filters
-    
+
+    url = f'https://api.humanfirst.ai/v1alpha1/integration_workspaces/{namespace}/{integration_id}/workspaces'
+
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return validate_response(response, url)
+
+def trigger_import_from_integration(
+        headers: str,
+        namespace: str,
+        playbook: str,
+        integration_id: str,
+        integration_workspace_id: str,
+        project: str,
+        region: str,
+        integration_language: str,
+        bidirectional_merge: bool = False,
+        hierarchical_intent_name_disabled: bool = True,
+        hierarchical_delimiter: str = '--',
+        zip_encoding: bool = False,
+        gzip_encoding: bool = False,
+        hierarchical_follow_up: bool = True,
+        include_negative_phrases: bool = False,
+        skip_empty_intents: bool = True,
+        clear_intents: bool = False,
+        clear_entities: bool = False,
+        clear_tags: bool = False,
+        merge_intents: bool = False,
+        merge_entities: bool = False,
+        merge_tags: bool = False,
+        extra_intent_tags: list = None,
+        extra_phrase_tags: list = None,
+        override_metadata: str = "INTENTS_FORMAT_HF_JSON",
+        override_name: str = "INTENTS_FORMAT_HF_JSON",
+
+    ):
+    '''Triggers import of the wrokspace from the selected integration'''
+    if extra_intent_tags is None:
+        extra_intent_tags = []
+    if extra_phrase_tags is None:
+        extra_phrase_tags = []
+
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook,
+        "integration_id": integration_id,
+        "integration_workspace_id": integration_workspace_id,
+        "integration_location": {
+            "project": project,
+            "region": region
+        },
+        "bidirectional_merge": bidirectional_merge,
+        "intent_options": {
+            "hierarchical_intent_name_disabled": hierarchical_intent_name_disabled,
+            "hierarchical_delimiter": hierarchical_delimiter,
+            "zip_encoding": zip_encoding,
+            "gzip_encoding": gzip_encoding,
+            "hierarchical_follow_up": hierarchical_follow_up,
+            "include_negative_phrases": include_negative_phrases,
+            "skip_empty_intents": skip_empty_intents
+        },
+        "import_options": {
+            "clear_intents": clear_intents,
+            "clear_entities": clear_entities,
+            "clear_tags": clear_tags,
+            "merge_intents": merge_intents,
+            "merge_entities": merge_entities,
+            "merge_tags": merge_tags,
+            "extra_intent_tags": extra_intent_tags,
+            "extra_phrase_tags": extra_phrase_tags,
+            "override_metadata": override_metadata,
+            "override_name": override_name,
+        },
+        "integration_language": integration_language
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/integration_workspaces/{namespace}/{integration_id}/workspaces/{integration_workspace_id}/import' # pylint: disable=line-too-long
+
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload),timeout=TIMEOUT)
+    return validate_response(response, url)
+
+def get_evaluation_presets(headers: str, namespace: str, playbook: str):
+    '''Get the presets to find the evaluation_preset_id to run an evaluation'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/playbooks/{namespace}/{playbook}/presets'
+
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return validate_response(response, url, "presets")
+
+def trigger_preset_evaluation(headers: str,
+                       namespace: str,
+                       playbook: str,
+                       evaluation_preset_id: str,
+                       name: str = ''):
+    '''Start an evaluation based on a preset'''
+    if name == '':
+        name = f'API triggered: {datetime.datetime.now()}'
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook,
+        "params": {
+            "evaluation_preset_id": evaluation_preset_id
+        },
+        "name": name
+    }
 
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/evaluations'
-    
+
     response = requests.request(
-        "POST", url, headers=headers, data=json.dumps(payload))
-    return validate_response(response,url)
+        "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return validate_response(response, url)
