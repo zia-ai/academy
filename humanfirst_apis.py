@@ -1,10 +1,10 @@
 #!/usr/bin/env python # pylint: disable=missing-module-docstring
 # -*- coding: utf-8 -*-
-# ***************************************************************************80
+# ******************************************************************************************************************120
 #
-# example api imports
+# Examples of how to the call the HumanFirst APIs
 #
-# *****************************************************************************
+# *********************************************************************************************************************
 
 # standard imports
 import json
@@ -17,7 +17,11 @@ import requests
 # constants
 TIMEOUT = 5
 
-
+# ******************************************************************************************************************120
+#
+# Exceptions
+#
+# *********************************************************************************************************************
 class HFAPIResponseValidationException(Exception):
     """When response validation fails"""
 
@@ -30,14 +34,12 @@ class HFAPIResponseValidationException(Exception):
         self.message = f'Did not receive 200 from url: {url} {self.response.status_code} {self.response.text}'
         super().__init__(self.message)
 
-
 class HFAPIParameterException(Exception):
     """When parameter validation fails"""
 
     def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
-
 
 class HFAPIAuthException(Exception):
     """When authorization validation fails"""
@@ -47,7 +49,11 @@ class HFAPIAuthException(Exception):
         super().__init__(self.message)
 
 
-def validate_response(response, url: str, field: str = None, payload: dict = None):
+# ******************************************************************************************************************120
+# Internal Functions
+# *********************************************************************************************************************
+
+def _validate_response(response, url: str, field: str = None, payload: dict = None):
     """Validate the response from the API and provide consistent aerror handling"""
     if payload is None:
         payload = {}
@@ -65,67 +71,9 @@ def validate_response(response, url: str, field: str = None, payload: dict = Non
     else:
         return None
 
-
-def get_evaluation_zip(headers: str, namespace: str, playbook: str, evaluation_id: str) -> dict:
-    '''Get the metdata for the intent needed'''
-    payload = {
-        "namespace": namespace,
-        "playbook_id": playbook
-    }
-
-    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/evaluations/{evaluation_id}/report.zip'
-    response = requests.request(
-        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-
-    return response
-
-
-def query_conversation_set(
-        headers: str,
-        namespace: str,
-        workspace: str,
-        search_text: str = "",
-        start_isodate: str = "",
-        end_isodate: str = "",
-        page_size: int = 10,
-        convsetsource: str = "",
-        next_page_token: str = "") -> dict:
-    '''Do a search and return the big data with predicates'''
-    predicates = []
-    if search_text and search_text != '':
-        predicates.append({"inputMatch": {"text": search_text}})
-    if start_isodate and end_isodate and start_isodate != '' and end_isodate != '':
-        predicates.append(
-            {
-                "timeRange": {
-                    "start": start_isodate,
-                    "end": end_isodate
-                }
-            }
-        )
-    if convsetsource and convsetsource != "":
-        predicates.append(
-            {"conversationSet": {"conversationSetIds": [convsetsource]}})
-    # if next_page_token and next_page_token != "":
-    #     predicates.append({"PageTokenData":{"PageToken":next_page_token}})
-
-    if len(predicates) == 0:
-        raise HFAPIParameterException(
-            "Must have either text or start and end date predicates." +
-            f"search_text: {search_text} start_isodate: {start_isodate} end_isodate: {end_isodate}")
-
-    payload = {
-        "predicates": predicates,
-        "pageSize": page_size
-    }
-    if next_page_token and next_page_token != "":
-        payload["page_token"] = next_page_token
-
-    url = f'https://api.humanfirst.ai/v1alpha1/conversations/{namespace}/{workspace}/query'
-    response = requests.request(
-        "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
-
+# ******************************************************************************************************************120
+# Tags
+# ********************************************************************************************************************
 
 def get_tags(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns tags'''
@@ -137,7 +85,7 @@ def get_tags(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "tags")
+    return _validate_response(response, url, "tags")
 
 def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict:
     '''Returns tags'''
@@ -150,8 +98,7 @@ def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags/{tag_id}'
     response = requests.request(
         "DELETE", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
-
+    return _validate_response(response, url)
 
 def create_tag(headers: str, namespace: str, playbook: str, tag_id: str,
                name: str, description: str, color: str) -> dict:
@@ -176,7 +123,11 @@ def create_tag(headers: str, namespace: str, playbook: str, tag_id: str,
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags/{tag_id}'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
+    return _validate_response(response, url)
+
+# ******************************************************************************************************************120
+# Playbooks/Workspaces
+# ********************************************************************************************************************
 
 
 def list_playbooks(headers: str, namespace: str = "") -> dict:
@@ -189,8 +140,7 @@ def list_playbooks(headers: str, namespace: str = "") -> dict:
     url = 'https://api.humanfirst.ai/v1alpha1/playbooks'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "playbooks")
-
+    return _validate_response(response, url, "playbooks")
 
 def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns metadata of playbook'''
@@ -202,8 +152,7 @@ def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/playbooks/{namespace}/{playbook}'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
-
+    return _validate_response(response, url)
 
 def get_playbook(headers: str,
                  namespace: str,
@@ -236,12 +185,15 @@ def get_playbook(headers: str,
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/export'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    response = validate_response(response, url, "data")
+    response = _validate_response(response, url, "data")
     response = base64.b64decode(response)
     response = response.decode('utf-8')
     response_dict = json.loads(response)
     return response_dict
 
+# ******************************************************************************************************************120
+# Intent retrieval
+# ********************************************************************************************************************
 
 def get_intents(headers: str, namespace: str, playbook: str) -> dict:
     '''Get all the intents in a workspace'''
@@ -253,7 +205,7 @@ def get_intents(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "intents")
+    return _validate_response(response, url, "intents")
 
 
 def get_intent(headers: str, namespace: str, playbook: str, intent_id: str) -> dict:
@@ -266,7 +218,7 @@ def get_intent(headers: str, namespace: str, playbook: str, intent_id: str) -> d
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/{intent_id}'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
+    return _validate_response(response, url)
 
 
 def get_revisions(headers: str, namespace: str, playbook: str,) -> dict:
@@ -279,8 +231,12 @@ def get_revisions(headers: str, namespace: str, playbook: str,) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/revisions'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "revisions")
+    return _validate_response(response, url, "revisions")
 
+
+# ******************************************************************************************************************120
+# Call NLU engines
+# ********************************************************************************************************************
 
 def get_models(headers: str, namespace: str) -> dict:
     '''Get available models for a namespace
@@ -290,7 +246,7 @@ def get_models(headers: str, namespace: str) -> dict:
     url = 'https://api.humanfirst.ai/v1alpha1/models'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    models = validate_response(response, url, "models")
+    models = _validate_response(response, url, "models")
     namespace_models = []
     for model in models:
         print(model)
@@ -309,7 +265,7 @@ def get_nlu_engines(headers: str, namespace: str, playbook: str) -> dict:
     url = f'https://api.humanfirst.ai/v1alpha1/playbooks/{namespace}/{playbook}/nlu_engines'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "nluEngines")
+    return _validate_response(response, url, "nluEngines")
 
 
 def get_nlu_engine(headers: str, namespace: str, playbook: str, nlu_id: str) -> dict:
@@ -323,8 +279,7 @@ def get_nlu_engine(headers: str, namespace: str, playbook: str, nlu_id: str) -> 
     url = f'https://api.humanfirst.ai/v1alpha1/playbooks/{namespace}/{playbook}/nlu_engines/{nlu_id}'
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
-
+    return _validate_response(response, url)
 
 def predict(headers: str, sentence: str, namespace: str, playbook: str,
             model_id: str = None, revision_id: str = None) -> dict:
@@ -355,7 +310,7 @@ def predict(headers: str, sentence: str, namespace: str, playbook: str,
 
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
+    return _validate_response(response, url)
 
 
 def batchPredict(headers: str, sentences: list, namespace: str, playbook: str) -> dict:  # pylint: disable=invalid-name
@@ -372,8 +327,11 @@ def batchPredict(headers: str, sentences: list, namespace: str, playbook: str) -
 
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "predictions")
+    return _validate_response(response, url, "predictions")
 
+# ******************************************************************************************************************120
+# Authorisation
+# ********************************************************************************************************************
 
 def get_headers(bearer_token: str) -> dict:
     """Produce the necessary header"""
@@ -412,7 +370,6 @@ def authorize(username: str, password: str) -> dict:
     # print('Retrieved id_token and added to headers')
     return headers
 
-
 def process_auth(bearertoken: str = '', username: str = '', password: str = '') -> dict:
     '''Validate which authorisation method using and return the headers'''
 
@@ -425,6 +382,9 @@ def process_auth(bearertoken: str = '', username: str = '', password: str = '') 
     else:
         return get_headers(bearertoken)
 
+# ******************************************************************************************************************120
+# Conversation sets and Querying Processed Conversation set data
+# *********************************************************************************************************************
 
 def get_conversion_set_list(headers: str, namespace: str) -> tuple:
     """Conversation set list"""
@@ -471,26 +431,59 @@ def get_conversion_set_list(headers: str, namespace: str) -> tuple:
 
     return conversation_set_list
 
+def query_conversation_set(
+        headers: str,
+        namespace: str,
+        workspace: str,
+        search_text: str = "",
+        start_isodate: str = "",
+        end_isodate: str = "",
+        page_size: int = 10,
+        convsetsource: str = "",
+        next_page_token: str = "") -> dict:
+    '''Do a search and return the big data with predicates'''
+    predicates = []
+    if search_text and search_text != '':
+        predicates.append({"inputMatch": {"text": search_text}})
+    if start_isodate and end_isodate and start_isodate != '' and end_isodate != '':
+        predicates.append(
+            {
+                "timeRange": {
+                    "start": start_isodate,
+                    "end": end_isodate
+                }
+            }
+        )
+    if convsetsource and convsetsource != "":
+        predicates.append(
+            {"conversationSet": {"conversationSetIds": [convsetsource]}})
+    # if next_page_token and next_page_token != "":
+    #     predicates.append({"PageTokenData":{"PageToken":next_page_token}})
 
-def trigger_kfold_eval(headers: str, namespace: str, playbook: str, num_folds: int):
-    '''Runs a kfold evaluation with the default NLU engine and the passed number of folds'''
+    if len(predicates) == 0:
+        raise HFAPIParameterException(
+            "Must have either text or start and end date predicates." +
+            f"search_text: {search_text} start_isodate: {start_isodate} end_isodate: {end_isodate}")
+
     payload = {
-        "namespace": namespace,
-        "playbook": playbook,
-        "k_fold": {
-            "num_folds": num_folds
-        }
+        "predicates": predicates,
+        "pageSize": page_size
     }
+    if next_page_token and next_page_token != "":
+        payload["page_token"] = next_page_token
 
-    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/evaluations'
-
+    url = f'https://api.humanfirst.ai/v1alpha1/conversations/{namespace}/{workspace}/query'
     response = requests.request(
-        "POST", url, headers=headers, data=json.dumps(payload),timeout=TIMEOUT)
-    return validate_response(response, url)
+        "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return _validate_response(response, url)
 
+
+# ******************************************************************************************************************120
+# Integrations
+# *********************************************************************************************************************
 
 def get_integrations(headers: str, namespace: str):
-    '''Runs a kfold evaluation with the default NLU engine and the passed number of folds'''
+    '''Returns all the integrations configured for a namespace'''
     payload = {
         "namespace": namespace
     }
@@ -499,10 +492,13 @@ def get_integrations(headers: str, namespace: str):
 
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "integrations")
+    return _validate_response(response, url, "integrations")
 
 def get_integration_workspaces(headers: str, namespace: str, integration_id: str):
-    '''Get the integration workspaces for an integration'''
+    '''Get the integration workspaces for an integration
+    i.e call the integration in HF to detect in the integrated NLU
+    what target/source workspaces there are.
+    i.e in DF case find out what agents there are to import data from'''
     payload = {
         "namespace": namespace,
         "integration_id":integration_id
@@ -512,7 +508,7 @@ def get_integration_workspaces(headers: str, namespace: str, integration_id: str
 
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
+    return _validate_response(response, url)
 
 def trigger_import_from_integration(
         headers: str,
@@ -587,7 +583,12 @@ def trigger_import_from_integration(
 
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload),timeout=TIMEOUT)
-    return validate_response(response, url)
+    return _validate_response(response, url)
+
+
+# ******************************************************************************************************************120
+# Evaluations
+# *********************************************************************************************************************
 
 def get_evaluation_presets(headers: str, namespace: str, playbook: str):
     '''Get the presets to find the evaluation_preset_id to run an evaluation'''
@@ -600,7 +601,7 @@ def get_evaluation_presets(headers: str, namespace: str, playbook: str):
 
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "presets")
+    return _validate_response(response, url, "presets")
 
 def trigger_preset_evaluation(headers: str,
                        namespace: str,
@@ -623,7 +624,24 @@ def trigger_preset_evaluation(headers: str,
 
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
+    return _validate_response(response, url)
+
+def get_evaluation_zip(headers: str, namespace: str, playbook: str, evaluation_id: str) -> dict:
+    '''Get the metdata for the intent needed'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/evaluations/{evaluation_id}/report.zip'
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+
+    return response
+
+# ******************************************************************************************************************120
+# Subscriptions
+# *********************************************************************************************************************
 
 def get_plan(headers: str):
     '''Get the plan for a subscription'''
@@ -633,7 +651,7 @@ def get_plan(headers: str):
 
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
+    return _validate_response(response, url)
 
 def get_usage(headers: str):
     '''Get the usage for a subscription'''
@@ -643,4 +661,4 @@ def get_usage(headers: str):
 
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url)
+    return _validate_response(response, url)

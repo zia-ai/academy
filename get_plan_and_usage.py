@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # ******************************************************************************************************************120
 #
-# python get_plan_usage.py
+# python get_plan_and_usage.py -u <username> -p <password>
 #
 # Retrieves the subscription plan and usage for the organisation a user belongs to
 #

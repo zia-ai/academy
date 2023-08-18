@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python trigger_kfold.py
+# python trigger_import.py
+#
+# trigger the import from a previously configured integration (using the gui)
+# i.e if you want to nightly bring in your dialogflow workspace
 #
 # *****************************************************************************
 
@@ -19,7 +22,7 @@ import humanfirst_apis
 @click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
 @click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
-@click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
+@click.option('-b', '--playbook', type=str, required=True, help='HumanFirst./ playbook id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 def main(username: str, password: int, namespace: bool, playbook: str, bearertoken: str):
     '''Main'''

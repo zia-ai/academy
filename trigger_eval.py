@@ -9,6 +9,9 @@
 # OPTIONAL
 # -e <evalpresetname>
 #
+# Trigger a kfold evaluation based on a preconfigured (using GUI) preset
+# for instance if you want to nightly run long running evals
+#
 # *****************************************************************************
 
 # standard imports
