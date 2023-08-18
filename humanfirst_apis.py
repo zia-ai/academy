@@ -139,20 +139,6 @@ def get_tags(headers: str, namespace: str, playbook: str) -> dict:
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return validate_response(response, url, "tags")
 
-
-def get_plan(headers: str, namespace: str, playbook: str) -> dict:
-    '''Returns plan information'''
-    payload = {
-        "namespace": namespace,
-        "playbook_id": playbook
-    }
-
-    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/tags'
-    response = requests.request(
-        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return validate_response(response, url, "tags")
-
-
 def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict:
     '''Returns tags'''
     payload = {
@@ -637,4 +623,24 @@ def trigger_preset_evaluation(headers: str,
 
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return validate_response(response, url)
+
+def get_plan(headers: str):
+    '''Get the plan for a subscription'''
+    payload = {}
+
+    url = 'https://api.humanfirst.ai/v1alpha1/subscriptions/plan'
+
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return validate_response(response, url)
+
+def get_usage(headers: str):
+    '''Get the usage for a subscription'''
+    payload = {}
+
+    url = 'https://api.humanfirst.ai/v1alpha1/subscriptions/usage'
+
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return validate_response(response, url)
