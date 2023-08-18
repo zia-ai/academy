@@ -306,7 +306,6 @@ class HFExample:
                 raise Exception("Intents can be provided as a list of HFIntentRef, HFIntent or str (intent_id) objects only")
             
 
-
 class HFWorkspace:
     '''Schema object for HFWorkspace - may be used to update labelled or unlabelled data to HF Studio
 

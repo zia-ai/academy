@@ -88,6 +88,7 @@ def main(input: str, username: str, password: int, namespace: bool, playbook: st
     # if verbose dump the whole predict response
     if verbose:
         print(json.dumps(response_dict,indent=2))
+        print(json.dumps(intent_full,indent=2))
 
 if __name__ == '__main__':
     main()
