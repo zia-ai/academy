@@ -1,0 +1,824 @@
+{
+  "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+  "name": "Morphological Negation",
+  "color": "#30295e",
+  "examples": [
+    {
+      "id": "phrase-Q6F3ZQAOOFGKBLDBLZCNSOWI",
+      "text": "Coffee tastes worse when you add sweetner",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "f46897fc846cda5c71de0fe893f16e97",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-I4YWPNL3F5AMJJKQIW4UOE2I",
+      "text": "I don't have a sweet tooth, no sugar please.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "9e902c8bf016bc39d0f9eb78589bd8fb",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-AXUWAWNB5BDHHPAAJGJMHXFI",
+      "text": "I don't like any sugar in my coffee",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "d4caf7827cffbb84f5e52767b6af915b",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-P6OXRV6EPNHN7BDOKUFIEKX5",
+      "text": "I don't take my tea with sweetner",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "49d01740c3c42db77245c1ff6a1137de",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-GIVPWVF3SZAJRCQQHZSFM2DK",
+      "text": "I don't want any sweetner in my coffee",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "ff38e7abb0018ac28b6b8b523cc9628d",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-OHDGBCNHCFGTFFPTMPFOCOWJ",
+      "text": "I don't want sugar in my coffee",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "d67a93ce15c69c4273441fe33477ae29",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-CISSCK3WANCVTJYZNEI2KHCA",
+      "text": "I don't want sugar with that",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "263814e7b683f9417ce86c39c5bc5681",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-LKSIHL7WCBCM7NRPZM2KKUND",
+      "text": "I have a sweet tooth but I'm trying to give up, no sweetner please.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "f1b857f3c154954301dc5982c3440785",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-263HQ5VBC5EOBGR7JF5GWCA6",
+      "text": "I like it unadulterated.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "dc703a5c508b8ab7a94fcb867ce533b6",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-EH7YCBORSBDXLGXSHJS7TXJC",
+      "text": "I want my coffee black, no milk, no sweetner",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "422c897d2bfe1ed4cfbae36987871edf",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-75OC4CGI3NFKVFBOTN3INS3A",
+      "text": "I want my coffee white but with no sugar",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "8c180c74b8982f7637a3424436178546",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-2WMAFTHWZJAUHIROW5L4HZ2J",
+      "text": "I'd like it unembellished.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "0be818919c7830d7256b9fffb53b7dcb",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-MPLWNFR2WJFZBELGBGYDBMRJ",
+      "text": "I'll have it without.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "45ce81f90bb33f2fe42f7aee1575e37e",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-SSPJCRAFBZFPHKHUFSE6KZ57",
+      "text": "I'm sweet enough already!",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "bc274ce90d4afe0006dfda1c736e121b",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-ZAFAFWBW5ZDDJNZFNKUNZ2GB",
+      "text": "Just straight please, nothing at all.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "5dec3f89b8bf9089a92206f2a53b2a0c",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-MP7HJ54PFFAAHHXE57YPDAAS",
+      "text": "My coffee tastes gross if I forget to put enough sweetner in",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "b436d96f63ded56063403384dad935ca",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-EBN2MSI42BBDTIHOJBIXGNCL",
+      "text": "Never",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "6e7b34fa59e1bd229b207892956dc41c",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-AFBT4ZPELNAARAUU5IPSNMS4",
+      "text": "No sugar please",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "6838e180c22084f96f170f9bd187fd05",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-46J6YOCXFRESPGV2LYTIKIS2",
+      "text": "No thank you, no sugar please",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "6167937976a1ad16fb7e7f9d67c57856",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-MLZGREH2QRGF3GMHPXBL6C67",
+      "text": "None for me.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "d6611d96d066a95a5fedb14e47883cfa",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-QHWMGBENUNBKXOFHZ3HFNSO5",
+      "text": "Not today.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "95774a27bf4088875d1b640b28b5ed51",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-KRKPPKOJHVARHPWY7444RDOZ",
+      "text": "People put too much sweetner in their coffee you should drink it black.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "f0070012b37b1e83cc8bbb9805600d01",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-4DK4FEUWANHVTEDAJP4C5J4G",
+      "text": "Sugarless, please.",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "16f9c84d9229bf7b7cdb843507f2ede6",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-YFK2U5FSHZBYZJUHREPLHMHM",
+      "text": "Yes please, just black, no sweetner",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "413e004e14e922c18efe2d661025b792",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-J5ZDRLDDCVHJ7AZDEP6TI6KD",
+      "text": "Yes thank you, no brown sugar",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "b4594bda11531c7847b4a6ccb5a27bb8",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-WXMVHAHCVBBARJVXSMF64AEM",
+      "text": "no more sugar please",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "4c592eef3ace35ab807b21c0ae00f7a7",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-4Y6BC4ZWQZFMZF4RSQCMHTX3",
+      "text": "sugar? none thank you",
+      "intents": [
+        {
+          "intent_id": "intent-I5GSRJZHNVDANIMFLAN3KFMD"
+        }
+      ],
+      "context": {
+        "context_id": "68a5a4578b9c713ed1651fa6c210f36d",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "phrase-ONU2INQUVFBRDDON4FYAPNVD",
+      "text": "A lot, please.",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "d0b79ddb811c7858eddcf57da291e0e0",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-ZBBHJKAKSBGF3FLCL3TTTGIF",
+      "text": "Always",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "68eec46437c384d8dad18d5464ebc35c",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-TIILLM2PXBGK7L5OVKMNCRG6",
+      "text": "Can I get an extra sugar cube in my drink please",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "119d7b8a9ae59a635d178dd65c1aa4ec",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-UUIXX657Q5FB3GGETDOXHJ5P",
+      "text": "Canderel is my favourite sweetner to put in my hot drink",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "6e73cae130c28eab1b7f2a2da2a186ee",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-2YA52MHIYJE2XGTW2E3QL2JZ",
+      "text": "Hot drinks go great with lots of sweetner in",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "5898e89c23c88be0b78e0905d79e9a71",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-DZWKLLT4YBDK7C5S47LYV6T7",
+      "text": "I can't stand coffee without sweetner",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "3e341e105682768163acc6eaec9320c5",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-STGQ4D2MVBD2RJITO7GAV2E5",
+      "text": "I do have a sweet tooth, extra sugar please",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "73a0d35bb1efa337c8e582c987cb5eeb",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-Q65FIPLRXVDOBIO5R2GCIPBF",
+      "text": "I have extra sweetner in my tea",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "5684c9416d6231e6471b55643721406b",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-W7UL6XRO55BTJLTE73DH2O7V",
+      "text": "I like three sugars in my tea",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "80f7bf676802621ef0f60c0203166509",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-BIGJOU5VVRHRZET4LYEIKJK7",
+      "text": "I only like one sweetner in my tea",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "669d9986e7d2bf1990f7eaa23cde2553",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-HXTNMGUIZJBETPENCLHCVE7O",
+      "text": "I usually don't, but why not?",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "052b03a1afca2d37f7f4a60467e60537",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-TFP7KZLDUFEXFO2K3RILBYXV",
+      "text": "I want sugar with that",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "9af2f65ea4d40b902604dbc04b0b11a4",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-FMBS2LD7URCRJBW2EBTPA6SH",
+      "text": "I want three canderel capsules in my coffee",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "f952930db90c4a40f8e7d77b2f8df027",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-RQQHVY4OKJCS5ER3R7KSAN3L",
+      "text": "If it's from a sugar cube, then yes.",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "e609e730f9b5409a78b7fdb7c1c0f8c2",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-YMQHU3S5J5FOVPTFA6QUI7RF",
+      "text": "Just a little.",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "d2698f6b6d4f61e6d41b98f22c7bd5fa",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-CNSH5QG5R5BRFN6DHLMNO6XG",
+      "text": "Just a pinch.",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "08595eae0084110cc2439acdc259bbdb",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-YTPTZVECDVAWBBSUKCOQFJEY",
+      "text": "No I'd like some sweetner please",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "9e37870af5c39afbd98f71d6f0b89e01",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-QRK6TAMS5ZENPABI4NVAVPX2",
+      "text": "No, I can't drink it without some sweetner",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "9c9fb7a239d38bba2a01243620e44d4f",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-FHN6UTJZLZGAXJYHVIPVDJZR",
+      "text": "Only if you promise it won't make me sweeter.",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "eb97ccdd3b2764b53109a15ad80fe4bb",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-TSPJ6WI4BJFTBOQK7II737PF",
+      "text": "Thanks, yes sweetner please",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "62dd97cc9abb6bac17f9b7b6d2dbf730",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-CNY47QHHGVGFZHRWVEGHBRO5",
+      "text": "Three lumps please",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "3989fdee32227cb572d1ab9d0d0c6bed",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-TBAQXEUIRNF5HKAWPY7R26UZ",
+      "text": "Yeah, I'll have some sweetner please",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "f807ff30364f82d1debeb5f55abe3762",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-F2WZB52VK5BL7HAEW6FYZZ23",
+      "text": "Yes please brown sugar",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "c99a1748624212ad56a728a2895a12aa",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-UPFPCLE45VD5ZINHVRNG5G4E",
+      "text": "Yes please, extra sugar please",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "194c13201ce955beae07d58f7b82b0d2",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-NI3J4DC3YFBEVBHWZD73OJW2",
+      "text": "sweetner, yes please.",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "302477eff7494704f27c3a27c5e0e6d8",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    },
+    {
+      "id": "phrase-7BANCITRZFCLPH5OKDYHB7WG",
+      "text": "yes sugar please",
+      "intents": [
+        {
+          "intent_id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW"
+        }
+      ],
+      "context": {
+        "context_id": "33d7c05217b3ba522cd7137c13751bfc",
+        "type": "utterance"
+      },
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    }
+  ],
+  "intents": [
+    {
+      "id": "intent-D3U4S3K7LNF2TCN4W47TJXFE",
+      "name": "answers_to_do_you_want_sugar_with_that",
+      "created_at": "2023-08-20T12:52:26Z",
+      "updated_at": "2023-08-20T12:52:26Z"
+    },
+    {
+      "id": "intent-I5GSRJZHNVDANIMFLAN3KFMD",
+      "name": "no",
+      "parent_intent_id": "intent-D3U4S3K7LNF2TCN4W47TJXFE",
+      "created_at": "2023-08-20T12:42:37Z",
+      "updated_at": "2023-08-20T12:52:39Z"
+    },
+    {
+      "id": "intent-V3NFXJ2E55HHVGTPZE6DTVRW",
+      "name": "yes",
+      "parent_intent_id": "intent-D3U4S3K7LNF2TCN4W47TJXFE",
+      "created_at": "2023-08-20T12:42:40Z",
+      "updated_at": "2023-08-20T12:52:31Z"
+    }
+  ]
+}

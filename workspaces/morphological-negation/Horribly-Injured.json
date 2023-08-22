@@ -1,0 +1,928 @@
+{
+  "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+  "name": "Horribly Injured from DF",
+  "color": "#28afbd",
+  "examples": [
+    {
+      "id": "phrase-5BSQLB2P7FE4PNS57J66T3ZJ",
+      "text": "I greet you",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-OY2XVY4I6ZFYZDERB3SOROFX",
+      "text": "a good day",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-L5TEYRAGKNGR7K2JKCEGJHKJ",
+      "text": "greetings",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-NRYARDSKJZFKJB5X7JYHPLZ5",
+      "text": "hello",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-4OJT66ZOJZHYZOWGC5FMFPXM",
+      "text": "hello again",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-SY4D2M6OXFDJBHIMS25T4ELC",
+      "text": "hello hi",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-4TNRMIJBBVB6JGRLVLDRKQ5Y",
+      "text": "hello there",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-X5W576TS4JDYNMFQZ7MR5TS3",
+      "text": "hey",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-54IPAEIG6JB6LCJTMCIOUWGN",
+      "text": "hey there",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-C2FJVACMPVCKRDYSHKY5VSQ2",
+      "text": "heya",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-UKMUEBHGDBGCLBNKF4VLGA27",
+      "text": "hi",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-DM4EYJW44NFRNNBC62B5GOTD",
+      "text": "hi there",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 2
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-KMEXINKXMFALLLSYW3NLM5LO",
+      "text": "howdy",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-JCVCSKE2RVB3DPKEX2DS2QZS",
+      "text": "just going to say hi",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-GJBCWIL6GZEYXNDF74CSLXKO",
+      "text": "long time no see",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-J6DNMILHSFDLBMY4756A3TO5",
+      "text": "lovely day isn't it",
+      "intents": [
+        {
+          "intent_id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-V6VWUSN2PBEGFMB245TGJUVG",
+      "text": "crushed by a falling piano",
+      "intents": [
+        {
+          "intent_id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-IB4KXQQDBVFPXNFTJNJ6BTPO",
+      "text": "disappeared down a manhole cover",
+      "intents": [
+        {
+          "intent_id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-SFIVEGTMMNAV3OE65UYUFB5D",
+      "text": "drank the coolaid",
+      "intents": [
+        {
+          "intent_id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-QX7SXN3ZS5DSFPXPWGNQCVXF",
+      "text": "eaten by lions",
+      "intents": [
+        {
+          "intent_id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV"
+        }
+      ],
+      "entities": [
+        {
+          "entity_id": "entity-T427AJFN25KHNCZSRN73W7MD",
+          "name": "animal",
+          "text": "lions",
+          "span": {
+            "from_character": 9,
+            "to_character": 14
+          },
+          "value": "lion",
+          "value_id": "entval-DXHAOGGE6BJV3H57C5TQPJQD"
+        }
+      ],
+      "parts": [
+        {
+          "text": "eaten by "
+        },
+        {
+          "entity": {
+            "entity_id": "entity-T427AJFN25KHNCZSRN73W7MD",
+            "name": "animal",
+            "text": "lions",
+            "value": "lion",
+            "value_id": "entval-DXHAOGGE6BJV3H57C5TQPJQD"
+          }
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-OPDYLPLGKFCBFJI5VE2Q2MJO",
+      "text": "fell off a narrow ledge",
+      "intents": [
+        {
+          "intent_id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-SZO6DR73WZDNLJECFJPD7QW5",
+      "text": "foot amputated",
+      "intents": [
+        {
+          "intent_id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-Y6MNFKLRMRHK3MAXZYH7R4XE",
+      "text": "shot six times",
+      "intents": [
+        {
+          "intent_id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-NQFM4HNTOVEEZH4ZLOQE5XPD",
+      "text": "stalked by an invincible robot",
+      "intents": [
+        {
+          "intent_id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-S2WXZHDWLFDL3AFMUHRH7OLA",
+      "text": "eaten by lions",
+      "intents": [
+        {
+          "intent_id": "intent-FGFLTWJAZRI6ZMT5AWMAQYYU"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-3RG5QGDQ2FAT7N5L2ZXJE7S4",
+      "text": "holding up the ice cream van",
+      "intents": [
+        {
+          "intent_id": "intent-FGFLTWJAZRI6ZMT5AWMAQYYU"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-ZSSRBH6FGJCOFB6B4EUZYK4T",
+      "text": "pressed up against the reptile tank",
+      "intents": [
+        {
+          "intent_id": "intent-FGFLTWJAZRI6ZMT5AWMAQYYU"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-56IOBG2XENEZ5IOQHMZK4E6P",
+      "text": "stuck in the planetarium",
+      "intents": [
+        {
+          "intent_id": "intent-FGFLTWJAZRI6ZMT5AWMAQYYU"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-K2ZUKPBRXVDZ7CF6NZVGYVB4",
+      "text": "stuck in the toilet",
+      "intents": [
+        {
+          "intent_id": "intent-FGFLTWJAZRI6ZMT5AWMAQYYU"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "phrase-PCZF6GPFYFFDBHK2Q4QP2STP",
+      "text": "wandered off to look at the monkeys",
+      "intents": [
+        {
+          "intent_id": "intent-FGFLTWJAZRI6ZMT5AWMAQYYU"
+        }
+      ],
+      "source": {
+        "metadata": {
+          "dialogflow": {
+            "repeat_count": 1
+          },
+          "type": "dialogflow"
+        }
+      },
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    }
+  ],
+  "intents": [
+    {
+      "id": "intent-TPY5VPWI65OVZOP5OUTIIOH2",
+      "name": "Default Negative Intent",
+      "source": {
+        "source_id": "00000000-0000-0000-0000-000000000001",
+        "merged_ids": [
+          "00000000-0000-0000-0000-000000000001"
+        ],
+        "metadata": {
+          "dialogflow": {
+            "fallback_intent": false
+          },
+          "type": "dialogflow"
+        }
+      },
+      "tags": [
+        {
+          "id": "tag-DX3JL4GPIRKX7J4POQGQAKGO",
+          "name": "Orphan"
+        }
+      ],
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "intent-LZDDRTAQMRKSZIAWOFAGEKVY",
+      "name": "Default Welcome Intent",
+      "source": {
+        "source_id": "00000000-0000-0000-0000-000000000000",
+        "merged_ids": [
+          "00000000-0000-0000-0000-000000000000"
+        ],
+        "metadata": {
+          "dialogflow": {
+            "fallback_intent": false
+          },
+          "type": "dialogflow"
+        }
+      },
+      "tags": [
+        {
+          "id": "tag-LZDDRTAQMRKSZIAWOFAGEKVY",
+          "name": "Default Start Flow"
+        },
+        {
+          "id": "tag-XAJFMPRELNJCJBEEYA2FG3QL",
+          "name": "Default Start Flow:Start"
+        }
+      ],
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "intent-RF6YVQY6LVNKBLI3BWAUKDCV",
+      "name": "horribly_injured",
+      "source": {
+        "source_id": "0f9ef575-52fd-4151-8564-3c8ecec9d31f",
+        "merged_ids": [
+          "0f9ef575-52fd-4151-8564-3c8ecec9d31f"
+        ],
+        "metadata": {
+          "dialogflow": {
+            "fallback_intent": false
+          },
+          "type": "dialogflow"
+        }
+      },
+      "tags": [
+        {
+          "id": "tag-DX3JL4GPIRKX7J4POQGQAKGO",
+          "name": "Orphan"
+        }
+      ],
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    },
+    {
+      "id": "intent-FGFLTWJAZRI6ZMT5AWMAQYYU",
+      "name": "lost_at_zoo",
+      "source": {
+        "source_id": "9f86c606-3f15-4311-9230-0febd0067b5d",
+        "merged_ids": [
+          "9f86c606-3f15-4311-9230-0febd0067b5d"
+        ],
+        "metadata": {
+          "dialogflow": {
+            "fallback_intent": false
+          },
+          "type": "dialogflow"
+        }
+      },
+      "tags": [
+        {
+          "id": "tag-DX3JL4GPIRKX7J4POQGQAKGO",
+          "name": "Orphan"
+        }
+      ],
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity-OKMKH5LPMZKPNISY6DHHOMWH",
+      "name": "animal",
+      "values": [
+        {
+          "id": "entval-6BVZ2IGHCNJWZI45GQFLRJRD",
+          "key_value": "lion",
+          "language": "en",
+          "synonyms": [
+            {
+              "value": "lion"
+            },
+            {
+              "value": "lions"
+            }
+          ],
+          "source": {
+            "merged_ids": [
+              "65c26ac2-d2d3-4c2e-84af-0c076e708799lion"
+            ]
+          },
+          "created_at": "2023-08-16T14:55:19Z",
+          "updated_at": "2023-08-16T15:48:28Z"
+        },
+        {
+          "id": "entval-JKBQAZPLKBH2FHUUTA2A357E",
+          "key_value": "monkeys",
+          "synonyms": [
+            {
+              "value": "monkeys"
+            }
+          ],
+          "created_at": "2023-08-16T15:48:10Z",
+          "updated_at": "2023-08-16T15:48:28Z"
+        },
+        {
+          "id": "entval-C4OFEVPTXZEIFPMNJGYPBSTI",
+          "key_value": "reptile ",
+          "synonyms": [
+            {
+              "value": "reptile"
+            }
+          ],
+          "created_at": "2023-08-16T15:48:10Z",
+          "updated_at": "2023-08-16T15:48:28Z"
+        }
+      ],
+      "source": {
+        "source_id": "65c26ac2-d2d3-4c2e-84af-0c076e708799",
+        "metadata": {
+          "dialogflow": {
+            "kind": "KIND_MAP"
+          },
+          "type": "dialogflow"
+        },
+        "merged_ids": [
+          "65c26ac2-d2d3-4c2e-84af-0c076e708799"
+        ]
+      },
+      "settings": {},
+      "created_at": "2023-08-16T14:55:19Z",
+      "updated_at": "2023-08-16T15:48:28Z"
+    },
+    {
+      "id": "entity-T427AJFN25KHNCZSRN73W7MD",
+      "name": "animal",
+      "values": [
+        {
+          "id": "entval-DXHAOGGE6BJV3H57C5TQPJQD",
+          "key_value": "lion",
+          "language": "en",
+          "synonyms": [
+            {
+              "value": "lion"
+            },
+            {
+              "value": "lions"
+            }
+          ],
+          "source": {
+            "merged_ids": [
+              "65c26ac2-d2d3-4c2e-84af-0c076e708799lion"
+            ]
+          },
+          "created_at": "2023-08-20T13:00:20Z",
+          "updated_at": "2023-08-20T13:00:20Z"
+        }
+      ],
+      "source": {
+        "source_id": "65c26ac2-d2d3-4c2e-84af-0c076e708799",
+        "metadata": {
+          "dialogflow": {
+            "kind": "KIND_MAP"
+          },
+          "type": "dialogflow"
+        },
+        "merged_ids": [
+          "65c26ac2-d2d3-4c2e-84af-0c076e708799"
+        ]
+      },
+      "settings": {},
+      "created_at": "2023-08-20T13:00:20Z",
+      "updated_at": "2023-08-20T13:00:20Z"
+    }
+  ],
+  "tags": [
+    {
+      "id": "tag-LZDDRTAQMRKSZIAWOFAGEKVY",
+      "name": "Default Start Flow",
+      "description": "A DialogFlow CX Flow where the intent is used",
+      "color": "#FCCCDC",
+      "source": {
+        "merged_ids": [
+          "00000000-0000-0000-0000-000000000000"
+        ],
+        "metadata": {
+          "dialogflowcx": {
+            "flow_id": "",
+            "page_id": "",
+            "transition_route_group_id": ""
+          },
+          "type": "dialogflowcx"
+        }
+      }
+    },
+    {
+      "id": "tag-RTMOEFJFXBOBZBRUO3VR2IOJ",
+      "name": "Default Start Flow",
+      "description": "A DialogFlow CX Flow where the intent is used",
+      "color": "#FCCCDC",
+      "source": {
+        "merged_ids": [
+          "00000000-0000-0000-0000-000000000000"
+        ],
+        "metadata": {
+          "dialogflowcx": {
+            "flow_id": "",
+            "page_id": "",
+            "transition_route_group_id": ""
+          },
+          "type": "dialogflowcx"
+        }
+      }
+    },
+    {
+      "id": "tag-CKIXZXOQHNJCDF347I2TMCM5",
+      "name": "Default Start Flow:Start",
+      "description": "A Default Start Page of a DialogFlow CX Flow where the intent is used",
+      "color": "#CCECFC",
+      "source": {
+        "merged_ids": [
+          "00000000-0000-0000-0000-000000000000Start"
+        ],
+        "metadata": {
+          "dialogflowcx": {
+            "flow_id": "00000000-0000-0000-0000-000000000000",
+            "page_id": "",
+            "transition_route_group_id": ""
+          },
+          "type": "dialogflowcx"
+        }
+      }
+    },
+    {
+      "id": "tag-XAJFMPRELNJCJBEEYA2FG3QL",
+      "name": "Default Start Flow:Start",
+      "description": "A Default Start Page of a DialogFlow CX Flow where the intent is used",
+      "color": "#CCECFC",
+      "source": {
+        "merged_ids": [
+          "00000000-0000-0000-0000-000000000000Start"
+        ],
+        "metadata": {
+          "dialogflowcx": {
+            "flow_id": "00000000-0000-0000-0000-000000000000",
+            "page_id": "",
+            "transition_route_group_id": ""
+          },
+          "type": "dialogflowcx"
+        }
+      }
+    },
+    {
+      "id": "tag-DX3JL4GPIRKX7J4POQGQAKGO",
+      "name": "Orphan",
+      "description": "An Orphaned intent which is not used in DialogFlow CX in any Flow, Page or Transition Route Group",
+      "color": "#FFFFFF",
+      "source": {
+        "merged_ids": [
+          "Orphan"
+        ],
+        "metadata": {
+          "dialogflowcx": {
+            "flow_id": "",
+            "page_id": "",
+            "transition_route_group_id": ""
+          },
+          "type": "dialogflowcx"
+        }
+      }
+    },
+    {
+      "id": "tag-S5OKDJLKLVN3VBH76QLYRLOY",
+      "name": "Orphan",
+      "description": "An Orphaned intent which is not used in DialogFlow CX in any Flow, Page or Transition Route Group",
+      "color": "#FFFFFF",
+      "source": {
+        "merged_ids": [
+          "Orphan"
+        ],
+        "metadata": {
+          "dialogflowcx": {
+            "flow_id": "",
+            "page_id": "",
+            "transition_route_group_id": ""
+          },
+          "type": "dialogflowcx"
+        }
+      }
+    }
+  ]
+}
