@@ -508,9 +508,9 @@ def get_integration_workspaces(headers: str, namespace: str, integration_id: str
 
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
-    return _validate_response(response, url)
+    return _validate_response(response, url, "workspaces")
 
-def trigger_import_from_integration(
+def trigger_import_from_df_cx_integration(
         headers: str,
         namespace: str,
         playbook: str,
@@ -534,10 +534,7 @@ def trigger_import_from_integration(
         merge_entities: bool = False,
         merge_tags: bool = False,
         extra_intent_tags: list = None,
-        extra_phrase_tags: list = None,
-        override_metadata: str = "INTENTS_FORMAT_HF_JSON",
-        override_name: str = "INTENTS_FORMAT_HF_JSON",
-
+        extra_phrase_tags: list = None
     ):
     '''Triggers import of the wrokspace from the selected integration'''
     if extra_intent_tags is None:
@@ -572,9 +569,7 @@ def trigger_import_from_integration(
             "merge_entities": merge_entities,
             "merge_tags": merge_tags,
             "extra_intent_tags": extra_intent_tags,
-            "extra_phrase_tags": extra_phrase_tags,
-            "override_metadata": override_metadata,
-            "override_name": override_name,
+            "extra_phrase_tags": extra_phrase_tags
         },
         "integration_language": integration_language
     }
