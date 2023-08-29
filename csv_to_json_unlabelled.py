@@ -127,6 +127,8 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
                 'expert':'expert'
             }
         else:
+            # split up the format expecting something:client,otherthing:expert
+            # optional * freem form.
             roles = role_mapper.split(',')
             print(roles)
             role_mapper = {}
@@ -134,6 +136,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             for role in roles:
                 pair = role.split(':')
                 role_mapper[pair[0]] = pair[1]
+        print("Using this role mapper:")
         print(json.dumps(role_mapper, indent=2))
 
         # produce roles
@@ -148,13 +151,17 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
         # This info lets you filter for the first or last thing the client says
         # this is very useful in boot strapping bot design
+        # 0s for expert
         df['idx_client'] = df.groupby(
             [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
-        df['first_customer_utt'] = df['idx_client'] == 0
-        df['second_customer_utt'] = df['idx_client'] == 1
-        df['idx_client_max'] = df.groupby([convo_id_col])[
-            'idx_client'].transform(numpy.max)
-        df['final_customer_utt'] = df['idx_client'] == df['idx_client_max']
+        df['first_client_utt'] = df.apply(decide_role_filter_values,args=['idx_client','client',0],axis=1)
+        df['second_client_utt'] = df.apply(decide_role_filter_values,args=['idx_client','client',1],axis=1)
+
+        # same for expert
+        df['idx_expert'] = df.groupby(
+            [convo_id_col, 'role']).cumcount().where(df.role == 'expert', 0)
+        df['first_expert_utt'] = df.apply(decide_role_filter_values,args=['idx_expert','expert',0],axis=1)
+        df['second_expert_utt'] = df.apply(decide_role_filter_values,args=['idx_expert','expert',1],axis=1)
 
         # make sure convo id on the metadata as well for summarisation linking
         metadata_keys.append(convo_id_col)
@@ -162,12 +169,18 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         # extend metadata_keys to indexed fields for conversations.
         # generated custom indexing fields
         metadata_keys.extend(
-            ['idx', 'first_customer_utt', 'second_customer_utt', 'final_customer_utt'])
+            ['idx',
+             'first_client_utt', 'second_client_utt',
+             'first_expert_utt', 'second_expert_utt',
+            ]
+            )
 
     # build metadata for utterances or conversations
     dict_of_file_level_values = {'loaded_date': datetime.datetime.now(
     ).isoformat(), 'script_name': 'csv_to_json_unlaballed.py'}
+    print("Capturing these metadata keys")
     print(metadata_keys)
+    print("Capturing these file level values for metaddata")
     print(dict_of_file_level_values)
     df['metadata'] = df.apply(create_metadata, args=[
                               metadata_keys, dict_of_file_level_values], axis=1)
@@ -190,12 +203,20 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     # write to output
     print("Commencing write")
     for ending in ['.csv','.xlsx']:
-        filename_out = filename.replace(ending, '.json')
+        if filename.endswith(ending):
+            filename_out = filename.replace(ending, '.json')
+            break
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
     print(f"Write complete to {filename_out}")
 
+def decide_role_filter_values(row: pandas.Series, column_name: str, role_filter: str, value_filter: str) -> bool:
+    """Determine whether this is the 0,1,2 where the role is also somthing"""
+    if row[column_name] == value_filter and row["role"] == role_filter:
+        return True
+    else:
+        return False
 
 def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '', created_at_col: str = ''):
     '''Build the examples'''
@@ -241,13 +262,12 @@ def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract:
         metadata = {}
     else:
         assert isinstance(dict_of_values, dict)
-        metadata = dict_of_values
+        metadata = dict_of_values.copy()
 
     for key in metadata_keys_to_extract:
         metadata[key] = str(row[key])
 
     return metadata
-
 
 def translate_roles(role: str, mapper: dict) -> str:
     '''Translates abcd to hf role mapping'''

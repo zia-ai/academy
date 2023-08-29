@@ -38,6 +38,8 @@ kaleido="*"
 openai="*"
 tiktoken="*"
 tdqm="*"
+deepgram-sdk="*"
+asyncclick="*"
 
 [dev-packages]
 
