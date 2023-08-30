@@ -42,7 +42,7 @@ import humanfirst
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert}"')
 @click.option('-e', '--encoding', type=str, required=False, default='utf8',
               help='Input CSV encoding')
-@click.option('-s', '--striphtml', is_flag=True, default=False,
+@click.option('-h', '--striphtml', is_flag=True, default=False,
               help='Whether to strip html tags from the utterance col')
 @click.option('--filtering', type=str, required=False, default='', help='column:value,column:value')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
@@ -97,7 +97,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
     # remove html if necessary
     if striphtml:
-        re_strip_html_tags = re.compile(r'<[ A-Za-z0-9\"\'\\\/=]+>')
+        re_strip_html_tags = re.compile(r'<[ A-Za-z0-9\-\"\'\\\/=]+>')
         df[utterance_col] = df[utterance_col].apply(execute_regex,args=[re_strip_html_tags])
 
     # if convos index them
@@ -288,7 +288,7 @@ def translate_roles(role: str, mapper: dict) -> str:
             f'Couldn\'t locate role: "{role}" in role mapping') from exc
 
 def execute_regex(text_to_run_on: str, re_to_run: re) -> str:
-    return re_to_run.sub(text_to_run_on)
+    return re_to_run.sub('',text_to_run_on)
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
