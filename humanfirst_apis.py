@@ -102,7 +102,7 @@ def delete_tag(headers: str, namespace: str, playbook: str, tag_id: str) -> dict
 
 def create_tag(headers: str, namespace: str, playbook: str, tag_id: str,
                name: str, description: str, color: str) -> dict:
-    '''Returns tags'''
+    '''Create a tag - untested - not sure possible'''
     payload = {
         "namespace": namespace,
         "playbook_id": playbook,
@@ -232,6 +232,20 @@ def get_revisions(headers: str, namespace: str, playbook: str,) -> dict:
     response = requests.request(
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return _validate_response(response, url, "revisions")
+
+def update_intent(headers: str, namespace: str, playbook: str, intent: dict) -> dict:
+    '''Update an intent'''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook,
+        "intent": intent,
+        "update_mask": "name,id,tags" # doesn't seem to work - confirmed bug to be fixed in next release ~ 2023-09
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents'
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return _validate_response(response, url)
 
 
 # ******************************************************************************************************************120
