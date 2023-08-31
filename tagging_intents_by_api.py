@@ -100,18 +100,18 @@ def main(filename: str,
 
     # then update them with their tag
     for i, row in df.iterrows():
-        
+
         # get intent
         print(f'{i} {row[intent_col]} begin:')
         intent = intent_index[row[intent_col]]
         assert isinstance(intent, dict)
-    
+
         # check if tags field exists if not create it
         if not "tags" in intent.keys():
             print(
                 f'- No current tags creating tags field for intent: {intent["name"]}')
             intent["tags"] = []
-        
+
         # see if the tag we are trying to add is already there
         found = False
         for existing_tag in intent["tags"]:
@@ -120,7 +120,7 @@ def main(filename: str,
                 print(f'- Intent {row[intent_col]} already has {row[tag_col]}')
                 found = True
                 break
-        
+
         # if it is not try and add it.
         if not found:
             print(
@@ -130,8 +130,10 @@ def main(filename: str,
                 'name': tag_index[row[tag_col]]['name']
             }
             intent["tags"].append(additional_tag)
+            print(intent)
             humanfirst_apis.update_intent(
-                headers, namespace, playbook, intent['id'], intent)
+                headers, namespace, playbook, intent)
+
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter

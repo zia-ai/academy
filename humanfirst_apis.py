@@ -233,15 +233,16 @@ def get_revisions(headers: str, namespace: str, playbook: str,) -> dict:
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return _validate_response(response, url, "revisions")
 
-def update_intent(headers: str, namespace: str, playbook: str, intent_id: str, intent: dict) -> dict:
+def update_intent(headers: str, namespace: str, playbook: str, intent: dict) -> dict:
     '''Update an intent'''
     payload = {
         "namespace": namespace,
         "playbook_id": playbook,
-        "intent": intent
+        "intent": intent,
+        "update_mask": "name,id,tags" # doesn't seem to work - confirmed bug to be fixed in next release ~ 2023-09
     }
 
-    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/{intent_id}'
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return _validate_response(response, url)
