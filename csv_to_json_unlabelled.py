@@ -115,7 +115,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             df[created_at_col] = df[created_at_col].astype(float)
             df['created_at'] = df[created_at_col].apply(
                 datetime.datetime.fromtimestamp)
-            print(f'Dates are:')
+            print('Dates are:')
             print(df)
             print('\n')
         else:
