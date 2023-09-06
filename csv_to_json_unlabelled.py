@@ -61,6 +61,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     for col in [utterance_col, convo_id_col, created_at_col, role_col]:
         if col != '':
             used_cols.append(col)
+    print(used_cols)
 
     # read the input csv only for the columns we care about - all as strings
     if not excel:
@@ -190,7 +191,11 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     # write to output
     print("Commencing write")
     for ending in ['.csv','.xlsx']:
-        filename_out = filename.replace(ending, '.json')
+        if filename.endswith(ending):
+            filename_out = filename.replace(ending, '.json')
+            break
+    assert(filename != filename_out)
+        
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
