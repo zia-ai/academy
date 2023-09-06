@@ -194,8 +194,8 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         if filename.endswith(ending):
             filename_out = filename.replace(ending, '.json')
             break
-    assert(filename != filename_out)
-        
+    assert filename != filename_out
+
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
