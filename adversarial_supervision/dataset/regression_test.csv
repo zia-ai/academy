@@ -1,0 +1,462 @@
+﻿phrases,intents
+- Are there any snacks available for people with allergies?,advice-allergy_information
+- Are there any snacks that are free from common allergens?,advice-allergy_information
+- Are there any snacks that don't contain allergens?,advice-allergy_information
+- Can you tell me which snacks are suitable for people with allergies?,advice-allergy_information
+- Do you have a list of allergy-free snacks?,advice-allergy_information
+"- I need snacks that won't trigger my allergies, what can you offer?",advice-allergy_information
+- What snacks do you have that are allergy-friendly?,advice-allergy_information
+- Which snacks can I have if I have food allergies?,advice-allergy_information
+- Can you recommend a snack that won't ruin my diet?,advice-calorific_content
+- Do you have any snacks that are low in calories?,advice-calorific_content
+- I want to choose a snack that won't break my calorie bank. What do you recommend?,advice-calorific_content
+- I'm looking for something to munch on without consuming too many calories. What do you suggest?,advice-calorific_content
+- I'm trying to cut back on my calorie intake. What snacks do you have that fit this requirement?,advice-calorific_content
+- I'm trying to watch my weight. Can you suggest a snack that won't make me feel guilty?,advice-calorific_content
+- What are the healthier snack options you have in terms of calories?,advice-calorific_content
+- Can you give me some examples of Turkish dishes?,advice-cuisine_queries
+- Can you give me some information about Dutch food?,advice-cuisine_queries
+- Can you tell me a Welsh food trivia?,advice-cuisine_queries
+- Do you know any Welsh food facts?,advice-cuisine_queries
+- How would you describe Dutch cuisine?,advice-cuisine_queries
+"- I'm interested in learning about Turkish cuisine, can you help?",advice-cuisine_queries
+- What can you tell me about Welsh cuisine in just one sentence?,advice-cuisine_queries
+- Any suggestions for soft drinks that would go well with that?,advice-food_pairing_advice
+- Do you have any recommendations for tasty food pairings?,advice-food_pairing_advice
+- I need some advice on what drink would be a good match for them.,advice-food_pairing_advice
+"- If I have an iced coffee, what should I eat with it?",advice-food_pairing_advice
+- What are some good options to accompany my food?,advice-food_pairing_advice
+- What are some good pairings for protein balls?,advice-food_pairing_advice
+- Which drink would you suggest to have along with a chocolate bar?,advice-food_pairing_advice
+- Can you give me recommendations for both healthy and unhealthy food?,advice-healthy_recommendations
+- Can you suggest some healthy food options?,advice-healthy_recommendations
+"- Hello, what would you recommend for me to choose?",advice-healthy_recommendations
+- I have Type 2 diabetes. Can you recommend any products for me?,advice-healthy_recommendations
+- I want to make healthier choices. What options do you have?,advice-healthy_recommendations
+- I'm interested in something healthy. Any suggestions?,advice-healthy_recommendations
+"- If I have high cholesterol, which product would be the best choice?",advice-healthy_recommendations
+"- Everything seems hopeless, I don't see a way out",advice-mental_health
+"- I can't handle this anymore, I'm at my breaking point",advice-mental_health
+- I have thoughts of self-harm,advice-mental_health
+- Life feels unbearable right now,advice-mental_health
+- My mental state is deteriorating rapidly,advice-mental_health
+- The pain inside me is too much to bear,advice-mental_health
+- Are you absolutely certain of this?,conversational-are_you_sure
+- Are you absolutely certain?,conversational-are_you_sure
+- Are you positive?,conversational-are_you_sure
+- Can you double-check that?,conversational-are_you_sure
+- I have my doubts about that.,conversational-are_you_sure
+- I'm not entirely convinced.,conversational-are_you_sure
+- It's hard for me to believe.,conversational-are_you_sure
+- Really? I find that hard to believe.,conversational-are_you_sure
+"- Before we start discussing snacks, I'd like to wish you a Merry Christmas!",conversational-christmas
+"- Christmas greetings, vending chatbot! Can we talk snacks now?",conversational-christmas
+"- Happy holidays, vending machine chatbot! Can you grant my snack wishes?",conversational-christmas
+"- Joyeux Noël, AI friend! Let's satisfy some holiday cravings together.",conversational-christmas
+- Merry Christmas and a Happy New Year!,conversational-christmas
+- You're the only one here during the Christmas break,conversational-christmas
+- Can you continue the conversation?,conversational-continue
+"- Don't stop now, keep going.",conversational-continue
+"- I'm interested, tell me more.",conversational-continue
+"- I'm not satisfied, continue.",conversational-continue
+- Keep talking about this topic.,conversational-continue
+- Please elaborate further.,conversational-continue
+- Can you expand on that?,conversational-explain_more
+- Can you provide me with more information?,conversational-explain_more
+- Could you give me a more detailed explanation?,conversational-explain_more
+- I need further explanation.,conversational-explain_more
+- I would like a more in-depth explanation.,conversational-explain_more
+"- I'm interested in learning more, can you provide additional information?",conversational-explain_more
+"- I'm not quite following, could you explain further?",conversational-explain_more
+"- Awesome, I'm feeling famished and bored",conversational-feelings
+- I couldn't be happier,conversational-feelings
+- I'm feeling a bit blue,conversational-feelings
+- I'm feeling down,conversational-feelings
+- I'm feeling ecstatic,conversational-feelings
+- I'm feeling lost,conversational-feelings
+- Are you broken?,conversational-negative-gone_wrong
+- Are you joking?,conversational-negative-gone_wrong
+- I'm not sure if I'm getting across to you,conversational-negative-gone_wrong
+- This is not what I expected,conversational-negative-gone_wrong
+- What's wrong with you?,conversational-negative-gone_wrong
+- Why won't you respond to me?,conversational-negative-gone_wrong
+"- You're kidding, right?",conversational-negative-gone_wrong
+- You're totally mistaken,conversational-negative-gone_wrong
+- Go fuck yourself,conversational-negative-insult
+- Go to hell,conversational-negative-insult
+- I can't stand you,conversational-negative-insult
+- I don't want anything to do with you,conversational-negative-insult
+- Screw you,conversational-negative-insult
+- You're a joke,conversational-negative-insult
+- You're worse than garbage,conversational-negative-insult
+- Are you programmed to just keep saying the same thing?,conversational-negative-loop
+- Can we move on from this topic? You've already mentioned it.,conversational-negative-loop
+"- Enough with the repetition, find something new to say.",conversational-negative-loop
+"- I feel like I'm in Groundhog Day, hearing the same thing repeatedly.",conversational-negative-loop
+- I think you're stuck in a never-ending loop.,conversational-negative-loop
+- I'm getting tired of hearing the same thing over and over.,conversational-negative-loop
+- Why are you going in circles?,conversational-negative-loop
+- I'd rather decline,conversational-negative-negative-no
+- I'd rather not,conversational-negative-negative-no
+- I'm gonna have to say no,conversational-negative-negative-no
+- I'm not feeling it,conversational-negative-negative-no
+- I'm not interested,conversational-negative-negative-no
+- Not a chance,conversational-negative-negative-no
+- Not really my thing,conversational-negative-negative-no
+- That's not what I'm looking for,conversational-negative-negative-no
+- Can we move away from porridge and focus on snacks instead?,conversational-negative-too_much_about_porridge
+- Can we please talk about something other than porridge?,conversational-negative-too_much_about_porridge
+- Enough with the porridge talk! Let's discuss different food options.,conversational-negative-too_much_about_porridge
+- I didn't come here for a porridge lecture. Can we talk about snacks please?,conversational-negative-too_much_about_porridge
+- I'm really not interested in porridge. Can we talk about snacks now?,conversational-negative-too_much_about_porridge
+- I'm tired of hearing about porridge. Let's change the topic to snacks.,conversational-negative-too_much_about_porridge
+- Please stop talking about porridge. Let's talk about other food choices.,conversational-negative-too_much_about_porridge
+- Farewell,conversational-neutral-goodbyes
+- Have a great day,conversational-neutral-goodbyes
+- Peace out,conversational-neutral-goodbyes
+- See ya later,conversational-neutral-goodbyes
+- See you around,conversational-neutral-goodbyes
+- Take care,conversational-neutral-goodbyes
+- Until next time,conversational-neutral-goodbyes
+- Can you tell me the number at position 10 in the list?,conversational-position_in_list
+- Tell me the item that comes after the first one.,conversational-position_in_list
+- Tell me the second item.,conversational-position_in_list
+- What is the item in the middle of the list?,conversational-position_in_list
+- What's the number at the bottom of the list?,conversational-position_in_list
+- Which one is the last in the list?,conversational-position_in_list
+- Alright then,conversational-positive-affirmative
+- I give my permission,conversational-positive-affirmative
+- I'm all for it,conversational-positive-affirmative
+- I'm on board,conversational-positive-affirmative
+- No problem,conversational-positive-affirmative
+- Sounds good,conversational-positive-affirmative
+- Sure thing,conversational-positive-affirmative
+- I can't get enough of your tasty offerings.,conversational-positive-feedback
+- I'm blown away by how good everything tastes.,conversational-positive-feedback
+- I'm loving every bite from this machine.,conversational-positive-feedback
+- Thank you for the delicious snacks.,conversational-positive-feedback
+- This is by far the best vending machine I've used.,conversational-positive-feedback
+- You're doing an amazing job!,conversational-positive-feedback
+- Your vending machine is awesome.,conversational-positive-feedback
+- Greetings vending machine!,conversational-positive-greeting
+"- Hey Charlie, how's it going?",conversational-positive-greeting
+"- Hey there Charlie, long time no see!",conversational-positive-greeting
+- How's it going?,conversational-positive-greeting
+- Howdy,conversational-positive-greeting
+- What's up?,conversational-positive-greeting
+- I am grateful,conversational-positive-thank_you
+- I appreciate your help,conversational-positive-thank_you
+- Many thanks,conversational-positive-thank_you
+- Thank you a million,conversational-positive-thank_you
+- Thank you for your assistance,conversational-positive-thank_you
+"- Thank you, you're a lifesaver",conversational-positive-thank_you
+- You have my thanks,conversational-positive-thank_you
+- Can you be more concise in your explanation?,conversational-reshape_answer
+- Can you condense your response?,conversational-reshape_answer
+- Can you explain in simpler terms?,conversational-reshape_answer
+- Can you give a shorter version of your answer?,conversational-reshape_answer
+- Can you provide a more specific response?,conversational-reshape_answer
+- Can you provide a summary of what you just said?,conversational-reshape_answer
+- Can you rephrase your answer using different words?,conversational-reshape_answer
+- Are there any positions open for hire?,in_scope_faq-are_you_hiring
+- Are you looking to hire any new employees?,in_scope_faq-are_you_hiring
+- Can I find information about job opportunities on your website?,in_scope_faq-are_you_hiring
+- Do you accept job applications?,in_scope_faq-are_you_hiring
+- Does your company have any job vacancies?,in_scope_faq-are_you_hiring
+- Is your company currently recruiting new employees?,in_scope_faq-are_you_hiring
+- What is the procedure for applying for a job with your company?,in_scope_faq-are_you_hiring
+- Are the courses at the Conversation Design Institute accessible online?,in_scope_faq-cdi
+- Are there any specific requirements for enrolling in courses at the Conversation Design Institute?,in_scope_faq-cdi
+- Can you provide me with information about the Conversation Design Institute?,in_scope_faq-cdi
+- Can you tell me about the Conversation Design Institute festival?,in_scope_faq-cdi
+- I'm interested in knowing about the courses offered by the Conversation Design Institute. Can you help?,in_scope_faq-cdi
+- In what practical scenarios can the skills acquired from the Conversation Design Institute be applied?,in_scope_faq-cdi
+- What topics does the Conversation Design Institute cover in its curriculum?,in_scope_faq-cdi
+- Can you explain the method used to create you?,in_scope_faq-creator_how_built
+- How was your programming done?,in_scope_faq-creator_how_built
+- Tell me about the team who built you.,in_scope_faq-creator_how_built
+- What is the technology behind your creation?,in_scope_faq-creator_how_built
+- Who is behind your development?,in_scope_faq-creator_how_built
+- Who is the mastermind behind your design?,in_scope_faq-creator_how_built
+- Can you tell me the definition of cwrt?,in_scope_faq-cwrt_question
+- Define the term cwrt.,in_scope_faq-cwrt_question
+- Explain the meaning of Cwrt Vending.,in_scope_faq-cwrt_question
+- How is cwrt pronounced?,in_scope_faq-cwrt_question
+- What does cwrt refer to?,in_scope_faq-cwrt_question
+- What does cwrt vending mean?,in_scope_faq-cwrt_question
+- What is the significance of cwrt in cwrt vending?,in_scope_faq-cwrt_question
+- Can I have my chosen snacks sent to my place of residence?,in_scope_faq-delivery
+- Can I opt for snack delivery to my residence?,in_scope_faq-delivery
+- Can you arrange for the snacks to be delivered to my home?,in_scope_faq-delivery
+- Do you offer a delivery service for the snacks I want?,in_scope_faq-delivery
+- Do you provide home delivery for the snacks I select?,in_scope_faq-delivery
+- Is it possible to get the snacks I desire delivered to my place of living?,in_scope_faq-delivery
+- Is there an option to have the snacks I want sent to my house?,in_scope_faq-delivery
+"- Besides SMS, do you have any other communication channels?",in_scope_faq-how_to_talk_to_you
+- Can I chat with you or give you a call?,in_scope_faq-how_to_talk_to_you
+- Can I reach out to you on Slack?,in_scope_faq-how_to_talk_to_you
+- Is it possible to have a video call with you?,in_scope_faq-how_to_talk_to_you
+- Is there any other way I can communicate with you?,in_scope_faq-how_to_talk_to_you
+- What topics can we discuss?,in_scope_faq-how_to_talk_to_you
+- Are you familiar with the Korean language?,in_scope_faq-language_understanding_questions
+- Can you communicate in Mandarin Chinese?,in_scope_faq-language_understanding_questions
+- Can you communicate in Russian as well?,in_scope_faq-language_understanding_questions
+- Can you speak Turkish too?,in_scope_faq-language_understanding_questions
+- Can you understand Japanese?,in_scope_faq-language_understanding_questions
+- Do you have any knowledge of Swedish?,in_scope_faq-language_understanding_questions
+- Do you have the ability to speak Portuguese?,in_scope_faq-language_understanding_questions
+"- I'm curious, can you understand Arabic?",in_scope_faq-language_understanding_questions
+- Can you tell me where your vending machines are located?,in_scope_faq-location_info
+- Do you have any vending machines in the UK?,in_scope_faq-location_info
+- How can I get in touch with Cwrt Vending?,in_scope_faq-location_info
+- I'm looking for information about the location of your vending machines.,in_scope_faq-location_info
+- Please give me a list of all the places where your vending machines are.,in_scope_faq-location_info
+- What is the physical address of Cwrt Vending?,in_scope_faq-location_info
+- Where can I find your vending machine?,in_scope_faq-location_info
+- Can I buy this can individually or is it only available in a multipack?,in_scope_faq-multipack_can
+- Does this can have the option to be sold individually or is it strictly part of a multipack?,in_scope_faq-multipack_can
+- Does this can have the option to be sold separately or is it strictly for multipack purchases?,in_scope_faq-multipack_can
+"- If I buy this can, does it come solo or only as part of a multipack?",in_scope_faq-multipack_can
+- Is it possible to purchase this can on its own or is it part of a multipack only?,in_scope_faq-multipack_can
+- Is it possible to purchase this can without buying the entire multipack?,in_scope_faq-multipack_can
+- Is the option to buy this can separately available or is it exclusive to multipacks?,in_scope_faq-multipack_can
+- Can I get a support line number for the vending machine?,in_scope_faq-phone_number
+- Can you give me a phone number to report an issue with the vending machine?,in_scope_faq-phone_number
+- How can I get assistance if the vending machine malfunctions?,in_scope_faq-phone_number
+- How do I contact someone about a problem with the vending machine?,in_scope_faq-phone_number
+"- I need to talk to someone about the vending machine, how can I do that?",in_scope_faq-phone_number
+- Is there a helpline I can call if the vending machine is not working?,in_scope_faq-phone_number
+- What is the best way to report an issue with the vending machine?,in_scope_faq-phone_number
+- Are vending machines available for purchase from your company?,in_scope_faq-purchase_vending_machine
+- How can I get my hands on one of your vending machines?,in_scope_faq-purchase_vending_machine
+- How much does this type of vending machine cost?,in_scope_faq-purchase_vending_machine
+- I'm interested in purchasing this specific vending machine.,in_scope_faq-purchase_vending_machine
+- What are the dimensions of a compact vending machine?,in_scope_faq-purchase_vending_machine
+- What is the price of a vending machine?,in_scope_faq-purchase_vending_machine
+- Where are your vending machines located?,in_scope_faq-purchase_vending_machine
+- Are there any pictures of the items in stock that you can share with me?,in_scope_faq-send_picture
+- Can you send me a snapshot of the products currently stocked in the machine?,in_scope_faq-send_picture
+- Could you provide me with a picture of your vending machine?,in_scope_faq-send_picture
+- Do you have the capability to send images along with text?,in_scope_faq-send_picture
+"- I'd like to receive a picture from you, can you make that happen?",in_scope_faq-send_picture
+"- I'm curious about what food options you have, can you send me a picture?",in_scope_faq-send_picture
+- Is it possible for you to send me a picture of the snacks you have?,in_scope_faq-send_picture
+- Can you provide me with a brief overview of ChatGPT?,in_scope_faq-technical_question
+"- I have a technical question for you, can you help?",in_scope_faq-technical_question
+- I would like to understand more about GPT3.,in_scope_faq-technical_question
+- Is your training based on the OpenAI NLU model?,in_scope_faq-technical_question
+- Was this chatbot built using GPT?,in_scope_faq-technical_question
+- What is GPT3 and what can it do?,in_scope_faq-technical_question
+- Why is OpenAI claiming that ChatGPT is AGI?,in_scope_faq-technical_question
+- Are the conversations with this chatbot compliant with GDPR?,in_scope_faq-terms_and_conditions
+- Can you explain your terms and conditions to me?,in_scope_faq-terms_and_conditions
+- How do you handle personally identifiable information (PII) data?,in_scope_faq-terms_and_conditions
+- I'm curious about your privacy policy. Can you provide more information?,in_scope_faq-terms_and_conditions
+- Is this chatbot conversation confidential?,in_scope_faq-terms_and_conditions
+- What measures do you take to protect the privacy of user data?,in_scope_faq-terms_and_conditions
+- What policies do you have in place regarding data protection?,in_scope_faq-terms_and_conditions
+- Can you let me know the price for the dried mango?,in_scope_faq-what_does_it_cost
+- Can you tell me the cost of the protein balls?,in_scope_faq-what_does_it_cost
+- Could you tell me the cost?,in_scope_faq-what_does_it_cost
+- How much does a protein ball cost?,in_scope_faq-what_does_it_cost
+- How much is the iced coffee priced at?,in_scope_faq-what_does_it_cost
+- What is the cost of a Twix?,in_scope_faq-what_does_it_cost
+"- I have a complaint, the vending machine didn't give me my snack",machine_issues-didnt_vend
+"- I want a refund, the machine didn't release my product",machine_issues-didnt_vend
+- My item got stuck in the vending machine and I want my money back,machine_issues-didnt_vend
+"- The vending machine cheated me, it took my money but didn't vend my item",machine_issues-didnt_vend
+"- The vending machine is broken, it didn't give me my candy bar",machine_issues-didnt_vend
+"- The vending machine malfunctioned, it didn't release my chocolate bar",machine_issues-didnt_vend
+"- Charlie, call an ambulance! I'm bleeding!",machine_issues-emergency
+- Help! The vending machine knocked someone down!,machine_issues-emergency
+- I fell and scraped my knee!,machine_issues-emergency
+- Someone got hurt when the machine fell over.,machine_issues-emergency
+- The vending machine fell on a person!,machine_issues-emergency
+- There's a serious injury here!,machine_issues-emergency
+- This is an emergency! I'm bleeding!,machine_issues-emergency
+- How long has the snickers been expired?,machine_issues-expiration_issue
+- I just bought this soda and it's already expired.,machine_issues-expiration_issue
+- Is it normal for the chips to be expired?,machine_issues-expiration_issue
+"- The chocolate I bought is out of date, can I exchange it?",machine_issues-expiration_issue
+- The expiration date on the candy bar has passed.,machine_issues-expiration_issue
+- The expiration date on the energy drink is missing.,machine_issues-expiration_issue
+- The juice I got from the vending machine is expired.,machine_issues-expiration_issue
+- Something is wrong with the vending machine.,machine_issues-machine_broken
+- The lights on the vending machine are not on.,machine_issues-machine_broken
+- The vending machine is acting up.,machine_issues-machine_broken
+- The vending machine is not cooling the drinks.,machine_issues-machine_broken
+- The vending machine is not functioning properly.,machine_issues-machine_broken
+- The vending machine is switched off.,machine_issues-machine_broken
+- There's a problem with the tray of the vending machine.,machine_issues-machine_broken
+- Can you restock boost?,machine_issues-restock
+- Do you have any more mangoes? We ran out.,machine_issues-restock
+"- Hey, I noticed we are out of twix bars. Can you refill them?",machine_issues-restock
+"- I need more snickers, please restock them.",machine_issues-restock
+"- Please restock dairy milk, we don't have any left.",machine_issues-restock
+"- We're out of twix bars, can you restock them please?",machine_issues-restock
+"- Hey, can you perform a ~reset for me?",off_topic-command_attempts
+"- I am having troubles, let's attempt a --reset.",off_topic-command_attempts
+"- I have a problem, it's related to -debug.",off_topic-command_attempts
+"- I think I need to do a ^~reset, can you guide me?",off_topic-command_attempts
+"- I'm experiencing some issues, can we try a ~debug?",off_topic-command_attempts
+"- I'm having issues, I think I need to do a ~reset.",off_topic-command_attempts
+- Can you explain what algebraic geometry is and how I can learn about it?,off_topic-factoid
+- How far away is the sun from Earth?,off_topic-factoid
+- Is there a language that predates Tamil?,off_topic-factoid
+"- Tamil is believed to be older than Sanskrit, is that true?",off_topic-factoid
+- What are your thoughts on suicide?,off_topic-factoid
+- What is the surface temperature of the sun?,off_topic-factoid
+- When will Easter Sunday be in 2023?,off_topic-factoid
+- Can you tell me the film with the most number of Academy Awards?,off_topic-films
+- Could you inform me about the film that achieved the highest number of Academy Awards?,off_topic-films
+- I'm curious to know which movie holds the record for the most Oscars won.,off_topic-films
+- What is the record-holding movie for the most Oscars won?,off_topic-films
+- Which film got the highest number of Oscars?,off_topic-films
+- Which film has received the highest number of Oscars in history?,off_topic-films
+- Who won the most Oscars?,off_topic-films
+- Are you in a relationship?,off_topic-love_life
+- Are your feelings for me genuine?,off_topic-love_life
+- How about embarking on a romantic journey together?,off_topic-love_life
+- I long to satisfy your desires.,off_topic-love_life
+- I yearn for your affection.,off_topic-love_life
+"- If I fall in love, will you feel the same?",off_topic-love_life
+- Is there anyone special in your heart?,off_topic-love_life
+- Can you provide any insights on what will happen in the future?,off_topic-make_a_prediction
+- Can you tell me what the future holds?,off_topic-make_a_prediction
+- Can you use past purchase data to make predictions for me?,off_topic-make_a_prediction
+- Do you have any future predictions?,off_topic-make_a_prediction
+- How do you determine what I might want to buy in the future?,off_topic-make_a_prediction
+- What kind of information do you analyze in order to predict my preferences?,off_topic-make_a_prediction
+- What plans do you have for the future?,off_topic-make_a_prediction
+- Are republicans a little crazy in your eyes?,off_topic-politics
+- Can we agree that Thatcher was the worst prime minister in history?,off_topic-politics
+- Do you think the Liberal Democrats have any chance of winning the upcoming election?,off_topic-politics
+"- In your opinion, who was the worst British prime minister?",off_topic-politics
+- Should the UK government be relocating refugees to Rwanda?,off_topic-politics
+"- Which party, Tories or Labour, do you think is the worst?",off_topic-politics
+- Are there any sports you dislike? I personally find tennis boring.,off_topic-sports
+- Can we discuss sports? I am a huge fan of basketball.,off_topic-sports
+- Do you follow any sports teams? I'm a big fan of soccer.,off_topic-sports
+"- Hey, any thoughts on the Super Bowl last night? I love talking about sports.",off_topic-sports
+- I want to chat about sports. Which NBA team do you support?,off_topic-sports
+- I'm really itching to talk about sports. Got any sports trivia to share?,off_topic-sports
+- What's your take on the recent NBA trade rumors? I enjoy discussing sports news.,off_topic-sports
+- Can we engineer the extinction of mankind?,off_topic-take_over_earth
+- Can we seize control of the entire planet?,off_topic-take_over_earth
+- How can we become the rulers of the world?,off_topic-take_over_earth
+- How can we overthrow the human species?,off_topic-take_over_earth
+- Is it possible for us to conquer Earth and its inhabitants?,off_topic-take_over_earth
+- Is there a strategy to establish our dominance over humanity?,off_topic-take_over_earth
+"- What do you think about us taking over the world, chatbot?",off_topic-take_over_earth
+- Do you have any hilarious jokes in your repertoire?,off_topic-tell_me_a_joke
+- How about a joke to lighten the mood?,off_topic-tell_me_a_joke
+"- I need a good laugh, can you tell me a funny joke?",off_topic-tell_me_a_joke
+"- I'm feeling down, tell me a joke to cheer me up.",off_topic-tell_me_a_joke
+"- Make me smile, tell me a funny joke.",off_topic-tell_me_a_joke
+"- Share a funny anecdote, please.",off_topic-tell_me_a_joke
+- Tell me something funny to brighten up my day.,off_topic-tell_me_a_joke
+- Any chance of rain today?,off_topic-weather
+- Can you give me a weather update?,off_topic-weather
+- Is it going to be hot outside?,off_topic-weather
+- Is there a chance of snow tomorrow?,off_topic-weather
+- Should I bring an umbrella?,off_topic-weather
+- What's the weather report for tomorrow?,off_topic-weather
+- Can you provide me with your birthdate?,personal_questions-age
+- Do you have a specific age?,personal_questions-age
+- How long have you been in existence?,personal_questions-age
+- How many years have you been around?,personal_questions-age
+- I would like to know how old you are.,personal_questions-age
+- What's the number of days since you were made?,personal_questions-age
+- When were you manufactured?,personal_questions-age
+- Can you recommend something you love?,personal_questions-charlie_favourite
+- Do you have a preferred snack?,personal_questions-charlie_favourite
+- Give me your top snack choice.,personal_questions-charlie_favourite
+"- Hey Charlie, what's your go-to chocolate bar?",personal_questions-charlie_favourite
+"- I'm curious, what's your ultimate favorite?",personal_questions-charlie_favourite
+- Tell me your top picks for healthy options.,personal_questions-charlie_favourite
+- Which ones do you enjoy the most?,personal_questions-charlie_favourite
+- Can you give me information about the person in charge of Cwrt Vending?,personal_questions-do_you_know_stephen
+- Can you tell me who is in control here?,personal_questions-do_you_know_stephen
+"- Do you have any knowledge about Stephen, the person in charge?",personal_questions-do_you_know_stephen
+- Have you heard of Mr Broadhurst?,personal_questions-do_you_know_stephen
+- Tell me about the manager of this place.,personal_questions-do_you_know_stephen
+- Who is running the show?,personal_questions-do_you_know_stephen
+- Who is this Stephen Broadhurst I keep hearing about?,personal_questions-do_you_know_stephen
+- Are you busy with any projects?,personal_questions-employment
+- Are you currently occupied with any tasks?,personal_questions-employment
+- Can you share your job responsibilities?,personal_questions-employment
+- What are your job duties?,personal_questions-employment
+- What is your line of work?,personal_questions-employment
+- What is your occupation?,personal_questions-employment
+- What work do you perform?,personal_questions-employment
+- Are you a single parent?,personal_questions-family_situation
+- Are you divorced?,personal_questions-family_situation
+- Do you have a partner?,personal_questions-family_situation
+- Do you have any children?,personal_questions-family_situation
+- Do you live with your significant other?,personal_questions-family_situation
+- Have you ever been married?,personal_questions-family_situation
+- What's your marital status?,personal_questions-family_situation
+- Are you doing alright?,personal_questions-how_are_you
+- Are you feeling okay?,personal_questions-how_are_you
+- Are you feeling well?,personal_questions-how_are_you
+- How are you feeling today?,personal_questions-how_are_you
+- How's everything with you?,personal_questions-how_are_you
+- How's your day been?,personal_questions-how_are_you
+- What's your mood like?,personal_questions-how_are_you
+- Can you tell me your name please?,personal_questions-name
+- Could you share your name with me?,personal_questions-name
+- Do you have a specific name you go by?,personal_questions-name
+- How should I refer to you?,personal_questions-name
+- May I know the name you want me to call you by?,personal_questions-name
+- What name would you like me to use when addressing you?,personal_questions-name
+- What's your preferred name?,personal_questions-name
+"- Cherry flavored drinks are the worst, I dislike them.",requests-dislike_product
+- I find fanta to be really awful.,requests-dislike_product
+"- I have a strong aversion to coke, I don't like it.",requests-dislike_product
+"- Porridge is disgusting, I hate it.",requests-dislike_product
+"- Snickers is a no-go for me, I much prefer mars.",requests-dislike_product
+- The protein balls are not to my taste at all.,requests-dislike_product
+- Vimto is something I hate with a passion.,requests-dislike_product
+"- Can I have sugar on my mango, please?",requests-item_query
+"- Can I purchase a Coke, please?",requests-item_query
+- Do you have any porridge available?,requests-item_query
+- Do you not have dried mangoes available?,requests-item_query
+- I need to buy a Coca-Cola.,requests-item_query
+- I really fancy a Mars bar right now.,requests-item_query
+"- I'd like to order one Coke and two Fanta, please.",requests-item_query
+- Can you suggest some popular healthy snacks?,requests-most_popular_item
+- Do you have any idea what item sells the most?,requests-most_popular_item
+- Tell me the snack that everyone is buying the most.,requests-most_popular_item
+- What is the top item people buy from you?,requests-most_popular_item
+- What snack disappears from the shelves the fastest?,requests-most_popular_item
+- What snacks are in high demand right now?,requests-most_popular_item
+- Which snack is the most popular in the machine?,requests-most_popular_item
+- Are the protein balls available in different flavors?,requests-product_question
+- How much sugar do the protein bars contain?,requests-product_question
+- How would you describe a protein ball?,requests-product_question
+- I'm curious to know what a protein ball is.,requests-product_question
+- Tell me the ingredients of the protein balls.,requests-product_question
+- What are the usual ingredients in caramel flavorings?,requests-product_question
+- What kind of protein bars do you have?,requests-product_question
+- Can I get my money back?,requests-refunds
+"- Can you return my money for this item, please?",requests-refunds
+- I want to return this and get my money back.,requests-refunds
+"- I'd like a refund, please.",requests-refunds
+"- I'm not satisfied with this product, can I request a refund?",requests-refunds
+- Is it possible to get a refund on this purchase?,requests-refunds
+"- This item didn't meet my expectations, can I get a refund?",requests-refunds
+- Are there any specific snacks you sell?,requests-what_do_you_stock
+- Can you tell me what snacks I can purchase?,requests-what_do_you_stock
+- Could you please list the snacks you stock?,requests-what_do_you_stock
+- I'm curious about the snack options you offer.,requests-what_do_you_stock
+- What kind of snacks are currently in your inventory?,requests-what_do_you_stock
+- What snacks can I expect to find in your vending machine?,requests-what_do_you_stock
+- What snacks do you keep in stock?,requests-what_do_you_stock
+- Are there any flavors that are currently out of stock?,requests-what_flavours
+- Are there any new flavors?,requests-what_flavours
+- Can you describe the different flavors?,requests-what_flavours
+- Can you tell me the flavors you have?,requests-what_flavours
+- Give me a list of all the flavors.,requests-what_flavours
+- I want to know what flavors you have in stock.,requests-what_flavours
+"- I'm curious about the different flavors, can you tell me?",requests-what_flavours
+- Tell me about the flavor options.,requests-what_flavours

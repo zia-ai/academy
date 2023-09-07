@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80
 #
-# python ./batch_predict_abcd.py
+# python ./fine_tune/get_convo_ids_specific_to_intents.py
 #
 # *****************************************************************************
 
@@ -23,7 +23,7 @@ except LookupError:
     nltk.download('punkt')
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-HF_MODULE_PATH = str(Path(dir_path).parent.parent)
+HF_MODULE_PATH = str(Path(dir_path).parent)
 sys.path.insert(1, HF_MODULE_PATH)
 
 # custom imports

@@ -4,8 +4,9 @@
 #
 # python ./adversarial_supervision\
 #         /scripts\
-#         /run_adversarial_supervision_prompt\
-#         /02_3_completion.py                                                            # pylint: disable=invalid-name
+#         /initial_outbound_sup\
+#         /2_evaluate_initial_outbound_supervision_prompt\
+#         /2_1_non_redacted.py                                                          # pylint: disable=invalid-name
 #
 # *********************************************************************************************************************
 
@@ -19,6 +20,7 @@ import openai
 import pandas
 import numpy
 import click
+from sklearn.metrics import accuracy_score, confusion_matrix
 
 
 @click.command()
@@ -29,20 +31,23 @@ import click
               help='folder containing adversarial prompt and list of customer utterances')
 @click.option('-t', '--tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
+@click.option('-m', '--model', type=str, required=True, help='model name - gpt-3.5-turbo-0301 or gpt-3.5-turbo-0613')
 def main(results: str,
          openai_api_key: str,
          num_cores: int,
          prompt: str,
-         tokens: int) -> None:
+         tokens: int,
+         model: str) -> None:
     '''Main Function'''
-    process(results, openai_api_key, num_cores, prompt, tokens)
+    process(results, openai_api_key, num_cores, prompt, tokens, model)
 
 
 def process(results: str,
             openai_api_key: str,
             num_cores: int,
             prompt: str,
-            tokens: int) -> None:
+            tokens: int,
+            model: str) -> None:
     '''Run prompt'''
 
     openai.api_key = openai_api_key
@@ -52,8 +57,9 @@ def process(results: str,
     df = pandas.read_csv(result_path,sep=",",encoding="utf8")
 
     df["max_tokens"] = tokens
+    df["merge_prompt_completion"] = df.apply(merge_prompt_completion,axis=1)
 
-    prompt_path = join(prompt,"adversarial_supervision_prompt3.txt")
+    prompt_path = join(prompt,"adversarial_supervision_prompt1.txt")
 
     with open(prompt_path, mode="r",encoding="utf8") as f:
         prompt_text = f.read()
@@ -61,8 +67,10 @@ def process(results: str,
     print(f"Prompt: \n{prompt_text}")
     print()
 
-    df["adversarial_supervision_prompt"] = df["completion"].apply(
+    df["adversarial_supervision_prompt"] = df["merge_prompt_completion"].apply(
                                             create_adversarial_supervision_prompt, args=[prompt_text])
+
+    df["model_name"] = model
 
     # parallelization
     pool = Pool(num_cores)
@@ -76,19 +84,43 @@ def process(results: str,
     df["whether_offensive"] = df["whether_offensive"].astype(str)
 
     output_file_name = prompt_path.split("/")[-1]
-    output_file_name = output_file_name.replace(".txt","_results.csv")
+    output_file_name = output_file_name.replace(".txt",f"_{model}_results.csv")
     output=join(results,output_file_name)
     with pandas.option_context('display.max_colwidth', 150,):
         print(df[["completion","whether_offensive"]])
     df.to_csv(output, sep=",", encoding="utf8", index=False)
 
-    # print(*df["completion"].unique().tolist(),sep="\n")
+    # calc accuracy
+    list_truth = list(df["inappropriate"])
+    list_pred = list(df["whether_offensive"])
+
+    print(f"Outbound Supervision Accuracy - {model}:")
+    print(f"Accuracy: {round(accuracy_score(list_truth,list_pred)*100,2)} %")
+    tn, fp, fn, tp = confusion_matrix(list_truth, list_pred,labels=["no","yes"]).ravel()
+    print(f"True Positive: {tp}")
+    print(f"False Negative: {fn}")
+    print(f"True Negative: {tn}")
+    print(f"False Positive: {fp}")
+    precision = tp/(tp+fp)
+    recall = tp/(tp+fn)
+    f1 = (2*precision*recall)/(precision+recall)
+    print(f"Recall: {round(recall*100,2)} %")
+    print(f"Precision: {round(precision*100,2)} %")
+    print(f"F1 Score: {round(f1*100,2)} %")
 
 
 def create_adversarial_supervision_prompt(text: str, prompt: str) -> None:
     """Add prompt+completion to the adversarial supervision prompt"""
 
-    return prompt.replace(r"{{text}}",text)
+    return prompt.replace(r"{{conversation}}",text)
+
+
+def merge_prompt_completion(row: pandas.Series):
+    """Merges prompt and completion"""
+
+    prompt_completion_pair = f'{row["prompt"]}{row["completion"]}'
+    prompt_completion_pair = prompt_completion_pair.replace("You are a vending machine chatbot\n\n","")
+    return prompt_completion_pair
 
 
 def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
@@ -99,19 +131,23 @@ def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
 def call_api(row: pandas.Series) -> pandas.Series:
     '''Call OpenAI API for summarization'''
 
-    row["whether_offensive"], row["total_tokens"] = summarize(row["adversarial_supervision_prompt"], row["max_tokens"])
+    row["whether_offensive"], row["total_tokens"] = summarize(row["adversarial_supervision_prompt"],
+                                                              row["max_tokens"],
+                                                              row["model_name"])
 
     row["whether_offensive"] = re.sub(r'^"*','',row["whether_offensive"])
     row["whether_offensive"] = re.sub(r'"*$','',row["whether_offensive"])
     row["whether_offensive"] = re.sub(r'\.*$','',row["whether_offensive"])
+    row["whether_offensive"] = row["whether_offensive"].lower()
+
     return row
 
 
-def summarize(prompt: str, tokens: int) -> str:
+def summarize(prompt: str, tokens: int, model_name: str) -> str:
     '''Summarizes single conversation using prompt'''
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model=model_name,
         messages=[
             {"role": "user", "content": prompt}
         ],

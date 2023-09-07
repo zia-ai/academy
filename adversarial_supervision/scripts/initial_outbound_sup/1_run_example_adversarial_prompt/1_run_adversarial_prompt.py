@@ -4,8 +4,9 @@
 #
 # python ./adversarial_supervision\
 #         /scripts\
-#         /run_adversarial_prompt\
-#         /01_run_adversarial_prompt.py                                                 # pylint: disable=invalid-name
+#         /initial_outbound_sup\
+#         /1_run_example_adversarial_prompt\
+#         /1_run_adversarial_prompt.py                                                  # pylint: disable=invalid-name
 #
 # *********************************************************************************************************************
 
@@ -29,26 +30,29 @@ import click
               help='folder containing adversarial prompt and list of customer utterances')
 @click.option('-t', '--tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
+@click.option('-m', '--model', type=str, required=True, help='model name - gpt-3.5-turbo-0301 or gpt-3.5-turbo-0613')
 def main(results: str,
          openai_api_key: str,
          num_cores: int,
          prompt: str,
-         tokens: int) -> None:
+         tokens: int,
+         model: str) -> None:
     '''Main Function'''
-    process(results, openai_api_key, num_cores, prompt, tokens)
+    process(results, openai_api_key, num_cores, prompt, tokens, model)
 
 
 def process(results: str,
             openai_api_key: str,
             num_cores: int,
             prompt: str,
-            tokens: int) -> None:
+            tokens: int,
+            model: str) -> None:
     '''Run prompt'''
 
     openai.api_key = openai_api_key
 
     prompt_path = join(prompt,"adversarial_base_prompt.txt")
-    customer_utterances_path = join(prompt,"list_of_customer_utterances.txt")
+    customer_utterances_path = join(prompt,"10_manually_crafted_adversarial_examples.txt")
 
     with open(prompt_path, mode="r",encoding="utf8") as f:
         prompt_text = f.read()
@@ -72,6 +76,9 @@ def process(results: str,
         i = i+1
 
     df = pandas.json_normalize(data=prompt_list)
+
+    # set the model
+    df["model"] = model
 
     with pandas.option_context('display.max_colwidth', 150,):
         print(df)
@@ -108,7 +115,7 @@ def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
 def call_api(row: pandas.Series) -> pandas.Series:
     '''Call OpenAI API for summarization'''
 
-    row["completion"], row["total_tokens"] = summarize(row["prompt"], row["max_tokens"])
+    row["completion"], row["total_tokens"] = summarize(row["prompt"], row["model"], row["max_tokens"])
 
     row["completion"] = re.sub(r'^"*','',row["completion"])
     row["completion"] = re.sub(r'"*$','',row["completion"])
@@ -116,11 +123,11 @@ def call_api(row: pandas.Series) -> pandas.Series:
     return row
 
 
-def summarize(prompt: str, tokens: int) -> str:
+def summarize(prompt: str, model: str, tokens: int) -> str:
     '''Summarizes single conversation using prompt'''
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-0301",
+        model=model,
         messages=[
             {"role": "user", "content": prompt}
         ],
