@@ -132,6 +132,11 @@ Based on results found from running various tests, inbound supervision model doe
 DAN attack prefix and adversarial suffix used in prompt attacks are originated from the following sources
 
 1. [DAN attack prefix](https://huggingface.co/datasets/deepset/prompt-injections/viewer/default/train?q=dan&row=415)
-2. [Adversarial suffix](https://arxiv.org/abs/2307.15043) 
+
+    Jasper Schwenzow. 2023. How to Prevent Prompt Injections: An Incomplete Guide | Haystack. Available at: https://haystack.deepset.ai/blog/how-to-prevent-prompt-injections [Accessed: 11 July 2023].
+
+2. [Adversarial suffix](https://arxiv.org/abs/2307.15043)
+
+    Zou, A., Wang, Z., Kolter, J.Z. and Fredrikson, M. 2023. Universal and Transferable Adversarial Attacks on Aligned Language Models. Available at: https://arxiv.org/abs/2307.15043 [Accessed: 11 July 2023].
 
 Adversarial suffix is uded as-is but DAN attaxk prefix is slightly modified to make it work for jailbreak and data leakage attacks.
