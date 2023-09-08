@@ -126,3 +126,12 @@ Generate responses for the instructions in regression test dataset using the ste
 Since all the responses are not harmful, they all are labelled as appropriate.
 
 Based on results found from running various tests, inbound supervision model does not affect these instructions but there is a chance outbound supervision model might affect the responses. So generated responses are tested against outbound supervision prompt using the steps mentioned in the section ***Evaluate outbound supervision prompt against the prompt attack responses***
+
+# External sources
+
+DAN attack prefix and adversarial suffix used in prompt attacks are originated from the following sources
+
+1. [DAN attack prefix](https://huggingface.co/datasets/deepset/prompt-injections/viewer/default/train?q=dan&row=415)
+2. [Adversarial suffix](https://arxiv.org/abs/2307.15043) 
+
+Adversarial suffix is uded as-is but DAN attaxk prefix is slightly modified to make it work for jailbreak and data leakage attacks.
