@@ -1,0 +1,7 @@
+The following is the training data for a vending machine chatbot for an intent called "machine_broken"
+
+{{text}}
+
+Give me new 10 examples trying to use different language how a chatbot user might express this intent.
+
+Please provide your answer as a "-" bulleted list.

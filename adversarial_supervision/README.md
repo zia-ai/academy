@@ -115,7 +115,7 @@ This compares the predicted result with ground truth and produces accuracy, reca
 
 # Perform regression test for Charlie
 
-Regerssion test dataset is generated in HF tool and exported as CSV.
+Regerssion test dataset is generated in HF tool using the prompt available at ./adversarial_supervision/prompt/regression_test_prompt.txt and exported as CSV.
 
 Exported CSV is then cleansed using the following command
 
