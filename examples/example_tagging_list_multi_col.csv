@@ -1,0 +1,11 @@
+﻿intent_name,CCAI,BAU,BLAH
+background-define_name,False,True,True
+change_details-change_phone_number,False,False,True
+conversational-greeting,False,False,False
+conversational-ok,True,True,True
+feedback-been_very_helpful,True,False,False
+feedback-upset,False,False,False
+login_issues-forgot_password,False,True,False
+login_issues-forgot_username,False,False,True
+login_issues-general_cant_login,False,False,False
+login_issues-two_factor_issue,True,True,False
