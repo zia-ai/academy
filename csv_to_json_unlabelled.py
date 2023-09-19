@@ -178,7 +178,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
     # build metadata for utterances or conversations
     dict_of_file_level_values = {'loaded_date': datetime.datetime.now(
-    ).isoformat(), 'script_name': 'csv_to_json_unlaballed.py'}
+    ).isoformat(), 'script_name': 'csv_to_json_unlabelled.py'}
     print(f'metadata_keys: {metadata_keys}')
     print(f'file_level values: {dict_of_file_level_values}')
     df['metadata'] = df.apply(create_metadata, args=[
@@ -195,7 +195,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     unlabelled = humanfirst.HFWorkspace()
 
     # add the examples to workspace
-    print("Adding examples to workpsace")
+    print("Adding examples to workspace")
     for example in df['example']:
         unlabelled.add_example(example)
 
