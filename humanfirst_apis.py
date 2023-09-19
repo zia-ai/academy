@@ -142,6 +142,27 @@ def list_playbooks(headers: str, namespace: str = "") -> dict:
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return _validate_response(response, url, "playbooks")
 
+def post_playbook(headers: str, namespace: str) -> dict:
+    '''Create a playbook'''
+    payload = {
+        "namespace": namespace, # namespace of the playbook in the pipeline metastore
+        "playbook_name": "Attempt1", 
+        "etcd_id": "FuckKnows-123", # Metastore ID of the playbook
+        # "model_name": "", # The model name from which the inputs are sourced - deprecatted?
+        # "start_index": "",   # Optional start index, if set the given number of conversations in a model's history are completely skipped
+        "revision": 0, # The current revision for this playbook. This value is incremented every time a mutating operation occurs (update or train)
+        "access_level": 4, # PlaybookAccessLevel_ADMIN
+        "metastore_playbook": "", # Playbook object as stored in pipeline's metastore
+        #"conversation_sets": # If specified, sets the pipeline object to use these conversation sets
+        # "import_default_template": # Flag used at playbook creation to control if default template is imported in the newly created playbook.
+        # "background_operation":  # When the playbook is returned from a creation / clone operation and this is set, the playbook is not yet ready to be used. The user should poll `GetOperation` until it's done.
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}"'
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return _validate_response(response, url)
+
 def get_playbook_info(headers: str, namespace: str, playbook: str) -> dict:
     '''Returns metadata of playbook'''
     payload = {
