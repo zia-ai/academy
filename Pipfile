@@ -38,8 +38,6 @@ plotly="*"
 kaleido="*"
 openai="*"
 tiktoken="*"
-tensorflow="*"
-tensorflow_hub="*"
 tdqm="*"
 
 [dev-packages]
