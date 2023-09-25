@@ -13,9 +13,10 @@ import datetime
 
 # third party imports
 import requests
+import requests_toolbelt
 
 # constants
-TIMEOUT = 5
+TIMEOUT = 10
 
 # ******************************************************************************************************************120
 #
@@ -53,15 +54,18 @@ class HFAPIAuthException(Exception):
 # Internal Functions
 # *********************************************************************************************************************
 
-def _validate_response(response, url: str, field: str = None, payload: dict = None):
+def _validate_response(response: requests.Response, url: str, field: str = None, payload: dict = None):
     """Validate the response from the API and provide consistent aerror handling"""
     if payload is None:
         payload = {}
-    if isinstance(response, str) or response.status_code != 200:
-        print(payload)
+    if isinstance(response, str):
+        raise HFAPIResponseValidationException(
+            url=url, payload=payload, response=response)
+    if response.status_code != 200:
         raise HFAPIResponseValidationException(
             url=url, payload=payload, response=response)
 
+    # Check for the passed field or return the full object
     candidate = response.json()
     if candidate:
         if field and field in candidate.keys():
@@ -69,7 +73,7 @@ def _validate_response(response, url: str, field: str = None, payload: dict = No
         else:
             return candidate
     else:
-        return None
+        return {}
 
 # ******************************************************************************************************************120
 # Tags
@@ -142,23 +146,14 @@ def list_playbooks(headers: str, namespace: str = "") -> dict:
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return _validate_response(response, url, "playbooks")
 
-def post_playbook(headers: str, namespace: str) -> dict:
+def post_playbook(headers: str, namespace: str, name: str) -> dict:
     '''Create a playbook'''
     payload = {
         "namespace": namespace, # namespace of the playbook in the pipeline metastore
-        "playbook_name": "Attempt1", 
-        "etcd_id": "FuckKnows-123", # Metastore ID of the playbook
-        # "model_name": "", # The model name from which the inputs are sourced - deprecatted?
-        # "start_index": "",   # Optional start index, if set the given number of conversations in a model's history are completely skipped
-        "revision": 0, # The current revision for this playbook. This value is incremented every time a mutating operation occurs (update or train)
-        "access_level": 4, # PlaybookAccessLevel_ADMIN
-        "metastore_playbook": "", # Playbook object as stored in pipeline's metastore
-        #"conversation_sets": # If specified, sets the pipeline object to use these conversation sets
-        # "import_default_template": # Flag used at playbook creation to control if default template is imported in the newly created playbook.
-        # "background_operation":  # When the playbook is returned from a creation / clone operation and this is set, the playbook is not yet ready to be used. The user should poll `GetOperation` until it's done.
+        "playbook_name": name # not currently honored - fix under way
     }
 
-    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}"'
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return _validate_response(response, url)
@@ -213,7 +208,7 @@ def get_playbook(headers: str,
     return response_dict
 
 # ******************************************************************************************************************120
-# Intent retrieval
+# Intents
 # ********************************************************************************************************************
 
 def get_intents(headers: str, namespace: str, playbook: str) -> dict:
@@ -266,6 +261,149 @@ def update_intent(headers: str, namespace: str, playbook: str, intent: dict) -> 
     url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents'
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return response
+
+def import_intents(
+        headers: str, namespace: str, playbook: str,
+        workspace_as_dict: dict,
+        format_int: int = 7,
+        hierarchical_intent_name_disabled: bool = True,
+        hierarchical_delimiter: str = "/",
+        zip_encoding: bool = False,
+        gzip_encoding: bool = False,
+        hierarchical_follow_up: bool = False,
+        include_negative_phrases: bool = False,
+        skip_empty_intents: bool = True,
+        clear_intents: bool = False,
+        clear_entities: bool = False,
+        clear_tags: bool = False,
+        merge_intents: bool = False,
+        merge_entities: bool = False,
+        merge_tags: bool = False,
+        # extra_intent_tags: list = None,
+        # extra_phrase_tags: list = None,
+        override_metadata: bool = True,
+        override_name: bool = True
+    ) -> dict:
+    """Import intents using multipart assuming an input humanfirst JSON file
+
+    Reference: https://docs.humanfirst.ai/api/import-intents
+
+    How to nest Request object?
+
+    """
+
+    assert isinstance(workspace_as_dict,dict)
+
+    payload = {
+        'namespace': namespace,
+        'playbook_id': playbook,
+        'format': format_int, #', # or 7?
+        'format_options': {
+            'hierarchical_intent_name_disabled': hierarchical_intent_name_disabled,
+            'hierarchical_delimiter': hierarchical_delimiter,
+            'zip_encoding': zip_encoding,
+            'gzip_encoding': gzip_encoding,
+            'hierarchical_follow_up': hierarchical_follow_up,
+            'include_negative_phrases': include_negative_phrases,
+            # intent_tag_predicate: {},
+            # phrase_tag_predicate: {},
+            'skip_empty_intents': skip_empty_intents
+        },
+        'import_options': {
+            'clear_intents': clear_intents,
+            'clear_entities': clear_entities,
+            'clear_tags': clear_tags,
+            'merge_intents': merge_intents,
+            'merge_entities': merge_entities,
+            'merge_tags': merge_tags,
+            # 'extra_intent_tags': extra_intent_tags,
+            # 'extra_phrase_tags': extra_phrase_tags,
+            'override_metadata': override_metadata,
+            'override_name': override_name
+        },
+        'data':''
+    }
+
+    # The payload needs to be string encoded with the field information - ' turns into "
+    payload = json.dumps(payload,indent=2)
+
+    # then the data needs to be bytes to be parsed but stored as string in the URL call
+    data_encoded_string = base64.urlsafe_b64encode(json.dumps(workspace_as_dict,indent=2).encode('utf-8')).decode('utf-8') # pylint: disable=line-too-long
+    payload = payload.replace('\"data\": \"\"',f'\"data\": \"{data_encoded_string}\"')
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/import'
+    response = requests.request(
+        "POST", url, headers=headers, data=payload, timeout=TIMEOUT)
+    return _validate_response(response, url)
+
+def import_intents_http(
+        headers: str, namespace: str, playbook: str,
+        workspace_file_path: str, # or union HFWorkspace
+        # format_int: int = 7,
+        hierarchical_intent_name_disabled: bool = True,
+        hierarchical_delimiter: str = "/"
+        # zip_encoding: bool = False,
+        # gzip_encoding: bool = False,
+        # hierarchical_follow_up: bool = False,
+        # clear_intents: bool = False,
+        # clear_entities: bool = False,
+        # clear_tags: bool = False,
+        # merge_intents: bool = False,
+        # merge_entities: bool = False,
+        # merge_tags: bool = False,
+        # extra_intent_tags: list = None,
+        # extra_phrase_tags: list = None,
+        # override_metadata: bool = True,
+        # override_name: bool = True
+    ) -> dict:
+    """Import intents using multipart assuming an input humanfirst JSON file
+
+    Reference: https://docs.humanfirst.ai/api/import-intents-http
+
+    How to nest Request object?
+
+    TODO: this doesn't currently work as is - see intents_import option instead
+
+    """
+
+    payload = requests_toolbelt.multipart.encoder.MultipartEncoder(
+        fields={
+            'file': ("upload_name", workspace_file_path, 'application/json'),
+            'format': 'INTENTS_FORMAT_HF_JSON',
+            "namespace": namespace,
+            "playbook_id": playbook,
+            "format_options": str(hierarchical_intent_name_disabled),
+            "hierarchical_delimiter": str(hierarchical_delimiter)
+            # 'request' : {
+            #     "namespace": namespace,
+            #     "playbook_id": playbook,
+            #     "format": format_int,
+            #     "format_options": hierarchical_intent_name_disabled,
+            #     "hierarchical_delimiter": hierarchical_delimiter,
+            #     "zip_encoding": zip_encoding,
+            #     "gzip_encoding": gzip_encoding,
+            #     "hierarchical_follow_up": hierarchical_follow_up,
+            #     "import_options": {
+            #         "clear_intents": clear_intents,
+            #         "clear_entities": clear_entities,
+            #         "clear_tags": clear_tags,
+            #         "merge_intents": merge_intents,
+            #         "merge_entities": merge_entities,
+            #         "merge_tags": merge_tags,
+            #         "extra_intent_tags": extra_intent_tags,
+            #         "extra_phrase_tags": extra_phrase_tags,
+            #         "override_metadata": override_metadata,
+            #         "override_name": override_name
+            #     }
+            # }
+        }
+    )
+    headers["Content-Type"] = payload.content_type
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/intents/import_http'
+    response = requests.request(
+        "POST", url, headers=headers, data=payload, timeout=TIMEOUT)
     return _validate_response(response, url)
 
 
@@ -284,7 +422,6 @@ def get_models(headers: str, namespace: str) -> dict:
     models = _validate_response(response, url, "models")
     namespace_models = []
     for model in models:
-        print(model)
         if model["namespace"] == namespace:
             namespace_models.append(model)
     return namespace_models
@@ -316,12 +453,50 @@ def get_nlu_engine(headers: str, namespace: str, playbook: str, nlu_id: str) -> 
         "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return _validate_response(response, url)
 
+def trigger_train_nlu(headers: str, namespace: str, playbook: str, nlu_id: str,
+                      force_train: bool = True, skip_train: bool= False,
+                      force_infer: bool = False, skip_infer: bool = True,
+                      auto: bool = False) -> dict:
+    '''Trigger training for a workspace here we only allow for one request for
+    one engine - but theoretically you can call to trigger many on the same
+    playbook
+
+    This example skips the infer by default - override the settings to stop skipping
+    if enabled by default, or force it if not enabled by default
+
+    This returns
+
+    '''
+    payload = {
+        "namespace": namespace,
+        "playbook_id": playbook,
+        "parameters": {
+            "engines": [
+                {
+                    "nlu_id": nlu_id, # Unique identifier of the NLU engine to train.
+                    "force_train": force_train, # Force training an on-demand NLU engine.
+                    "skip_train": skip_train, # Skip training of an NLU engine even if it's not on-demand.
+                    "force_infer": force_infer, # Force inference of an on-demand NLU engine.
+                    "skip_infer": skip_infer # Skip inference of an NLU engine even if it's not on-demand.
+                }
+            ],
+            "auto": auto # If true, signals that the training is an automatic run.
+        }
+    }
+
+    url = f'https://api.humanfirst.ai/v1alpha1/workspaces/{namespace}/{playbook}/nlu:train'
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+
+    return _validate_response(response, url)
+
+
 def predict(headers: str, sentence: str, namespace: str, playbook: str,
             model_id: str = None, revision_id: str = None) -> dict:
     '''Get response_dict of matches and hier matches for an input
     optionally specify which model and revision ID you want the prediction from
     model_id probably better know as nlu-id
-    revision_id probably better known as run_id 
+    revision_id probably better known as run_id
     but it needs to be the run_id of the model job not revisions which is showing export job
     TODO: update when updated'''
 
@@ -351,7 +526,6 @@ def predict(headers: str, sentence: str, namespace: str, playbook: str,
 def batchPredict(headers: str, sentences: list, namespace: str, playbook: str) -> dict:  # pylint: disable=invalid-name
     '''Get response_dict of matches and hier matches for a batch of sentences
     TODO: model version changes'''
-    print(f'Analysing {len(sentences)} sentences')
     payload = {
         "namespace": "string",
         "playbook_id": "string",
@@ -382,8 +556,6 @@ def get_headers(bearer_token: str) -> dict:
 def authorize(username: str, password: str) -> dict:
     '''Get bearer token for a username and password'''
 
-    # print(f'Hello {username} getting auth token details')
-
     key = 'AIzaSyA5xZ7WCkI6X1Q2yzWHUrc70OXH5iCp7-c'
     base_url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='
     auth_url = f'{base_url}{key}'
@@ -402,7 +574,6 @@ def authorize(username: str, password: str) -> dict:
             f'Not authorised, google returned {auth_response.status_code} {auth_response.json()}')
     id_token = auth_response.json()['idToken']
     headers = get_headers(id_token)
-    # print('Retrieved id_token and added to headers')
     return headers
 
 def process_auth(bearertoken: str = '', username: str = '', password: str = '') -> dict:
