@@ -39,7 +39,6 @@ kaleido="*"
 openai="*"
 tiktoken="*"
 tdqm="*"
-wordcloud="*"
 
 [dev-packages]
 
