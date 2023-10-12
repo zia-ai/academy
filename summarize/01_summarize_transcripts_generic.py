@@ -13,6 +13,9 @@ import logging
 from multiprocessing import Pool
 from time import perf_counter
 import datetime
+import sys
+from pathlib import Path
+import re
 
 # 3rd party imports
 import openai
@@ -21,12 +24,19 @@ import numpy
 import click
 import tiktoken
 
+# custom imports
+dir_path = os.path.dirname(os.path.realpath(__file__))
+hf_module_path = str(Path(dir_path).parent)
+sys.path.insert(1, hf_module_path)
+
+import humanfirst_nlg
+
 
 class OpenAITooManyTokens(Exception):
     """Thrown if input data too large before calling the relevant model"""
 
-    def __init__(self, tokens: int, limit: int):
-        self.message = f'Data tokens {tokens} exceeds OpenAI model limit {limit}'
+    def __init__(self, tokens: int, limit: int, convo_id: str):
+        self.message = f'Data tokens {tokens} exceeds OpenAI model limit {limit} - convo id is {convo_id}'
         super().__init__(self.message)
 
 @click.command()
@@ -41,6 +51,7 @@ class OpenAITooManyTokens(Exception):
 @click.option('-m', '--model_override', default='', type=str, required=False,
               help='Use this model name')
 @click.option('-l', '--log_file_path', type=str, default='./logs', help='Server log file path')
+@click.option('-b', '--drop_list', type=str, default='', help='Comma separated list of conversations to drop')
 @click.option('-o', '--output_file_path', type=str, default='./summaries', help='Summaries output file path')
 @click.option('-r', '--rewrite', is_flag=True, type=bool, default=False,
               help='If present will rewrite (overwrite) all previous summaries')
@@ -56,13 +67,14 @@ def main(input_filepath: str,
          sample_size: str,
          model_override: str,
          log_file_path: str,
+         drop_list: str,
          output_file_path: str,
          rewrite: bool,
          dummy: bool,
          verbose: bool) -> None:
     '''Main Function'''
     process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
-            sample_size, model_override, log_file_path, output_file_path, rewrite, dummy, verbose)
+            sample_size, model_override, log_file_path, drop_list, output_file_path, rewrite, dummy, verbose)
 
 
 def process(input_filepath: str,
@@ -73,6 +85,7 @@ def process(input_filepath: str,
             sample_size: str,
             model_override: str,
             log_file_path: str,
+            drop_list: str,
             output_file_path: str,
             rewrite: bool,
             dummy: bool,
@@ -181,8 +194,15 @@ def process(input_filepath: str,
     df.rename(columns={"prompt_line": "conversation"}, inplace=True)
 
     # assemble the final prompt with the {{ conversation }} replaced
+    re_conversation = humanfirst_nlg.get_nlg_tag_regex("conversation")
+
+    # drops off any conversations from processing
+    if drop_list != "":
+        drop_list = drop_list.split(",")
+        df.drop(labels=drop_list,inplace=True)
+
     df['prompt'] = df['conversation'].apply(
-        merge_prompt_and_convo, args=[prompt])
+        merge_prompt_and_convo, args=[prompt, re_conversation])
 
     # estimate the tokens - use the 4k one, and then bump up if needed with factor of safety
     df['tokens'] = df["prompt"].apply(count_tokens,
@@ -198,7 +218,9 @@ def process(input_filepath: str,
     if model_override != '':
         df['model'] = model_override
     else:
-        df['model'] = df['tokens'].apply(calculate_which_model,args=[output_tokens])
+        # Below line send the tokens as a series.
+        # This helps in providing the index while raising OpenAITooManyTokens exception
+        df['model'] = df[['tokens']].apply(calculate_which_model,args=[output_tokens],axis=1)
 
     # max_tokens
     df['max_tokens'] = output_tokens
@@ -231,9 +253,10 @@ def get_completed_files(output_file_path: str) -> pandas.DataFrame:
     return completed_df
 
 
-def merge_prompt_and_convo(conversation: str, prompt: str) -> str:
-    ''' Replaces {{ conversation }} with the actual conversation'''
-    return prompt.replace('{{ conversation }}', conversation)
+def merge_prompt_and_convo(conversation: str, prompt: str, re_tag: re) -> str:
+    ''' Replaces tags with the actual conversation'''
+
+    return re_tag.sub(conversation,prompt)
 
 
 def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
@@ -271,9 +294,10 @@ def call_api(row: pandas.Series) -> pandas.Series:
     return row
 
 
-def calculate_which_model(tokens: int, output_tokens: int) -> str:
+def calculate_which_model(row: pandas.Series, output_tokens: int) -> str:
     '''Works out which model for data line based on tokens'''
 
+    tokens=row["tokens"]
     # dec to bin conversion gives margin of error
     if tokens + output_tokens < 4000:
         return "gpt-3.5-turbo"
@@ -282,7 +306,7 @@ def calculate_which_model(tokens: int, output_tokens: int) -> str:
     elif tokens + output_tokens < 32000:
         return "gpt-4-32k"
     else:
-        raise OpenAITooManyTokens(tokens + output_tokens, 32000)
+        raise OpenAITooManyTokens(tokens + output_tokens, 32000, row.name)
 
 
 def summarize(row: pandas.Series, output_tokens: int) -> str:
