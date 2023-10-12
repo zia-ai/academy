@@ -637,6 +637,34 @@ def get_conversion_set_list(headers: str, namespace: str) -> tuple:
 
     return conversation_set_list
 
+def get_conversation_set(headers: str, namespace: str, conversation_set_id: str) -> dict:
+    """Get conversation set"""
+
+    payload = {
+        "namespace":namespace,
+        "conversation_set_id":conversation_set_id
+    }
+    url = f"https://api.humanfirst.ai/v1alpha1/conversation_sets/{namespace}/{conversation_set_id}"
+    response = requests.request(
+        "GET", url, headers=headers, data=payload, timeout=TIMEOUT)
+    return _validate_response(response=response,url=url)
+
+def create_conversation_set(headers: str, namespace: str, convoset: str) -> dict:
+    """Creates a conversation set"""
+
+    payload = {
+        "namespace": namespace,
+        "conversation_set":{
+            "name": convoset,
+            "description": ""
+        }
+    }
+
+    url = f"https://api.humanfirst.ai/v1alpha1/conversation_sets/{namespace}"
+    response = requests.request(
+        "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return _validate_response(response=response, url=url)
+
 def query_conversation_set(
         headers: str,
         namespace: str,
