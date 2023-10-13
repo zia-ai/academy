@@ -133,7 +133,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             print(df)
             print('\n')
         else:
-            df['created_at'] = df[created_at_col].apply(parser.parse)
+            df['created_at'] = df[created_at_col].apply(parse_dates)
 
         # check roles
         if role_col == '':
@@ -226,6 +226,11 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     file_out.close()
     print(f"Write complete to {filename_out}")
 
+
+def parse_dates(date: str) -> datetime.datetime:
+    """Parse the date"""
+
+    return parser.parse(timestr=date, dayfirst=True)
 
 def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '', created_at_col: str = ''):
     '''Build the examples'''
