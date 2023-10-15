@@ -649,13 +649,13 @@ def get_conversation_set(headers: str, namespace: str, conversation_set_id: str)
         "GET", url, headers=headers, data=payload, timeout=TIMEOUT)
     return _validate_response(response=response,url=url)
 
-def create_conversation_set(headers: str, namespace: str, convoset: str) -> dict:
-    """Creates a conversation set"""
+def create_conversation_set(headers: str, namespace: str, convoset_name: str) -> dict:
+    """Creates a conversation set. Returns conversation source ID"""
 
     payload = {
         "namespace": namespace,
         "conversation_set":{
-            "name": convoset,
+            "name": convoset_name,
             "description": ""
         }
     }
@@ -663,6 +663,60 @@ def create_conversation_set(headers: str, namespace: str, convoset: str) -> dict
     url = f"https://api.humanfirst.ai/v1alpha1/conversation_sets/{namespace}"
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    create_conversation_response = _validate_response(response=response, url=url)
+    convo_set_id = create_conversation_response["id"]
+
+    # check whether conversation source has been created
+    # If not, then create one
+    get_convo_set_config_response = get_conversation_set_configuration(headers=headers,
+                                                                       namespace=namespace,
+                                                                       convoset_id=convo_set_id)
+
+    if "sources" in get_convo_set_config_response:
+        conversation_source_id = get_convo_set_config_response["sources"][0]["userUpload"]["conversationSourceId"]
+
+    else:
+        update_convo_set_config_response = update_conversation_set_configuration(headers=headers,
+                                                                      namespace=namespace,
+                                                                      convoset_id=convo_set_id)
+
+        conversation_source_id = update_convo_set_config_response["sources"][0]["userUpload"]["conversationSourceId"]
+
+    return conversation_source_id
+
+def get_conversation_set_configuration(headers: str, namespace: str, convoset_id: str) -> dict:
+    """Gets conversation set configuration"""
+
+    payload = {
+        "namespace": namespace,
+        "id": convoset_id
+    }
+
+    url = f"https://api.humanfirst.ai/v1alpha1/conversation_sets/{namespace}/{convoset_id}/config"
+    response = requests.request(
+        "GET", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
+    return _validate_response(response=response, url=url)
+
+
+def update_conversation_set_configuration(headers: str, namespace: str, convoset_id: str) -> dict:
+    """Update conversation set configuration"""
+
+    payload = {
+        "namespace": namespace,
+        "id": convoset_id,
+        "config": {
+            "namespace": namespace,
+            "sources": [
+                {
+                    "userUpload": {}
+                }
+            ]
+        }
+    }
+
+    url = f"https://api.humanfirst.ai/v1alpha1/conversation_sets/{namespace}/{convoset_id}/config"
+    response = requests.request(
+        "PUT", url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT)
     return _validate_response(response=response, url=url)
 
 def query_conversation_set(
