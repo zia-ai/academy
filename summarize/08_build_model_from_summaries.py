@@ -5,8 +5,7 @@
 # python ./summarize/08_build_model_from_summaries.py                     # pylint: disable=invalid-name
 #
 # looks through directory
-# turns that into a model, where the filename/id is assumed to be the intent name.
-# just does it as simple csv for now.
+# used for performance test build very rough
 #
 # ********************************************************************************************************************
 
@@ -43,8 +42,8 @@ def main(summaries_dir: str, workspaces_dir: str, client: str):
             file = open(file_name, mode='r', encoding='utf8')
             contents = file.read()
             file.close()
-            contents = contents.split("- ")[1:] # Split also removes "-" bullets. Ignore empty first
-            contents = [str(s).strip() for s in contents] # Strip newlines from the end
+            contents = contents.split("\n")[0:-1] # Split also removes "-" bullets. Ignore empty first
+            contents = [str(s).strip('\"') for s in contents] # Strip newlines from the end
             values.append(contents)
 
     # create a df
