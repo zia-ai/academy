@@ -46,7 +46,7 @@ class OpenAITooManyTokens(Exception):
               help='location of prompt file to read')
 @click.option('-t', '--output_tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
-@click.option('-s', '--sample_size', type=int, default=0, help='Number of conversations to sample')
+@click.option('-s', '--sample_size', type=int, default=0, help='Number of conversations/utterances to sample')
 @click.option('-m', '--model_override', default='', type=str, required=False,
               help='Use this model name')
 @click.option('-l', '--log_file_path', type=str, default='./logs', help='Server log file path')
