@@ -54,7 +54,7 @@ def main(summaries_dir: str, workspaces_dir: str, client: str):
                 content = re_quote.sub("",content)
                 content = re_hier.sub("-",content)
                 content = re_gabah.sub("-",content)
-                if not content == "bot_title-intent_name":
+                if not content == "bot_title-intent_name" and not content.find("-") < 0:
                     values.append(content)
 
     # create a df
