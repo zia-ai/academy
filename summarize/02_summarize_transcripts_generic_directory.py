@@ -100,7 +100,7 @@ def main(summaries_dir: str, workspaces_dir: str, explode: bool, mapper: str, id
 
             # deal with mapper
             if mapper != '' and isinstance(mapper, dict):
-                intents = [unlabelled.intent(f'{c} {mapper[c]}')]
+                intents = [unlabelled.intent(f'{c}_{mapper[c]}')]
             else:
                 intents = []
 
