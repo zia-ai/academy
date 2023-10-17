@@ -1,8 +1,12 @@
 """
 
-python predict_utterance.py --bearer $HF_BEARER -i "Utterance"
+python strip_annotations -i <HF Workspace JSON>
+
+Strips the entities and parts section from all examples and creates
+an output file of _output.json original file
 
 """
+#********************************************************************************************************************120
 
 # standard imports
 import json
@@ -11,7 +15,6 @@ import json
 import click
 
 # Custom imports
-
 
 @click.command()
 @click.option('-i','--input_file_name',type=str,required=True,help='Input json HF workspace')
