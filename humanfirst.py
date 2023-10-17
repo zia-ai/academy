@@ -41,6 +41,12 @@ class HFMapperException(Exception):
     def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
+        
+class HFOutputFileMustBeDifferent(Exception):
+    """When the output file name is the same as the input file name"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
 
 
 @dataclass_json
@@ -70,9 +76,7 @@ class HFTag:
         if color and color != '':
             self.color = color
         else:
-            self.color = '#' + \
-                ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-
+            self.color = generate_random_color()
 
 @dataclass_json
 @dataclass
@@ -345,7 +349,7 @@ class HFWorkspace:
                                          useful to an annotator in HF Studio                                  
         '''
         if type(name_or_hier) is not list:
-            print("not list")
+            # print("not list")
             name_or_hier = [name_or_hier]
 
         parent_intent_id = None
@@ -620,6 +624,9 @@ def hash_string(s: str, prefix: Optional[str] = None) -> str:
         return f'{prefix}-{hexdigest[0:20]}'
     else:
         return f'{hexdigest[0:20]}'
+    
+def generate_random_color() -> str:
+    return '#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
 
 class InvalidFilterLevel(Exception):
     """Exception raised when tag filter value is invalid"""

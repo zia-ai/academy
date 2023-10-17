@@ -22,6 +22,7 @@ import tqdm
 # custom imports
 import humanfirst
 
+
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
 @click.option('-m', '--metadata_keys', type=str, required=False, default='',
@@ -64,11 +65,13 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     for col in [utterance_col, convo_id_col, created_at_col, role_col]:
         if col != '':
             used_cols.append(col)
+    print(f'used_cols: {used_cols}')
+    print('\n')
 
     # read the input csv only for the columns we care about - all as strings
     if not excel:
         df = pandas.read_csv(filename, encoding=encoding,
-                            usecols=used_cols, dtype=str, delimiter=delimiter)
+                             usecols=used_cols, dtype=str, delimiter=delimiter)
     else:
         df = pandas.read_excel(filename, usecols=used_cols, dtype=str)
     assert isinstance(df, pandas.DataFrame)
@@ -94,6 +97,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         for key, value in filtering.items():
             df = df[df[key] == value]
         print(f'After filtering: {df.shape[0]}')
+        print('\n')
 
     # remove html if necessary
     if striphtml:
@@ -117,8 +121,11 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         # parse dates
         if unix_date:
             df[created_at_col] = df[created_at_col].astype(float)
-            df['created_at'] = df[created_at_col].apply(datetime.datetime.fromtimestamp)
+            df['created_at'] = df[created_at_col].apply(
+                datetime.datetime.fromtimestamp)
+            print('Dates are:')
             print(df)
+            print('\n')
         else:
             df['created_at'] = df[created_at_col].apply(parser.parse)
 
@@ -129,16 +136,18 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         # work out role mapper
         assert isinstance(role_mapper, str)
         if role_mapper == '':
-            print('Warning no role mapper using defaults')
+            print('Warning no role mapper using defaults:')
             role_mapper = {
-                'client':'client',
-                'expert':'expert'
+                'client': 'client',
+                'expert': 'expert'
             }
         else:
             # split up the format expecting something:client,otherthing:expert
             # optional * freem form.
             roles = role_mapper.split(',')
+            print('Roles are:')
             print(roles)
+            print('\n')
             role_mapper = {}
             assert isinstance(role_mapper, dict)
             for role in roles:
@@ -146,11 +155,14 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
                 role_mapper[pair[0]] = pair[1]
         print("Using this role mapper:")
         print(json.dumps(role_mapper, indent=2))
+        print('\n')
 
         # produce roles
         df['role'] = df[role_col].apply(translate_roles, args=[role_mapper])
+        print('Role summary:')
         print(df[['role', role_col, convo_id_col]].groupby(
             ['role', role_col]).count())
+        print('\n')
 
         # index the speakers
         df['idx'] = df.groupby([convo_id_col]).cumcount()
@@ -184,8 +196,10 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             )
 
     # build metadata for utterances or conversations
-    dict_of_file_level_values = {'loaded_date': datetime.datetime.now(
-    ).isoformat(), 'script_name': 'csv_to_json_unlaballed.py'}
+    dict_of_file_level_values = {
+        'loaded_date': datetime.datetime.now().isoformat(),
+        'script_name': 'csv_to_json_unlaballed.py'
+    }
     print("Capturing these metadata keys")
     print(metadata_keys)
     print("Capturing these file level values for metaddata")
@@ -204,16 +218,19 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     unlabelled = humanfirst.HFWorkspace()
 
     # add the examples to workspace
-    print("Adding examples to workpsace")
+    print("Adding examples to workspace")
     for example in df['example']:
         unlabelled.add_example(example)
 
     # write to output
     print("Commencing write")
+    filename_out = filename
     for ending in ['.csv','.xlsx']:
-        if filename.endswith(ending):
-            filename_out = filename.replace(ending, '.json')
+        filename_out = filename.replace(ending, '.json')
+        if filename_out != filename:
             break
+    if filename_out == filename:
+        raise humanfirst.HFOutputFileMustBeDifferent(f'Output filename: {filename_out} == input filename: {filename}')
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
@@ -262,20 +279,19 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
     row['example'] = example
     return row
 
+
 def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract:
                     list, dict_of_values: dict = None) -> dict:
     '''Build the HF metadata object for the pandas line using the column names passed'''
 
-    if dict_of_values is None:
-        metadata = {}
-    else:
+    metadata = {}
+    if not dict_of_values is None:
         assert isinstance(dict_of_values, dict)
         metadata = dict_of_values.copy()
 
     for key in metadata_keys_to_extract:
         metadata[key] = str(row[key])
-
-    return metadata
+    return metadata.copy()
 
 def translate_roles(role: str, mapper: dict) -> str:
     '''Translates abcd to hf role mapping'''
@@ -288,6 +304,8 @@ def translate_roles(role: str, mapper: dict) -> str:
             f'Couldn\'t locate role: "{role}" in role mapping') from exc
 
 def execute_regex(text_to_run_on: str, re_to_run: re) -> str:
+    """Executes a compiled regex on a text"""
+    
     return re_to_run.sub('',text_to_run_on)
 
 if __name__ == '__main__':
