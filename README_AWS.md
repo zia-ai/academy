@@ -8,7 +8,15 @@ Install AWS
     sudo ./aws/install
 
 Authenticate
-get credentials from 1Password and save as .env
+get credentials - AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION from 1Password and save as .env
+The .env file should have the values stored in following format:
+
+```
+AWS_ACCESS_KEY_ID=<aws access key>
+AWS_SECRET_ACCESS_KEY=<aws secret access key>
+AWS_DEFAULT_REGION=<region>
+```
+
 export $(cat .env | xargs)
 https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-authentication.html
 
