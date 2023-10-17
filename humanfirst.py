@@ -76,9 +76,7 @@ class HFTag:
         if color and color != '':
             self.color = color
         else:
-            self.color = '#' + \
-                ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-
+            self.color = generate_random_color()
 
 @dataclass_json
 @dataclass
@@ -311,7 +309,6 @@ class HFExample:
             else:
                 raise Exception("Intents can be provided as a list of HFIntentRef, HFIntent or str (intent_id) objects only")
             
-
 
 class HFWorkspace:
     '''Schema object for HFWorkspace - may be used to update labelled or unlabelled data to HF Studio
@@ -627,6 +624,9 @@ def hash_string(s: str, prefix: Optional[str] = None) -> str:
         return f'{prefix}-{hexdigest[0:20]}'
     else:
         return f'{hexdigest[0:20]}'
+    
+def generate_random_color() -> str:
+    return '#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
 
 class InvalidFilterLevel(Exception):
     """Exception raised when tag filter value is invalid"""

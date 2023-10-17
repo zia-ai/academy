@@ -1,0 +1,4 @@
+We are preparing a chatbot for a {{ text }}
+Please provide 50 intent names that the chatbot should be able to help users with.
+Provide your answer as a CSV in the format:
+bot_title,intent_name

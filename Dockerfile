@@ -43,7 +43,7 @@ RUN python3 -m spacy download en_core_web_md
 RUN python3 -m spacy download en_core_web_lg
 
 # Install HF CLI tool
-ENV HFVER=0.0.7
+ENV HFVER=1.28.1
 RUN wget https://github.com/zia-ai/humanfirst/releases/download/cli-$HFVER/hf-linux-amd64?raw=true -O /usr/local/bin/hf && chmod 755 /usr/local/bin/hf
 
 # This runs user mode user changeover and finalise

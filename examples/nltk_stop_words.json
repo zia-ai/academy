@@ -1,0 +1,1037 @@
+{
+   "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+   "entities": [
+      {
+         "id": "entname-cc7004c6-af2c-46fb-822d-8d5138c42196",
+         "name": "nltk_stop_words_en",
+         "values": [
+            {
+               "id": "keyvalue-7055fd29-1e5d-4adc-8efc-837490c6f879",
+               "key_value": "stop_word_en",
+               "synonyms": [
+                  {
+                     "value": "this"
+                  },
+                  {
+                     "value": "don't"
+                  },
+                  {
+                     "value": "doesn't"
+                  },
+                  {
+                     "value": "has"
+                  },
+                  {
+                     "value": "as"
+                  },
+                  {
+                     "value": "under"
+                  },
+                  {
+                     "value": "above"
+                  },
+                  {
+                     "value": "why"
+                  },
+                  {
+                     "value": "theirs"
+                  },
+                  {
+                     "value": "them"
+                  },
+                  {
+                     "value": "did"
+                  },
+                  {
+                     "value": "couldn"
+                  },
+                  {
+                     "value": "below"
+                  },
+                  {
+                     "value": "from"
+                  },
+                  {
+                     "value": "very"
+                  },
+                  {
+                     "value": "any"
+                  },
+                  {
+                     "value": "mightn't"
+                  },
+                  {
+                     "value": "they"
+                  },
+                  {
+                     "value": "because"
+                  },
+                  {
+                     "value": "against"
+                  },
+                  {
+                     "value": "some"
+                  },
+                  {
+                     "value": "wasn't"
+                  },
+                  {
+                     "value": "re"
+                  },
+                  {
+                     "value": "himself"
+                  },
+                  {
+                     "value": "before"
+                  },
+                  {
+                     "value": "most"
+                  },
+                  {
+                     "value": "y"
+                  },
+                  {
+                     "value": "who"
+                  },
+                  {
+                     "value": "am"
+                  },
+                  {
+                     "value": "how"
+                  },
+                  {
+                     "value": "your"
+                  },
+                  {
+                     "value": "be"
+                  },
+                  {
+                     "value": "again"
+                  },
+                  {
+                     "value": "ll"
+                  },
+                  {
+                     "value": "o"
+                  },
+                  {
+                     "value": "to"
+                  },
+                  {
+                     "value": "mustn"
+                  },
+                  {
+                     "value": "won't"
+                  },
+                  {
+                     "value": "at"
+                  },
+                  {
+                     "value": "on"
+                  },
+                  {
+                     "value": "with"
+                  },
+                  {
+                     "value": "ve"
+                  },
+                  {
+                     "value": "you"
+                  },
+                  {
+                     "value": "here"
+                  },
+                  {
+                     "value": "both"
+                  },
+                  {
+                     "value": "each"
+                  },
+                  {
+                     "value": "my"
+                  },
+                  {
+                     "value": "ourselves"
+                  },
+                  {
+                     "value": "down"
+                  },
+                  {
+                     "value": "during"
+                  },
+                  {
+                     "value": "those"
+                  },
+                  {
+                     "value": "don"
+                  },
+                  {
+                     "value": "mustn't"
+                  },
+                  {
+                     "value": "wasn"
+                  },
+                  {
+                     "value": "was"
+                  },
+                  {
+                     "value": "their"
+                  },
+                  {
+                     "value": "m"
+                  },
+                  {
+                     "value": "you're"
+                  },
+                  {
+                     "value": "needn't"
+                  },
+                  {
+                     "value": "up"
+                  },
+                  {
+                     "value": "mightn"
+                  },
+                  {
+                     "value": "nor"
+                  },
+                  {
+                     "value": "were"
+                  },
+                  {
+                     "value": "hasn"
+                  },
+                  {
+                     "value": "you'd"
+                  },
+                  {
+                     "value": "what"
+                  },
+                  {
+                     "value": "are"
+                  },
+                  {
+                     "value": "does"
+                  },
+                  {
+                     "value": "it"
+                  },
+                  {
+                     "value": "didn"
+                  },
+                  {
+                     "value": "but"
+                  },
+                  {
+                     "value": "me"
+                  },
+                  {
+                     "value": "out"
+                  },
+                  {
+                     "value": "haven't"
+                  },
+                  {
+                     "value": "t"
+                  },
+                  {
+                     "value": "just"
+                  },
+                  {
+                     "value": "shouldn't"
+                  },
+                  {
+                     "value": "our"
+                  },
+                  {
+                     "value": "by"
+                  },
+                  {
+                     "value": "only"
+                  },
+                  {
+                     "value": "should"
+                  },
+                  {
+                     "value": "wouldn't"
+                  },
+                  {
+                     "value": "ain"
+                  },
+                  {
+                     "value": "now"
+                  },
+                  {
+                     "value": "over"
+                  },
+                  {
+                     "value": "other"
+                  },
+                  {
+                     "value": "aren't"
+                  },
+                  {
+                     "value": "shouldn"
+                  },
+                  {
+                     "value": "where"
+                  },
+                  {
+                     "value": "can"
+                  },
+                  {
+                     "value": "wouldn"
+                  },
+                  {
+                     "value": "him"
+                  },
+                  {
+                     "value": "own"
+                  },
+                  {
+                     "value": "no"
+                  },
+                  {
+                     "value": "that"
+                  },
+                  {
+                     "value": "until"
+                  },
+                  {
+                     "value": "couldn't"
+                  },
+                  {
+                     "value": "weren't"
+                  },
+                  {
+                     "value": "herself"
+                  },
+                  {
+                     "value": "doing"
+                  },
+                  {
+                     "value": "ma"
+                  },
+                  {
+                     "value": "shan"
+                  },
+                  {
+                     "value": "she's"
+                  },
+                  {
+                     "value": "after"
+                  },
+                  {
+                     "value": "ours"
+                  },
+                  {
+                     "value": "through"
+                  },
+                  {
+                     "value": "myself"
+                  },
+                  {
+                     "value": "too"
+                  },
+                  {
+                     "value": "you'll"
+                  },
+                  {
+                     "value": "between"
+                  },
+                  {
+                     "value": "not"
+                  },
+                  {
+                     "value": "there"
+                  },
+                  {
+                     "value": "then"
+                  },
+                  {
+                     "value": "will"
+                  },
+                  {
+                     "value": "such"
+                  },
+                  {
+                     "value": "yourself"
+                  },
+                  {
+                     "value": "whom"
+                  },
+                  {
+                     "value": "hadn't"
+                  },
+                  {
+                     "value": "yourselves"
+                  },
+                  {
+                     "value": "she"
+                  },
+                  {
+                     "value": "while"
+                  },
+                  {
+                     "value": "if"
+                  },
+                  {
+                     "value": "being"
+                  },
+                  {
+                     "value": "off"
+                  },
+                  {
+                     "value": "shan't"
+                  },
+                  {
+                     "value": "had"
+                  },
+                  {
+                     "value": "have"
+                  },
+                  {
+                     "value": "won"
+                  },
+                  {
+                     "value": "once"
+                  },
+                  {
+                     "value": "and"
+                  },
+                  {
+                     "value": "hadn"
+                  },
+                  {
+                     "value": "into"
+                  },
+                  {
+                     "value": "it's"
+                  },
+                  {
+                     "value": "more"
+                  },
+                  {
+                     "value": "having"
+                  },
+                  {
+                     "value": "its"
+                  },
+                  {
+                     "value": "for"
+                  },
+                  {
+                     "value": "itself"
+                  },
+                  {
+                     "value": "hers"
+                  },
+                  {
+                     "value": "all"
+                  },
+                  {
+                     "value": "isn't"
+                  },
+                  {
+                     "value": "he"
+                  },
+                  {
+                     "value": "needn"
+                  },
+                  {
+                     "value": "should've"
+                  },
+                  {
+                     "value": "hasn't"
+                  },
+                  {
+                     "value": "few"
+                  },
+                  {
+                     "value": "a"
+                  },
+                  {
+                     "value": "about"
+                  },
+                  {
+                     "value": "than"
+                  },
+                  {
+                     "value": "you've"
+                  },
+                  {
+                     "value": "d"
+                  },
+                  {
+                     "value": "the"
+                  },
+                  {
+                     "value": "an"
+                  },
+                  {
+                     "value": "haven"
+                  },
+                  {
+                     "value": "his"
+                  },
+                  {
+                     "value": "in"
+                  },
+                  {
+                     "value": "yours"
+                  },
+                  {
+                     "value": "her"
+                  },
+                  {
+                     "value": "is"
+                  },
+                  {
+                     "value": "weren"
+                  },
+                  {
+                     "value": "been"
+                  },
+                  {
+                     "value": "isn"
+                  },
+                  {
+                     "value": "of"
+                  },
+                  {
+                     "value": "so"
+                  },
+                  {
+                     "value": "we"
+                  },
+                  {
+                     "value": "i"
+                  },
+                  {
+                     "value": "doesn"
+                  },
+                  {
+                     "value": "aren"
+                  },
+                  {
+                     "value": "when"
+                  },
+                  {
+                     "value": "these"
+                  },
+                  {
+                     "value": "further"
+                  },
+                  {
+                     "value": "same"
+                  },
+                  {
+                     "value": "or"
+                  },
+                  {
+                     "value": "which"
+                  },
+                  {
+                     "value": "s"
+                  },
+                  {
+                     "value": "that'll"
+                  },
+                  {
+                     "value": "themselves"
+                  },
+                  {
+                     "value": "do"
+                  },
+                  {
+                     "value": "didn't"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "id": "entname-5c563332-c2f7-4982-a716-dbb593535096",
+         "name": "nltk_stop_words_fr",
+         "values": [
+            {
+               "id": "keyvalue-4212a16a-cca7-48d2-b71c-d7a1e71e8db0",
+               "key_value": "stop_word_fr",
+               "synonyms": [
+                  {
+                     "value": "dans"
+                  },
+                  {
+                     "value": "sa"
+                  },
+                  {
+                     "value": "fussent"
+                  },
+                  {
+                     "value": "eurent"
+                  },
+                  {
+                     "value": "n"
+                  },
+                  {
+                     "value": "eu"
+                  },
+                  {
+                     "value": "as"
+                  },
+                  {
+                     "value": "qui"
+                  },
+                  {
+                     "value": "aurez"
+                  },
+                  {
+                     "value": "aies"
+                  },
+                  {
+                     "value": "de"
+                  },
+                  {
+                     "value": "mais"
+                  },
+                  {
+                     "value": "je"
+                  },
+                  {
+                     "value": "aurai"
+                  },
+                  {
+                     "value": "seras"
+                  },
+                  {
+                     "value": "eusse"
+                  },
+                  {
+                     "value": "ayons"
+                  },
+                  {
+                     "value": "une"
+                  },
+                  {
+                     "value": "auras"
+                  },
+                  {
+                     "value": "eussent"
+                  },
+                  {
+                     "value": "es"
+                  },
+                  {
+                     "value": "ont"
+                  },
+                  {
+                     "value": "mon"
+                  },
+                  {
+                     "value": "y"
+                  },
+                  {
+                     "value": "qu"
+                  },
+                  {
+                     "value": "pas"
+                  },
+                  {
+                     "value": "nos"
+                  },
+                  {
+                     "value": "nous"
+                  },
+                  {
+                     "value": "seront"
+                  },
+                  {
+                     "value": "\u00e0"
+                  },
+                  {
+                     "value": "pour"
+                  },
+                  {
+                     "value": "avais"
+                  },
+                  {
+                     "value": "aviez"
+                  },
+                  {
+                     "value": "serai"
+                  },
+                  {
+                     "value": "serons"
+                  },
+                  {
+                     "value": "aurons"
+                  },
+                  {
+                     "value": "la"
+                  },
+                  {
+                     "value": "on"
+                  },
+                  {
+                     "value": "lui"
+                  },
+                  {
+                     "value": "serais"
+                  },
+                  {
+                     "value": "\u00e9tantes"
+                  },
+                  {
+                     "value": "aurais"
+                  },
+                  {
+                     "value": "ton"
+                  },
+                  {
+                     "value": "tes"
+                  },
+                  {
+                     "value": "m\u00eame"
+                  },
+                  {
+                     "value": "ces"
+                  },
+                  {
+                     "value": "m"
+                  },
+                  {
+                     "value": "fut"
+                  },
+                  {
+                     "value": "serait"
+                  },
+                  {
+                     "value": "les"
+                  },
+                  {
+                     "value": "soyez"
+                  },
+                  {
+                     "value": "avez"
+                  },
+                  {
+                     "value": "le"
+                  },
+                  {
+                     "value": "\u00eates"
+                  },
+                  {
+                     "value": "mes"
+                  },
+                  {
+                     "value": "ayez"
+                  },
+                  {
+                     "value": "aura"
+                  },
+                  {
+                     "value": "me"
+                  },
+                  {
+                     "value": "\u00e9tants"
+                  },
+                  {
+                     "value": "leur"
+                  },
+                  {
+                     "value": "t"
+                  },
+                  {
+                     "value": "c"
+                  },
+                  {
+                     "value": "est"
+                  },
+                  {
+                     "value": "aux"
+                  },
+                  {
+                     "value": "elle"
+                  },
+                  {
+                     "value": "f\u00fbmes"
+                  },
+                  {
+                     "value": "ayantes"
+                  },
+                  {
+                     "value": "\u00e9tant"
+                  },
+                  {
+                     "value": "que"
+                  },
+                  {
+                     "value": "\u00e9tais"
+                  },
+                  {
+                     "value": "e\u00fbtes"
+                  },
+                  {
+                     "value": "serions"
+                  },
+                  {
+                     "value": "fussiez"
+                  },
+                  {
+                     "value": "avait"
+                  },
+                  {
+                     "value": "sera"
+                  },
+                  {
+                     "value": "soyons"
+                  },
+                  {
+                     "value": "eues"
+                  },
+                  {
+                     "value": "votre"
+                  },
+                  {
+                     "value": "fusse"
+                  },
+                  {
+                     "value": "vous"
+                  },
+                  {
+                     "value": "sont"
+                  },
+                  {
+                     "value": "il"
+                  },
+                  {
+                     "value": "ma"
+                  },
+                  {
+                     "value": "f\u00fbt"
+                  },
+                  {
+                     "value": "des"
+                  },
+                  {
+                     "value": "\u00e9tante"
+                  },
+                  {
+                     "value": "ou"
+                  },
+                  {
+                     "value": "se"
+                  },
+                  {
+                     "value": "e\u00fbmes"
+                  },
+                  {
+                     "value": "aient"
+                  },
+                  {
+                     "value": "seraient"
+                  },
+                  {
+                     "value": "son"
+                  },
+                  {
+                     "value": "sommes"
+                  },
+                  {
+                     "value": "sur"
+                  },
+                  {
+                     "value": "aurions"
+                  },
+                  {
+                     "value": "eussiez"
+                  },
+                  {
+                     "value": "du"
+                  },
+                  {
+                     "value": "eue"
+                  },
+                  {
+                     "value": "eux"
+                  },
+                  {
+                     "value": "fus"
+                  },
+                  {
+                     "value": "furent"
+                  },
+                  {
+                     "value": "avec"
+                  },
+                  {
+                     "value": "ayant"
+                  },
+                  {
+                     "value": "suis"
+                  },
+                  {
+                     "value": "ce"
+                  },
+                  {
+                     "value": "ai"
+                  },
+                  {
+                     "value": "f\u00fbtes"
+                  },
+                  {
+                     "value": "notre"
+                  },
+                  {
+                     "value": "auraient"
+                  },
+                  {
+                     "value": "un"
+                  },
+                  {
+                     "value": "fussions"
+                  },
+                  {
+                     "value": "au"
+                  },
+                  {
+                     "value": "l"
+                  },
+                  {
+                     "value": "eusses"
+                  },
+                  {
+                     "value": "te"
+                  },
+                  {
+                     "value": "auriez"
+                  },
+                  {
+                     "value": "\u00e9tions"
+                  },
+                  {
+                     "value": "ils"
+                  },
+                  {
+                     "value": "avons"
+                  },
+                  {
+                     "value": "\u00e9tait"
+                  },
+                  {
+                     "value": "seriez"
+                  },
+                  {
+                     "value": "en"
+                  },
+                  {
+                     "value": "aie"
+                  },
+                  {
+                     "value": "\u00e9taient"
+                  },
+                  {
+                     "value": "aurait"
+                  },
+                  {
+                     "value": "avions"
+                  },
+                  {
+                     "value": "ayante"
+                  },
+                  {
+                     "value": "j"
+                  },
+                  {
+                     "value": "eut"
+                  },
+                  {
+                     "value": "d"
+                  },
+                  {
+                     "value": "ayants"
+                  },
+                  {
+                     "value": "auront"
+                  },
+                  {
+                     "value": "vos"
+                  },
+                  {
+                     "value": "fusses"
+                  },
+                  {
+                     "value": "e\u00fbt"
+                  },
+                  {
+                     "value": "\u00e9tiez"
+                  },
+                  {
+                     "value": "moi"
+                  },
+                  {
+                     "value": "toi"
+                  },
+                  {
+                     "value": "avaient"
+                  },
+                  {
+                     "value": "eus"
+                  },
+                  {
+                     "value": "serez"
+                  },
+                  {
+                     "value": "et"
+                  },
+                  {
+                     "value": "\u00e9t\u00e9s"
+                  },
+                  {
+                     "value": "ait"
+                  },
+                  {
+                     "value": "eussions"
+                  },
+                  {
+                     "value": "ses"
+                  },
+                  {
+                     "value": "ne"
+                  },
+                  {
+                     "value": "soit"
+                  },
+                  {
+                     "value": "sois"
+                  },
+                  {
+                     "value": "soient"
+                  },
+                  {
+                     "value": "\u00e9t\u00e9"
+                  },
+                  {
+                     "value": "tu"
+                  },
+                  {
+                     "value": "s"
+                  },
+                  {
+                     "value": "ta"
+                  },
+                  {
+                     "value": "\u00e9t\u00e9es"
+                  },
+                  {
+                     "value": "\u00e9t\u00e9e"
+                  },
+                  {
+                     "value": "par"
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}
