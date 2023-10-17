@@ -201,12 +201,13 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
     # write to output
     print("Commencing write")
-    for ending in ['.csv', '.xlsx']:
-        if filename.endswith(ending):
-            filename_out = filename.replace(ending, '.json')
+    filename_out = filename
+    for ending in ['.csv','.xlsx']:
+        filename_out = filename.replace(ending, '.json')
+        if filename_out != filename:
             break
-    assert filename != filename_out
-
+    if filename_out == filename:
+        raise humanfirst.HFOutputFileMustBeDifferent(f'Output filename: {filename_out} == input filename: {filename}')
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
