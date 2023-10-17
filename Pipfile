@@ -41,6 +41,7 @@ tiktoken="*"
 tdqm="*"
 deepgram-sdk="*"
 asyncclick="*"
+anyio="*"
 
 [dev-packages]
 
