@@ -4,6 +4,8 @@
 #
 # python ./summarize/summarize_transcripts_generic.py                                    # pylint: disable=invalid-name
 #
+# text mode received limited testing
+#
 # *********************************************************************************************************************
 
 # standard imports
@@ -29,7 +31,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 hf_module_path = str(Path(dir_path).parent)
 sys.path.insert(1, hf_module_path)
 
-import humanfirst_nlg
+import humanfirst_nlg # pylint: disable=wrong-import-position
 
 
 class OpenAITooManyTokens(Exception):
@@ -39,15 +41,16 @@ class OpenAITooManyTokens(Exception):
         self.message = f'Data tokens {tokens} exceeds OpenAI model limit {limit} - convo id is {convo_id}'
         super().__init__(self.message)
 
+
 @click.command()
 @click.option('-i', '--input_filepath', type=str, required=True,
-              help='Path containing HF Unlabelled conversations in json format')
+              help='Path containing HF Unlabelled conversations in json format or a txt format if utterances')
 @click.option('-a', '--openai_api_key', type=str, required=True, help='OpenAI API key')
 @click.option('-p', '--prompt', type=str, default='./prompts/abcd_example_prompt.txt',
               help='location of prompt file to read')
 @click.option('-t', '--output_tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
-@click.option('-s', '--sample_size', type=int, default=0, help='Number of conversations to sample')
+@click.option('-s', '--sample_size', type=int, default=0, help='Number of conversations/utterances to sample')
 @click.option('-m', '--model_override', default='', type=str, required=False,
               help='Use this model name')
 @click.option('-l', '--log_file_path', type=str, default='./logs', help='Server log file path')
@@ -58,7 +61,8 @@ class OpenAITooManyTokens(Exception):
 @click.option('-d', '--dummy', is_flag=True, type=bool, default=False, help='Skip the actual openai call')
 @click.option('-v', '--verbose', is_flag=True, type=bool, default=False,
               help='Set logging level to DEBUG otherwise INFO')
-
+@click.option('-o', '--omitrole', is_flag=True, type=bool, required=False, default=False,
+              help='Omit role where conversation is only one utterance by the client')
 def main(input_filepath: str,
          openai_api_key: str,
          num_cores: int,
@@ -71,10 +75,12 @@ def main(input_filepath: str,
          output_file_path: str,
          rewrite: bool,
          dummy: bool,
-         verbose: bool) -> None:
+         verbose: bool,
+         omitrole: bool) -> None:
     '''Main Function'''
     process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
-            sample_size, model_override, log_file_path, drop_list, output_file_path, rewrite, dummy, verbose)
+            sample_size, model_override, log_file_path, drop_list, output_file_path, 
+            rewrite, dummy, verbose, omitrole)
 
 
 def process(input_filepath: str,
@@ -89,7 +95,8 @@ def process(input_filepath: str,
             output_file_path: str,
             rewrite: bool,
             dummy: bool,
-            verbose: bool):
+            verbose: bool,
+            omitrole: bool):
     '''Summarization of Conversations'''
 
     # set log level
@@ -122,19 +129,35 @@ def process(input_filepath: str,
     openai.api_key = openai_api_key
 
     # load input data
-    with open(input_filepath, mode="r", encoding="utf8") as file:
-        data = json.load(file)
-    df = pandas.json_normalize(data=data["examples"], sep="-",)
+    if input_filepath.endswith(".json"):
+        with open(input_filepath, mode="r", encoding="utf8") as file:
+            data = json.load(file)
+        df = pandas.json_normalize(data=data["examples"], sep="-",)
 
-    # enforce id is string
-    df["context-context_id"] = df["context-context_id"].astype(str)
+        # enforce id is string
+        df["context-context_id"] = df["context-context_id"].astype(str)
 
-    # give a sequence number to each utterance
-    df = df.sort_values(["context-context_id", "created_at"])
-    df['seq'] = df.groupby("context-context_id").cumcount()
+        # give a sequence number to each utterance
+        df = df.sort_values(["context-context_id", "created_at"])
+        df['seq'] = df.groupby("context-context_id").cumcount()
 
-    # set context-context_id and seq as index
-    df.set_index(["context-context_id", "seq"], drop=True, inplace=True)
+        mode = "conversation"
+
+        # set context-context_id and seq as index
+        df.set_index(["context-context_id", "seq"], drop=True, inplace=True)
+
+    elif input_filepath.endswith(".txt"):
+        with open(input_filepath, mode="r", encoding="utf8") as file:
+            data = file.read()
+            data = data.split("\n")
+        df = pandas.DataFrame(data=data, columns=["text"],)
+
+        df["context-context_id"] = df["text"]
+        df["seq"] = 1
+        mode = "text"
+        df.set_index(["context-context_id", "seq"], drop=False, inplace=True)
+    else:
+        raise Exception("Unrecognised type")
 
     # work out what's been run before
     if output_file_path.startswith('./'):
@@ -176,40 +199,61 @@ def process(input_filepath: str,
     # select down the data frame to that.
     df = df.loc[context_ids, :]
 
-    # ABCD example has a difference between metdata-abcd_role and context-role
-    # here we are going to use a generic client|expert HF standard but that is perhaps not optimum
-    # print(df.loc["1000",["text","metadata-abcd_role","context-role"]])
-    # build the conversation line for prompt
-    df["prompt_line"] = df["context-role"] + ": " + df["text"]
+    if mode == "conversation":
+        # ABCD example has a difference between metdata-abcd_role and context-role
+        # here we are going to use a generic client|expert HF standard but that is perhaps not optimum
+        # print(df.loc["1000",["text","metadata-abcd_role","context-role"]])
+        # build the conversation line for prompt
+        df["prompt_line"] = df["context-role"] + ": " + df["text"]
+    elif mode == "text":
+        df["prompt_line"] = df["text"]
+    else:
+        raise Exception(f"Not recognised mode: {mode}")
 
     # reduce our data frame just to the data we need
-    df = df[["prompt_line", "skip", "completed"]]
+    df = df[["context-context_id","prompt_line", "skip", "completed"]]
     assert isinstance(df, pandas.DataFrame)
 
-    # join all the prompt_lines together into the conversation text by
-    # the context-context_id, skip and whether completed
-    df = df.groupby(["context-context_id", "skip", "completed"]
-                    )['prompt_line'].apply('\n'.join).reset_index()
-    df.set_index("context-context_id", inplace=True, drop=False)
-    df.rename(columns={"prompt_line": "conversation"}, inplace=True)
+    if mode == "conversation":
+        # join all the prompt_lines together into the conversation text by
+        # the context-context_id, skip and whether completed
+        df = df.groupby(["context-context_id", "skip", "completed"]
+                        )['prompt_line'].apply('\n'.join).reset_index()
+        df.set_index("context-context_id", inplace=True, drop=False)
+        df.rename(columns={"prompt_line": "conversation"}, inplace=True)
 
-    # assemble the final prompt with the {{ conversation }} replaced
-    re_conversation = humanfirst_nlg.get_nlg_tag_regex("conversation")
+        # assemble the final prompt with the {{ conversation }} replaced
+        re_conversation = humanfirst_nlg.get_nlg_tag_regex("conversation")
 
-    # drops off any conversations from processing
-    if drop_list != "":
-        drop_list = drop_list.split(",")
-        df.drop(labels=drop_list,inplace=True)
+        # drops off any conversations from processing
+        if drop_list != "":
+            drop_list = drop_list.split(",")
+            df.drop(labels=drop_list,inplace=True)
 
-    df['prompt'] = df['conversation'].apply(
-        merge_prompt_and_convo, args=[prompt, re_conversation])
+        # assemble the final prompt with the {{ conversation }} replaced
+        df['prompt'] = df['conversation'].apply(
+            merge_prompt_and_string, args=[prompt, re_conversation])
+    elif mode == "text":
+        # assemble the final prompt with the {{ conversation }} replaced
+        re_text = humanfirst_nlg.get_nlg_tag_regex("text")
+
+        # drops off any conversations from processing
+        if drop_list != "":
+            drop_list = drop_list.split(",")
+            df.drop(labels=drop_list,inplace=True)
+
+        df["prompt"] = df["prompt_line"].apply(
+            merge_prompt_and_string, args=[prompt, re_text])
+        df.set_index("context-context_id", inplace=True, drop=False)
+    else:
+        raise Exception(f"Not recognised mode: {mode}")
 
     # estimate the tokens - use the 4k one, and then bump up if needed with factor of safety
     df['tokens'] = df["prompt"].apply(count_tokens,
                                       args=[tiktoken.encoding_for_model("gpt-3.5-turbo")])
     mean_input = df["tokens"].mean()
-    logging.info('Mean input tokens is: %s',mean_input)
-    logging.info('Output tokens is:  %s',output_tokens)
+    logging.info('Mean input tokens is: %s', mean_input)
+    logging.info('Output tokens is:  %s', output_tokens)
     in_and_out_tokens = mean_input + output_tokens
     per_second = 1500 / in_and_out_tokens
     logging.info('Per second rate is max %2f', per_second)
@@ -225,8 +269,13 @@ def process(input_filepath: str,
     # max_tokens
     df['max_tokens'] = output_tokens
 
+    print(df[["context-context_id","prompt"]])
+
     # add the output location for the file
     df['summary_path'] = output_file_path + df['context-context_id'] + ".txt"
+
+    # verbose setting
+    df["verbose"] = verbose
 
     print(df)
 
@@ -253,10 +302,10 @@ def get_completed_files(output_file_path: str) -> pandas.DataFrame:
     return completed_df
 
 
-def merge_prompt_and_convo(conversation: str, prompt: str, re_tag: re) -> str:
-    ''' Replaces tags with the actual conversation'''
+def merge_prompt_and_string(string: str, prompt: str, re_tag: re) -> str:
+    ''' Replaces tags with the actual string'''
 
-    return re_tag.sub(conversation,prompt)
+    return re_tag.sub(string,prompt)
 
 
 def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
@@ -268,29 +317,32 @@ def call_api(row: pandas.Series) -> pandas.Series:
     '''Call OpenAI API for summarization'''
 
     start_time = perf_counter()
-    logging.info("Calling OpenAI model %s to summarize conversation: %s",row["model"],row.name)
+    logging.info(
+        "Calling OpenAI model %s to summarize conversation: %s", row["model"], row.name)
+    if row["verbose"]:
+        logging.info("Prompt: %s", row["prompt"])
 
     row["summary"] = ''
     row["total_tokens"] = 0
     if not row["skip"]:
         try:
             row = summarize(row, output_tokens=row["max_tokens"])
-        except Exception as e: # pylint: disable=broad-except
-            logging.error('Exception for %s is %s',row.name,e)
+        except Exception as e:  # pylint: disable=broad-except
+            logging.error('Exception for %s is %s', row.name, e)
             return row["summary"]
 
     logging.info('Total tokens for conversation id %s is %s',
                  row.name, row["total_tokens"])
-    logging.info('Conversation - %s is summarized',row.name)
+    logging.info('Conversation - %s is summarized', row.name)
 
     # write the file to output if not in dummy mode
     if not row["skip"]:
         with open(row["summary_path"], mode="w", encoding="utf8") as file:
             file.write(row["summary"])
 
-    logging.info('Summary is saved at: %s',row["summary_path"])
+    logging.info('Summary is saved at: %s', row["summary_path"])
     end_time = perf_counter()
-    logging.info('Took %.2f seconds',end_time-start_time)
+    logging.info('Took %.2f seconds', end_time-start_time)
     return row
 
 
