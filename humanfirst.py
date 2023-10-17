@@ -24,6 +24,30 @@ import copy
 
 HFMetadata = Dict[str, Any]
 
+class HFIncompatibleOptionException(Exception):
+    """When parameters passed are incompatible"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
+class HFMissingCredentialsException(Exception):
+    """When can't locate assumed credentials"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
+class HFMapperException(Exception):
+    """When a mapping can't be resolved"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+        
+class HFOutputFileMustBeDifferent(Exception):
+    """When the output file name is the same as the input file name"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
 
 @dataclass_json
 @dataclass
@@ -47,14 +71,12 @@ class HFTag:
     color: Optional[str] = None
 
     def __init__(self, id: str, name: str, color: Optional[str] = None):
-        self.id = id
+        self.id = id # pylint: disable=redefined-builtin
         self.name = name
         if color and color != '':
             self.color = color
         else:
-            self.color = '#' + \
-                ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-
+            self.color = generate_random_color()
 
 @dataclass_json
 @dataclass
@@ -226,7 +248,9 @@ class HFExample:
     context:  HFContext, optional  A HFContext object defining what document type the example came from
                                    defining what role the speaker/writer was performing and linking the 
                                    example to other examples making up that document
-    intents:  list HFIntentRefs    A list of ids of intents for which this example text is an example of
+    intents:  list HFIntentRef|HFIntent|str 
+                                   A list of HFintentRefs for intents, or a list of HFIntents
+                                   or a list of strings containing intent ids 
                                    May be empty list [] if so the utterance will be treated as unlabelled
     tags:     list HFTags          A list of ids of intents for which this example text is an example of
                                    May be empty list [] if so the utterance will be treated as unlabelled
@@ -244,7 +268,16 @@ class HFExample:
     metadata: HFMetadata = field(default_factory=dict)
     context: Optional[HFContext] = None
 
-    def __init__(self, text: str, id: str, created_at: Optional[datetime.datetime] = None, intents: List[HFIntent] = [], tags: List[HFTag] = [], metadata: HFMetadata = {}, context: Optional[HFContext] = None):
+    def __init__(
+            self, 
+            text: str, 
+            id: str, 
+            created_at: Optional[datetime.datetime] = None, 
+            intents: Union[List[HFIntentRef],List[HFIntent],List[str]] = [], 
+            tags: List[HFTag] = [], 
+            metadata: HFMetadata = {}, 
+            context: Optional[HFContext] = {}
+        ):
         self.id = id
         self.text = text
         self.intents = intents
@@ -254,6 +287,8 @@ class HFExample:
         self.tags = tags
         self.metadata = metadata
         self.context = context
+        if self.context is None:
+            self.context = {}
 
         if created_at is not None:
             if isinstance(created_at, str):
@@ -262,9 +297,18 @@ class HFExample:
                 self.created_at = created_at.isoformat() + 'Z'
 
         if len(intents) > 0:
-            self.intents = [HFIntentRef(intent.intent_id)
-                            for intent in intents]
-
+            if isinstance(intents[0],HFIntentRef):
+                self.intents = [HFIntentRef(intent.intent_id)
+                                for intent in intents]
+            elif isinstance(intents[0],HFIntent):
+                self.intents = [HFIntentRef(intent.id)
+                                for intent in intents]
+            elif isinstance(intents[0],str):
+                self.intents = [HFIntentRef(intent)
+                                for intent in intents]
+            else:
+                raise Exception("Intents can be provided as a list of HFIntentRef, HFIntent or str (intent_id) objects only")
+            
 
 class HFWorkspace:
     '''Schema object for HFWorkspace - may be used to update labelled or unlabelled data to HF Studio
@@ -305,7 +349,7 @@ class HFWorkspace:
                                          useful to an annotator in HF Studio                                  
         '''
         if type(name_or_hier) is not list:
-            print("not list")
+            # print("not list")
             name_or_hier = [name_or_hier]
 
         parent_intent_id = None
@@ -520,9 +564,9 @@ class HFWorkspace:
         or from a json file
         '''
         if isinstance(input, IO):
-            obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True)
+            obj = HFWorkspaceJson.from_json(input.read(), infer_missing=True) # pylint: disable=no-member
         elif isinstance(input, dict):
-            obj = HFWorkspaceJson.from_json(
+            obj = HFWorkspaceJson.from_json( # pylint: disable=no-member
                 json.dumps(input), infer_missing=True)
         else:
             raise Exception(f"What is this thing of type: {type(input)}")
@@ -542,6 +586,7 @@ class HFWorkspace:
         sorted_examples = list(self.examples.values())
         sorted_examples.sort(key=lambda ex: ex.created_at)
         workspace = {
+            "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
             "examples": [ex.to_dict() for ex in sorted_examples],
         }
 
@@ -579,6 +624,9 @@ def hash_string(s: str, prefix: Optional[str] = None) -> str:
         return f'{prefix}-{hexdigest[0:20]}'
     else:
         return f'{hexdigest[0:20]}'
+    
+def generate_random_color() -> str:
+    return '#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
 
 class InvalidFilterLevel(Exception):
     """Exception raised when tag filter value is invalid"""

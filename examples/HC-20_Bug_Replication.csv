@@ -1,0 +1,16 @@
+﻿text,customer_expert,ts,id_field,Intent Name,other_field,fieldmore
+Welcome to your test set,expert,2023-09-06 08:47:30,convo-id-1,None,Don't care,nothing
+This is just an example utterance with Intent Name metdata SRA-Handling.Eligibility-Failure,client,2023-09-06 08:47:31,convo-id-1,SRA-Handling.Eligibility-Failure,Fawagsfdf,.qhjt4t43
+Hello this is super bot,expert,2023-09-06 08:47:32,convo-id-1,None,Don't care,nothing
+Another example utterance with metadata Intent Name SRA-Handling.Eligibility-Failure,client,2023-09-06 08:47:34,convo-id-1,SRA-Handling.Eligibility-Failure,434n_+9),stephen@humanfirst.ai
+Goodbye!,expert,2023-09-06 08:47:35,convo-id-1,None,Don't care,nothing
+Welcome to your test set,expert,2023-09-06 08:47:36,convo-id-2,None,Don't care,nothing
+Some other converation with Intent Name metdata SRA-Handling.Eligibility-Failure,client,2023-09-06 08:47:37,convo-id-2,SRA-Handling.Eligibility-Failure,q3t4rgn,$32.44
+Hello this is super bot,expert,2023-09-06 08:47:38,convo-id-2,None,Don't care,nothing
+Second utterance in Some other converation with Intent Name metdata SRA-Handling.Eligibility-Failure,client,2023-09-06 08:47:40,convo-id-2,SRA-Handling.Eligibility-Failure,aerg13426t3q,"£45,435.22"
+Goodbye!,expert,2023-09-06 08:47:41,convo-id-2,None,Don't care,nothing
+Welcome to your test set,expert,2023-09-06 08:47:42,convo-id-3,None,Don't care,nothing
+A converation without the data we are filtering for,client,2023-09-06 08:47:43,convo-id-3,Some other data format,"agdjfdvm,nt44","4,000,000"
+Hello this is super bot,expert,2023-09-06 08:47:44,convo-id-3,None,Don't care,nothing
+A second utterance in that conversation with random data in the Intent Name field,client,2023-09-06 08:47:46,convo-id-3,Yeah.Lots of stuff going * on here! _ - whoop whoop,hasdcg43`,Anything Else
+Goodbye!,expert,2023-09-06 08:47:47,convo-id-3,None,Don't care,nothing

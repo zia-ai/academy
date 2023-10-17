@@ -1,0 +1,6 @@
+The following is an intent for a chatbot intent in the format "chatbot_name-intent_name"
+"{{ text }}"
+Please provide 25 example user utterances that might be used to train a chatbot for that intent.
+Please try and imagine a variety of situations that the user might be facing when contacting the chatbot
+Try and use different phrasing and synonyms for each example
+Please provide your answer as a simple list without bullets or numbers.

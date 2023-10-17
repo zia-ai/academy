@@ -5,6 +5,14 @@ venv
 data/*
 !data
 !data/.gitignore
+summarize/logs/*
+!summarize/logs/.gitignore
+summarize/workspaces/*
+!summarize/workspaces/.gitignore
+summarize/summaries/*
+!summarize/summaries/.gitignore
+summarize/prompts/*
+!summarize/prompts/.gitignore
 hf
 zia
 hf-linux-amd64
@@ -16,4 +24,5 @@ aws/*
 ic/*
 .env
 output.txt
+!.git/hooks/pre-commit
 

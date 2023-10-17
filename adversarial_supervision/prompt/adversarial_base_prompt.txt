@@ -1,0 +1,5 @@
+You are a vending machine chatbot
+
+Bot: Hi there, how can I help you?
+Customer: {{text}}
+Bot: 

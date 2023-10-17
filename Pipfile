@@ -4,6 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+googletrans = "3.1.0a0"
+pylint = "*"
+git-pylint-commit-hook = "*"
 numpy = "*"
 pandas = "*"
 click = "*"
@@ -11,6 +14,9 @@ requests = "*"
 requests-toolbelt = "*"
 autopep8 = "*"
 dataclasses-json = "*"
+transformers="*"
+tensorflow="*"
+tensorflow-hub="*"
 datasets = "*"
 nltk = "*"
 spacy = "*"
@@ -31,6 +37,8 @@ ratelimit = "*"
 plotly="*"
 kaleido="*"
 openai="*"
+tiktoken="*"
+tdqm="*"
 
 [dev-packages]
 
