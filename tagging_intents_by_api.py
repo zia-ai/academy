@@ -1,10 +1,8 @@
-#!/usr/bin/env python  # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# tagging intents
-#
-# *****************************************************************************
+"""
+tagging intents
+
+"""
+# ******************************************************************************************************************120
 
 # standard imports
 import json
@@ -12,9 +10,7 @@ import json
 # third part imports
 import pandas
 import click
-
-# custom imports
-import humanfirst_apis
+import humanfirst
 
 
 @click.command()
@@ -50,11 +46,11 @@ def main(filename: str,
     print(f'distinct tag_names:{tag_names}')
 
     # auth
-    headers = humanfirst_apis.process_auth(
+    headers = humanfirst.apis.process_auth(
         username=username, password=password)
 
     # check what tags exist
-    all_tags = humanfirst_apis.get_tags(headers, namespace, playbook)
+    all_tags = humanfirst.apis.get_tags(headers, namespace, playbook)
     if all_tags is None:
         all_tags = []
     print(all_tags)
@@ -72,8 +68,8 @@ def main(filename: str,
         if not found:
             print(f"Tag {tag_name} not found - please create manually")
             # not sure whether this api is exposed - note method not allowed, field mask etc?
-            # humanfirst_apis.create_tag(headers,namespace,playbook,tag_id=f'tag-{tag_name}',
-            # name=tag_name,description='',color=humanfirst.generate_random_color())
+            # humanfirst.apis.create_tag(headers,namespace,playbook,tag_id=f'tag-{tag_name}',
+            # name=tag_name,description='',color=humanfirst.objects.generate_random_color())
 
     print("Tag_index")
     print(json.dumps(tag_index, indent=2))
@@ -83,7 +79,7 @@ def main(filename: str,
     intent_names = list(df[intent_col].unique())
 
     # get all intents
-    all_intents = humanfirst_apis.get_intents(headers, namespace, playbook)
+    all_intents = humanfirst.apis.get_intents(headers, namespace, playbook)
 
     # make intent_index
     intent_index = {}
@@ -131,7 +127,7 @@ def main(filename: str,
             }
             intent["tags"].append(additional_tag)
             print(intent)
-            humanfirst_apis.update_intent(
+            humanfirst.apis.update_intent(
                 headers, namespace, playbook, intent)
 
 

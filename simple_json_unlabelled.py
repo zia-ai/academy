@@ -1,23 +1,28 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python simple_json_unlabelled.py -f <your input file relative path>
-#
-# *****************************************************************************
+"""
+python simple_json_unlabelled.py -f <your input file relative path>
+
+"""
+# *********************************************************************************************************************
 
 # standard imports
+from datetime import datetime
+from typing import Union
+from dateutil import parser
+
+# 3rd party imports
 import pandas
 import numpy
 import click
 import humanfirst
-from datetime import datetime
-from dateutil import parser
-from typing import Union
+
+class MetadataNotStringException(Exception):
+    """This happens when metadata key value pair is not a string"""
+
 
 @click.command()
 @click.option('-f','--filename',type=str,required=True,help='Input File')
 def main(filename: str):
+    """Main Function"""
 
     # our example input file looks like this
     dtypes={
@@ -40,12 +45,13 @@ def main(filename: str):
         # if you have limited diarization quality upload all as
     }
     df['role'] = df['speaker'].apply(translate_roles,args=[role_mapper])
-    
+
     # index the speakers
     df['idx'] = df.groupby(["external_id"]).cumcount()
     df['idx_max'] = df.groupby(["external_id"])['idx'].transform(numpy.max)
-    
-    # This info lets you filter for the first or last thing the client says - this is very useful in boot strapping bot design
+
+    # This info lets you filter for the first or last thing the client says
+    # - this is very useful in boot strapping bot design
     df['idx_client'] = df.groupby(['external_id', 'role']).cumcount().where(df.role == 'client', 0)
     df['first_customer_utt'] = df['idx_client'] == 0
     df['second_customer_utt'] = df['idx_client'] == 1
@@ -60,8 +66,14 @@ def main(filename: str):
     # create metadata object per utterance
     metadata_keys_to_extract = ['nlu_detected_intent', 'nlu_confidence'] # example utterance level info
     metadata_keys_to_extract.extend(['overall_call_star_rating']) # example conversation level data from original sheet
-    metadata_keys_to_extract.extend(['idx','first_customer_utt','second_customer_utt','final_customer_utt']) # generated custom indexing fields
-    dict_of_file_level_values = { 'loaded_date': datetime.now().isoformat(), 'script_name': 'simple_example_script'} # if there is anythign you think relevant
+    metadata_keys_to_extract.extend(['idx',
+                                     'first_customer_utt',
+                                     'second_customer_utt',
+                                     'final_customer_utt']) # generated custom indexing fields
+    dict_of_file_level_values = {
+        'loaded_date': datetime.now().isoformat(),
+        'script_name': 'simple_example_script'
+    } # if there is anythign you think relevant
     df['metadata'] = df.apply(create_metadata,args=[metadata_keys_to_extract, dict_of_file_level_values],axis=1)
 
     # add any tags
@@ -75,7 +87,7 @@ def main(filename: str):
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     for example in df['example']:
@@ -91,7 +103,7 @@ def build_examples(row: pandas.Series):
     '''Build the examples'''
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
     text=row['utterance'],
         id=f'example-{row.name[0]}-{row.name[1]}',
         created_at=row['created_at'],
@@ -99,22 +111,27 @@ def build_examples(row: pandas.Series):
         tags=[], # recommend uploading metadata for unlabelled and tags for labelled
         metadata=row['metadata'],
         # this links the individual utterances into their conversation
-        context=humanfirst.HFContext(
-            str(row.name[0]), # any ID can be used recommend a hash of the text which is repeatable or the external conversation id if there is one.
+        context=humanfirst.objects.HFContext(
+            str(row.name[0]),
+            # any ID can be used recommend a hash of the text
+            # which is repeatable or the external conversation id if there is one.
             'conversation', # the type of document
             row['role'] # the speakers role in the conversations
         )
     )
     row['example'] = example
     return row
-    
-def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract: list, dict_of_file_level_values: dict= None) -> pandas.Series:
+
+def create_metadata(row: Union[pandas.Series, dict],
+                    metadata_keys_to_extract: list,
+                    dict_of_file_level_values: dict= None) -> pandas.Series:
     '''Build the HF metadata object for the pandas line using the column names passed'''
-    
-    metadata = {} # metadata is a simple dict object 
-    if dict_of_file_level_values and len(dict_of_file_level_values.keys()) > 0:
-        metadata = metadata
-    
+
+    metadata = {} # metadata is a simple dict object
+    print(dict_of_file_level_values)
+    # if dict_of_file_level_values and len(dict_of_file_level_values.keys()) > 0:
+    #     metadata = metadata
+
     for key in metadata_keys_to_extract:
         if isinstance(row[key],list):
             metadata[key] = ','.join(row[key])
@@ -122,23 +139,27 @@ def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract: l
             metadata[key] = str(row[key])
 
     # all key value pairs must be strings
-    for key in metadata.keys():
+    for key,_ in metadata.items():
         try:
-            assert(isinstance(metadata[key],str))
-        except Exception:
+            assert isinstance(metadata[key],str)
+        except MetadataNotStringException:
             print(f'Key: {key} value {metadata[key]} is not a string')
 
     return metadata
 
 def convert_timestamps(datestring:str) -> datetime:
+    """Parse Datestring"""
+
     return parser.parse(datestring)
 
 def translate_roles(role:str, mapper:dict) -> str:
     '''Translates abcd to hf role mapping'''
-    try:
-        return mapper[role]
-    except KeyError:
-        raise Exception(f'Couldn\'t locate role: "{role}" in role mapping')
+
+    if role not in mapper:
+        raise KeyError(f'Couldn\'t locate role: "{role}" in role mapping')
+
+    return mapper[role]
+
 
 if __name__ == '__main__':
-    main()
+    main() # pylint: disable=no-value-for-parameter

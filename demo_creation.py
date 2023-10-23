@@ -1,16 +1,14 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python demo_creation.py
-# -u <username>
-# -p $HF_PASSWORD
-# -n <namepspace>
-# -b <playbook-id>
-#
-# demonstration of creating a workspace and intents incrementally using APIs
-#
-# *****************************************************************************
+"""
+python demo_creation.py
+-u <username>
+-p $HF_PASSWORD
+-n <namepspace>
+-b <playbook-id>
+
+demonstration of creating a workspace and intents incrementally using APIs
+
+"""
+# *********************************************************************************************************************
 
 # standard imports
 import json
@@ -21,9 +19,7 @@ import time
 import click
 import pandas
 import nltk
-
-# Custom imports
-import humanfirst_apis
+import humanfirst
 
 
 @click.command()
@@ -78,13 +74,13 @@ def main(username: str,
     if not dummy:
         # authorisation
         print('Authorising')
-        headers = humanfirst_apis.process_auth(bearertoken=bearertoken, username=username, password=password)
+        headers = humanfirst.apis.process_auth(bearertoken=bearertoken, username=username, password=password)
 
         if playbook == '':
             # create the workspace/playbook
             # calling this the returned playbook to differentiate it from workspace.
             # this is the object with the ids created.
-            playbook = humanfirst_apis.post_playbook(headers, namespace, "name not yet working")
+            playbook = humanfirst.apis.post_playbook(headers, namespace, "name not yet working")
             playbook_id = playbook["metastorePlaybook"]["id"]
             print(f'Created playbook: {playbook_id}')
         else:
@@ -93,20 +89,20 @@ def main(username: str,
 
         # update the workspace with the training
         print('Importing workspace into playbook:')
-        print(humanfirst_apis.import_intents(headers,namespace,playbook_id,workspace_as_dict=workspace))
+        print(humanfirst.apis.import_intents(headers,namespace,playbook_id,workspace_as_dict=workspace))
 
         # get the NLU enginess for the workspace
-        nlu_engines = humanfirst_apis.get_nlu_engines(headers,namespace,playbook_id)
+        nlu_engines = humanfirst.apis.get_nlu_engines(headers,namespace,playbook_id)
 
         # in this case ther is only going to be one (as we haven't created any others)
         # and that is going to be humanfirst engine, so assume it's in the first position
         # This is a tautism, you could get from the nlu_engines call the same info.
-        nlu_engine = humanfirst_apis.get_nlu_engine(headers, namespace, playbook_id, nlu_engines[0]["id"])
+        nlu_engine = humanfirst.apis.get_nlu_engine(headers, namespace, playbook_id, nlu_engines[0]["id"])
         print('NLU engine to train:')
         print(nlu_engine)
 
         # Trigger this - doesn't have a very meaningful response, None, or {} here, but with a code 200
-        humanfirst_apis.trigger_train_nlu(headers,namespace,playbook_id,nlu_engine["id"])
+        humanfirst.apis.trigger_train_nlu(headers,namespace,playbook_id,nlu_engine["id"])
         print("Triggered training on NLU engine")
 
     # Get the docs to classify
@@ -130,7 +126,7 @@ def main(username: str,
             print(f'Interviewer: {doc["author"]} interviewing {doc["interviewee"]}')
 
             # get the predictions from huamnfirst
-            predictions = humanfirst_apis.batchPredict(headers,doc["text"],namespace,playbook_id)
+            predictions = humanfirst.apis.batchPredict(headers,doc["text"],namespace,playbook_id)
 
             # loop through them printing out the text sentence with the score
             for i,match in enumerate(predictions):
@@ -144,7 +140,7 @@ def list_workspaces(dummy: bool, headers, namespace) -> pandas.DataFrame:
     """Returns a list of workspace ids and names checking connection is correct"""
     if not dummy:
         df_all_workspaces = pandas.json_normalize(
-            humanfirst_apis.list_playbooks(headers, namespace))
+            humanfirst.apis.list_playbooks(headers, namespace))
         return df_all_workspaces[df_all_workspaces["namespace"] == "humanfirst-academy"]["name"]
 
 def get_user_examples() -> list:

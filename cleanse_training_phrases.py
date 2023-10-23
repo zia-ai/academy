@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python cleanse_training_phrases.py -f filepath
-#
-# *****************************************************************************
+"""
+python cleanse_training_phrases.py -f filepath
+
+"""
+# *********************************************************************************************************************
 
 # standard imports
 import json
@@ -13,14 +11,14 @@ import re
 # 3rd party imports
 import pandas
 import click
-
-# custom imports
 import humanfirst
+
 
 @click.command()
 @click.option('-f','--input_filepath',type=str,required=True,help='HF labelled json file')
 @click.option('-o','--output_filepath',type=str,default="",help='Output file path with .json extension')
 def main(input_filepath: str, output_filepath: str):
+    """Main Function"""
 
     cleanse_training_phrases(input_filepath, output_filepath)
 
@@ -29,7 +27,7 @@ def cleanse_training_phrases(input_filepath: str, output_filepath: str):
 
     with open(input_filepath,mode="r",encoding="utf8") as f:
         data = json.load(f)
-    
+
     df = pandas.json_normalize(data=data["examples"])
 
     df["text_base"] = df["text"].apply(cleanse_text)
@@ -40,7 +38,7 @@ def cleanse_training_phrases(input_filepath: str, output_filepath: str):
     data["examples"] = examples_json
 
     duplicated_df = df.loc[df["text_base"].duplicated()].reset_index(drop=True)
-    workspace_only_with_intents = humanfirst.HFWorkspace.from_json({"intents":data["intents"]})
+    workspace_only_with_intents = humanfirst.objects.HFWorkspace.from_json({"intents":data["intents"]})
     intent_index = workspace_only_with_intents.get_intent_index(delimiter="-")
     print("------Duplicated Texts -> Intent it was removed from------")
     duplicated_df["intent_id"] = duplicated_df["intents"].apply(lambda intent_list: intent_list[0]["intent_id"])
@@ -66,4 +64,4 @@ def cleanse_text(text: str) -> str:
     return text
 
 if __name__=="__main__":
-    main()
+    main() # pylint: disable=no-value-for-parameter

@@ -1,37 +1,35 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python abcd_unlabelled.py
-#
-# create an unlabelled json set to upload to HF
-#
-# Works on the dataset from this paper:
-# Chen, D., Chen, H., Yang, Y., Lin, A. and Yu, Z., 2021.
-# Action-based conversations dataset: A corpus for building more in-depth
-# task-oriented dialogue systems. arXiv preprint arXiv:2104.00783.
-#
-# options
-#
-# --sample <int>
-#   randomly sample on a portion of complete conversations from the dataset
-#   useful if making changes to script or trying to keep under a datapoint limit
-#
-# --anonymize
-#   if present presidio will be used to replace mentions of PERSON and telephone
-#   or account-a-like numbers in the abcd dataset
-#
-# --translate <lc>
-#      translate using google translate to https://cloud.google.com/translate/docs/languages
-#      you will need to have created json service credentials at .google-credentials.json
-#      you will incur costs for using this over 500,000 chars in a month
-#
-#
-# Produces two files
-# ./data/abcd_unlabelled05.json - example month of May unlabelled file to upload as a datasource
-# ./data/abcd_unlabelled06.json - same thing for June
-#
-# *****************************************************************************
+"""
+python abcd_unlabelled.py
+
+create an unlabelled json set to upload to HF
+
+Works on the dataset from this paper:
+Chen, D., Chen, H., Yang, Y., Lin, A. and Yu, Z., 2021.
+Action-based conversations dataset: A corpus for building more in-depth
+task-oriented dialogue systems. arXiv preprint arXiv:2104.00783.
+
+options
+
+--sample <int>
+  randomly sample on a portion of complete conversations from the dataset
+  useful if making changes to script or trying to keep under a datapoint limit
+
+--anonymize
+  if present presidio will be used to replace mentions of PERSON and telephone
+  or account-a-like numbers in the abcd dataset
+
+--translate <lc>
+     translate using google translate to https://cloud.google.com/translate/docs/languages
+     you will need to have created json service credentials at .google-credentials.json
+     you will incur costs for using this over 500,000 chars in a month
+
+
+Produces two files
+./data/abcd_unlabelled05.json - example month of May unlabelled file to upload as a datasource
+./data/abcd_unlabelled06.json - same thing for June
+
+"""
+# *********************************************************************************************************************
 
 # standard imports
 import datetime
@@ -50,8 +48,6 @@ import presidio_analyzer
 import presidio_anonymizer
 import tqdm
 from google.cloud import translate_v2 as translate
-
-# custom imports
 import humanfirst
 
 # role mapping abcd roles to HF roles
@@ -76,8 +72,16 @@ performance_log = []
               help='Filter for just this abcd_id')
 @click.option('-l', '--include_actions', is_flag=True, default=False, type=bool, required=False,
               help='Include system actions')
-def main(input_file: str, unlabelled: str, sample: int, anonymize: bool, translation: str, source: str, abcd_id: int, include_actions: bool):
+def main(input_file: str,
+         unlabelled: str,
+         sample: int,
+         anonymize: bool,
+         translation: str,
+         source: str,
+         abcd_id: int,
+         include_actions: bool):
     '''Main function'''
+
     process(input_file, unlabelled, sample, anonymize, translation, source, abcd_id, include_actions)
 
 def process(input_file: str, unlabelled: str, sample: int, anonymize: bool,
@@ -94,11 +98,11 @@ def process(input_file: str, unlabelled: str, sample: int, anonymize: bool,
 
     # explode the original abcd column to abcd_role and utterance
     df = df.explode(['original']).reset_index(drop=True)
-    
+
     # at this point should all b in order
     print(df)
     print(df.loc[0,:])
-    
+
     df = pandas.concat([df, pandas.DataFrame(
         df['original'].tolist(), columns=['abcd_role', 'utterance'])], axis=1)
     print(df)
@@ -145,14 +149,14 @@ def process(input_file: str, unlabelled: str, sample: int, anonymize: bool,
 
     # translate and anonymize check
     if translation != '' and anonymize:
-        raise humanfirst.HFIncompatibleOptionException('Cannot both translate and anonymize')
+        raise humanfirst.objects.HFIncompatibleOptionException('Cannot both translate and anonymize')
 
     # translate
     if translation != '':
         # store a set of service user credentials in this hidden file
         creds_file = '.google-credentials.json'
         if not os.path.isfile(creds_file):
-            raise humanfirst.HFMissingCredentialsException(
+            raise humanfirst.objects.HFMissingCredentialsException(
                 f'Could not locate google credentials at: {creds_file}')
         perf_log(f'Translating from {source} to {translation} is on')
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = creds_file
@@ -190,7 +194,7 @@ def process(input_file: str, unlabelled: str, sample: int, anonymize: bool,
 
     # make a workspace for each month and write to file
     for m in list(df['month'].unique()):  # pylint: disable=invalid-name
-        unlabelled_workspace = humanfirst.HFWorkspace()
+        unlabelled_workspace = humanfirst.objects.HFWorkspace()
         df_month = df[df['month'] == m]['example']
         for example in df_month:
             unlabelled_workspace.add_example(example)
@@ -231,7 +235,7 @@ def create_metadata(row: pandas.Series, keys_to_extract: list) -> pandas.Series:
         elif isinstance(row[key], str):
             convo_metadata_dict[key] = row[key]
         else:
-            raise humanfirst.HFMapperException('Value is not string or list')
+            raise humanfirst.objects.HFMapperException('Value is not string or list')
 
     row['metadata'] = convo_metadata_dict
     return row
@@ -256,7 +260,7 @@ def load_data_file(input_file: str, abcd_id: int) -> pandas.DataFrame:
             del allset[i]['delexed']
         except KeyError:
             without_delexed = 0 + without_delexed
-            
+
         # if we need to trin to just one record
         if abcd_id > 0 and abcd_id == allset[i]["convo_id"]:
             print(abcd_id)
@@ -264,8 +268,7 @@ def load_data_file(input_file: str, abcd_id: int) -> pandas.DataFrame:
             print(json.dumps(allset[i],indent=2))
     if len(filtered_allset) == 1:
         allset = filtered_allset
-            
-                
+
     perf_log("Records that couldn't have delexed removed: " +
              str(without_delexed))
 
@@ -294,12 +297,12 @@ def abcd_to_hf_roles(role: str) -> str:
     try:
         return role_mapping[role]
     except KeyError as exc:
-        raise humanfirst.HFMapperException(f'Couldn\'t locate role: "{role}" in role mapping. KeyError: {exc}')
+        raise humanfirst.objects.HFMapperException(f'Couldn\'t locate role: "{role}" in role mapping. KeyError: {exc}')
 
 
 def build_example(row: pandas.Series) -> pandas.Series:
     '''Creates a HumanFirst unlabelled utterance example linking it to it's conversation and adding metadata'''
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row['utterance'],
         id=f'example-{row.name[0]}-{row.name[1]}',
         created_at=row['created_at'],
@@ -307,7 +310,7 @@ def build_example(row: pandas.Series) -> pandas.Series:
         tags=[],  # no tags only metadata on unlabelled
         metadata=row['metadata'],
         # abcd_id, conversation, hf_role
-        context=humanfirst.HFContext(
+        context=humanfirst.objects.HFContext(
             str(row.name[0]), 'conversation', row['hf_role'])
     )
     row['example'] = example

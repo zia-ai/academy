@@ -1,9 +1,7 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# *********************************************************************************************************************
-#
-# python csv_to_json_labelled.py
-#
+"""
+python csv_to_json_labelled.py
+
+"""
 # *********************************************************************************************************************
 
 # standard imports
@@ -14,8 +12,6 @@ from typing import Union
 # 3rd party imports
 import pandas
 import click
-
-# custom imports
 import humanfirst
 
 
@@ -82,7 +78,7 @@ def main(filename: str,
         tag_col = tag_col.split(',')
 
     # A workspace is used to upload labelled or unlabelled data
-    labelled = humanfirst.HFWorkspace()
+    labelled = humanfirst.objects.HFWorkspace()
 
     # build examples adding the intents as we go to labelled
     df = df.apply(build_examples, args=[
@@ -101,7 +97,7 @@ def main(filename: str,
 
 
 def build_examples(row: pandas.Series,
-                   labelled: humanfirst.HFWorkspace,
+                   labelled: humanfirst.objects.HFWorkspace,
                    utterance_col: str,
                    intent_col: str,
                    strip: str,
@@ -129,7 +125,7 @@ def build_examples(row: pandas.Series,
         utterance = utterance.replace(strip, ' ')
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=utterance,
         id=f'example-{uuid.uuid4()}',
         created_at=datetime.now().isoformat(),

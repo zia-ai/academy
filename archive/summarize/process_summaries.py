@@ -146,7 +146,7 @@ def process(input_dir: str, num_cores: int, server: str):
         df[key]["text"].fillna(value="None", inplace=True)
 
         # convert the summaries into unlabelled HF format
-        unlabelled_workspace = humanfirst.HFWorkspace()
+        unlabelled_workspace = humanfirst.objects.HFWorkspace()
         df[key] = df[key].apply(parse_utterances, axis=1, args=[unlabelled_workspace, key])
 
         output_filepath_csv = join(input_dir, f"summarized_{key}.csv")
@@ -357,7 +357,7 @@ def add_escape_char(text: str) -> str:
     return text
 
 
-def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.HFWorkspace, key: str) -> None:
+def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.objects.HFWorkspace, key: str) -> None:
     '''parse a single utterance to an example'''
 
     row["resolved"] = re.sub(r'[^\w\s]', '', str(row["resolved"])).lower()
@@ -390,10 +390,10 @@ def parse_utterances(row: pandas.Series, unlabelled_workspace: humanfirst.HFWork
         conversation_id = row.name[0]
 
     # Will load these as conversations where it is only the client speaking
-    context = humanfirst.HFContext(conversation_id, 'conversation', 'client')
+    context = humanfirst.objects.HFContext(conversation_id, 'conversation', 'client')
 
     # Create the example
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row['text'],
         id=example_id,
         created_at=row["created_at"],

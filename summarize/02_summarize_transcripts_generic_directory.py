@@ -1,29 +1,22 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80*************************************120
-#
-# python ./summarize/01_summarize_transcripts_generic_directory.py                       # pylint: disable=invalid-name
-#
-# Looks through the summaries directory and turns any *.txt files there
-# into an unlabelled workspace with a metadata field of the original id
-#
+# pylint: disable=invalid-name
+"""
+python ./summarize/01_summarize_transcripts_generic_directory.py
+
+Looks through the summaries directory and turns any *.txt files there
+into an unlabelled workspace with a metadata field of the original id
+
+"""
 # ********************************************************************************************************************
 
 # standard imports
 import os
 import datetime
-import sys
-import pathlib
 
 # 3rd party imports
 import click
 import pandas
+import humanfirst
 
-# Custom Imports
-import_path = os.path.dirname(os.path.realpath(__file__))
-hf_module_path = str(pathlib.Path(import_path).parent)
-sys.path.insert(1, hf_module_path)
-import humanfirst  # pylint: disable=wrong-import-position
 
 @click.command()
 @click.option('-s', '--summaries_dir', type=str, default='./summaries', help='Summaries input file path')
@@ -58,7 +51,7 @@ def main(summaries_dir: str, workspaces_dir: str, explode: bool, mapper: str, id
             file.close()
 
     # declare an unlabelled workspace
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # get mapper
     if mapper != '':
@@ -88,7 +81,7 @@ def main(summaries_dir: str, workspaces_dir: str, explode: bool, mapper: str, id
                 if e.startswith('- '):
                     e = e[2:]
                 example_id = f'{c}-{i}'
-                context = humanfirst.HFContext(
+                context = humanfirst.objects.HFContext(
                     context_id=c, type='conversation', role='client')
             else:
                 example_id = c
@@ -104,7 +97,7 @@ def main(summaries_dir: str, workspaces_dir: str, explode: bool, mapper: str, id
             else:
                 intents = []
 
-            example = humanfirst.HFExample(
+            example = humanfirst.objects.HFExample(
                 text=e,
                 id=example_id,
                 created_at=datetime.datetime.now(),

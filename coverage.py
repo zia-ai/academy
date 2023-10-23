@@ -1,9 +1,7 @@
-#!/usr/bin/env python  # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python coverage.py -f <your input file relative path>
-#
+"""
+python coverage.py -f <your input file relative path>
+
+"""
 # *****************************************************************************
 
 # standard imports
@@ -13,10 +11,7 @@ import copy
 # third part imports
 import pandas
 import click
-
-# custom imports
 import humanfirst
-import humanfirst_apis
 
 
 @click.command()
@@ -57,8 +52,8 @@ def write_coverage_csv(username: str,
     inferred from the provided playbook then write a csv containing prediction data to the path provided with the
     separator provided'''
 
-    headers = humanfirst_apis.process_auth(bearertoken, username, password)
-    playbook_dict = humanfirst_apis.get_playbook(headers, namespace, playbook)
+    headers = humanfirst.apis.process_auth(bearertoken, username, password)
+    playbook_dict = humanfirst.apis.get_playbook(headers, namespace, playbook)
 
     df = get_conversationset_df(headers, namespace, playbook, convsetsource,
                                 searchtext, startisodate, endisodate, playbook_dict,
@@ -92,14 +87,14 @@ def get_conversationset_df(
     '''Download the inferred statistics for the conversation set source for the provided
     playbook and return a data frame.  Pages through the very large data science data
     with each page of page_size'''
-    labelled_workspace = humanfirst.HFWorkspace.from_json(playbook_dict)
-    assert isinstance(labelled_workspace, humanfirst.HFWorkspace)
+    labelled_workspace = humanfirst.objects.HFWorkspace.from_json(playbook_dict)
+    assert isinstance(labelled_workspace, humanfirst.objects.HFWorkspace)
     intent_name_index = labelled_workspace.get_intent_index(delimiter="-")
     print("Got playbook and parsed it")
 
     i = 0
     results = []
-    response_json = humanfirst_apis.query_conversation_set(
+    response_json = humanfirst.apis.query_conversation_set(
         headers,
         namespace,
         playbook,
@@ -119,7 +114,7 @@ def get_conversationset_df(
     while "nextPageToken" in response_json:
         if quit_after_pages > 0 and i >= quit_after_pages:
             break
-        response_json = humanfirst_apis.query_conversation_set(
+        response_json = humanfirst.apis.query_conversation_set(
             headers,
             namespace,
             playbook,
