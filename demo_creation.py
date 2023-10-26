@@ -118,7 +118,8 @@ def main(username: str,
 
     # wait for model to train - later on example checking NLU ready
     print("Starting wait for model to train")
-    time.sleep(wait_to_train)
+    if not dummy:
+        time.sleep(wait_to_train)
     print("Wait complete")
 
     if not dummy:
@@ -139,6 +140,12 @@ def main(username: str,
                 if match_confidence >= min_match_score:
                     match_name = match["matches"][0]["name"]
                 print(f'{doc["text"][i]:80} {match_name:>20}:{match_confidence:.2f},')
+
+    # Show changing one thing in workspace
+    if not dummy:
+        print(json.dumps(workspace,indent=2))
+        workspace["examples"][0]["text"] = "I changed only the first example"
+        print(humanfirst_apis.import_intents(headers,namespace,playbook_id,workspace_as_dict=workspace,clear_intents=True))
 
 def list_workspaces(dummy: bool, headers, namespace) -> pandas.DataFrame:
     """Returns a list of workspace ids and names checking connection is correct"""
