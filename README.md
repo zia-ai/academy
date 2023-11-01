@@ -9,25 +9,16 @@ This is bash (go fish or not)
 * `docker create --name hf-workbench0 -v "$(builtin cd ../..;pwd):/home/ubuntu/source/" -t -i hf-workbench bash`
 * `docker start hf-workbench0`
 
-### or just do your dependencies
-* You need Python 3.8.x (check `python3 --version`)
-* Install deps: `sudo apt install python3.8 python3.8-dev python3-venv`
-
 ### Virtual env
-* Create virtualenv & activate `python3 -m venv venv` 
-* if fish shell `source venv/bin/activate.fish`
-* if bash shell `source venv/bin/activate`
+* Create virtualenv `pyenv virtualenv venv` 
+* Activate venv `pyenv activate venv`
 * Update pip `pip install -U pip pipenv`
 * Install requirements: `pipenv install`
+* List existing virtualenvs: `pyenv virtualenvs`
+* Deactivate venv `pyenv deactivate`
+* Delete venv `pyenv uninstall -f venv`
+*  More info about using virtualenv can be found [here](https://github.com/pyenv/pyenv-virtualenv#usage)
 
 ### VS Code extensions reminder
 * Python
 * Gitlens
-
-## MacOS
-
-### On MacOS
-* You need Python 3.8.x (check `python3 --version`)
-* Create virtualenv & activate (`python3 -m venv venv` && `source venv/bin/activate.fish`)
-* Update pip `pip install -U pip pipenv`
-* Install requirements: `pipenv install`

@@ -23,24 +23,20 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
         tzdata \
         sudo \
         software-properties-common \
-        python3 python3-dev python3-pip python3-venv \
         libsasl2-dev \
         git \
-        openssh-server
-
-
-# HF currently requires 3.8 - ubuntu:focal defaults to this
-# If want to be on ubuntu:jammy will need to deadsnakes to get 3.8
-# RUN add-apt-repository -y ppa:deadsnakes/ppa
-# RUN apt-get install -y python3.8 python3.8-dev python3.8-venv python3-pip
-# some at HF runs on fish shell - RUN apt-get install -y fish
-
-# update pip
-RUN pip install --upgrade pip
-RUN pip install --upgrade pip pipenv
-RUN pip install spacy
-RUN python3 -m spacy download en_core_web_md
-RUN python3 -m spacy download en_core_web_lg
+        openssh-server \
+        zlib1g-dev \
+        libncurses5-dev \
+        libgdbm-dev \
+        libnss3-dev \
+        libreadline-dev \
+        libffi-dev \
+        libsqlite3-dev \
+        libbz2-dev \
+        liblzma-dev \
+        tk-dev \
+        libdb-dev
 
 # Install HF CLI tool
 ENV HFVER=1.28.1
@@ -54,6 +50,25 @@ USER ubuntu
 WORKDIR /home/ubuntu
 RUN mkdir source
 COPY .bashrc_custom /home/ubuntu/.bashrc
+
+# Install python
+RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+ENV HOME /home/ubuntu
+ENV PYENV_ROOT $HOME/.pyenv
+ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+ENV SETUPTOOLS_USE_DISTUTILS=stdlib
+RUN pyenv install 3.11.6
+RUN pyenv global 3.11.6
+
+# Update pip
+RUN pip install --upgrade pip
+RUN pip install --upgrade pip pipenv
+RUN pip install spacy
+RUN python -m spacy download en_core_web_md
+RUN python -m spacy download en_core_web_lg
+
+# Install pyenv virtualenv
+RUN git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
 
 # node - using node version manager
 # setup the shell under ubuntu

@@ -88,6 +88,7 @@ def process(input_file: str, unlabelled: str, sample: int, anonymize: bool,
             translation: str, source: str, abcd_id: int, include_actions: bool):
     '''Process the file'''
     perf_log('Begin')
+    start = datetime.now()
 
     # load data
     tqdm.tqdm.pandas()
@@ -208,6 +209,8 @@ def process(input_file: str, unlabelled: str, sample: int, anonymize: bool,
     print(df[['utterance', 'abcd_role', 'created_at']])
     print(df[['month', 'utterance']].groupby(['month']).count())
 
+    end = datetime.now()
+    print(f"Total time taken to run the script: {(end-start).total_seconds()}")
 
 def create_metadata(row: pandas.Series, keys_to_extract: list) -> pandas.Series:
     '''Build the HF metadata object for the pandas line using the column names passed'''
