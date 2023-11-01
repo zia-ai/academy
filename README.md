@@ -17,7 +17,7 @@ This is bash (go fish or not)
 * List existing virtualenvs: `pyenv virtualenvs`
 * Deactivate venv `pyenv deactivate`
 * Delete venv `pyenv uninstall -f venv`
-*  More info about using virtualenv can be found [here](https://github.com/pyenv/pyenv-virtualenv#usage)
+* More info about using virtualenv can be found [here](https://github.com/pyenv/pyenv-virtualenv#usage)
 
 ### VS Code extensions reminder
 * Python
