@@ -11,6 +11,7 @@ import re
 import json
 import datetime
 from typing import Union
+from copy import deepcopy
 
 # 3rd party imports
 import pandas
@@ -43,9 +44,9 @@ import humanfirst
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert}"')
 @click.option('-e', '--encoding', type=str, required=False, default='utf8',
               help='Input CSV encoding')
+@click.option('--filtering', type=str, required=False, default='', help='column:value,column:value;column:value,column:value')
 @click.option('-h', '--striphtml', is_flag=True, default=False,
               help='Whether to strip html tags from the utterance col')
-@click.option('--filtering', type=str, required=False, default='', help='column:value,column:value')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
          role_mapper: str, encoding: str, filtering: str, striphtml: bool) -> None:
@@ -82,20 +83,33 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     # assume role all to start with and overwrite later
     df['role'] = 'client'
 
+    print(df)
+
     # filtering
     if filtering != '':
+        df_filter = []
         print(f'Before filtering: {df.shape[0]}')
-        filters = filtering.split(',')
-        print(filters)
-        filtering = {}
-        for filt in filters:
-            pair = filt.split(':')
-            filtering[pair[0]] = pair[1]
-        print('Filtering on:')
-        print(filtering)
-        assert isinstance(filtering, dict)
-        for key, value in filtering.items():
-            df = df[df[key] == value]
+        multiple_filters = filtering.split(";")
+        print("\nMultiple Filters")
+        print(multiple_filters)
+        print("\n")
+        for filtering in multiple_filters:
+            filters = filtering.split(',')
+            filtering = {}
+            for filt in filters:
+                pair = filt.split(':')
+                filtering[pair[0]] = pair[1]
+            print('Filtering on:')
+            print(filtering)
+            assert isinstance(filtering, dict)
+            df_filt = deepcopy(df)
+            for key, value in filtering.items():
+                df_filt = df_filt[df_filt[key] == value]
+            df_filter.append(df_filt)
+            print("\n")
+        df = pandas.concat(df_filter)
+        
+
         print(f'After filtering: {df.shape[0]}')
         print('\n')
 
@@ -127,7 +141,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             print(df)
             print('\n')
         else:
-            df['created_at'] = df[created_at_col].apply(parser.parse)
+            df['created_at'] = df[created_at_col].apply(parse_dates)
 
         # check roles
         if role_col == '':
@@ -242,6 +256,11 @@ def decide_role_filter_values(row: pandas.Series, column_name: str, role_filter:
         return True
     else:
         return False
+
+def parse_dates(date: str) -> datetime.datetime:
+    """Parse the date"""
+
+    return parser.parse(timestr=date, dayfirst=True)
 
 def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '', created_at_col: str = ''):
     '''Build the examples'''
