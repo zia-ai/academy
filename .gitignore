@@ -2,7 +2,6 @@
 __pycache__
 .vscode
 venv
-venv3.11
 data/*
 !data
 !data/.gitignore
