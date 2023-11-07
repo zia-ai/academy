@@ -15,8 +15,6 @@ import logging
 from multiprocessing import Pool
 from time import perf_counter
 import datetime
-import sys
-from pathlib import Path
 import re
 
 # 3rd party imports
@@ -25,14 +23,13 @@ import pandas
 import numpy
 import click
 import tiktoken
+import humanfirst
 
-# custom imports
-dir_path = os.path.dirname(os.path.realpath(__file__))
-hf_module_path = str(Path(dir_path).parent)
-sys.path.insert(1, hf_module_path)
+class UnrecognisedInputException(Exception):
+    """Thrown if input is neither conversation nor text"""
 
-import humanfirst_nlg # pylint: disable=wrong-import-position
-
+class UnrecognisedModeException(Exception):
+    """Thrown if mode is neither conversation nor text"""
 
 class OpenAITooManyTokens(Exception):
     """Thrown if input data too large before calling the relevant model"""
@@ -79,7 +76,7 @@ def main(input_filepath: str,
          omitrole: bool) -> None:
     '''Main Function'''
     process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
-            sample_size, model_override, log_file_path, drop_list, output_file_path, 
+            sample_size, model_override, log_file_path, drop_list, output_file_path,
             rewrite, dummy, verbose, omitrole)
 
 
@@ -144,7 +141,7 @@ def process(input_filepath: str,
         mode = "conversation"
 
         # set context-context_id and seq as index
-        df.set_index(["context-context_id", "seq"], drop=True, inplace=True)
+        df.set_index(["context-context_id", "seq"], drop=False, inplace=True)
 
     elif input_filepath.endswith(".txt"):
         with open(input_filepath, mode="r", encoding="utf8") as file:
@@ -157,7 +154,7 @@ def process(input_filepath: str,
         mode = "text"
         df.set_index(["context-context_id", "seq"], drop=False, inplace=True)
     else:
-        raise Exception("Unrecognised type")
+        raise UnrecognisedInputException("Unrecognised type")
 
     # work out what's been run before
     if output_file_path.startswith('./'):
@@ -208,10 +205,10 @@ def process(input_filepath: str,
     elif mode == "text":
         df["prompt_line"] = df["text"]
     else:
-        raise Exception(f"Not recognised mode: {mode}")
+        raise UnrecognisedInputException(f"Not recognised mode: {mode}")
 
     # reduce our data frame just to the data we need
-    df = df[["context-context_id","prompt_line", "skip", "completed"]]
+    df = df[["prompt_line", "skip", "completed"]]
     assert isinstance(df, pandas.DataFrame)
 
     if mode == "conversation":
@@ -223,7 +220,8 @@ def process(input_filepath: str,
         df.rename(columns={"prompt_line": "conversation"}, inplace=True)
 
         # assemble the final prompt with the {{ conversation }} replaced
-        re_conversation = humanfirst_nlg.get_nlg_tag_regex("conversation")
+        hf_nlg = humanfirst.nlg.HFNLG("conversation")
+        re_conversation = hf_nlg.get_nlg_tag_regex()
 
         # drops off any conversations from processing
         if drop_list != "":
@@ -235,7 +233,8 @@ def process(input_filepath: str,
             merge_prompt_and_string, args=[prompt, re_conversation])
     elif mode == "text":
         # assemble the final prompt with the {{ conversation }} replaced
-        re_text = humanfirst_nlg.get_nlg_tag_regex("text")
+        hf_nlg = humanfirst.nlg.HFNLG("text")
+        re_text = hf_nlg.get_nlg_tag_regex()
 
         # drops off any conversations from processing
         if drop_list != "":
@@ -246,7 +245,7 @@ def process(input_filepath: str,
             merge_prompt_and_string, args=[prompt, re_text])
         df.set_index("context-context_id", inplace=True, drop=False)
     else:
-        raise Exception(f"Not recognised mode: {mode}")
+        raise UnrecognisedModeException(f"Not recognised mode: {mode}")
 
     # estimate the tokens - use the 4k one, and then bump up if needed with factor of safety
     df['tokens'] = df["prompt"].apply(count_tokens,
@@ -305,6 +304,8 @@ def get_completed_files(output_file_path: str) -> pandas.DataFrame:
 def merge_prompt_and_string(string: str, prompt: str, re_tag: re) -> str:
     ''' Replaces tags with the actual string'''
 
+    # this removes bad escape characters that are available in abcd conversations
+    string = string.replace("\\","")
     return re_tag.sub(string,prompt)
 
 
