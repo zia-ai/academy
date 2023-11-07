@@ -23,21 +23,11 @@ import pandas
 import numpy
 import click
 import tiktoken
-import humanfirst
 
-class UnrecognisedInputException(Exception):
-    """Thrown if input is neither conversation nor text"""
+# customer imports
+# import humanfirst TODO: bring back in
 
-class UnrecognisedModeException(Exception):
-    """Thrown if mode is neither conversation nor text"""
-
-class OpenAITooManyTokens(Exception):
-    """Thrown if input data too large before calling the relevant model"""
-
-    def __init__(self, tokens: int, limit: int, convo_id: str):
-        self.message = f'Data tokens {tokens} exceeds OpenAI model limit {limit} - convo id is {convo_id}'
-        super().__init__(self.message)
-
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 @click.command()
 @click.option('-i', '--input_filepath', type=str, required=True,
@@ -58,8 +48,6 @@ class OpenAITooManyTokens(Exception):
 @click.option('-d', '--dummy', is_flag=True, type=bool, default=False, help='Skip the actual openai call')
 @click.option('-v', '--verbose', is_flag=True, type=bool, default=False,
               help='Set logging level to DEBUG otherwise INFO')
-@click.option('-o', '--omitrole', is_flag=True, type=bool, required=False, default=False,
-              help='Omit role where conversation is only one utterance by the client')
 def main(input_filepath: str,
          openai_api_key: str,
          num_cores: int,
@@ -72,12 +60,11 @@ def main(input_filepath: str,
          output_file_path: str,
          rewrite: bool,
          dummy: bool,
-         verbose: bool,
-         omitrole: bool) -> None:
+         verbose: bool) -> None:
     '''Main Function'''
     process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
             sample_size, model_override, log_file_path, drop_list, output_file_path,
-            rewrite, dummy, verbose, omitrole)
+            rewrite, dummy, verbose)
 
 
 def process(input_filepath: str,
@@ -92,8 +79,7 @@ def process(input_filepath: str,
             output_file_path: str,
             rewrite: bool,
             dummy: bool,
-            verbose: bool,
-            omitrole: bool):
+            verbose: bool):
     '''Summarization of Conversations'''
 
     # set log level
@@ -101,15 +87,9 @@ def process(input_filepath: str,
     if verbose:
         log_level = logging.DEBUG
 
-    # determine curtent directory
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    if not dir_path.endswith("/"):
-        dir_path = f'{dir_path}/'
-
-    # logging config
-    if log_file_path.startswith("./"):
-        now = datetime.datetime.now().isoformat()
-        log_file_path = f'{dir_path}{log_file_path}/summarize_transcripts_generic_{now}.log'
+   # logging config
+    now = datetime.datetime.now().isoformat()
+    log_file_path = os.path.join(DIR_PATH,log_file_path,f'summarize_transcripts_generic_{now}.log')
     logging.basicConfig(
         filename=log_file_path,
         filemode='w',
@@ -117,10 +97,15 @@ def process(input_filepath: str,
         format='%(asctime)s - %(name)s - %(process)d - %(levelname)s -- %(message)s', datefmt='%d-%b-%y %H:%M:%S')
     logging.info("Logging to: %s", log_file_path)
 
-    # get prompt
-    if prompt.startswith("./"):
-        prompt = prompt[2:]
-    prompt = open(f'{dir_path}{prompt}', mode="r", encoding="utf8").read()
+    # get prompt - could be local, could be run from root or here, could be absolute
+    prompt_paths = [os.path.join(DIR_PATH,prompt),prompt]
+    prompt_found = False
+    for prompt_path in prompt_paths:
+        if os.path.isfile(prompt_path):
+            prompt_found = True
+            prompt = open(prompt_path, mode="r", encoding="utf8").read()
+            break
+    assert prompt_found
     logging.info("Prompt is: \n %s", prompt)
 
     openai.api_key = openai_api_key
@@ -154,14 +139,11 @@ def process(input_filepath: str,
         mode = "text"
         df.set_index(["context-context_id", "seq"], drop=False, inplace=True)
     else:
-        raise UnrecognisedInputException("Unrecognised type")
+        raise RuntimeError(f"Unrecognised type: {input_filepath}")
 
     # work out what's been run before
-    if output_file_path.startswith('./'):
-        output_file_path = output_file_path[2:]
-        output_file_path = f'{dir_path}{output_file_path}'
-    if not output_file_path.endswith('/'):
-        output_file_path = f'{output_file_path}/'
+    output_file_path = os.path.join(DIR_PATH,output_file_path)
+    print(f'Checking: {output_file_path} for previously run')
     completed_df = get_completed_files(output_file_path)
     df = df.join(completed_df)
     df["completed"] = df["completed"].fillna(False)
@@ -202,13 +184,17 @@ def process(input_filepath: str,
         # print(df.loc["1000",["text","metadata-abcd_role","context-role"]])
         # build the conversation line for prompt
         df["prompt_line"] = df["context-role"] + ": " + df["text"]
+
+        # reduce our data frame just to the data we need
+        df = df[["prompt_line", "skip", "completed"]]
     elif mode == "text":
         df["prompt_line"] = df["text"]
-    else:
-        raise UnrecognisedInputException(f"Not recognised mode: {mode}")
 
-    # reduce our data frame just to the data we need
-    df = df[["prompt_line", "skip", "completed"]]
+        # reduce our data frame just to the data we need
+        df = df[["context-context_id","prompt_line", "skip", "completed"]]
+
+    else:
+        raise RuntimeError(f"Not recognised mode: {mode}")
     assert isinstance(df, pandas.DataFrame)
 
     if mode == "conversation":
@@ -220,8 +206,7 @@ def process(input_filepath: str,
         df.rename(columns={"prompt_line": "conversation"}, inplace=True)
 
         # assemble the final prompt with the {{ conversation }} replaced
-        hf_nlg = humanfirst.nlg.HFNLG("conversation")
-        re_conversation = hf_nlg.get_nlg_tag_regex()
+        re_conversation = re.compile(r"{{[ ]*conversation[ ]*}}") # TODO: replacement with humanfirst.nlg
 
         # drops off any conversations from processing
         if drop_list != "":
@@ -233,8 +218,7 @@ def process(input_filepath: str,
             merge_prompt_and_string, args=[prompt, re_conversation])
     elif mode == "text":
         # assemble the final prompt with the {{ conversation }} replaced
-        hf_nlg = humanfirst.nlg.HFNLG("text")
-        re_text = hf_nlg.get_nlg_tag_regex()
+        re_text = re.compile(r"{{[ ]*text[ ]*}}") # TODO: replacement with humanfirst.nlg
 
         # drops off any conversations from processing
         if drop_list != "":
@@ -245,7 +229,7 @@ def process(input_filepath: str,
             merge_prompt_and_string, args=[prompt, re_text])
         df.set_index("context-context_id", inplace=True, drop=False)
     else:
-        raise UnrecognisedModeException(f"Not recognised mode: {mode}")
+        raise RuntimeError(f"Not recognised mode: {mode}")
 
     # estimate the tokens - use the 4k one, and then bump up if needed with factor of safety
     df['tokens'] = df["prompt"].apply(count_tokens,
@@ -271,7 +255,7 @@ def process(input_filepath: str,
     print(df[["context-context_id","prompt"]])
 
     # add the output location for the file
-    df['summary_path'] = output_file_path + df['context-context_id'] + ".txt"
+    df['summary_path'] = output_file_path
 
     # verbose setting
     df["verbose"] = verbose
@@ -301,13 +285,17 @@ def get_completed_files(output_file_path: str) -> pandas.DataFrame:
     return completed_df
 
 
-def merge_prompt_and_string(string: str, prompt: str, re_tag: re) -> str:
-    ''' Replaces tags with the actual string'''
-
-    # this removes bad escape characters that are available in abcd conversations
-    string = string.replace("\\","")
-    return re_tag.sub(string,prompt)
-
+def merge_prompt_and_string(text: str, prompt: str, re_tag: re) -> str:
+    ''' Replaces tags with the actual string
+    without using a substitution'''
+    match = re_tag.search(prompt)
+    if not match:
+        return prompt
+    assert isinstance(match, re.Match)
+    limit_before_match = match.span()[0]
+    start_after_match  = match.span()[1]
+    prompt = prompt[0:limit_before_match] + text + prompt[start_after_match:]
+    return prompt
 
 def parallelise_calls(df: pandas.DataFrame) -> pandas.DataFrame:
     '''Parallelise dataframe processing'''
@@ -338,7 +326,8 @@ def call_api(row: pandas.Series) -> pandas.Series:
 
     # write the file to output if not in dummy mode
     if not row["skip"]:
-        with open(row["summary_path"], mode="w", encoding="utf8") as file:
+        with open(os.path.join(row["summary_path"],f'{row["context-context_id"]}.txt'),
+                  mode="w", encoding="utf8") as file:
             file.write(row["summary"])
 
     logging.info('Summary is saved at: %s', row["summary_path"])
@@ -359,8 +348,9 @@ def calculate_which_model(row: pandas.Series, output_tokens: int) -> str:
     elif tokens + output_tokens < 32000:
         return "gpt-4-32k"
     else:
-        raise OpenAITooManyTokens(tokens + output_tokens, 32000, row.name)
-
+        error_string = f'Data tokens {tokens + output_tokens}'
+        error_string = f'{error_string} exceeds OpenAI model limit 32000 - convo id is {row.name}'
+        raise RuntimeError(error_string)
 
 def summarize(row: pandas.Series, output_tokens: int) -> str:
     '''Summarizes single conversation using prompt'''
