@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "76089dc77f7e10b54dd14cd4be97b7bbb0e5e815d3d6d23956b6ae3c166fd485"
+            "sha256": "4e857e9613639f39ad1ea910727dda36d1180f4bfb5b5d72b76ce6acf8cbac0f"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.8"
+            "python_version": "3.11"
         },
         "sources": [
             {
@@ -583,11 +583,11 @@
         },
         "deepgram-sdk": {
             "hashes": [
-                "sha256:9c8728c9c590b5c1f4726470ff7aa3a6c2abd81028af19bfc63963ed5509f48a",
-                "sha256:c46cd7e8d4e06e48ee42ab0f8ecd3e1a1148f00ff893fea7be2adf00d328110b"
+                "sha256:04d69f821c6b27789578102e237d451b026d5d78e980cd1a7ea365ca7ef58b8f",
+                "sha256:e84fb6e0d05ba20f28767a7e9f1cb6e8b8eafd66c76ffe147c06036436f4d662"
             ],
             "index": "pypi",
-            "version": "==2.11.0"
+            "version": "==2.12.0"
         },
         "dframcy": {
             "hashes": [
@@ -757,7 +757,7 @@
             "hashes": [
                 "sha256:34a17436ed1e96697a86f9de3d15a3b0be01d8bc8de9c1dffd59fb8234ed5307"
             ],
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.18.3"
         },
         "gast": {
@@ -1006,12 +1006,12 @@
         },
         "humanfirst": {
             "hashes": [
-                "sha256:3d54b10226457f931c22333bcc5e687dd9ca6b646bf1fce4a62e315fb35b6623",
-                "sha256:d5c05060bd6bdb12ed913ac90ec5a83f72f4c09c4e2fee51b7f7fbe50556ca83"
+                "sha256:b7e834fde4169395d038f4c177fc166927ef45da2986c2792c44510c889de251",
+                "sha256:fb011bde923dcba29af1f0dd5e85759558b6c73d094c5a113016aea97abd03ea"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==0.0.3"
+            "version": "==1.0.0"
         },
         "hyperframe": {
             "hashes": [
@@ -2197,8 +2197,16 @@
                 "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86",
                 "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==2.8.2"
+        },
+        "python-dotenv": {
+            "hashes": [
+                "sha256:a8df96034aae6d2d50a4ebe8216326c61c3eb64836776504fcca410e5937a3ba",
+                "sha256:f5971a9226b701070a4bf2c38c89e5a3f0d64de8debda981d1db98583009122a"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==1.0.0"
         },
         "python-slugify": {
             "hashes": [
@@ -2610,7 +2618,7 @@
                 "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
                 "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
         },
         "smart-open": {
@@ -3139,11 +3147,11 @@
         },
         "weasel": {
             "hashes": [
-                "sha256:141b12fd0d38599ff8c567208d1db0f5af1b532363fadeba27d7bc87d751d88a",
-                "sha256:924962dfc9d89602552e7332846e95d264eca18aebe2b96c2527d46b7bb7cf9c"
+                "sha256:eb16f92dc9f1a3ffa89c165e3a9acd28018ebb656e0da4da02c0d7d8ae3f6178",
+                "sha256:ee48a944f051d007201c2ea1661d0c41035028c5d5a8bcb29a0b10f1100206ae"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==0.3.3"
+            "version": "==0.3.4"
         },
         "webencodings": {
             "hashes": [
