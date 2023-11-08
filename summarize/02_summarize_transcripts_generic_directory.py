@@ -82,7 +82,7 @@ def main(summaries_dir: str, workspaces_dir: str, explode: bool, mapper: str, id
                     e = e[2:]
                 example_id = f'{c}-{i}'
                 context = humanfirst.objects.HFContext(
-                    context_id=c, type='conversation', role='client')
+                    context_id=c, context_type='conversation', role='client')
             else:
                 example_id = c
                 context = {}
