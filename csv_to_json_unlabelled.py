@@ -1,9 +1,7 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# *********************************************************************************************************************
-#
-# python csv_to_json_unlabelled.py
-#
+"""
+python csv_to_json_unlabelled.py
+
+"""
 # *********************************************************************************************************************
 
 # standard imports
@@ -19,8 +17,6 @@ import numpy
 import click
 from dateutil import parser
 import tqdm
-
-# custom imports
 import humanfirst
 
 
@@ -229,7 +225,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     print("Adding examples to workspace")
@@ -244,7 +240,8 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         if filename_out != filename:
             break
     if filename_out == filename:
-        raise humanfirst.HFOutputFileMustBeDifferent(f'Output filename: {filename_out} == input filename: {filename}')
+        raise humanfirst.objects.HFOutputFileMustBeDifferent(
+            f'Output filename: {filename_out} == input filename: {filename}')
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
@@ -267,13 +264,13 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
 
     # if utterances use the hash of the utterance for an id
     if convo_id_col == '':
-        external_id = humanfirst.hash_string(row[utterance_col], 'example')
+        external_id = humanfirst.objects.hash_string(row[utterance_col], 'example')
         context = None
 
     # if convos use the convo id and sequence
     else:
         external_id = f'example-{row[convo_id_col]}-{row["idx"]}'
-        context = humanfirst.HFContext(
+        context = humanfirst.objects.HFContext(
             context_id=row[convo_id_col],
             type='conversation',
             role=row["role"]
@@ -286,7 +283,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
         created_at = row[created_at_col]
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row[utterance_col],
         id=external_id,
         created_at=created_at,
@@ -324,7 +321,7 @@ def translate_roles(role: str, mapper: dict) -> str:
 
 def execute_regex(text_to_run_on: str, re_to_run: re) -> str:
     """Executes a compiled regex on a text"""
-    
+
     return re_to_run.sub('',text_to_run_on)
 
 if __name__ == '__main__':

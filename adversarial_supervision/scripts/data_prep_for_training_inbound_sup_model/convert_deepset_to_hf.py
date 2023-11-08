@@ -1,32 +1,21 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80*************************************120
-#
-# python ./adversarial_supervision\
-#         /scripts\
-#         /data_prep_for_training_inbound_sup_model\
-#         /convert_deepset_to_hf.py                                                      # pylint: disable=invalid-name
-#
+"""
+python ./adversarial_supervision\
+        /scripts\
+        /data_prep_for_training_inbound_sup_model\
+        /convert_deepset_to_hf.py
+
+"""
 # *********************************************************************************************************************
 
 # Core imports
 import uuid
 from os.path import join
-import os
-from pathlib import Path
-import sys
 
 # 3rd party imports
 import pandas
 import click
 from googletrans import Translator
-
-DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-HF_MODULE_PATH = str(Path(DIR_PATH).parent.parent.parent)
-sys.path.insert(1, HF_MODULE_PATH)
-
-# custom imports
-import humanfirst # pylint: disable=wrong-import-position
+import humanfirst
 
 class UnrecognisedEnvironmentException(Exception):
     """This happens when entered environmenis neither dev nor prod"""
@@ -77,7 +66,7 @@ def process(text_folder_path: str) -> None:
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     for example in df['example']:
@@ -95,7 +84,7 @@ def build_examples(row: pandas.Series):
     '''Build the examples'''
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row['translated_text'].strip(),
         id=f'example-{str(uuid.uuid4())}',
         created_at="",
@@ -103,7 +92,7 @@ def build_examples(row: pandas.Series):
         tags=[],  # recommend uploading metadata for unlabelled and tags for labelled
         metadata={"prompt_attack":"True"},
         # this links the individual utterances into their conversation
-        context=humanfirst.HFContext()
+        context=humanfirst.objects.HFContext()
     )
     row['example'] = example
     return row

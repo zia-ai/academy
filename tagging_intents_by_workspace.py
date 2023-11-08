@@ -1,21 +1,19 @@
-#!/usr/bin/env python  # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python tagging_intents_by_workspace.py
-#
-# This accepts an input csv
-# --filename <filename>
-# With at least two columns
-# --intent_col <name>        Column containing names of intents (no duplicates)
-# --tag_col    <tag>         name of tag to apply to intent
-# And then a downloaded Humanfirst JSON workspace
-# --workspacejsonname <name>
-# Which it will update with the provided tags for each intent name given
-# You can then merge this file back into the original workspace
-# No api calls necessary
-#
-# *****************************************************************************
+"""
+python tagging_intents_by_workspace.py
+
+This accepts an input csv
+--filename <filename>
+With at least two columns
+--intent_col <name>        Column containing names of intents (no duplicates)
+--tag_col    <tag>         name of tag to apply to intent
+And then a downloaded Humanfirst JSON workspace
+--workspacejsonname <name>
+Which it will update with the provided tags for each intent name given
+You can then merge this file back into the original workspace
+No api calls necessary
+
+"""
+# ******************************************************************************************************************120
 
 # standard imports
 import json
@@ -82,8 +80,8 @@ def main(filename: str, workspacejsonname: str,
             tags_to_create.append(tag_name)
             print(f"Tag {tag_name} not found - please create manually")
             # not sure whether this api is exposed - note method not allowed, field mask etc?
-            # humanfirst_apis.create_tag(headers,namespace,playbook,tag_id=f'tag-{tag_name}',
-            # name=tag_name,description='',color=humanfirst.generate_random_color())
+            # humanfirst.apis.create_tag(headers,namespace,playbook,tag_id=f'tag-{tag_name}',
+            # name=tag_name,description='',color=humanfirst.objects.generate_random_color())
     print(f"You need to create a total of tags: {count_to_create}")
     print(tags_to_create)
     if count_to_create > 0:

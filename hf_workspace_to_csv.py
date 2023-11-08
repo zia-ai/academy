@@ -1,21 +1,15 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python write_csv.py
-#
-# *****************************************************************************
+"""
+python write_csv.py
+
+"""
+# *********************************************************************************************************************
 
 # standard imports
 import json
-from os.path import join
 
 # third part imports
 import click
-
-# custom imports
 import humanfirst
-import humanfirst_apis
 
 
 @click.command()
@@ -25,17 +19,23 @@ import humanfirst_apis
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 @click.option('-o', '--output_dir', type=str, default="./data", help='Output file path')
-@click.option('--include_intent_tags', type=str, default="", help='Comma delimited list of include intent tags to filter the output by')
-@click.option('--exclude_intent_tags', type=str, default="", help='Comma delimited list of exclude intent tags to filter the output by')
-@click.option('--include_utterance_tags', type=str, default="", help='Comma delimited list of include utterance tags to filter the output by')
-@click.option('--exclude_utterance_tags', type=str, default="", help='Comma delimited list of exclude utterance tags to filter the output by')
+@click.option('--include_intent_tags', type=str, default="",
+              help='Comma delimited list of include intent tags to filter the output by')
+@click.option('--exclude_intent_tags', type=str, default="",
+              help='Comma delimited list of exclude intent tags to filter the output by')
+@click.option('--include_utterance_tags', type=str, default="",
+              help='Comma delimited list of include utterance tags to filter the output by')
+@click.option('--exclude_utterance_tags', type=str, default="",
+              help='Comma delimited list of exclude utterance tags to filter the output by')
 def main(username: str, password: int, namespace: bool, playbook: str, bearertoken: str, output_dir: str,
          include_intent_tags: str,
          exclude_intent_tags: str,
          include_utterance_tags: str,
          exclude_utterance_tags: str
          ):
-    tag_filters = humanfirst.HFTagFilters()
+    """Main Function"""
+
+    tag_filters = humanfirst.objects.HFTagFilters()
     tag_filters.set_tag_filter("intent", "include", include_intent_tags)
     tag_filters.set_tag_filter("intent", "exclude", exclude_intent_tags)
     tag_filters.set_tag_filter("utterance", "include", include_utterance_tags)
@@ -44,7 +44,13 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
     write_csv(username, password, namespace, playbook, bearertoken, output_dir, tag_filters)
 
 
-def write_csv(username: str, password: int, namespace: bool, playbook: str, bearertoken: str, output_dir: str, tag_filters: list) -> None:
+def write_csv(username: str,
+              password: int,
+              namespace: bool,
+              playbook: str,
+              bearertoken: str,
+              output_dir: str,
+              tag_filters: list) -> None:
     """Writes the HF workspace to a CSV file and stores it in the output path
     CSV will contain intent_id, intent_name, for every example
     along with any intent level and utterance level metadata as columns"""
@@ -53,10 +59,10 @@ def write_csv(username: str, password: int, namespace: bool, playbook: str, bear
         output_dir = output_dir + '/'
 
     # Download playbook as json
-    headers = humanfirst_apis.process_auth(bearertoken, username, password)
-    playbook_dict = humanfirst_apis.get_playbook(headers, namespace, playbook)
-    labelled_workspace = humanfirst.HFWorkspace.from_json(playbook_dict)
-    assert (isinstance(labelled_workspace, humanfirst.HFWorkspace))
+    headers = humanfirst.apis.process_auth(bearertoken, username, password)
+    playbook_dict = humanfirst.apis.get_playbook(headers, namespace, playbook)
+    labelled_workspace = humanfirst.objects.HFWorkspace.from_json(playbook_dict)
+    assert isinstance(labelled_workspace, humanfirst.objects.HFWorkspace)
     output_path_json = f'{output_dir}{namespace}-{playbook_dict["name"]}.json'
 
     # Write json version
@@ -71,4 +77,4 @@ def write_csv(username: str, password: int, namespace: bool, playbook: str, bear
 
 
 if __name__ == '__main__':
-    main()
+    main()  # pylint: disable=no-value-for-parameter

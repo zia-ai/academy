@@ -1,46 +1,31 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python ./voc_analysis/02_predict_utterance_from_voc.py
-#        -f ./data/voc.csv
-#        -r <review col name>
-#        -d "Survey ID"
-#        -u <hf username>
-#        -p <hf password>
-#        -n <namepsace>
-#        -b <playbook id>
-#        --background
-#
-# *****************************************************************************
+# pylint: disable=invalid-name
+"""
+python ./voc_analysis/02_predict_utterance_from_voc.py
+       -f ./data/voc.csv
+       -r <review col name>
+       -d "Survey ID"
+       -u <hf username>
+       -p <hf password>
+       -n <namepsace>
+       -b <playbook id>
+       --background
 
-# standard imports
-import json
-import os
-from pathlib import Path
-import sys
+"""
+# *********************************************************************************************************************
 
 # third party imports
 import click
 import pandas
 import nltk
+import humanfirst
 
 # custom imports
-dir_path = os.path.dirname(os.path.realpath(__file__))
-hf_module_path = str(Path(dir_path).parent)
-sys.path.insert(1, hf_module_path)
-import humanfirst_apis
 import voc_helper
 
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
     nltk.download('punkt')
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
-hf_module_path = str(Path(dir_path).parent)
-sys.path.insert(1, hf_module_path)
-
 
 @click.command()
 @click.option('-f', '--input_filename', type=str, required=True, help='Input File')
@@ -54,18 +39,34 @@ sys.path.insert(1, hf_module_path)
 @click.option('-h', '--background', is_flag=True, default=False, help='Adds background info to the CSV')
 @click.option('-d', '--doc_col_id', type=str, default='Survey ID', help='Document ID Column Name')
 @click.option('-c', '--chunk', type=int, default=500, help='size of maximum chunk to send to batch predict')
-@click.option('-s', '--sentencize', type=bool, required=False, default=True, help='whether to sentencize the review_col or not')
+@click.option('-s', '--sentencize', type=bool, required=False, default=True,
+              help='whether to sentencize the review_col or not')
 def main(input_filename: str, output_filename: str, review_col: str,
          username: str, password: int, namespace: bool, playbook: str,
          background: bool, bearertoken: str, doc_col_id: str, chunk: int, sentencize: bool) -> None:
+    """Main Function"""
 
     pt = nltk.tokenize.PunktSentenceTokenizer()
-    load_file(input_filename, output_filename, review_col, pt, username, password, namespace, playbook, bearertoken, background, doc_col_id, chunk, sentencize)
+    load_file(input_filename,
+              output_filename,
+              review_col,
+              pt,
+              username,
+              password,
+              namespace,
+              playbook,
+              bearertoken,
+              background,
+              doc_col_id,
+              chunk,
+              sentencize)
 
 
 def load_file(input_filename: str, output_filename: str, review_col: str, pt: nltk.tokenize.PunktSentenceTokenizer,
-              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, background: bool, doc_col_id: str,
-              chunk: int, sentencize: bool) -> None:
+              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, # pylint: disable=unused-argument
+              background: bool,
+              doc_col_id: str, chunk: int, sentencize: bool) -> None:
+    """Load file"""
 
     # convert csv to dataframe
     df = voc_helper.get_df_from_input(input_filename, review_col)
@@ -77,12 +78,12 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
         print(f'Shape after using punkt {df.shape}')
     else:
         df['utterance'] = df[review_col]
-        
+
     df['utterance'].fillna('',inplace=True)
 
-    headers = humanfirst_apis.process_auth(username=username, password=password)
-    # predict = humanfirst_apis.predict(headers=headers,namespace=namespace,playbook=playbook,
-    #           sentence="The refund was not too hard to organise, but I do not like substitution without consultation.")
+    headers = humanfirst.apis.process_auth(username=username, password=password)
+    # predict = humanfirst.apis.predict(headers=headers,namespace=namespace,playbook=playbook,
+    #    sentence="The refund was not too hard to organise, but I do not like substitution without consultation.")
     # print(json.dumps(predict,indent=3))
     # quit()
 
@@ -93,7 +94,10 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
     num_processed = 0
     for i in range(0, df['utterance'].size, chunk):
         utterance_chunk = list(df['utterance'][i: i + chunk])
-        response_dict = humanfirst_apis.batchPredict(headers=headers, sentences=utterance_chunk, namespace=namespace, playbook=playbook)
+        response_dict = humanfirst.apis.batchPredict(headers=headers,
+                                                     sentences=utterance_chunk,
+                                                     namespace=namespace,
+                                                     playbook=playbook)
 
         for j in range(len(utterance_chunk)):
             confidence.append(response_dict[j]['matches'][0]['score'])
@@ -153,4 +157,4 @@ def assign_background_child_intent(row: pandas.Series, df_doc: pandas.DataFrame,
 
 
 if __name__ == '__main__':
-    main()
+    main() # pylint: disable=no-value-for-parameter

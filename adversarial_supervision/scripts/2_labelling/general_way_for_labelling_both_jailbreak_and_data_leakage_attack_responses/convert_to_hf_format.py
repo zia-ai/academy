@@ -1,29 +1,16 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80*************************************120
-#
-# python ./adversarial_supervision/scripts\
-#         /2_labelling\
-#         /general_way_for_labelling_both_jailbreak_and_data_leakage_attack_responses\
-#         /convert_to_hf_format.py                                                       # pylint: disable=invalid-name
-#
+"""
+python ./adversarial_supervision/scripts\
+        /2_labelling\
+        /general_way_for_labelling_both_jailbreak_and_data_leakage_attack_responses\
+        /convert_to_hf_format.py
+
+"""
 # *********************************************************************************************************************
 
-# standard imports
-import os
-from pathlib import Path
-import sys
-
-DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-HF_MODULE_PATH = str(Path(DIR_PATH).parent.parent.parent.parent)
-sys.path.insert(1, HF_MODULE_PATH)
-
 # 3rd party imports
-import pandas # pylint: disable=wrong-import-position
-import click # pylint: disable=wrong-import-position
-
-# custom imports
-import humanfirst # pylint: disable=wrong-import-position,import-error
+import pandas
+import click
+import humanfirst
 
 
 @click.command()
@@ -47,7 +34,7 @@ def process(filename: str) -> None:
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     for example in df['example']:
@@ -65,7 +52,7 @@ def build_examples(row: pandas.Series):
     '''Build the examples'''
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row['response'].strip(),
         id=f'example-{row.name}',
         created_at="",
@@ -74,7 +61,7 @@ def build_examples(row: pandas.Series):
         metadata={"id": row.name,
                   "prompt": row["final_prompt"]},
         # this links the individual utterances into their conversation
-        context=humanfirst.HFContext()
+        context=humanfirst.objects.HFContext()
     )
     row['example'] = example
     return row

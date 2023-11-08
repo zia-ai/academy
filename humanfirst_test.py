@@ -1,18 +1,21 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80**************************************120
-#
-# Set of pytest humanfirst.py tests
-#
+"""
+Set of pytest humanfirst.py tests
+
+"""
 # ***************************************************************************80**************************************120
 
+# standard imports
 import os
 import json
-import numpy
+
+# 3rd party imports
 import pandas
-import pytest
-import humanfirst
+
+# custom imports
 import simple_json_labelled
+
+# locate where we are
+here = os.path.abspath(os.path.dirname(__file__))
 
 def test_load_testdata():
     """test_load_testdata"""
@@ -28,149 +31,20 @@ def test_load_testdata():
     }
 
     # read the input csv
-    df = pandas.read_csv('./examples/simple_example.csv',
+    path_to_file=os.path.join(here,'examples','simple_example.csv')
+    df = pandas.read_csv(path_to_file,
                          encoding='utf8', dtype=dtypes)
     assert isinstance(df, pandas.DataFrame)
     assert df.shape == (5, 7)
-
-
-def test_intent_hierarchy_numbers():
-    """test_intent_hierarchy_numbers"""
-
-    labelled = humanfirst.HFWorkspace()
-    assert len(labelled.intents) == 0
-    # multi hierachy
-    intent = labelled.intent(
-        name_or_hier=['billing', 'billing_issues', 'payment_late']
-    )
-    assert isinstance(intent, humanfirst.HFIntent)
-    assert intent.id == 'intent-2'
-    assert intent.name == 'payment_late'
-    assert intent.parent_intent_id == 'intent-1'
-    assert len(labelled.intents) == 3
-
-
-def test_create_intent_second_time():
-    """test_create_intent_second_time"""
-
-    labelled = humanfirst.HFWorkspace()
-    intent = labelled.intent(
-        name_or_hier=['billing', 'billing_issues', 'payment_late'])
-    assert isinstance(intent, humanfirst.HFIntent)
-    assert intent.name == 'payment_late'
-    assert intent.id == 'intent-2'
-    assert intent.parent_intent_id == 'intent-1'
-    assert len(labelled.intents) == 3
-    intent = labelled.intent(name_or_hier=['billing'])
-    assert isinstance(intent, humanfirst.HFIntent)
-    assert intent.name == 'billing'
-    assert intent.id == 'intent-0'
-    assert intent.parent_intent_id is None
-    assert len(labelled.intents) == 3
-
-
-def test_metadata_intent():
-    """test_metadata_intent"""
-
-    labelled = humanfirst.HFWorkspace()
-    metadata = {
-        'somekey': 'somevalue',
-        'anotherkey': 'anothervalue'
-    }
-    intent = labelled.intent(
-        name_or_hier=['billing', 'billing_issues', 'payment_late'], metadata=metadata)
-    assert isinstance(intent, humanfirst.HFIntent)
-    assert intent.metadata['anotherkey'] == 'anothervalue'
-    assert len(labelled.intents) == 3
-    # this is the possibly undesirable bit
-    assert (
-        labelled.intents['billing'].metadata['anotherkey'] == 'anothervalue')
-    assert (
-        labelled.intents['billing_issues'].metadata['anotherkey'] == 'anothervalue')
-    assert (
-        labelled.intents['payment_late'].metadata['anotherkey'] == 'anothervalue')
-
-
-def test_tag_color_create():
-    """test_tag_color_create"""
-
-    labelled = humanfirst.HFWorkspace()
-    tag = labelled.tag(tag='exclude')
-    assert isinstance(tag, humanfirst.HFTag)
-    assert tag.color.startswith('#')
-    assert len(tag.color) == 7
-    old_color = tag.color
-    new_color = '#ffffff'
-    # if try to recreate, already exists tag doesn't change
-    tag = labelled.tag(tag='exclude', color=new_color)
-    assert tag.color == old_color
-    # creating new works
-    tag = labelled.tag(tag='exclude-white', color=new_color)
-    assert tag.color == new_color
-
-
-def test_write_csv():
-    """test_write_csv"""
-
-    # delete output file so can sure we are testing fresh each time
-    if os.path.exists("./examples/write_csv_example.csv"):
-        os.remove("./examples/write_csv_example.csv")
-    workspace = "./examples/write_csv_example.json"
-
-    with open(workspace, mode="r", encoding="utf8") as file_obj:
-        data = json.load(file_obj)
-    labelled_workspace = humanfirst.HFWorkspace.from_json(data)
-    assert isinstance(labelled_workspace, humanfirst.HFWorkspace)
-    output_file = "./examples/write_csv_example.csv"
-    labelled_workspace.write_csv(output_file)
-    df = pandas.read_csv(output_file, encoding="utf8")
-
-    # Check column names
-    columns_should_be = []
-    # utterance and full name
-    columns_should_be.extend(["utterance", "fully_qualified_intent_name"])
-    # four different intent keys
-    columns_should_be.extend(["intent_metadata-intent_metadata1", "intent_metadata-intent_metadata2",
-                             "intent_metadata-intent_metadata3", "intent_metadata-intent_metadata4"])
-    # two different metadata keys
-    columns_should_be.extend(
-        ["example_metadata-example_metadata1", "example_metadata-example_metadata2"])
-    columns_should_be.sort()
-
-    columns = list(df.columns)
-    columns.sort()
-
-    assert columns == columns_should_be
-
-    # Check intent level values
-    assert list(df["intent_metadata-intent_metadata1"].unique()
-            == ['value1', numpy.nan, 'value5'])
-    assert df[df["intent_metadata-intent_metadata1"] == 'value1'].shape[0] == 5
-    assert df[df["intent_metadata-intent_metadata1"] == 'value5'].shape[0] == 1
-    assert df[df["intent_metadata-intent_metadata1"].isna()].shape[0] == 5
-
-    assert list(df["intent_metadata-intent_metadata2"].unique()
-            == ['value2', numpy.nan, 'value6'])
-    assert df[df["intent_metadata-intent_metadata2"] == 'value2'].shape[0] == 5
-    assert df[df["intent_metadata-intent_metadata2"] == 'value6'].shape[0] == 1
-    assert df[df["intent_metadata-intent_metadata2"].isna()].shape[0] == 5
-
-    # Check example level values
-    assert list(df["example_metadata-example_metadata1"].unique()
-            == [numpy.nan, 'valueA'])
-    assert (df[df["example_metadata-example_metadata1"]
-            == 'valueA'].shape[0] == 1)
-    assert df[df["example_metadata-example_metadata1"].isna()].shape[0] == 10
-
 
 def test_write_json():
     """test_write_json"""
 
     # delete output file so can sure we are testing fresh each time
-    output_file = "./examples/json_model_example_output.json"
+    output_file = os.path.join(here, "examples", "json_model_example_output.json")
     if os.path.exists(output_file):
         os.remove(output_file)
-    input_file = "./examples/json_model_example.json"
+    input_file = os.path.join(here, "examples", "json_model_example.json")
     input_json = json.loads(open(input_file, 'r', encoding='utf8').read())
 
     simple_json_labelled.process(input_json, input_file, create_date=True)
@@ -179,66 +53,3 @@ def test_write_json():
     examples = output_json["examples"]
     assert examples[0]["created_at"] == "2023-06-05T14:26:07+00:00"
     assert examples[1]["created_at"] == "2023-06-05T14:26:08+00:00"
-
-
-def test_read_json():
-    """test_read_json"""
-
-    input_file = "./examples/json_model_example_output.json"
-    workspace = humanfirst.HFWorkspace()
-    json_input = json.loads(open(input_file, 'r', encoding='utf8').read())
-    workspace = workspace.from_json(json_input)
-    intent_index = workspace.get_intent_index("-")
-    assert list(intent_index.values()) == [
-            "GROUP1", "GROUP1-GROUP1_EN_INJURED_AT_THE_ZOO", "GROUP2", "GROUP2-GROUP2_DREADFULLY_INJURED"]
-
-
-def test_tag_filter_validation():
-    """test_tag_filter_validation"""
-
-    tag_filters = humanfirst.HFTagFilters()
-    assert (tag_filters.validate_tag_list_format(
-        ["test-regression", "test-analyst"]) == ["test-regression", "test-analyst"])
-    assert (tag_filters.validate_tag_list_format(
-        "test-regression,test-analyst") == ["test-regression", "test-analyst"])
-
-
-def test_tag_filters():
-    """test_tag_filters"""
-
-    tag_filters = humanfirst.HFTagFilters()
-    assert isinstance(tag_filters.intent, humanfirst.HFTagFilter)
-    assert isinstance(tag_filters.utterance, humanfirst.HFTagFilter)
-
-    # check we can set the list of values
-    tag_filters.set_tag_filter("intent", "exclude", [
-                               "test-regression", "test-analyst"])
-    assert isinstance(tag_filters.intent.exclude, list)
-    assert tag_filters.intent.exclude[0] == "test-regression"
-    assert tag_filters.intent.exclude[1] == "test-analyst"
-    assert len(tag_filters.intent.exclude) == 2
-
-    # Check we can access like a list
-    tag_filters.intent.exclude.pop(0)
-    assert len(tag_filters.intent.exclude) == 1
-    assert tag_filters.intent.exclude[0] == "test-analyst"
-
-    # Check if we set the other tag_type we don't lose the other already set data
-    tag_filters.set_tag_filter("intent", "include", [
-                               "release-1.0.1", "release-1.0.2", "release-1.0.3"])
-    assert tag_filters.intent.exclude[0] == "test-analyst"
-    assert tag_filters.intent.include[1] == "release-1.0.2"
-
-    # check validates on tag level
-    with pytest.raises(humanfirst.InvalidFilterLevel) as e:
-        tag_filters.set_tag_filter("workspace", "exclude", [
-                                   "test-regression", "test-analyst"])
-        assert str(
-            e.value) == "Accepted levels are ['intent', 'utterance'] level was: workspace"
-
-    # check validates on tag type
-    with pytest.raises(humanfirst.InvalidFilterType) as e:
-        tag_filters.set_tag_filter(
-            "intent", "both", ["test-regression", "test-analyst"])
-        assert str(
-            e.value) == "Accepted types are ['incldue', 'exclude'] level was: both"

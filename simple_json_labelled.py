@@ -1,11 +1,9 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python simple_json_labelled.py
-# basic hardcoded example
-#
-# *****************************************************************************
+"""
+python simple_json_labelled.py
+basic hardcoded example
+
+"""
+# ******************************************************************************************************************120
 
 # standard imports
 import json
@@ -14,10 +12,7 @@ from dateutil import parser
 
 # 3rd party imports
 import click
-
-# custom imports
 import humanfirst
-
 
 
 @click.command()
@@ -37,7 +32,7 @@ def process(input_json: dict, filename: str, create_date: bool = False) -> None:
     """Process Function"""
 
     # declare a labelled workspace
-    labelled = humanfirst.HFWorkspace()
+    labelled = humanfirst.objects.HFWorkspace()
 
     # add a loop through the json file and for every example in it create the intent and example
     intent_names = list(input_json.keys())
@@ -62,7 +57,7 @@ def process(input_json: dict, filename: str, create_date: bool = False) -> None:
             else:
                 created_at = set_at + timedelta(seconds=i)
             # build example
-            example = humanfirst.HFExample(
+            example = humanfirst.objects.HFExample(
                 text=input_intent[example_id],
                 id=example_id,
                 created_at=created_at.isoformat(),

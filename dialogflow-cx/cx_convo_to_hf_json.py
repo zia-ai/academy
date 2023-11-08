@@ -1,28 +1,17 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python cx_convo_to_hf_json.py -f filepath
-#
-# *****************************************************************************
+"""
+python cx_convo_to_hf_json.py -f filepath
+
+"""
+# *********************************************************************************************************************
 
 # standard imports
 import json
 from dateutil import parser
 import numpy
-import os
-from pathlib import Path
-import sys
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
-hf_module_path = str(Path(dir_path).parent)
-sys.path.insert(1, hf_module_path)
 
 # 3rd party imports
 import pandas
 import click
-
-# custom imports
 import humanfirst
 
 
@@ -38,7 +27,8 @@ def main(filepath: str):
     df = pandas.json_normalize(data=data, sep="_")
 
     # Rows with input query has no other information other than input timestamp
-    df_input_text_timestamps = df[pandas.isna(df["jsonPayload_queryResult_diagnosticInfo_Session Id"])][["timestamp"]].reset_index(drop=True)
+    df_input_text_timestamps = df[pandas.isna(
+        df["jsonPayload_queryResult_diagnosticInfo_Session Id"])][["timestamp"]].reset_index(drop=True)
     df_input_text_timestamps = df_input_text_timestamps.rename(columns={"timestamp": "input_timestamp"})
 
     df = df[pandas.notna(df["jsonPayload_queryResult_diagnosticInfo_Session Id"])]
@@ -69,7 +59,8 @@ def main(filepath: str):
                                    "intent_matchType",
                                    "match_event"]].apply(set_intent_name, axis=1)
 
-    # This info lets you filter for the first or last thing the client says - this is very useful in boot strapping bot design
+    # This info lets you filter for the first or last thing the client says
+    # - this is very useful in boot strapping bot design
     df['idx'] = df.groupby(["convo_id"]).cumcount()
     df['first_customer_utt'] = df['idx'] == 0
     df['second_customer_utt'] = df['idx'] == 1
@@ -121,7 +112,7 @@ def main(filepath: str):
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     for example in hf_df['example']:
@@ -151,7 +142,7 @@ def split_timestamps(row: pandas.Series) -> pandas.Series:
         start.append(end[i])
 
     # convert all the timestamps to isoformat
-    for i in range(len(end)):
+    for i,_ in enumerate(end):
         end[i] = end[i].isoformat().split("+")[0] + "Z"
     row.response_timestamp = end
     row.input_timestamp = row.input_timestamp.isoformat().split("+")[0] + "Z"
@@ -178,7 +169,7 @@ def build_examples(row: pandas.Series) -> pandas.Series:
     '''Build the examples'''
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row['utterance'],
         id=f'example-{row.name[0]}-{row.name[1]}',
         created_at=row['created_at'],
@@ -186,8 +177,10 @@ def build_examples(row: pandas.Series) -> pandas.Series:
         tags=[],  # recommend uploading metadata for unlabelled and tags for labelled
         metadata=row['metadata'],
         # this links the individual utterances into their conversation
-        context=humanfirst.HFContext(
-            str(row.name[0]),  # any ID can be used recommend a hash of the text which is repeatable or the external conversation id if there is one.
+        context=humanfirst.objects.HFContext(
+            str(row.name[0]),
+            # any ID can be used recommend a hash of the text
+            # which is repeatable or the external conversation id if there is one.
             'conversation',  # the type of document
             row['role']  # the speakers role in the conversations
         )
@@ -224,4 +217,4 @@ def create_metadata(row: pandas.Series) -> dict:
 
 
 if __name__ == "__main__":
-    main()
+    main() # pylint: disable=no-value-for-parameter

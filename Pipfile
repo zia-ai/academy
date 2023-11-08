@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+humanfirst = "*"
 googletrans = "3.1.0a0"
 pylint = "*"
 git-pylint-commit-hook = "*"
@@ -47,4 +48,4 @@ anyio="*"
 [dev-packages]
 
 [requires]
-python_version = "3.8"
+python_version = "3.11"

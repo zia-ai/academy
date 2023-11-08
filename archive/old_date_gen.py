@@ -9,7 +9,7 @@ def get_list_utterance_datetimes(start_date: datetime.datetime, number_of_days: 
     Utterances are spread between 0 and max seconds per utterance from the start time
     '''
     seconds_in_range = 60*60*24*number_of_days
-    seed_int = int(humanfirst.hash_string(seed_string,None),16)
+    seed_int = int(humanfirst.objects.hash_string(seed_string,None),16)
     rng = numpy.random.RandomState(numpy.random.MT19937(numpy.random.SeedSequence(seed_int)))
     start_date_delta_seconds = rng.randint(0,seconds_in_range)
     convo_start_date = start_date + datetime.timedelta(seconds=start_date_delta_seconds)

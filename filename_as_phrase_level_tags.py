@@ -1,13 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python filename_as_phrase_level_tags.py -f <input file> -o <output file>
-#
-# *****************************************************************************
+"""
+python filename_as_phrase_level_tags.py -f <input file> -o <output file>
+
+"""
+# *********************************************************************************************************************
 
 # standard imports
-import pandas
 from datetime import datetime
 from datetime import timedelta
 from typing import Union
@@ -16,8 +13,7 @@ from pathlib import Path
 
 # 3rd party imports
 import click
-
-# custom imports
+import pandas
 import humanfirst
 
 
@@ -56,7 +52,7 @@ def main(filename: str, output_filename: str) -> None:
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     for example in df['example']:
@@ -71,7 +67,7 @@ def main(filename: str, output_filename: str) -> None:
     print(f"File is saved at {output_filename}")
 
 
-def assign_uuid(row: pandas.Series) -> str:
+def assign_uuid(_: pandas.Series) -> str:
     '''Generates UUID'''
 
     return uuid4()
@@ -97,7 +93,7 @@ def build_examples(row: pandas.Series) -> pandas.Series:
     '''Build the examples'''
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row['utterance'],
         id=f'example-{row.name}',
         created_at=row["created_at"],
@@ -120,4 +116,4 @@ def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract: l
 
 
 if __name__ == '__main__':
-    main()
+    main() # pylint: disable=no-value-for-parameter
