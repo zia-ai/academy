@@ -9,6 +9,7 @@ OPTIONAL
 Trigger a kfold evaluation based on a preconfigured (using GUI) preset
 for instance if you want to nightly run long running evals
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # ******************************************************************************************************************120
 
@@ -21,21 +22,22 @@ import humanfirst
 
 
 @click.command()
-@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-u', '--username', type=str, default='',
+              help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='',
+              help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
-@click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 @click.option('-e', '--evalpresetname', type=str, default='Default Auto Evaluation Preset',
               help='The name of the evaluation preset you want to run')
-def main(username: str, password: int, namespace: bool, playbook: str, bearertoken: str, evalpresetname: str):
+def main(username: str, password: int, namespace: bool, playbook: str, evalpresetname: str):
     '''Main'''
 
     # do authorisation
-    headers = humanfirst.apis.process_auth(bearertoken=bearertoken,username=username,password=password)
+    hf_api = humanfirst.apis.HFAPI(username=username,password=password)
 
     # get the preset evaluation id you want.
-    presets = humanfirst.apis.get_evaluation_presets(headers,namespace,playbook)
+    presets = hf_api.get_evaluation_presets(namespace,playbook)
     print("All presets found")
     print(json.dumps(presets,indent=2))
 
@@ -52,11 +54,11 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
         quit()
 
     # trigger eval - no options - need
-    print(json.dumps(humanfirst.apis.trigger_preset_evaluation(headers,
-                                                               namespace,
-                                                               playbook,
-                                                               evaluation_preset_id),
-                     indent=2))
+    print(json.dumps(hf_api.trigger_preset_evaluation(namespace,
+                                                      playbook,
+                                                      evaluation_preset_id),
+                                                      indent=2))
+
 
 if __name__ == '__main__':
     main() # pylint: disable=no-value-for-parameter

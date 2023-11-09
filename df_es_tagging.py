@@ -26,13 +26,17 @@ class MetadataNotStringException(Exception):
 
 @click.command()
 @click.option('-d','--directory',type=str,required=True,help='Directory containing your unzipped agent zip')
-# @click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-# @click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+# @click.option('-u', '--username', type=str, default='',
+#               help='HumanFirst username if not setting HF_USERNAME environment variable')
+# @click.option('-p', '--password', type=str, default='',
+#               help='HumanFirst password if not setting HF_PASSWORD environment variable')
 # @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 # @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 # @click.option('-v', '--verbose', is_flag=True, default=False, help='Increase logging level')
 @click.option('-f', '--filename', type=str, required=True, help='Workspace file to update')
-def main(directory: str, filename: str): # username: str, password: str, namespace: str, playbook: str, verbose: bool):
+@click.option('-l','--delimiter',type=str,default="-",help='Intent name delimiter')
+def main(directory: str, filename: str, delimiter: str):
+    # username: str, password: str, namespace: str, playbook: str, verbose: bool):
     """Main Function"""
 
     config = validate_agent_directory(directory)
@@ -41,7 +45,7 @@ def main(directory: str, filename: str): # username: str, password: str, namespa
     df = process_priorities(df)
     df = process_intent_types(df)
 
-    labelled_workspace = get_workspace(config,filename)
+    labelled_workspace = get_workspace(config,filename, delimiter=delimiter)
     intent_name_index = labelled_workspace.get_intent_index(delimiter="-")
     df["intent_id"] = df["name"].apply(map_values,args=[intent_name_index])
     df.apply(add_priority_tags,args=[labelled_workspace],axis=1)
@@ -58,12 +62,12 @@ def add_intent_type_tags(row:pandas.Series, labelled_workspace: humanfirst.objec
 
     labelled_workspace.tag_intent(row["intent_id"],labelled_workspace.tag(row["intent_type"]))
 
-def get_workspace(config: dict, filename: str) -> humanfirst.objects.HFWorkspace:
+def get_workspace(config: dict, filename: str, delimiter: str) -> humanfirst.objects.HFWorkspace:
     """Gets workspace from file"""
 
     file_uri = f'{config["directory_dir"]}{filename}'
     file = open(file_uri, mode="r",encoding="utf8")
-    labelled_workspace = humanfirst.objects.HFWorkspace.from_json(file)
+    labelled_workspace = humanfirst.objects.HFWorkspace.from_json(file, delimiter = delimiter)
     file.close()
     return labelled_workspace
 

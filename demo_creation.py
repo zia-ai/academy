@@ -7,6 +7,7 @@ python demo_creation.py
 
 demonstration of creating a workspace and intents incrementally using APIs
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *********************************************************************************************************************
 
@@ -17,16 +18,16 @@ import time
 
 # third party imports
 import click
-import pandas
 import nltk
 import humanfirst
 
 
 @click.command()
-@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-u', '--username', type=str, default='',
+              help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='',
+              help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
-@click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 @click.option('-w', '--wait_to_train', type=int, default=10, help='How long for NLU to train')
 @click.option('-m', '--min_match_score', type=float, default=0.4, help='Minimum threshold to consider a match')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='Increase logging level')
@@ -36,7 +37,6 @@ import humanfirst
 def main(username: str,
          password: int,
          namespace: bool,
-         bearertoken: str,
          wait_to_train: int,
          min_match_score: float,
          verbose: bool = False,
@@ -74,13 +74,13 @@ def main(username: str,
     if not dummy:
         # authorisation
         print('Authorising')
-        headers = humanfirst.apis.process_auth(bearertoken=bearertoken, username=username, password=password)
+        hf_api = humanfirst.apis.HFAPI(username=username, password=password)
 
         if playbook == '':
             # create the workspace/playbook
             # calling this the returned playbook to differentiate it from workspace.
             # this is the object with the ids created.
-            playbook = humanfirst.apis.post_playbook(headers, namespace, "name not yet working")
+            playbook = hf_api.post_playbook(namespace, "name not yet working")
             playbook_id = playbook["metastorePlaybook"]["id"]
             print(f'Created playbook: {playbook_id}')
         else:
@@ -89,20 +89,20 @@ def main(username: str,
 
         # update the workspace with the training
         print('Importing workspace into playbook:')
-        print(humanfirst.apis.import_intents(headers,namespace,playbook_id,workspace_as_dict=workspace))
+        print(hf_api.import_intents(namespace,playbook_id,workspace_as_dict=workspace))
 
         # get the NLU enginess for the workspace
-        nlu_engines = humanfirst.apis.get_nlu_engines(headers,namespace,playbook_id)
+        nlu_engines = hf_api.get_nlu_engines(namespace,playbook_id)
 
         # in this case ther is only going to be one (as we haven't created any others)
         # and that is going to be humanfirst engine, so assume it's in the first position
         # This is a tautism, you could get from the nlu_engines call the same info.
-        nlu_engine = humanfirst.apis.get_nlu_engine(headers, namespace, playbook_id, nlu_engines[0]["id"])
+        nlu_engine = hf_api.get_nlu_engine(namespace, playbook_id, nlu_engines[0]["id"])
         print('NLU engine to train:')
         print(nlu_engine)
 
         # Trigger this - doesn't have a very meaningful response, None, or {} here, but with a code 200
-        humanfirst.apis.trigger_train_nlu(headers,namespace,playbook_id,nlu_engine["id"])
+        hf_api.trigger_train_nlu(namespace,playbook_id,nlu_engine["id"])
         print("Triggered training on NLU engine")
 
     # Get the docs to classify
@@ -126,7 +126,7 @@ def main(username: str,
             print(f'Interviewer: {doc["author"]} interviewing {doc["interviewee"]}')
 
             # get the predictions from huamnfirst
-            predictions = humanfirst.apis.batchPredict(headers,doc["text"],namespace,playbook_id)
+            predictions = hf_api.batchPredict(doc["text"],namespace,playbook_id)
 
             # loop through them printing out the text sentence with the score
             for i,match in enumerate(predictions):
@@ -135,13 +135,6 @@ def main(username: str,
                 if match_confidence >= min_match_score:
                     match_name = match["matches"][0]["name"]
                 print(f'{doc["text"][i]:80} {match_name:>20}:{match_confidence:.2f},')
-
-def list_workspaces(dummy: bool, headers, namespace) -> pandas.DataFrame:
-    """Returns a list of workspace ids and names checking connection is correct"""
-    if not dummy:
-        df_all_workspaces = pandas.json_normalize(
-            humanfirst.apis.list_playbooks(headers, namespace))
-        return df_all_workspaces[df_all_workspaces["namespace"] == "humanfirst-academy"]["name"]
 
 def get_user_examples() -> list:
     """some example training phrases being used to boot strap the model
