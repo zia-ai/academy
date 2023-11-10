@@ -7,15 +7,14 @@ no headers
 filename without .csv is entity name
 col0 = key_value
 col1 = onward are synonyms
-for example this is the way Dialogflow exports an entity
-
-
+for example this is the way Dialogflow ES exports an entity
 
 """
 # *********************************************************************************************************************
 
 # standard imports
 import json
+import os
 
 # 3rd party imports
 import pandas
@@ -46,12 +45,15 @@ def main(filename: str,
     # values
     values = []
 
+    # chceck if column containing keys
+    assert df[0].is_unique
+
     # iterate through dataframe
     for i in range(df.shape[0]):
 
-        # work out how many synonyms we have (columns 3 onward until NaN)
+        # work out how many synonyms we have (2nd onward until NaN)
         synonyms = []
-        for j in range(2,df.shape[1],1):
+        for j in range(1,df.shape[1],1):
             # exit when come to first NaN value
             if pandas.isna(df.loc[i,j]):
                 break
@@ -62,15 +64,15 @@ def main(filename: str,
 
         # add a value to the entity with those synonyms (colunn 1)
         value = {
-            "id":f'entity-value-{df.loc[i,1]}',
-            "key_value": df.loc[i,1],
+            "id":f'entity-value-{df.loc[i,0]}',
+            "key_value": df.loc[i,0],
             "language": language,
             "synonyms": synonyms
         }
         values.append(value.copy())
 
     # create the entity add the values
-    entity_name = filename.split("/")[-1].replace(".csv","")
+    entity_name = os.path.basename(filename).replace(".csv","")
     entity = {
         "id": f'entity-{entity_name}',
         "name": entity_name,
@@ -79,6 +81,7 @@ def main(filename: str,
 
     # add all entities to workspace as a list
     workspace = {
+        "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
         "entities": [entity]
     }
 
