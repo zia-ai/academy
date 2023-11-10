@@ -45,7 +45,7 @@ def main(filename: str,
     # values
     values = []
 
-    # chceck if column containing keys
+    # check if column containing keys is having only unique values
     assert df[0].is_unique
 
     # iterate through dataframe
