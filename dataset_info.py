@@ -1,21 +1,20 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# *******************************************************************************************************************120
-#  Code Language:   python
-#  Script:          dataset_info.py
-#  Imports:         click, requests, pandas, humanfirst_apis
-#  Functions:       main(), get_source_id()
-#  Description:     Produces a CSV contaning dataset information
-#
+"""
+ Code Language:   python
+ Script:          dataset_info.py
+ Imports:         click, requests, pandas, humanfirst
+ Functions:       main(), get_source_id()
+ Description:     Produces a CSV contaning dataset information
+
+ """
 # **********************************************************************************************************************
 
+# standard imports
+from typing import Union
+
 # third party imports
-import requests
 import click
 import pandas
-from typing import Union
-# custom import
-import humanfirst_apis
+import humanfirst
 
 
 @click.command()
@@ -26,8 +25,8 @@ import humanfirst_apis
 def main(username: str, password: str, namespace: str, output_path: str) -> None:
     """Main function"""
 
-    headers = humanfirst_apis.process_auth(username=username, password=password)
-    conversation_set_list = humanfirst_apis.get_conversion_set_list(headers, namespace)
+    headers = humanfirst.apis.process_auth(username=username, password=password)
+    conversation_set_list = humanfirst.apis.get_conversion_set_list(headers, namespace)
     df = pandas.json_normalize(data=conversation_set_list, sep="-")
     df.rename(columns={"id": "conversation_set_id"}, inplace=True)
     df["conversation_source_id"] = df["sources"].apply(get_source_id)
@@ -44,7 +43,7 @@ def get_source_id(source: Union[list, float]) -> Union[str, float]:
 
     if not isinstance(source, float):
         if not pandas.isna(source).all():
-            for i, obj in enumerate(source):
+            for _, obj in enumerate(source):
                 if 'conversationSourceId' in obj:
                     return obj['conversationSourceId']
             return pandas.NA
@@ -57,4 +56,4 @@ def get_source_id(source: Union[list, float]) -> Union[str, float]:
 
 
 if __name__ == "__main__":
-    main()
+    main() # pylint: disable=no-value-for-parameter

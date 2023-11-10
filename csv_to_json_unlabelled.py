@@ -1,9 +1,7 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# *********************************************************************************************************************
-#
-# python csv_to_json_unlabelled.py
-#
+"""
+python csv_to_json_unlabelled.py
+
+"""
 # *********************************************************************************************************************
 
 # standard imports
@@ -11,6 +9,7 @@ import re
 import json
 import datetime
 from typing import Union
+from copy import deepcopy
 
 # 3rd party imports
 import pandas
@@ -18,8 +17,6 @@ import numpy
 import click
 from dateutil import parser
 import tqdm
-
-# custom imports
 import humanfirst
 
 
@@ -43,9 +40,9 @@ import humanfirst
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert}"')
 @click.option('-e', '--encoding', type=str, required=False, default='utf8',
               help='Input CSV encoding')
+@click.option('--filtering', type=str, required=False, default='', help='column:value,column:value;column:value,column:value')
 @click.option('-h', '--striphtml', is_flag=True, default=False,
               help='Whether to strip html tags from the utterance col')
-@click.option('--filtering', type=str, required=False, default='', help='column:value,column:value')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
          role_mapper: str, encoding: str, filtering: str, striphtml: bool) -> None:
@@ -82,20 +79,33 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
     # assume role all to start with and overwrite later
     df['role'] = 'client'
 
+    print(df)
+
     # filtering
     if filtering != '':
+        df_filter = []
         print(f'Before filtering: {df.shape[0]}')
-        filters = filtering.split(',')
-        print(filters)
-        filtering = {}
-        for filt in filters:
-            pair = filt.split(':')
-            filtering[pair[0]] = pair[1]
-        print('Filtering on:')
-        print(filtering)
-        assert isinstance(filtering, dict)
-        for key, value in filtering.items():
-            df = df[df[key] == value]
+        multiple_filters = filtering.split(";")
+        print("\nMultiple Filters")
+        print(multiple_filters)
+        print("\n")
+        for filtering in multiple_filters:
+            filters = filtering.split(',')
+            filtering = {}
+            for filt in filters:
+                pair = filt.split(':')
+                filtering[pair[0]] = pair[1]
+            print('Filtering on:')
+            print(filtering)
+            assert isinstance(filtering, dict)
+            df_filt = deepcopy(df)
+            for key, value in filtering.items():
+                df_filt = df_filt[df_filt[key] == value]
+            df_filter.append(df_filt)
+            print("\n")
+        df = pandas.concat(df_filter)
+        
+
         print(f'After filtering: {df.shape[0]}')
         print('\n')
 
@@ -127,7 +137,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             print(df)
             print('\n')
         else:
-            df['created_at'] = df[created_at_col].apply(parser.parse)
+            df['created_at'] = df[created_at_col].apply(parse_dates)
 
         # check roles
         if role_col == '':
@@ -215,7 +225,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     print("Adding examples to workspace")
@@ -230,7 +240,8 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
         if filename_out != filename:
             break
     if filename_out == filename:
-        raise humanfirst.HFOutputFileMustBeDifferent(f'Output filename: {filename_out} == input filename: {filename}')
+        raise humanfirst.objects.HFOutputFileMustBeDifferent(
+            f'Output filename: {filename_out} == input filename: {filename}')
     file_out = open(filename_out, mode='w', encoding='utf8')
     unlabelled.write_json(file_out)
     file_out.close()
@@ -243,18 +254,23 @@ def decide_role_filter_values(row: pandas.Series, column_name: str, role_filter:
     else:
         return False
 
+def parse_dates(date: str) -> datetime.datetime:
+    """Parse the date"""
+
+    return parser.parse(timestr=date, dayfirst=True)
+
 def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '', created_at_col: str = ''):
     '''Build the examples'''
 
     # if utterances use the hash of the utterance for an id
     if convo_id_col == '':
-        external_id = humanfirst.hash_string(row[utterance_col], 'example')
+        external_id = humanfirst.objects.hash_string(row[utterance_col], 'example')
         context = None
 
     # if convos use the convo id and sequence
     else:
         external_id = f'example-{row[convo_id_col]}-{row["idx"]}'
-        context = humanfirst.HFContext(
+        context = humanfirst.objects.HFContext(
             context_id=row[convo_id_col],
             type='conversation',
             role=row["role"]
@@ -267,7 +283,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
         created_at = row[created_at_col]
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row[utterance_col],
         id=external_id,
         created_at=created_at,
@@ -305,7 +321,7 @@ def translate_roles(role: str, mapper: dict) -> str:
 
 def execute_regex(text_to_run_on: str, re_to_run: re) -> str:
     """Executes a compiled regex on a text"""
-    
+
     return re_to_run.sub('',text_to_run_on)
 
 if __name__ == '__main__':

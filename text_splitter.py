@@ -1,41 +1,37 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python text_splitter.py
-# -filepath <unlabelled hf json>
-# --split <text_to_split>
-# --output <output_path>
-# --timestamp <created_at_time>
-# --key_id <unique_id>
-#
-# text_to_split,created_at_time,key_id - in case of nested object start the
-#                                        naming from root with the delimeter as
-#                                        "-"
+"""
+python text_splitter.py
+-filepath <unlabelled hf json>
+--split <text_to_split>
+--output <output_path>
+--timestamp <created_at_time>
+--key_id <unique_id>
+
+text_to_split,created_at_time,key_id - in case of nested object start the
+                                       naming from root with the delimeter as
+                                       "-"
+
+"""
 # *****************************************************************************
 
 # standard imports
-import random
 import json
-import click
-from os import listdir
-from os.path import isfile, join
-import uuid
 import re
-from datetime import datetime, timedelta, date
+from datetime import datetime
 from dateutil import parser
 
 # third Party imports
 import pandas
+import click
 import nltk
+import humanfirst
+
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
     nltk.download('punkt')
 
-# custom imports
-import humanfirst
-
+class MetadataNotStingException(Exception):
+    """This happens when key value pair in metadata is not string"""
 
 @click.command()
 @click.option('-i', '--key_id', type=str, required=True, help='Key ID field name')
@@ -84,7 +80,7 @@ def main(filepath: str, split: str, output: str, key_id: str, timestamp: str) ->
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
     # add the examples to workspace
     for example in df['example']:
         unlabelled.add_example(example)
@@ -135,10 +131,10 @@ def create_metadata(row: pandas.Series, metadata_keys_to_extract: list) -> dict:
                 metadata[re.sub("^metadata-", "", key)] = str(row[key])
 
     # all key value pairs must be strings
-    for key in metadata.keys():
+    for key,_ in metadata.items():
         try:
-            assert (isinstance(metadata[key], str))
-        except Exception:
+            assert isinstance(metadata[key], str)
+        except MetadataNotStingException:
             print(f'Key: {key} value {metadata[key]} is not a string')
 
     return metadata
@@ -148,7 +144,7 @@ def build_examples(row: pandas.Series) -> pandas.Series:
     '''Build the examples'''
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         id=f"example-{row.name[0]}-{row.name[1]}",
         text=row['split_text'],
         created_at=row["created_at"],
@@ -156,8 +152,10 @@ def build_examples(row: pandas.Series) -> pandas.Series:
         tags=[],  # recommend uploading metadata for unlabelled and tags for labelled
         metadata=row['metadata'],
         # this links the individual utterances into their conversation
-        context=humanfirst.HFContext(
-            str(row.name[0]),  # any ID can be used recommend a hash of the text which is repeatable or the external conversation id if there is one.
+        context=humanfirst.objects.HFContext(
+            str(row.name[0]),
+            # any ID can be used recommend a hash of the text
+            # which is repeatable or the external conversation id if there is one.
             'conversation',  # the type of document
             "client"  # the speakers role in the conversations
         )
@@ -167,4 +165,4 @@ def build_examples(row: pandas.Series) -> pandas.Series:
 
 
 if __name__ == '__main__':
-    main()
+    main() # pylint: disable=no-value-for-parameter

@@ -1,12 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# *******************************************************************************************************************120
-#  Code Language:   python
-#  Script:          hf_labelled_to_unlabelled.py
-#  Imports:         click, os, humanfirst_apis
-#  Functions:       main(), process(), delete_intent_ids_from_examples()
-#  Description:     Converts labelled HF data to Unlabelled format
-#
+"""
+ Code Language:   python
+ Script:          hf_labelled_to_unlabelled.py
+ Imports:         click, os
+ Functions:       main(), process(), delete_intent_ids_from_examples()
+ Description:     Converts labelled HF data to Unlabelled format
+
+"""
 # **********************************************************************************************************************
 
 # standard imports
@@ -33,7 +32,7 @@ def process(filepath: str, output_filepath: str) -> None:
         with open(filepath, mode="r", encoding="utf8") as f:
             data = json.load(f)
     else:
-        raise Exception(f"{filepath} does not exist")
+        raise FileNotFoundError(f"{filepath} does not exist")
 
     if "intents" in data.keys():
         del data["intents"]
@@ -56,7 +55,7 @@ def process(filepath: str, output_filepath: str) -> None:
 def delete_intent_ids_from_examples(examples: list) -> list:
     '''deletes intent ids from examples'''
 
-    for i in range(len(examples)):
+    for i,_ in enumerate(examples):
         if "intents" in examples[i].keys():
             del examples[i]["intents"]
 
@@ -64,4 +63,4 @@ def delete_intent_ids_from_examples(examples: list) -> list:
 
 
 if __name__ == "__main__":
-    main()
+    main() # pylint: disable=no-value-for-parameter

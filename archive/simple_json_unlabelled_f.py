@@ -98,7 +98,7 @@ def main(filename: str):
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     for example in df['example']:
@@ -117,7 +117,7 @@ def build_examples(row: pandas.Series):
     '''Build the examples'''
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
         text=row['utterance'],
         id=f'example-{row.name[0]}-{row.name[1]}',
         created_at=row['created_at'],
@@ -125,7 +125,7 @@ def build_examples(row: pandas.Series):
         tags=[],  # recommend uploading metadata for unlabelled and tags for labelled
         metadata=row['metadata'],
         # this links the individual utterances into their conversation
-        context=humanfirst.HFContext(
+        context=humanfirst.objects.HFContext(
             # any ID can be used recommend a hash of the text which is
             # repeatable or the external conversation id if there is one.
             str(row.name[0]),

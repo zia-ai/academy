@@ -1,9 +1,7 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ******************************************************************************************************************120
-#
-# reduce_confusion_matrix.py
-#
+"""
+reduce_confusion_matrix.py
+
+"""
 # *********************************************************************************************************************
 
 # standard imports
@@ -18,9 +16,8 @@ import numpy
 import click
 from sklearn.metrics import confusion_matrix
 import plotly.express as px
+import humanfirst
 
-# custom imports
-import humanfirst_apis
 
 # Typical phrases.csv from HF contains
 # Labelled Phrase,Detected Phrase,Intent Id,Intent Name,Top Match Intent Id,Top Match Intent Name,Top Match Score,
@@ -60,8 +57,8 @@ def main(filedir: str, input_filepath: str, output_filepath: str, output_chart: 
     if not isfile(input_filepath):
         if not isdir(filedir):
             raise FileDirException(f"{filedir} is not a directory")
-        headers = humanfirst_apis.process_auth(bearertoken, username, password)
-        response = humanfirst_apis.get_evaluation_zip(
+        headers = humanfirst.apis.process_auth(bearertoken, username, password)
+        response = humanfirst.apis.get_evaluation_zip(
             headers, namespace, playbook, evaluation_id)
         zip_file = zipfile.ZipFile(io.BytesIO(response.content))
         zip_file.extractall(filedir)

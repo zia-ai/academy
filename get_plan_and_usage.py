@@ -1,11 +1,9 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ******************************************************************************************************************120
-#
-# python get_plan_and_usage.py -u <username> -p <password>
-#
-# Retrieves the subscription plan and usage for the organisation a user belongs to
-#
+"""
+python get_plan_and_usage.py -u <username> -p <password>
+
+Retrieves the subscription plan and usage for the organisation a user belongs to
+
+"""
 # *********************************************************************************************************************
 
 # standard imports
@@ -14,9 +12,7 @@ import json
 # third party imports
 import click
 import pandas
-
-# Custom imports
-import humanfirst_apis
+import humanfirst
 
 
 @click.command()
@@ -27,16 +23,16 @@ def main(username: str, password: int, bearertoken: str):
     '''Main'''
 
     # authorise
-    headers = humanfirst_apis.process_auth(username=username, password=password, bearertoken=bearertoken)
+    headers = humanfirst.apis.process_auth(username=username, password=password, bearertoken=bearertoken)
 
     # get plan info as a json
     print("Plan info")
-    plan_dict = humanfirst_apis.get_plan(headers)
+    plan_dict = humanfirst.apis.get_plan(headers)
     print(json.dumps(plan_dict, indent=2))
     print("\n")
 
     # get usage info
-    usage_dict = humanfirst_apis.get_usage(headers)
+    usage_dict = humanfirst.apis.get_usage(headers)
 
     # turn into dfs for df.to_csv or similar
     print("dataPoints.conversationSets")
