@@ -51,7 +51,7 @@ def main(filename: str,
     # iterate through dataframe
     for i in range(df.shape[0]):
 
-        # work out how many synonyms we have (2nd onward until NaN)
+        # work out how many synonyms we have (2nd column (column 1) onward until NaN)
         synonyms = []
         for j in range(1,df.shape[1],1):
             # exit when come to first NaN value
@@ -62,7 +62,7 @@ def main(filename: str,
             }
             synonyms.append(synonym.copy())
 
-        # add a value to the entity with those synonyms (colunn 1)
+        # add a value to the entity with those synonyms
         value = {
             "id":f'entity-value-{df.loc[i,0]}',
             "key_value": df.loc[i,0],
