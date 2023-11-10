@@ -1,22 +1,17 @@
-#!/usr/bin/env python  # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python trigger_import.py
-#
-# trigger the import from a previously configured integration (using the gui)
-# i.e if you want to nightly bring in your dialogflow workspace
-#
-# *****************************************************************************
+"""
+python trigger_import.py
 
-# standard imports
+trigger the import from a previously configured integration (using the gui)
+i.e if you want to nightly bring in your dialogflow workspace
+
+"""
+# ******************************************************************************************************************120
 
 # 3rd party imports
 import click
 import pandas
+import humanfirst
 
-# custom imports
-import humanfirst_apis
 
 @click.command()
 # either username+password or bearertoken credentials
@@ -34,7 +29,8 @@ import humanfirst_apis
 @click.option('-i', '--integration_id', type=str, default='', help='Integration to trigger')
 @click.option('-w', '--integration_workspace_id', type=str, default='', help='Integration Workspace to import')
 @click.option('-l', '--language', type=str, default='en', help='Language for integration workspace')
-@click.option('-m', '--merge_type',type=str,default='merge',help='clear|merge|none clear all intents or merge all intents')
+@click.option('-m', '--merge_type',type=str,default='merge',
+              help='clear|merge|none clear all intents or merge all intents')
 def main(username: str, password: int, bearertoken: str,
          namespace: bool, playbook: str, integration_type: str,
          execute: bool,
@@ -46,7 +42,7 @@ def main(username: str, password: int, bearertoken: str,
     '''Main'''
 
     # do authorisation
-    headers = humanfirst_apis.process_auth(bearertoken=bearertoken,username=username,password=password)
+    headers = humanfirst.apis.process_auth(bearertoken=bearertoken,username=username,password=password)
 
     # if we are not executing provide the information to let the user to pick
     # their integration_id and integration_workspace
@@ -54,14 +50,14 @@ def main(username: str, password: int, bearertoken: str,
 
         # check playbook
         print("Playbook Information")
-        playbook_info = humanfirst_apis.get_playbook_info(headers, namespace, playbook)
+        playbook_info = humanfirst.apis.get_playbook_info(headers, namespace, playbook)
         playbook_df = pandas.json_normalize(playbook_info)
         print(playbook_df[["namespace","id","name"]])
         print("\n")
 
         # get integrations
         print(f'Integrations for namespace {namespace} playbook {playbook}')
-        integrations = humanfirst_apis.get_integrations(headers,namespace)
+        integrations = humanfirst.apis.get_integrations(headers,namespace)
         integrations_df = pandas.json_normalize(integrations)
         print(integrations)
         print(integrations_df[["id","name","type"]])
@@ -72,14 +68,14 @@ def main(username: str, password: int, bearertoken: str,
             if integration["type"] == integration_type:
                 print(f'Retreiving integration {i} {integration["name"]} workspaces')
                 try:
-                    workspaces = humanfirst_apis.get_integration_workspaces(
+                    workspaces = humanfirst.apis.get_integration_workspaces(
                         headers,
                         namespace=namespace,
                         integration_id=integration["id"])
                     workspaces_df = pandas.json_normalize(workspaces)
                     print(workspaces_df[["id","name"]])
                     print("\n")
-                except humanfirst_apis.HFAPIResponseValidationException as e:
+                except humanfirst.apis.HFAPIResponseValidationException as e:
                     print(f'Couldn\'t get workspaces for {integration["name"]}')
                     print(e)
                     print("\n")
@@ -89,14 +85,14 @@ def main(username: str, password: int, bearertoken: str,
         # check have correct info
         assert integration_id != ''
         assert integration_workspace_id != ''
-        integrations = humanfirst_apis.get_integrations(headers,namespace)
+        integrations = humanfirst.apis.get_integrations(headers,namespace)
         integration = None
         for integration_candidate in integrations:
             if integration_candidate["id"] == integration_id:
                 integration = integration_candidate
                 break
         assert isinstance(integration, dict)
-        workspaces = humanfirst_apis.get_integration_workspaces(
+        workspaces = humanfirst.apis.get_integration_workspaces(
             headers,
             namespace=namespace,
             integration_id=integration["id"])
@@ -119,7 +115,7 @@ def main(username: str, password: int, bearertoken: str,
             print(f'Unknown merge type: {merge_type}')
             quit()
 
-        import_return = humanfirst_apis.trigger_import_from_df_cx_integration(
+        import_return = humanfirst.apis.trigger_import_from_df_cx_integration(
             headers,
             namespace,
             playbook,
@@ -133,7 +129,7 @@ def main(username: str, password: int, bearertoken: str,
             clear_tags=clear,
             merge_entities=merge,
             merge_intents=merge,
-            merge_tags=merge 
+            merge_tags=merge
         )
         print(import_return)
 

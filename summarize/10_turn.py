@@ -1,30 +1,22 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80*************************************120
-#
-# python ./summarize/10_turn       # pylint: disable=invalid-name
-#
-# Makes a tagging file csv
-#
+# pylint: disable=invalid-name
+"""
+python ./summarize/10_turn       # pylint: disable=invalid-name
+
+Makes a tagging file csv
+"""
 # ********************************************************************************************************************
 
 # standard imports
-import os
-import sys
 import json
-import pathlib
 import datetime
 
 # 3rd party imports
 import click
 import pandas
-import numpy as np
-
-# Custom Imports
-import_path = os.path.dirname(os.path.realpath(__file__))
-hf_module_path = str(pathlib.Path(import_path).parent)
-sys.path.insert(1, hf_module_path)
 import humanfirst
+
+class NoEmptySingleQuotesException(Exception):
+    """This happens when there is no single quotes present"""
 
 @click.command()
 @click.option('-j', '--jointo', type=str, required=True, help='Path of original data to join to')
@@ -42,8 +34,8 @@ def main(jointo:str, spliton:str):
     intent_id_dict = df_original[["name","tags","metadata"]].to_dict("index")
 
     tags = []
-    for id in intent_id_dict:
-        name = intent_id_dict[id]["name"]
+    for idx in intent_id_dict:
+        name = intent_id_dict[idx]["name"]
         assert isinstance(name,str)
         potential_tags = name.split(spliton)
         if isinstance(potential_tags,str):
@@ -53,7 +45,7 @@ def main(jointo:str, spliton:str):
     tag_names = list(set(tags))
     try:
         tag_names.remove('')
-    except Exception as e:
+    except NoEmptySingleQuotesException as e:
         print(f"Didn't have \'\' {e}")
     print(f'Total tag names to create: {len(tag_names)}')
 
@@ -62,11 +54,11 @@ def main(jointo:str, spliton:str):
         tags.append(build_tags(tag_name))
     original_dict["tags"] = tags
 
-    for id in intent_id_dict:
+    for idx in intent_id_dict:
         for tag in tags:
-            if intent_id_dict[id]["name"].find(tag["name"]) >= 0:
-                intent_id_dict[id]["tags"].append(tag)
-                intent_id_dict[id]["metadata"][tag["name"]] = datetime.datetime.now().isoformat()
+            if intent_id_dict[idx]["name"].find(tag["name"]) >= 0:
+                intent_id_dict[idx]["tags"].append(tag)
+                intent_id_dict[idx]["metadata"][tag["name"]] = datetime.datetime.now().isoformat()
 
     intents = original_dict["intents"]
     for intent in intents:
@@ -92,11 +84,12 @@ def build_tags(tag_name:str) -> dict:
     return {
         "id": f'tagid-{tag_name}',
         "name": tag_name,
-        "color": humanfirst.generate_random_color()
+        "color": humanfirst.objects.generate_random_color()
     }
 
-def no_args_gen_color(row: pandas.Series) -> str:
+def no_args_gen_color(_: pandas.Series) -> str:
     """Do the thing with no args"""
-    return humanfirst.generate_random_color()
+    return humanfirst.objects.generate_random_color()
+
 if __name__ == "__main__":
     main()  # pylint: disable=no-value-for-parameter
