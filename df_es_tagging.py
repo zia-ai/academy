@@ -1,27 +1,28 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python simple_json_unlabelled.py -f <your input file relative path>
-#
+"""
+python simple_json_unlabelled.py -f <your input file relative path>
+
+"""
 # *****************************************************************************
 
 # standard imports
 import os
 import json
 from datetime import datetime
-from dateutil import parser
 from typing import Union
-
+from dateutil import parser
 
 # third part imports
 import pandas
 import numpy
 import click
-
-# custom imports
 import humanfirst
-import humanfirst_apis
+
+class FileTypeError(Exception):
+    """This happens when the file object is neither represents a file nor a directory"""
+
+class MetadataNotStringException(Exception):
+    """This happens when metadata key value pair is not string"""
+
 
 @click.command()
 @click.option('-d','--directory',type=str,required=True,help='Directory containing your unzipped agent zip')
@@ -32,52 +33,68 @@ import humanfirst_apis
 # @click.option('-v', '--verbose', is_flag=True, default=False, help='Increase logging level')
 @click.option('-f', '--filename', type=str, required=True, help='Workspace file to update')
 def main(directory: str, filename: str): # username: str, password: str, namespace: str, playbook: str, verbose: bool):
-    
+    """Main Function"""
+
     config = validate_agent_directory(directory)
     intents = load_intents(config["intent_dir"])
     df = pandas.json_normalize(intents)
     df = process_priorities(df)
     df = process_intent_types(df)
-    
+
     labelled_workspace = get_workspace(config,filename)
     intent_name_index = labelled_workspace.get_intent_index(delimiter="-")
-    df["intent_id"] = df["name"].apply(map_values,args=[intent_name_index])  
+    df["intent_id"] = df["name"].apply(map_values,args=[intent_name_index])
     df.apply(add_priority_tags,args=[labelled_workspace],axis=1)
     df.apply(add_intent_type_tags,args=[labelled_workspace],axis=1)
     write_workspace(config, filename, labelled_workspace)
-    
-def add_priority_tags(row:pandas.Series, labelled_workspace: humanfirst.HFWorkspace):
+
+def add_priority_tags(row:pandas.Series, labelled_workspace: humanfirst.objects.HFWorkspace):
+    """Adds priority tags"""
+
     labelled_workspace.tag_intent(row["intent_id"],labelled_workspace.tag(row["priority"]))
 
-def add_intent_type_tags(row:pandas.Series, labelled_workspace: humanfirst.HFWorkspace):
-    labelled_workspace.tag_intent(row["intent_id"],labelled_workspace.tag(row["intent_type"]))
-    
+def add_intent_type_tags(row:pandas.Series, labelled_workspace: humanfirst.objects.HFWorkspace):
+    """Adds intent type tags"""
 
-def get_workspace(config: dict, filename: str) -> humanfirst.HFWorkspace:
+    labelled_workspace.tag_intent(row["intent_id"],labelled_workspace.tag(row["intent_type"]))
+
+def get_workspace(config: dict, filename: str) -> humanfirst.objects.HFWorkspace:
+    """Gets workspace from file"""
+
     file_uri = f'{config["directory_dir"]}{filename}'
     file = open(file_uri, mode="r",encoding="utf8")
-    labelled_workspace = humanfirst.HFWorkspace.from_json(file)
+    labelled_workspace = humanfirst.objects.HFWorkspace.from_json(file)
     file.close()
     return labelled_workspace
 
-def write_workspace(config: dict, filename: str, labelled_workspace: humanfirst.HFWorkspace) -> humanfirst.HFWorkspace:
+def write_workspace(config: dict,
+                    filename: str,
+                    labelled_workspace: humanfirst.objects.HFWorkspace) -> humanfirst.objects.HFWorkspace:
+    """Writes workspace to a file"""
+
     file_uri = f'{config["directory_dir"]}{filename}'
     file_uri = file_uri.replace("in.json","out.json")
     file = open(file_uri, mode="w",encoding="utf8")
     labelled_workspace.write_json(file)
     file.close()
-    
+
 def process_intent_types(df: pandas.DataFrame) -> pandas.DataFrame:
+    """Determines intent types"""
+
     df["intent_type"] = df.apply(classify_intent_type,axis=1)
-    return df    
+    return df
 
 def process_priorities(df: pandas.DataFrame) -> pandas.DataFrame:
+    """Process prioroties"""
+
     df.rename(columns={"priority":"priority_raw"},inplace=True)
     mapper = get_priority_mapper()
     df["priority"] = df["priority_raw"].apply(map_values,args=[mapper])
     return df
-   
+
 def get_priority_mapper():
+    """Priority mapper"""
+
     return {
         -1:"ignore",
         250000:"low",
@@ -85,12 +102,15 @@ def get_priority_mapper():
         750000:"high",
         1000000:"highest"
     }
-    
-    
+
 def map_values(key: any, mapper: dict):
+    """Maps value"""
+
     return mapper[key]
-    
+
 def classify_intent_type(row: pandas.Series) -> str:
+    """Intent type classification"""
+
     intent_type = "unknown"
     if pandas.isna(row["parentId"]) and pandas.isna(row["parentId"]):
         if len(row["contexts"]) == 0:
@@ -98,12 +118,12 @@ def classify_intent_type(row: pandas.Series) -> str:
         else:
             intent_type = "context"
     else:
-        intent_type = "follow_on"            
+        intent_type = "follow_on"
     return intent_type
-    
-        
+
 def load_intents(intent_dir: str):
     """Read all intent definitions (not usersays_en)"""
+
     intent_filenames = os.listdir(intent_dir)
     intents = []
     for intent_filename in intent_filenames:
@@ -115,11 +135,12 @@ def load_intents(intent_dir: str):
             intents.append(json.load(file))
             file.close()
         else:
-            raise Exception(f"Did not recognise file in directory: {intent_dir} of name: {intent_filename}")
+            raise FileNotFoundError(f"Did not recognise file in directory: {intent_dir} of name: {intent_filename}")
     return intents
-        
+
 def validate_agent_directory(directory: str):
     """Directory must contain agent.json, packaged.json and intents and entities directories to be valid"""
+
     if not directory.endswith("/"):
         directory = directory + "/"
     config = {
@@ -130,28 +151,28 @@ def validate_agent_directory(directory: str):
         "entities_dir": f'{directory}entities/'
     }
 
-    for key in config.keys():
+    for key,_ in config.items():
         is_file_object(config[key], key.split('_')[1])
-        
+
     return config
-    
-def is_file_object(uri:str, type: str):
-    if type == "file":
+
+def is_file_object(uri:str, file_type: str):
+    """Checks the type of the file object"""
+
+    if file_type == "file":
         if not os.path.isfile(uri):
             print(f'Not a file: {uri}')
             quit()
-    elif type == "dir":
+    elif file_type == "dir":
         if not os.path.isdir(uri):
             print(f'Not a dir: {uri}')
             quit()
-    else: 
-        raise Exception(f"unrecognised type: {type}")
-    print(f'Verified {type:4} {uri}')
-    
-            
-            
-    
+    else:
+        raise FileTypeError(f"unrecognised type: {file_type}")
+    print(f'Verified {file_type:4} {uri}')
+
 def old():
+    """Archived function"""
 
     # our example input file looks like this
     dtypes={
@@ -174,12 +195,13 @@ def old():
         # if you have limited diarization quality upload all as
     }
     df['role'] = df['speaker'].apply(translate_roles,args=[role_mapper])
-    
+
     # index the speakers
     df['idx'] = df.groupby(["external_id"]).cumcount()
     df['idx_max'] = df.groupby(["external_id"])['idx'].transform(numpy.max)
-    
-    # This info lets you filter for the first or last thing the client says - this is very useful in boot strapping bot design
+
+    # This info lets you filter for the first or last thing the client says
+    # - this is very useful in boot strapping bot design
     df['idx_client'] = df.groupby(['external_id', 'role']).cumcount().where(df.role == 'client', 0)
     df['first_customer_utt'] = df['idx_client'] == 0
     df['second_customer_utt'] = df['idx_client'] == 1
@@ -194,8 +216,14 @@ def old():
     # create metadata object per utterance
     metadata_keys_to_extract = ['nlu_detected_intent', 'nlu_confidence'] # example utterance level info
     metadata_keys_to_extract.extend(['overall_call_star_rating']) # example conversation level data from original sheet
-    metadata_keys_to_extract.extend(['idx','first_customer_utt','second_customer_utt','final_customer_utt']) # generated custom indexing fields
-    dict_of_file_level_values = { 'loaded_date': datetime.now().isoformat(), 'script_name': 'simple_example_script'} # if there is anythign you think relevant
+    metadata_keys_to_extract.extend(['idx',
+                                     'first_customer_utt',
+                                     'second_customer_utt',
+                                     'final_customer_utt']) # generated custom indexing fields
+    dict_of_file_level_values = {
+        'loaded_date': datetime.now().isoformat(),
+        'script_name': 'simple_example_script'
+    } # if there is anythign you think relevant
     df['metadata'] = df.apply(create_metadata,args=[metadata_keys_to_extract, dict_of_file_level_values],axis=1)
 
     # add any tags
@@ -209,7 +237,7 @@ def old():
 
     # A workspace is used to upload labelled or unlabelled data
     # unlabelled data will have no intents on the examples and no intents defined.
-    unlabelled = humanfirst.HFWorkspace()
+    unlabelled = humanfirst.objects.HFWorkspace()
 
     # add the examples to workspace
     for example in df['example']:
@@ -225,7 +253,7 @@ def build_examples(row: pandas.Series):
     '''Build the examples'''
 
     # build examples
-    example = humanfirst.HFExample(
+    example = humanfirst.objects.HFExample(
     text=row['utterance'],
         id=f'example-{row.name[0]}-{row.name[1]}',
         created_at=row['created_at'],
@@ -233,22 +261,27 @@ def build_examples(row: pandas.Series):
         tags=[], # recommend uploading metadata for unlabelled and tags for labelled
         metadata=row['metadata'],
         # this links the individual utterances into their conversation
-        context=humanfirst.HFContext(
-            str(row.name[0]), # any ID can be used recommend a hash of the text which is repeatable or the external conversation id if there is one.
+        context=humanfirst.objects.HFContext(
+            str(row.name[0]),
+            # any ID can be used recommend a hash of the text
+            # which is repeatable or the external conversation id if there is one.
             'conversation', # the type of document
             row['role'] # the speakers role in the conversations
         )
     )
     row['example'] = example
     return row
-    
-def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract: list, dict_of_file_level_values: dict= None) -> pandas.Series:
+
+def create_metadata(row: Union[pandas.Series, dict],
+                    metadata_keys_to_extract: list,
+                    dict_of_file_level_values: dict= None) -> pandas.Series:
     '''Build the HF metadata object for the pandas line using the column names passed'''
-    
-    metadata = {} # metadata is a simple dict object 
-    if dict_of_file_level_values and len(dict_of_file_level_values.keys()) > 0:
-        metadata = metadata
-    
+
+    metadata = {} # metadata is a simple dict object
+    # if dict_of_file_level_values and len(dict_of_file_level_values.keys()) > 0:
+    #     metadata = metadata
+    print(dict_of_file_level_values)
+
     for key in metadata_keys_to_extract:
         if isinstance(row[key],list):
             metadata[key] = ','.join(row[key])
@@ -256,23 +289,22 @@ def create_metadata(row: Union[pandas.Series, dict], metadata_keys_to_extract: l
             metadata[key] = str(row[key])
 
     # all key value pairs must be strings
-    for key in metadata.keys():
+    for key,_ in metadata.items():
         try:
-            assert(isinstance(metadata[key],str))
-        except Exception:
+            assert isinstance(metadata[key],str)
+        except MetadataNotStringException:
             print(f'Key: {key} value {metadata[key]} is not a string')
 
     return metadata
 
 def convert_timestamps(datestring:str) -> datetime:
+    """Parses datestring"""
     return parser.parse(datestring)
 
 def translate_roles(role:str, mapper:dict) -> str:
     '''Translates abcd to hf role mapping'''
-    try:
-        return mapper[role]
-    except KeyError:
-        raise Exception(f'Couldn\'t locate role: "{role}" in role mapping')
+    if role not in mapper:
+        raise KeyError(f'Couldn\'t locate role: "{role}" in role mapping')
 
 if __name__ == '__main__':
-    main()
+    main() # pylint: disable=no-value-for-parameter

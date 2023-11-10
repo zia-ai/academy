@@ -1,27 +1,24 @@
-#!/usr/bin/env python  # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python trigger_kfold.py
-# -u <username>
-# -p <password>
-# -b <playbook>
-# OPTIONAL
-# -e <evalpresetname>
-#
-# Trigger a kfold evaluation based on a preconfigured (using GUI) preset
-# for instance if you want to nightly run long running evals
-#
-# *****************************************************************************
+"""
+python trigger_kfold.py
+-u <username>
+-p <password>
+-b <playbook>
+OPTIONAL
+-e <evalpresetname>
+
+Trigger a kfold evaluation based on a preconfigured (using GUI) preset
+for instance if you want to nightly run long running evals
+
+"""
+# ******************************************************************************************************************120
 
 # standard imports
 import json
 
 # 3rd party imports
 import click
+import humanfirst
 
-# custom imports
-import humanfirst_apis
 
 @click.command()
 @click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
@@ -35,10 +32,10 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
     '''Main'''
 
     # do authorisation
-    headers = humanfirst_apis.process_auth(bearertoken=bearertoken,username=username,password=password)
+    headers = humanfirst.apis.process_auth(bearertoken=bearertoken,username=username,password=password)
 
     # get the preset evaluation id you want.
-    presets = humanfirst_apis.get_evaluation_presets(headers,namespace,playbook)
+    presets = humanfirst.apis.get_evaluation_presets(headers,namespace,playbook)
     print("All presets found")
     print(json.dumps(presets,indent=2))
 
@@ -55,7 +52,7 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
         quit()
 
     # trigger eval - no options - need
-    print(json.dumps(humanfirst_apis.trigger_preset_evaluation(headers,
+    print(json.dumps(humanfirst.apis.trigger_preset_evaluation(headers,
                                                                namespace,
                                                                playbook,
                                                                evaluation_preset_id),

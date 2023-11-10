@@ -1,33 +1,24 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# ***************************************************************************80
-#
-# python ./fine_tune/get_convo_ids_specific_to_intents.py
-#
-# *****************************************************************************
+"""
+python ./fine_tune/get_convo_ids_specific_to_intents.py
+
+"""
+# *********************************************************************************************************************
 
 # standard imports
 import json
 import os
-from pathlib import Path
-import sys
 
 # third party imports
 import click
 import pandas
 import nltk
+import humanfirst
 
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
     nltk.download('punkt')
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-HF_MODULE_PATH = str(Path(dir_path).parent)
-sys.path.insert(1, HF_MODULE_PATH)
-
-# custom imports
-import humanfirst_apis # pylint: disable=wrong-import-position
 
 @click.command()
 @click.option('-f', '--input_filename', type=str, required=True, help='Input File')
@@ -83,7 +74,7 @@ def process(input_filename: str,
 
         # df = df.sample(100)
 
-        headers = humanfirst_apis.process_auth(username=username,
+        headers = humanfirst.apis.process_auth(username=username,
                                             password=password)
 
         fully_qualified_intent_name = []
@@ -93,7 +84,7 @@ def process(input_filename: str,
         num_processed = 0
         for i in range(0, df['text'].size, chunk):
             utterance_chunk = list(df['text'][i: i + chunk])
-            response_dict = humanfirst_apis.batchPredict(headers=headers,
+            response_dict = humanfirst.apis.batchPredict(headers=headers,
                                                         sentences=utterance_chunk,
                                                         namespace=namespace,
                                                         playbook=playbook)
