@@ -29,8 +29,6 @@ import humanfirst
               help='Source HumanFirst workspace json to pull data from')
 @click.option('-t', '--target_filename', type=str, required=True,
               help='Target CLU project json to merge to')
-@click.option('-f', '--filename', type=str, required=True,
-              help='Source HumanFirst workspace json to pull data from')
 # HF is multi lingual by default, if target NLU requires a language code
 # it is set on export
 @click.option('-l', '--language', type=str, required=False, default='en-us',
