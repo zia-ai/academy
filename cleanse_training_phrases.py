@@ -17,12 +17,13 @@ import humanfirst
 @click.command()
 @click.option('-f','--input_filepath',type=str,required=True,help='HF labelled json file')
 @click.option('-o','--output_filepath',type=str,default="",help='Output file path with .json extension')
-def main(input_filepath: str, output_filepath: str):
+@click.option('-d','--delimiter',type=str,default="-",help='Intent name delimiter')
+def main(input_filepath: str, output_filepath: str, delimiter):
     """Main Function"""
 
-    cleanse_training_phrases(input_filepath, output_filepath)
+    cleanse_training_phrases(input_filepath, output_filepath, delimiter)
 
-def cleanse_training_phrases(input_filepath: str, output_filepath: str):
+def cleanse_training_phrases(input_filepath: str, output_filepath: str, delimiter: str):
     """Ensures the training phrases are unique in the workspace level"""
 
     with open(input_filepath,mode="r",encoding="utf8") as f:
@@ -38,7 +39,8 @@ def cleanse_training_phrases(input_filepath: str, output_filepath: str):
     data["examples"] = examples_json
 
     duplicated_df = df.loc[df["text_base"].duplicated()].reset_index(drop=True)
-    workspace_only_with_intents = humanfirst.objects.HFWorkspace.from_json({"intents":data["intents"]})
+    workspace_only_with_intents = humanfirst.objects.HFWorkspace.from_json({"intents":data["intents"]},
+                                                                           delimiter=delimiter)
     intent_index = workspace_only_with_intents.get_intent_index(delimiter="-")
     print("------Duplicated Texts -> Intent it was removed from------")
     duplicated_df["intent_id"] = duplicated_df["intents"].apply(lambda intent_list: intent_list[0]["intent_id"])

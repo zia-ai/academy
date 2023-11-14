@@ -1,6 +1,7 @@
 """
 reduce_confusion_matrix.py
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *********************************************************************************************************************
 
@@ -42,24 +43,23 @@ class MispredictionsOutOfRangeException(Exception):
               help='Output filepath for reduced confusion matrix')
 @click.option('-c', '--output_chart', type=str, default='./data/confusion_chart.png',
               help='Output filepath for confusion chart')
-@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-u', '--username', type=str, default='',
+              help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='',
+              help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-e', '--evaluation_id', type=str, required=True, help='HumanFirst evaluation id')
-@click.option('-t', '--bearertoken', type=str, default='',
-              help='Bearer token to authorise with if not providing username/password')
 def main(filedir: str, input_filepath: str, output_filepath: str, output_chart: str,
          top_mispredictions: int, username: str, password: int, namespace: bool,
-         playbook: str, bearertoken: str, evaluation_id: str) -> None:
+         playbook: str, evaluation_id: str) -> None:
     '''Main function'''
 
     if not isfile(input_filepath):
         if not isdir(filedir):
             raise FileDirException(f"{filedir} is not a directory")
-        headers = humanfirst.apis.process_auth(bearertoken, username, password)
-        response = humanfirst.apis.get_evaluation_zip(
-            headers, namespace, playbook, evaluation_id)
+        hf_api = humanfirst.apis.HFAPI(username, password)
+        response = hf_api.get_evaluation_report(namespace, playbook, evaluation_id)
         zip_file = zipfile.ZipFile(io.BytesIO(response.content))
         zip_file.extractall(filedir)
         phrases_filename = join(filedir, "phrases.csv")

@@ -1,6 +1,7 @@
 """
 tagging intents
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # ******************************************************************************************************************120
 
@@ -21,9 +22,9 @@ import humanfirst
 @click.option('-t', '--tag_col', type=str, default='tag_name',
               help='Name of intent_name column - default tag_name')
 @click.option('-u', '--username', type=str, default='',
-              help='HumanFirst username if not providing bearer token')
+              help='HumanFirst username if not setting HF_USERNAME environment variable')
 @click.option('-p', '--password', type=str, default='',
-              help='HumanFirst password')
+              help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True,
               help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True,
@@ -46,11 +47,11 @@ def main(filename: str,
     print(f'distinct tag_names:{tag_names}')
 
     # auth
-    headers = humanfirst.apis.process_auth(
+    hf_api = humanfirst.apis.HFAPI(
         username=username, password=password)
 
     # check what tags exist
-    all_tags = humanfirst.apis.get_tags(headers, namespace, playbook)
+    all_tags = hf_api.get_tags(namespace, playbook)
     if all_tags is None:
         all_tags = []
     print(all_tags)
@@ -79,7 +80,7 @@ def main(filename: str,
     intent_names = list(df[intent_col].unique())
 
     # get all intents
-    all_intents = humanfirst.apis.get_intents(headers, namespace, playbook)
+    all_intents = hf_api.get_intents(namespace, playbook)
 
     # make intent_index
     intent_index = {}
@@ -127,8 +128,7 @@ def main(filename: str,
             }
             intent["tags"].append(additional_tag)
             print(intent)
-            humanfirst.apis.update_intent(
-                headers, namespace, playbook, intent)
+            hf_api.update_intent(namespace, playbook, intent)
 
 
 if __name__ == '__main__':
