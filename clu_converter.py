@@ -23,7 +23,6 @@ import click
 # custom imports
 import humanfirst
 
-
 @click.command()
 @click.option('-f', '--filename', type=str, required=True,
               help='Source HumanFirst workspace json to pull data from')
@@ -65,6 +64,8 @@ def main(filename: str,
     # examples section
     df_examples = pandas.json_normalize(hf_json["examples"])
     df_examples["clu_utterance"] = df_examples.apply(utterance_mapper,args=[language,hf_workspace],axis=1)
+    # TODO: this to me looks like it should overwrite the whole of utterances
+    # not sure anything is surviging - is it CLU/PVA doing it or is the json wrong?
     clu_json["utterances"] = df_examples["clu_utterance"].to_list()
 
     # find any intents that were in utterances
@@ -76,11 +77,15 @@ def main(filename: str,
     clu_intents = []
     for intent_name in clu_intent_names:
         clu_intents.append(intent_mapper(intent_name))
+    #
     clu_json["assets"]["intents"] = clu_intents
 
     # write output verion
     output_file_name = target_filename.replace(".json","_output.json")
     output_file_obj = open(output_file_name,mode='w',encoding='utf8')
+    # TODO: These indent commands control output - suggest parameterising them with click
+    # as arguements passed into the main function, then putting that variable.
+    # click will let you set a default of 4 and then  you can override it on the command line
     json.dump(clu_json,output_file_obj,indent=2)
     print(f'Wrote to {output_file_name}')
 
