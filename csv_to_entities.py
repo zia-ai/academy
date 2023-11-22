@@ -3,11 +3,12 @@ python csv_to_entites.py
 
 accept in a UTF8 csv file and a delimiter and converts it to entities
 your csv should be of the format
-no headers
+if has a header line -h will remove it
 filename without .csv is entity name
 col0 = key_value
 col1 = onward are synonyms
 for example this is the way Dialogflow ES exports an entity
+also works with CX exported lists
 
 """
 # *********************************************************************************************************************
@@ -28,15 +29,23 @@ import click
               help='Delimiter for the csv file')
 @click.option('-l', '--language', type=str, required=False, default="en",
               help='Language of entities default: en')
+@click.option('-h', '--header', is_flag=True, required=False, default=False,
+              help='If passed the first row of the CSV will be treated as column names')
 def main(filename: str,
          delimiter: str,
-         language:str
+         language:str,
+         header: bool
          ) -> None:
     """Main Function"""
 
     # read the input csv with columns 0,1,2 etc
     assert filename.endswith(".csv")
     df = pandas.read_csv(filename, encoding='utf8',header=None, delimiter=delimiter)
+
+    # Drop header if present
+    if header:
+        df = df.iloc[1:]
+        df.reset_index(inplace=True)
 
     # assert
     assert df.shape[0] >= 1
