@@ -81,7 +81,7 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
 
     df['utterance'].fillna('',inplace=True)
 
-    headers = humanfirst.apis.process_auth(username=username, password=password)
+    hf_api = humanfirst.apis.HFAPI()
     # predict = humanfirst.apis.predict(headers=headers,namespace=namespace,playbook=playbook,
     #    sentence="The refund was not too hard to organise, but I do not like substitution without consultation.")
     # print(json.dumps(predict,indent=3))
@@ -94,8 +94,7 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
     num_processed = 0
     for i in range(0, df['utterance'].size, chunk):
         utterance_chunk = list(df['utterance'][i: i + chunk])
-        response_dict = humanfirst.apis.batchPredict(headers=headers,
-                                                     sentences=utterance_chunk,
+        response_dict = hf_api.batchPredict(sentences=utterance_chunk,
                                                      namespace=namespace,
                                                      playbook=playbook)
 
