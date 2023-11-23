@@ -108,6 +108,9 @@ def get_conversationset_df(
         convsetsource=convsetsource,
         page_size=page_size
     )
+    # with open("./data/testing_coverage_123.json",mode="w",encoding="utf8") as fileobj:
+    #     json.dump(response_json,fileobj,indent=2)
+    # quit()
     results = extract_results(
         results, intent_name_index, response_json, debug=debug)
     assert isinstance(response_json, dict)
@@ -118,16 +121,22 @@ def get_conversationset_df(
     while "nextPageToken" in response_json:
         if quit_after_pages > 0 and i >= quit_after_pages:
             break
-        response_json = hf_api.query_conversation_set(
-            namespace,
-            playbook,
-            search_text=searchtext,
-            start_isodate=startisodate,
-            end_isodate=endisodate,
-            convsetsource=convsetsource,
-            page_size=page_size,
-            next_page_token=response_json["nextPageToken"]
-        )
+        try:
+            response_json = hf_api.query_conversation_set(
+                namespace,
+                playbook,
+                search_text=searchtext,
+                start_isodate=startisodate,
+                end_isodate=endisodate,
+                convsetsource=convsetsource,
+                page_size=page_size,
+                next_page_token=response_json["nextPageToken"]
+            )
+        except Exception as e: # pylint: disable=broad-exception-caught
+            print(f"Error - {e}")
+            print("Retrying")
+            continue
+
         assert isinstance(response_json, dict)
         if not "results" in response_json.keys() and "totalCount" in response_json.keys():
             print(f'totalCount: {response_json["totalCount"]}')
