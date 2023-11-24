@@ -1,12 +1,33 @@
+# pylint: disable=invalid-name
+"""
+python ./json_to_csv.py
+       -f <YOUR FILENAME>
+
+"""
+# *********************************************************************************************************************
+# standard imports
+
+# third party imports
+import click
 import pandas
 import json
 
+# custom imports
 
-file = open("/home/ubuntu/source/academy/summarize/workspaces/summarize_summaries_aprende.json", mode = "r", encoding = "utf8")
-workspace_json = json.load(file)
-print(workspace_json)
-file.close()
-df = pandas.json_normalize(workspace_json["examples"])
-print(df)
 
-df.to_csv("/home/ubuntu/source/academy/data/Aprende/objections.csv",index=False, header=True)
+@click.command()
+@click.option('-f', '--input_filename', type=str, required=True, help='Input File')
+def main(input_filename: str):
+    file = open(input_filename, mode = "r", encoding = "utf8")
+    workspace_json = json.load(file)
+    file.close()
+    df = pandas.json_normalize(workspace_json["examples"])
+    print(df)
+    assert input_filename.endswith(".json")
+    output_filename = input_filename.replace(".json", "_output.csv")
+    assert input_filename != output_filename
+    df.to_csv(output_filename,index=False, header=True)
+    print(f'wrote to: {output_filename}')
+
+if __name__ == '__main__':
+    main() # pylint: disable=no-value-for-parameter
