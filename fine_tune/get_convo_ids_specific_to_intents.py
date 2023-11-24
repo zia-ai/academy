@@ -1,6 +1,7 @@
 """
 python ./fine_tune/get_convo_ids_specific_to_intents.py
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *********************************************************************************************************************
 
@@ -22,24 +23,22 @@ except LookupError:
 
 @click.command()
 @click.option('-f', '--input_filename', type=str, required=True, help='Input File')
-@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
-@click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 @click.option('-c', '--chunk', type=int, default=500, help='size of maximum chunk to send to batch predict')
-@click.option('-i', '--intent', type=str, required=True, help='HumanFirst playbook id')
+@click.option('-i', '--intent', type=str, required=True, help='Intent name')
 def main(input_filename: str,
          username: str,
          password: int,
          namespace: bool,
          playbook: str,
-         bearertoken: str,
          chunk: int,
          intent: str) -> None:
     '''Main Function'''
 
-    process(input_filename, username, password, namespace, playbook, bearertoken, chunk, intent)
+    process(input_filename, username, password, namespace, playbook, chunk, intent)
 
 
 def process(input_filename: str,
@@ -47,7 +46,6 @@ def process(input_filename: str,
             password: int,
             namespace: bool,
             playbook: str,
-            _: str,
             chunk: int,
             intent: str) -> None:
     '''Predicts the utterances'''
@@ -74,8 +72,7 @@ def process(input_filename: str,
 
         # df = df.sample(100)
 
-        headers = humanfirst.apis.process_auth(username=username,
-                                            password=password)
+        hf_api = humanfirst.apis.HFAPI(username=username,password=password)
 
         fully_qualified_intent_name = []
         confidence = []
@@ -84,10 +81,10 @@ def process(input_filename: str,
         num_processed = 0
         for i in range(0, df['text'].size, chunk):
             utterance_chunk = list(df['text'][i: i + chunk])
-            response_dict = humanfirst.apis.batchPredict(headers=headers,
-                                                        sentences=utterance_chunk,
-                                                        namespace=namespace,
-                                                        playbook=playbook)
+            response_dict = hf_api.batchPredict(
+                                                sentences=utterance_chunk,
+                                                namespace=namespace,
+                                                playbook=playbook)
 
             for j in range(len(utterance_chunk)):
                 confidence.append(response_dict[j]['matches'][0]['score'])

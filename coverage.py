@@ -1,6 +1,7 @@
 """
-python coverage.py -f <your input file relative path>
+python coverage.py
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *****************************************************************************
 
@@ -15,34 +16,37 @@ import humanfirst
 
 
 @click.command()
-@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-u', '--username', type=str, default='',
+              help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='',
+              help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
-@click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 @click.option('-c', '--convsetsource', type=str, default='', help='Filter results by a certain conversationset')
 @click.option('-x', '--searchtext', type=str, default='', help='text to search for in conversations')
 @click.option('-s', '--startisodate', type=str, default='', help='Date range to extract conversations from')
 @click.option('-e', '--endisodate', type=str, default='', help='Date range to extract conversations from')
 @click.option('-q', '--quit_after_pages', type=int, default=0, help='Date range to extract conversations from')
 @click.option('-d', '--debug', is_flag=True, default=False, help='Debug')
-def main(username: str, password: int, namespace: bool, playbook: str, bearertoken: str,
-         convsetsource: str, searchtext: str, startisodate: str, endisodate: str, quit_after_pages: int, debug: bool):
+@click.option('-l','--delimiter',type=str,default="-",help='Intent name delimiter')
+def main(username: str, password: str, namespace: bool, playbook: str,
+         convsetsource: str, searchtext: str, startisodate: str,
+         endisodate: str, quit_after_pages: int, debug: bool, delimiter: str):
     '''Main function'''
-    write_coverage_csv(username, password, namespace, playbook, bearertoken,
-                       convsetsource, searchtext, startisodate, endisodate,
+    write_coverage_csv(username, password, namespace, playbook,
+                       convsetsource, searchtext, startisodate, endisodate, delimiter=delimiter,
                        quit_after_pages=quit_after_pages, debug=debug)
 
 
 def write_coverage_csv(username: str,
-                       password: int,
+                       password: str,
                        namespace: bool,
                        playbook: str,
-                       bearertoken: str,
                        convsetsource: str,
                        searchtext: str,
                        startisodate: str,
                        endisodate: str,
+                       delimiter: str,
                        output_path: str = './data',
                        separator: str = ',',
                        page_size: int = 50,
@@ -52,11 +56,11 @@ def write_coverage_csv(username: str,
     inferred from the provided playbook then write a csv containing prediction data to the path provided with the
     separator provided'''
 
-    headers = humanfirst.apis.process_auth(bearertoken, username, password)
-    playbook_dict = humanfirst.apis.get_playbook(headers, namespace, playbook)
+    hf_api = humanfirst.apis.HFAPI(username=username, password=password)
+    playbook_dict = hf_api.get_playbook(namespace, playbook)
 
-    df = get_conversationset_df(headers, namespace, playbook, convsetsource,
-                                searchtext, startisodate, endisodate, playbook_dict,
+    df = get_conversationset_df(hf_api, namespace, playbook, convsetsource,
+                                searchtext, startisodate, endisodate, playbook_dict, delimiter,
                                 page_size=page_size, quit_after_pages=quit_after_pages, debug=debug)
 
     if not output_path.endswith('/'):
@@ -73,7 +77,7 @@ def write_coverage_csv(username: str,
 
 
 def get_conversationset_df(
-        headers: dict,
+        hf_api : humanfirst.apis.HFAPI,
         namespace: str,
         playbook: str,
         convsetsource: str,
@@ -81,21 +85,21 @@ def get_conversationset_df(
         startisodate: str,
         endisodate: str,
         playbook_dict: dict,
+        delimiter: str,
         page_size: int = 50,
         quit_after_pages: int = 0,
         debug: bool = False) -> pandas.DataFrame:
     '''Download the inferred statistics for the conversation set source for the provided
     playbook and return a data frame.  Pages through the very large data science data
     with each page of page_size'''
-    labelled_workspace = humanfirst.objects.HFWorkspace.from_json(playbook_dict)
+    labelled_workspace = humanfirst.objects.HFWorkspace.from_json(playbook_dict,delimiter=delimiter)
     assert isinstance(labelled_workspace, humanfirst.objects.HFWorkspace)
     intent_name_index = labelled_workspace.get_intent_index(delimiter="-")
     print("Got playbook and parsed it")
 
     i = 0
     results = []
-    response_json = humanfirst.apis.query_conversation_set(
-        headers,
+    response_json = hf_api.query_conversation_set(
         namespace,
         playbook,
         search_text=searchtext,
@@ -114,8 +118,7 @@ def get_conversationset_df(
     while "nextPageToken" in response_json:
         if quit_after_pages > 0 and i >= quit_after_pages:
             break
-        response_json = humanfirst.apis.query_conversation_set(
-            headers,
+        response_json = hf_api.query_conversation_set(
             namespace,
             playbook,
             search_text=searchtext,

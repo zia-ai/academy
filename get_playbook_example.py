@@ -7,6 +7,7 @@ python get_workspace_example
 -n <namepspace>
 -b <playbook-id>
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *********************************************************************************************************************
 
@@ -19,25 +20,25 @@ import humanfirst
 
 
 @click.command()
-@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-u', '--username', type=str, default='',
+              help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='',
+              help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
-@click.option('-t', '--bearertoken', type=str, default='',
-              help='Bearer token to authorise with if not providing username/password')
 @click.option('-o', '--outputdir', type=str, default='./data/', help='Where to output playbook')
-def main(username: str, password: int, namespace: bool, playbook: str, bearertoken: str, outputdir: str):
+def main(username: str, password: int, namespace: bool, playbook: str, outputdir: str):
     '''Example showing how to download the metadata for a playbook and the playbook itself
     using the humanfirst library.  Downloads both as JSON and then writes to file'''
 
     # check which authorization method using
-    headers = humanfirst.apis.process_auth(bearertoken, username, password)
+    hf_api = humanfirst.apis.HFAPI(username, password)
 
     if not outputdir.endswith('/'):
         outputdir = outputdir + '/'
 
     # get the metadata info for a playbook
-    playbook_info_dict = humanfirst.apis.get_playbook_info(headers, namespace, playbook)
+    playbook_info_dict = hf_api.get_playbook_info(namespace, playbook)
     playbook_name = playbook_info_dict["name"]
     playbook_info_out = f'{outputdir}{namespace}-{playbook_name}-info.json'
     with open(playbook_info_out, 'w', encoding="utf-8") as file_out:
@@ -45,7 +46,7 @@ def main(username: str, password: int, namespace: bool, playbook: str, bearertok
         print(f'Wrote workspace info to: {playbook_info_out}')
 
     # get the playbook itself
-    playbook_dict = humanfirst.apis.get_playbook(headers, namespace, playbook)
+    playbook_dict = hf_api.get_playbook(namespace, playbook)
     playbook_name = playbook_dict["name"]
     playbook_out = f'{outputdir}{namespace}-{playbook_name}.json'
     with open(playbook_out, 'w', encoding="utf-8") as file_out:

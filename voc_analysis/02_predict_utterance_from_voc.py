@@ -10,6 +10,7 @@ python ./voc_analysis/02_predict_utterance_from_voc.py
        -b <playbook id>
        --background
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *********************************************************************************************************************
 
@@ -31,11 +32,10 @@ except LookupError:
 @click.option('-f', '--input_filename', type=str, required=True, help='Input File')
 @click.option('-o', '--output_filename', type=str, default='', help='Output File')
 @click.option('-r', '--review_col', type=str, required=True, help='Column name of the user review')
-@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
-@click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 @click.option('-h', '--background', is_flag=True, default=False, help='Adds background info to the CSV')
 @click.option('-d', '--doc_col_id', type=str, default='Survey ID', help='Document ID Column Name')
 @click.option('-c', '--chunk', type=int, default=500, help='size of maximum chunk to send to batch predict')
@@ -43,7 +43,7 @@ except LookupError:
               help='whether to sentencize the review_col or not')
 def main(input_filename: str, output_filename: str, review_col: str,
          username: str, password: int, namespace: bool, playbook: str,
-         background: bool, bearertoken: str, doc_col_id: str, chunk: int, sentencize: bool) -> None:
+         background: bool, doc_col_id: str, chunk: int, sentencize: bool) -> None:
     """Main Function"""
 
     pt = nltk.tokenize.PunktSentenceTokenizer()
@@ -55,7 +55,6 @@ def main(input_filename: str, output_filename: str, review_col: str,
               password,
               namespace,
               playbook,
-              bearertoken,
               background,
               doc_col_id,
               chunk,
@@ -63,7 +62,7 @@ def main(input_filename: str, output_filename: str, review_col: str,
 
 
 def load_file(input_filename: str, output_filename: str, review_col: str, pt: nltk.tokenize.PunktSentenceTokenizer,
-              username: str, password: int, namespace: bool, playbook: str, bearertoken: str, # pylint: disable=unused-argument
+              username: str, password: int, namespace: bool, playbook: str,
               background: bool,
               doc_col_id: str, chunk: int, sentencize: bool) -> None:
     """Load file"""
@@ -81,7 +80,7 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
 
     df['utterance'].fillna('',inplace=True)
 
-    hf_api = humanfirst.apis.HFAPI()
+    hf_api = humanfirst.apis.HFAPI(username=username, password=password)
     # predict = humanfirst.apis.predict(headers=headers,namespace=namespace,playbook=playbook,
     #    sentence="The refund was not too hard to organise, but I do not like substitution without consultation.")
     # print(json.dumps(predict,indent=3))
@@ -94,9 +93,10 @@ def load_file(input_filename: str, output_filename: str, review_col: str, pt: nl
     num_processed = 0
     for i in range(0, df['utterance'].size, chunk):
         utterance_chunk = list(df['utterance'][i: i + chunk])
-        response_dict = hf_api.batchPredict(sentences=utterance_chunk,
-                                                     namespace=namespace,
-                                                     playbook=playbook)
+        response_dict = hf_api.batchPredict(
+                                            sentences=utterance_chunk,
+                                            namespace=namespace,
+                                            playbook=playbook)
 
         for j in range(len(utterance_chunk)):
             confidence.append(response_dict[j]['matches'][0]['score'])
