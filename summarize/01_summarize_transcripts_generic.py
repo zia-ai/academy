@@ -9,6 +9,7 @@
 # *********************************************************************************************************************
 
 # standard imports
+import time
 import json
 import os
 import logging
@@ -47,6 +48,10 @@ DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 @click.option('-d', '--dummy', is_flag=True, type=bool, default=False, help='Skip the actual openai call')
 @click.option('-v', '--verbose', is_flag=True, type=bool, default=False,
               help='Set logging level to DEBUG otherwise INFO')
+@click.option('-e', '--sleep_seconds', type=int, default=0, required=False,
+              help='Configurable sleep per thread per call')
+@click.option('-u', '--timeout_seconds', type=int, default=15, required=False,
+              help='Configurable timeout for openai calls')
 def main(input_filepath: str,
          openai_api_key: str,
          num_cores: int,
@@ -59,12 +64,14 @@ def main(input_filepath: str,
          output_file_path: str,
          rewrite: bool,
          dummy: bool,
-         verbose: bool) -> None:
+         verbose: bool,
+         sleep_seconds: int,
+         timeout_seconds: int
+         ) -> None:
     '''Main Function'''
     process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
             sample_size, model_override, log_file_path, drop_list, output_file_path,
-            rewrite, dummy, verbose)
-
+            rewrite, dummy, verbose, sleep_seconds, timeout_seconds)
 
 def process(input_filepath: str,
             openai_api_key: str,
@@ -78,7 +85,9 @@ def process(input_filepath: str,
             output_file_path: str,
             rewrite: bool,
             dummy: bool,
-            verbose: bool):
+            verbose: bool,
+            sleep_seconds: int = 0,
+            timeout_seconds: int = 15):
     '''Summarization of Conversations'''
 
     # set log level
@@ -180,6 +189,12 @@ def process(input_filepath: str,
     if dummy:
         df["skip"] = dummy
 
+    # set a sleep on every api call
+    df["sleep_seconds"] = sleep_seconds
+
+    # set a timeout on every api call
+    df["timeout_seconds"] = timeout_seconds
+
     # take the next sample size to process
     if sample_size > 0:
         context_ids = context_ids[0:sample_size]
@@ -198,12 +213,12 @@ def process(input_filepath: str,
         df["prompt_line"] = df["context-role"] + ": " + df["text"]
 
         # reduce our data frame just to the data we need
-        df = df[["prompt_line", "skip", "completed"]]
+        df = df[["prompt_line", "skip", "completed", "sleep_seconds", "timeout_seconds"]]
 
     elif mode == "text":
         df["prompt_line"] = df["text"]
         # reduce our data frame just to the data we need
-        df = df[["context-context_id","prompt_line", "skip", "completed"]]
+        df = df[["context-context_id","prompt_line", "skip", "completed", "sleep_seconds", "timeout_seconds"]]
 
     else:
         raise RuntimeError(f"Not recognised mode: {mode}")
@@ -213,7 +228,7 @@ def process(input_filepath: str,
     if mode == "conversation":
         # join all the prompt_lines together into the conversation text by
         # the context-context_id, skip and whether completed
-        df = df.groupby(["context-context_id", "skip", "completed"]
+        df = df.groupby(["context-context_id", "skip", "completed", "sleep_seconds", "timeout_seconds"]
                         )['prompt_line'].apply('\n'.join).reset_index()
         df.set_index("context-context_id", inplace=True, drop=False)
         df.rename(columns={"prompt_line": "conversation"}, inplace=True)
@@ -246,6 +261,7 @@ def process(input_filepath: str,
     else:
         raise RuntimeError(f"Not recognised mode: {mode}")
 
+
     # estimate the tokens - use the 4k one, and then bump up if needed with factor of safety
     df['tokens'] = df["prompt"].apply(count_tokens,
                                       args=[tiktoken.encoding_for_model("gpt-3.5-turbo")])
@@ -274,8 +290,6 @@ def process(input_filepath: str,
 
     # verbose setting
     df["verbose"] = verbose
-
-    print(df)
 
     # parallelization
     pool = Pool(num_cores)
@@ -324,7 +338,8 @@ def call_api(row: pandas.Series, logger: logging) -> pandas.Series:
 
     start_time = perf_counter()
     logger.info(
-        "Calling OpenAI model %s to summarize conversation: %s", row["model"], row.name)
+        "Call model: %s convo: %s, sleep: %i and timeout: %i",
+        row["model"], row.name, row["sleep_seconds"], row["timeout_seconds"])
     if row["verbose"]:
         logger.info("Prompt: %s", row["prompt"])
 
@@ -350,6 +365,9 @@ def call_api(row: pandas.Series, logger: logging) -> pandas.Series:
     logger.info('Summary is saved at: %s', row["summary_path"])
     end_time = perf_counter()
     logger.info('Took %.2f seconds', end_time-start_time)
+    if row["sleep_seconds"] > 0:
+        logger.info('Sleeping for %i seconds', row["sleep_seconds"])
+        time.sleep(row["sleep_seconds"])
     return row
 
 
@@ -383,11 +401,11 @@ def summarize(row: pandas.Series, output_tokens: int) -> str:
         top_p=1,
         frequency_penalty=0.0,
         presence_penalty=0.0
+        # timeout=row["timeout_seconds"]
     )
     row["summary"] = response.choices[0].message.content + "\n"
     row["total_tokens"] = response.usage.total_tokens
     return row
-
 
 def count_tokens(text: str, encoding):
     """Returns the number of tokens in a text string."""
