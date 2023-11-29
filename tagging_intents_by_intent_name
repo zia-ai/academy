@@ -1,5 +1,6 @@
 """
-tagging labelled utterances
+tagging intents by using intent name as the search string
+
 Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # ******************************************************************************************************************120
