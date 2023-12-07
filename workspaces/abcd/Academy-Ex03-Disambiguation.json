@@ -2,7 +2,7 @@
   "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
   "name": "ABCD Ex03 ",
   "description": "Disambiguation Challenge",
-  "color": "#4cfa6d",
+  "color": "#20d021",
   "examples": [
     {
       "id": "phrase-DMJSOUPKV5ASXNZV3LKW36KU",

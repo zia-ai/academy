@@ -1,8 +1,8 @@
 {
   "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
   "name": "ABCD Ex04 ",
-  "description": "Examples of tagging, out of scope and a more complete model on ABCD.  ",
-  "color": "#4cfa6d",
+  "description": "Examples of tagging, out of scope and a more complete model on ABCD.",
+  "color": "#20d021",
   "examples": [
     {
       "id": "phrase-QFPHEBF5HZHLLOFNEIITKXQ6",
