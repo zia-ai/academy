@@ -1,6 +1,13 @@
 """
 tagging intents by using intent name as the search string
 
+When you need to add/remove tag to intents in bunch where the intents have a common substring, this script can be used.
+This script accepts the downloads the workspace and produces labelled HF JSON with the required intents tagged
+Then this HF JSON should be merged with the existing model in the GUI using the following steps
+    -> Import -> Model -> Upload an intent file -> Humanfirst JSON
+    -> Enable Merge intents by name, tags and entities -> Browse files
+    -> Choose the correct file and then upload
+
 Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # ******************************************************************************************************************120
