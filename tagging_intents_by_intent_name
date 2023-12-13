@@ -1,8 +1,8 @@
 """
 tagging intents by using intent name as the search string
 
-When you need to add/remove tag to intents in bunch where the intents have a common substring, this script can be used.
-This script accepts the downloads the workspace and produces labelled HF JSON with the required intents tagged
+When you need to add/remove tag to intents in bunch where the name of the intents have a common substring, this script can be used.
+This script downloads the workspace and produces labelled HF JSON with the required intents tagged
 Then this HF JSON should be merged with the existing model in the GUI using the following steps
     -> Import -> Model -> Upload an intent file -> Humanfirst JSON
     -> Enable Merge intents by name, tags and entities -> Browse files
@@ -42,7 +42,7 @@ def main(delimiter: str, add_tag: str,
 
     if add_tag == "" and delete_tag == "":
         error_msg = "Both add_tag and delete_tag are empty. Atleast one should be provided"
-        raise  Exception(error_msg) # pylint: disable=broad-exception-raised
+        raise  RuntimeError(error_msg)
 
     hf_api = humanfirst.apis.HFAPI(username=username, password=password)
     playbook_dict = hf_api.get_playbook(namespace, playbook)
@@ -103,9 +103,11 @@ def main(delimiter: str, add_tag: str,
 
             if del_flag == 0 and delete_tag != "":
                 error_msg = f"{delete_tag} is not present in any of the intents"
-                raise Exception(error_msg) # pylint: disable=broad-exception-raised
+                raise RuntimeError(error_msg)
 
-            if add_flag == 0 or del_flag == 1:
+            elif add_flag == 0 or del_flag == 1:
+                # if del_flag is 1 then there exists an intent which has a tag that needs to be deleted
+                # if add_flag is 0 then there exists an intent to which a tag needs too be added
                 full_intent = {
                     "id": labelled_workspace.intents[intent_name].id,
                     "name": labelled_workspace.intents[intent_name].name,
