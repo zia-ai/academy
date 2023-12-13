@@ -104,7 +104,7 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
             df_filter.append(df_filt)
             print("\n")
         df = pandas.concat(df_filter)
-        
+
 
         print(f'After filtering: {df.shape[0]}')
         print('\n')
@@ -272,7 +272,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
         external_id = f'example-{row[convo_id_col]}-{row["idx"]}'
         context = humanfirst.objects.HFContext(
             context_id=row[convo_id_col],
-            type='conversation',
+            context_type='conversation',
             role=row["role"]
         )
 
