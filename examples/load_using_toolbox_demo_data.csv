@@ -1,0 +1,244 @@
+﻿convoid,conv_created_at,utterance,speaker,confidence_score,intent,fallback_indicator,escalation_indicator
+1413,2022-05-08T20:50:40Z,"Good afternoon, how can I help you?",expert,,,,
+1413,2022-05-08T20:50:40Z,Hi. I need your help in sorting out a problem I have,client,1,technical_issues-general_issue,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,"Gladly, tell me what you need.",expert,,,,
+1413,2022-05-08T20:50:40Z,I am looking at my march bill and I see that I was charged twice for a shirt that I bought. Can you help with this?,client,0.17757392,shopping_issues-missing_credit_on_account,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,Of couse!,expert,,,,
+1413,2022-05-08T20:50:40Z,Give me your full name and account ID. please,expert,,,,
+1413,2022-05-08T20:50:40Z,my name is joyce wu and the account id is 64vmt99fke,client,0.58992475,background-define_name,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,Account has been pulled up for Joyce Wu.,expert,,,,
+1413,2022-05-08T20:50:40Z,Account has been pulled up for 64vmt99fke.,expert,,,,
+1413,2022-05-08T20:50:40Z,"Ok, would you give me the order ID. please",expert,,,,
+1413,2022-05-08T20:50:40Z,order id is 3135346547,client,0.49880716,shipping_issues-status_order,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,Identity verification in progess ...,expert,,,,
+1413,2022-05-08T20:50:40Z,Ok let me check the error.,expert,,,,
+1413,2022-05-08T20:50:40Z,Querying the system for an answer ...,expert,,,,
+1413,2022-05-08T20:50:40Z,It would indicate the level of your membership,expert,,,,
+1413,2022-05-08T20:50:40Z,please,expert,,,,
+1413,2022-05-08T20:50:40Z,my membeship level is guest,client,0.2894275,membership_enquiries-premium_signup,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,why was I charged twice?,client,0.27416772,membership_enquiries,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,are you there,client,0.19923294,conversational-greeting,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,Membership level of guest has been noted.,expert,,,,
+1413,2022-05-08T20:50:40Z,"Yes, but it was due to a change in prices on the date of purchase. I really apologize for the inconvenience but there is nothing I can do.",expert,,,,
+1413,2022-05-08T20:50:40Z,I would like to speak with your manager,client,0.25084886,shopping_issues-item_question,TRUE,TRUE
+1413,2022-05-08T20:50:40Z,"I understand, a moment please",expert,,,,
+1413,2022-05-08T20:50:40Z,Agent is looking for solutions ...,expert,,,,
+1413,2022-05-08T20:50:40Z,I need a manager please,client,0.237855,technical_issues-general_issue,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,Agent is looking for solutions ...,expert,,,,
+1413,2022-05-08T20:50:40Z,The Passing request to the Manager. has been notified.,expert,,,,
+1413,2022-05-08T20:50:40Z,You will be contacted shortly. Sorry for the inconvenience. is all I can do at the moment.,expert,,,,
+1413,2022-05-08T20:50:40Z,I need a manager right away to resolve my problem,client,0.6135088,technical_issues-general_issue,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,"The Manager will contact you separately. Sir, I must count the chat because I can no longer offer any option to your condition.",expert,,,,
+1413,2022-05-08T20:50:40Z,when will the manager contact me. I need a time,client,0.18156464,find_or_arrange_dropoff_centre,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,The waiting time varies between 2 to 4 hours. In that interval you will be contacted.,expert,,,,
+1413,2022-05-08T20:50:40Z,That is not good. I ugently need to resolve this issue right now,client,0.2695491,feedback-upset,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,Sorry but I can only offer the information indicated to me. If you wait that time you can solve your doubts with the Manager.,expert,,,,
+1413,2022-05-08T20:50:40Z,I will apologize but it is all I can offer at the moment.,expert,,,,
+1413,2022-05-08T20:50:40Z,Please give me a phone number for the manager,client,0.29872146,change_details-change_phone_number,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,No problem. The number is as follows: 800 534 7568,expert,,,,
+1413,2022-05-08T20:50:40Z,thanks and have a good day,client,0.7941234,conversational-greeting,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,Have a nice day too,expert,,,,
+1413,2022-05-08T20:50:40Z,what is the manager's name,client,0.16756512,find_or_arrange_dropoff_centre,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,Joseph,expert,,,,
+1413,2022-05-08T20:50:40Z,and his last name,client,0.38439906,login_issues-forgot_username,TRUE,FALSE
+1413,2022-05-08T20:50:40Z,Smith,expert,,,,
+1413,2022-05-08T20:50:40Z,thanks that's all goodbye,client,0.4267797,feedback-been_very_helpful,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,Not problem. Goodbye !,expert,,,,
+1413,2022-05-08T20:50:40Z,goodbye,client,0.45748717,conversational-greeting,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,thanks for your help,client,0.71962255,feedback-been_very_helpful,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,I will call the manager and get the problem resolved,client,0.44838732,technical_issues-general_issue,FALSE,FALSE
+1413,2022-05-08T20:50:40Z,No problem. A pleasure to help you!,expert,,,,
+3323,2022-05-19T12:06:43Z,"Good afternoon, how can I help you today?",expert,,,,
+3323,2022-05-19T12:06:43Z,Hi. I checked my order and I see there extra fee? Can u explain why,client,0.34230584,shipping_issues-do_i_qualify_for_free_shipping,TRUE,FALSE
+3323,2022-05-19T12:06:43Z,"I can try to help with that, what's your full name?",expert,,,,
+3323,2022-05-19T12:06:43Z,Joseph banter,client,0.60118693,background-define_name,FALSE,FALSE
+3323,2022-05-19T12:06:43Z,Account has been pulled up for Joseph banter.,expert,,,,
+3323,2022-05-19T12:06:43Z,"Thanks Joseph. Just to clarify, it's not part of your shipping cost, right?",expert,,,,
+3323,2022-05-19T12:06:43Z,correct,client,0.6911777,technical_issues-its_fixed,FALSE,FALSE
+3323,2022-05-19T12:06:43Z,Got it. Can I have your account ID and order ID as well?,expert,,,,
+3323,2022-05-19T12:06:43Z,one moment please,client,0.19187318,find_or_arrange_dropoff_centre,TRUE,FALSE
+3323,2022-05-19T12:06:43Z,Sure thing.,expert,,,,
+3323,2022-05-19T12:06:43Z,9178312729 5CXY2VYGGH,client,0.3279315,out_of_scope-addresses,TRUE,FALSE
+3323,2022-05-19T12:06:43Z,Identity verification in progess ...,expert,,,,
+3323,2022-05-19T12:06:43Z,Are you sure that's your account ID?,expert,,,,
+3323,2022-05-19T12:06:43Z,Identity verification in progess ...,expert,,,,
+3323,2022-05-19T12:06:43Z,5CXY2VYGFH,client,0.10649925,feedback-been_very_helpful,TRUE,FALSE
+3323,2022-05-19T12:06:43Z,Identity verification in progess ...,expert,,,,
+3323,2022-05-19T12:06:43Z,Thank you. I was able to locate your account with us.,expert,,,,
+3323,2022-05-19T12:06:43Z,Querying the system for an answer ...,expert,,,,
+3323,2022-05-19T12:06:43Z,Hmm... My system seems to think it's not a mistake with the order.,expert,,,,
+3323,2022-05-19T12:06:43Z,I will look into it more.,expert,,,,
+3323,2022-05-19T12:06:43Z,What's your membership level?,expert,,,,
+3323,2022-05-19T12:06:43Z,Bronze,client,0.1553464,conversational-greeting,TRUE,FALSE
+3323,2022-05-19T12:06:43Z,Thanks Joseph.,expert,,,,
+3323,2022-05-19T12:06:43Z,"Unfortunately, there's nothing I can do at this point because the difference you are seeing is a temporary fee being added to all orders. :(",expert,,,,
+3323,2022-05-19T12:06:43Z,Okay so it will go away than,client,0.6541042,technical_issues-its_fixed,FALSE,FALSE
+3323,2022-05-19T12:06:43Z,"No, I am sorry, every customer is paying that fee right now, so it has to stay on there.",expert,,,,
+3323,2022-05-19T12:06:43Z,Is there a supervisor I can talk to?,client,0.22234873,technical_issues-general_issue,TRUE,TRUE
+3323,2022-05-19T12:06:43Z,"Sure, if you call into customer service at (800) 594-0817 and select option 6, they will be able to escalate your issue to our management team.",expert,,,,
+3323,2022-05-19T12:06:43Z,I definitely will. Ty for information.,client,0.67809933,conversational-ok,FALSE,FALSE
+3323,2022-05-19T12:06:43Z,Is there anything else I can assist you with this afternoon?,expert,,,,
+3323,2022-05-19T12:06:43Z,No ty,client,0.2223261,conversational-ok,TRUE,FALSE
+3323,2022-05-19T12:06:43Z,"You're welcome, I am sorry we weren't able to address this issue is a satisfactory manner. I hope someone will be able to help!",expert,,,,
+3323,2022-05-19T12:06:43Z,Have a great afternoon!,expert,,,,
+2460,2022-05-14T16:46:26Z,Hello! Thank you for choosing AcmeBrands. How may I assist you?,expert,,,,
+2460,2022-05-14T16:46:26Z,Hi I need your help with something,client,0.97027487,technical_issues-general_issue,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,"Absolutely, glad to help. What may I assist you with?",expert,,,,
+2460,2022-05-14T16:46:26Z,I spent too much money last month,client,0.33448896,shopping_issues-missing_credit_on_account,TRUE,FALSE
+2460,2022-05-14T16:46:26Z,And I can't afford to pay for my premium subscription,client,0.5672903,membership_enquiries-premium_signup,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,Can you give me an extension on the bill?,client,0.58454853,membership_enquiries,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,I need time to save up,client,0.23421821,technical_issues,TRUE,FALSE
+2460,2022-05-14T16:46:26Z,"May I get your Full Name or Account ID, please?",expert,,,,
+2460,2022-05-14T16:46:26Z,Chloe Zhang,client,0.23391232,conversational-greeting,TRUE,FALSE
+2460,2022-05-14T16:46:26Z,Account has been pulled up for Chloe Zhang.,expert,,,,
+2460,2022-05-14T16:46:26Z,"Thank you, Chloe. And your Account ID and most recent Order ID, please?",expert,,,,
+2460,2022-05-14T16:46:26Z,account is5PWXCN0MMH,client,0.54858005,login_issues-general_cant_login,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,order is 9827264937,client,0.7177918,shipping_issues-status_order,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,Identity verification in progess ...,expert,,,,
+2460,2022-05-14T16:46:26Z,What is your current Membership Level?,expert,,,,
+2460,2022-05-14T16:46:26Z,I'm a Guest,client,0.49477553,background-define_name,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,"I'm so sorry, unfortunately Guests are not eligible for extensions.",expert,,,,
+2460,2022-05-14T16:46:26Z,Is there anything more I may assist you with today?,expert,,,,
+2460,2022-05-14T16:46:26Z,What????,client,0.27661628,conversational-ok,TRUE,FALSE
+2460,2022-05-14T16:46:26Z,That's not fair,client,0.7905256,feedback-upset,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,Membership level of Guest has been noted.,expert,,,,
+2460,2022-05-14T16:46:26Z,I'm a good customer,client,0.23134902,feedback-been_very_helpful,TRUE,FALSE
+2460,2022-05-14T16:46:26Z,I would like to speak to a manager about this,client,0.16439667,shopping_issues-item_question,TRUE,TRUE
+2460,2022-05-14T16:46:26Z,"I completely understand, Chloe. May I get your phone number that we can call you back on?",expert,,,,
+2460,2022-05-14T16:46:26Z,Yes,client,0.731353,technical_issues-its_fixed,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,(688) 367-7885,client,0.3172653,out_of_scope-addresses,TRUE,FALSE
+2460,2022-05-14T16:46:26Z,Details of (688) 367-7885 have been entered.,expert,,,,
+2460,2022-05-14T16:46:26Z,I'll be glad to have a manager call you back for further assistance.,expert,,,,
+2460,2022-05-14T16:46:26Z,Okay,client,0.52139425,conversational-ok,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,The manager has been notified.,expert,,,,
+2460,2022-05-14T16:46:26Z,I will be waiting by the phone to hear from them,client,0.157915,change_details-change_phone_number,TRUE,FALSE
+2460,2022-05-14T16:46:26Z,I have a lot to say,client,0.35784614,feedback-upset,TRUE,FALSE
+2460,2022-05-14T16:46:26Z,Is there anything more I may help you with today?,expert,,,,
+2460,2022-05-14T16:46:26Z,"No, that's it",client,0.50734,technical_issues-its_fixed,FALSE,FALSE
+2460,2022-05-14T16:46:26Z,"I sincerely apologize for the inconvenience! Thank you for contacting AcmeBrands, and have a great day.",expert,,,,
+4141,2022-05-24T01:26:10Z,"Hello, thank you for shopping with AcmeBrands! How may I help you?",expert,,,,
+4141,2022-05-24T01:26:10Z,"Hi, I signed up for the bronze subscription and I want to keep it but I need additional time to get money to pay the membership fee",client,0.41833502,membership_enquiries-pay_subscription_fee,FALSE,FALSE
+4141,2022-05-24T01:26:10Z,"So, can you help me out with an extension please?",client,0.22206615,technical_issues-general_issue,TRUE,FALSE
+4141,2022-05-24T01:26:10Z,Sure! May I have your full name?,expert,,,,
+4141,2022-05-24T01:26:10Z,"Yes, it's Alessandro Phoenix",client,0.82165086,background-define_name,FALSE,FALSE
+4141,2022-05-24T01:26:10Z,Account has been pulled up for Alessandro Phoenix.,expert,,,,
+4141,2022-05-24T01:26:10Z,Thank you. May I also have your account ID and order ID?,expert,,,,
+4141,2022-05-24T01:26:10Z,Account ID is Y90MCCVOC6,client,0.43879995,login_issues-forgot_username,FALSE,FALSE
+4141,2022-05-24T01:26:10Z,Order ID is 3381649451,client,0.3400263,shipping_issues-status_order,TRUE,FALSE
+4141,2022-05-24T01:26:10Z,Identity verification in progress ...,expert,,,,
+4141,2022-05-24T01:26:10Z,"Thank you. Unfortunately, as a Bronze member, you are not able to get an extension.",expert,,,,
+4141,2022-05-24T01:26:10Z,I'm very sorry for the inconvenience.,expert,,,,
+4141,2022-05-24T01:26:10Z,There's nothing you can do?,client,0.24515939,login_issues,TRUE,FALSE
+4141,2022-05-24T01:26:10Z,Can I speak to a manager please?,client,0.2301911,technical_issues-general_issue,TRUE,TRUE
+4141,2022-05-24T01:26:10Z,"Yes, I can have a manager get in touch with you.  May I have your phone number?",expert,,,,
+4141,2022-05-24T01:26:10Z,(118) 324-1536,client,0.19430168,out_of_scope-addresses,TRUE,FALSE
+4141,2022-05-24T01:26:10Z,Details of (118) 324-1536 have been entered.,expert,,,,
+4141,2022-05-24T01:26:10Z,The manager has been notified.,expert,,,,
+4141,2022-05-24T01:26:10Z,A manager will call you soon.,expert,,,,
+4141,2022-05-24T01:26:10Z,Is there anything else I can help you with?,expert,,,,
+4141,2022-05-24T01:26:10Z,"That's it, thanks",client,0.7544271,conversational-ok,FALSE,FALSE
+4141,2022-05-24T01:26:10Z,You're welcome. Have a nice day!,expert,,,,
+122,2022-05-01T16:18:18Z,"hello, thank you for contacting AcmeBrands, how may I assist you?",expert,,,,
+122,2022-05-01T16:18:18Z,Hi!  I am interested in renewing my membership today.  Can you help me with that?,client,0.447499,membership_enquiries-membership_levels_and_benefits,FALSE,FALSE
+122,2022-05-01T16:18:18Z,"yes, i would be happy to help you there",expert,,,,
+122,2022-05-01T16:18:18Z,"to get started, can i get your name or account id?",expert,,,,
+122,2022-05-01T16:18:18Z,"Sure!  Joseph Banter, acct# 3BGSUNDXJ8",client,0.5821074,login_issues-general_cant_login,FALSE,FALSE
+122,2022-05-01T16:18:18Z,"great, thanks",expert,,,,
+122,2022-05-01T16:18:18Z,i will also need your order id,expert,,,,
+122,2022-05-01T16:18:18Z,"I don't have an order, I just want to renew my subscription as a Silver member.",client,0.2263119,membership_enquiries-subscription_added_by_mistake,TRUE,FALSE
+122,2022-05-01T16:18:18Z,"Got it, i have verified your indentity with the information given",expert,,,,
+122,2022-05-01T16:18:18Z,"ok, your subscription is set to renew at a cost of $30",expert,,,,
+122,2022-05-01T16:18:18Z,should i charge the credit card you have on file?,expert,,,,
+122,2022-05-01T16:18:18Z,"Yes, let's do that",client,0.9020606,technical_issues-its_fixed,FALSE,FALSE
+122,2022-05-01T16:18:18Z,wonderful,expert,,,,
+122,2022-05-01T16:18:18Z,"ok, that is completed",expert,,,,
+122,2022-05-01T16:18:18Z,is there anything else you need?,expert,,,,
+122,2022-05-01T16:18:18Z,"Okay, just to verify, that will be at the current Silver level, correct?",client,0.19123302,membership_enquiries-membership_levels_and_benefits,TRUE,FALSE
+122,2022-05-01T16:18:18Z,"yes, that is right Joseph",expert,,,,
+122,2022-05-01T16:18:18Z,Super!  Thank you very much for your help today.,client,0.57028264,conversational-ok,FALSE,FALSE
+122,2022-05-01T16:18:18Z,thanks!,expert,,,,
+122,2022-05-01T16:18:18Z,Account has been pulled up for Joseph Banter.,expert,,,,
+122,2022-05-01T16:18:18Z,Identity verification in progess ...,expert,,,,
+122,2022-05-01T16:18:18Z,Querying the system for subscription status ...,expert,,,,
+122,2022-05-01T16:18:18Z,Account has been updated with renew subscription.,expert,,,,
+119,2022-05-01T15:54:14Z,"Hi, my name is Chloe and the promo code that I am using is not working even though I got the code 2 days ago",client,1,technical_issues-promo_code_issue,FALSE,FALSE
+119,2022-05-01T15:54:14Z,"Hello Chloe, I'm sorry to hear that and would be glad to help.",expert,,,,
+119,2022-05-01T15:54:14Z,"Okay, great. I would like to get this situated",client,0.38019818,conversational-ok,TRUE,FALSE
+119,2022-05-01T15:54:14Z,"Sure, Can you please tell me your membership number?",expert,,,,
+119,2022-05-01T15:54:14Z,"I am not a member, I am a guest. I can tell you my order ID",client,0.40735504,login_issues-forgot_username,FALSE,FALSE
+119,2022-05-01T15:54:14Z,My order ID is 1768436006,client,0.46914434,shipping_issues-status_order,FALSE,FALSE
+119,2022-05-01T15:54:14Z,Thank you!,client,0.66867995,conversational-ok,FALSE,FALSE
+119,2022-05-01T15:54:14Z,"You're welcome, is there anything else I can assist you with?",expert,,,,
+119,2022-05-01T15:54:14Z,That is all for today.,client,0.78421,technical_issues-its_fixed,FALSE,FALSE
+119,2022-05-01T15:54:14Z,Have a great days!,expert,,,,
+119,2022-05-01T15:54:14Z,"You too, thanks!",client,0.40902817,feedback-been_very_helpful,FALSE,FALSE
+119,2022-05-01T15:54:14Z,Querying the system for an answer ...,expert,,,,
+119,2022-05-01T15:54:14Z,A promo code has been created.,expert,,,,
+119,2022-05-01T15:54:14Z,A link will be sent.,expert,,,,
+118,2022-05-01T15:46:13Z,Have a good day!,expert,,,,
+118,2022-05-01T15:46:13Z,"Hello! What's your name, and how may I help you today?",expert,,,,
+118,2022-05-01T15:46:13Z,Hi there. It's Alessandro Phoenix here. I received my bill today and see that I was charged twice a coat that I bought for my wife last month,client,0.22126882,background-define_name,TRUE,FALSE
+118,2022-05-01T15:46:13Z,"Alright, to verify your order and to help you, I'll need a few details. Could I have the Order ID and your Account ID, please?",expert,,,,
+118,2022-05-01T15:46:13Z,Sure. My ID is HECSW6JOHA and I don't see an order ID anywhere.,client,0.22174978,technical_issues,TRUE,FALSE
+118,2022-05-01T15:46:13Z,"I see, allow me to see if I can check with what you gave me.",expert,,,,
+118,2022-05-01T15:46:13Z,Thanks,client,0.6763244,conversational-ok,FALSE,FALSE
+118,2022-05-01T15:46:13Z,"It seems you were overcharged, may I know how much the overcharge was?",expert,,,,
+118,2022-05-01T15:46:13Z,"Yes, $49",client,0.30601013,technical_issues-its_fixed,TRUE,FALSE
+118,2022-05-01T15:46:13Z,Okay. Great!,client,0.6412396,conversational-ok,FALSE,FALSE
+118,2022-05-01T15:46:13Z,"Your order has been updated to remove the extra charge. Anything else I can help you with today, Alessandro?",expert,,,,
+118,2022-05-01T15:46:13Z,No thanks. That takes care of everything!,client,0.1577343,feedback-upset,TRUE,FALSE
+118,2022-05-01T15:46:13Z,Identity verification in progess ...,expert,,,,
+118,2022-05-01T15:46:13Z,Querying the system for an answer ...,expert,,,,
+118,2022-05-01T15:46:13Z,Order has been updated with 49.,expert,,,,
+110,2022-05-01T14:42:04Z,"Hello! What's your name, and how may I help you today?",expert,,,,
+110,2022-05-01T14:42:04Z,"Hi, My name is joseph Banter. I have been on the site for over a half an hour trying to get  a page to load. IS there an issue with the site?",client,0.77098966,technical_issues-website_slow,FALSE,FALSE
+110,2022-05-01T14:42:04Z,We can check that for you right away. May I ask if you could visit another website and see how that runs for me?,expert,,,,
+110,2022-05-01T14:42:04Z,"Yes, I can do that.",client,0.88987064,technical_issues-its_fixed,FALSE,FALSE
+110,2022-05-01T14:42:04Z,Thank you. Let me know how it goes whenever you're done.,expert,,,,
+110,2022-05-01T14:42:04Z,Other sites seem to work fine.,client,1,technical_issues,FALSE,FALSE
+110,2022-05-01T14:42:04Z,"I see. If you can, could you close any other browsers in your other tabs if there are any. I'd also like to instruct you to log out and back in before I send a report, to pinpoint the issue.",expert,,,,
+110,2022-05-01T14:42:04Z,Okay. Should I close other tabs then log out or does the order matter?,client,0.21976706,membership_enquiries-what_happens_if_late_with_payment,TRUE,FALSE
+110,2022-05-01T14:42:04Z,"The order doesn't matter, after the actions are finished in any order, see how it works then, thank you.",expert,,,,
+110,2022-05-01T14:42:04Z,"Hey, that seems to have worked! Thank you so much!",client,0.9492503,technical_issues-its_fixed,FALSE,FALSE
+110,2022-05-01T14:42:04Z,"No problem! I'm so glad it worked, anything else I can help you with today?",expert,,,,
+110,2022-05-01T14:42:04Z,No thank you. Have a great day! Thanks again!,client,0.3672008,conversational-ok,TRUE,FALSE
+110,2022-05-01T14:42:04Z,"You too, Joseph!",expert,,,,
+110,2022-05-01T14:42:04Z,Agent is looking for solutions ...,expert,,,,
+1631,2022-05-10T01:58:47Z,HI! Thank you for contacting Acme today. How may I help you?,expert,,,,
+1631,2022-05-10T01:58:47Z,Hi! I had signed up for the premium subscription shopping service,client,0.4213786,membership_enquiries-premium_signup,FALSE,FALSE
+1631,2022-05-10T01:58:47Z,I would like to request an extension to pay as I need some more time to get the money.,client,0.5413162,membership_enquiries-pay_subscription_fee,FALSE,FALSE
+1631,2022-05-10T01:58:47Z,I would be more then happy to look into that for you,expert,,,,
+1631,2022-05-10T01:58:47Z,Can I please have your full name?,expert,,,,
+1631,2022-05-10T01:58:47Z,Joseph Banter,client,0.7970661,background-define_name,FALSE,FALSE
+1631,2022-05-10T01:58:47Z,Account has been pulled up for Joseph Banter.,expert,,,,
+1631,2022-05-10T01:58:47Z,Thank you Mr. Banter.  Can I alos have your account ID and Order ID,expert,,,,
+1631,2022-05-10T01:58:47Z,Account ID: JU3GED30O1,client,0.41729683,login_issues-forgot_username,FALSE,FALSE
+1631,2022-05-10T01:58:47Z,Order ID: 6639315667,client,0.33874205,shipping_issues-status_order,TRUE,FALSE
+1631,2022-05-10T01:58:47Z,Identity verification in progess ...,expert,,,,
+1631,2022-05-10T01:58:47Z,Thank you.  What is your membership level?,expert,,,,
+1631,2022-05-10T01:58:47Z,Guest,client,0.34878716,conversational-greeting,TRUE,FALSE
+1631,2022-05-10T01:58:47Z,Membership level of Guest has been noted.,expert,,,,
+1631,2022-05-10T01:58:47Z,"Unfortunately, with a guest membership we do not offer extension on payments",expert,,,,
+1631,2022-05-10T01:58:47Z,Can you get me a manager please. I really need this resolved,client,0.4890791,technical_issues-general_issue,FALSE,TRUE
+1631,2022-05-10T01:58:47Z,I can escalate this issue to my manager for you.  Can you provide me with your best contact phone number?,expert,,,,
+1631,2022-05-10T01:58:47Z,(841) 035-0049,client,0.35634148,change_details-change_phone_number,TRUE,FALSE
+1631,2022-05-10T01:58:47Z,Details of (841) 035-0049 have been entered.,expert,,,,
+1631,2022-05-10T01:58:47Z,The Manager has been notified.,expert,,,,
+1631,2022-05-10T01:58:47Z,Thank you.  I have escalated this to my manager.  They will contact you by phone shortly,expert,,,,
+1631,2022-05-10T01:58:47Z,Thank you,client,0.55450475,conversational-ok,FALSE,FALSE
+1631,2022-05-10T01:58:47Z,Is there anything else I can assist with today,expert,,,,
+1631,2022-05-10T01:58:47Z,That's all. Thanks for your help,client,0.71124756,conversational-ok,FALSE,FALSE
+1631,2022-05-10T01:58:47Z,You're Welcome Have a great day,expert,,,,
+1631,2022-05-10T01:58:47Z,YOu too,client,0.28414065,feedback,TRUE,FALSE
+5551,2022-05-31T21:52:47Z,"Hello, how may I assist you today?",expert,,,,
+5551,2022-05-31T21:52:47Z,Hi. I am considering buying a shirt but i have a few more questions about it.,client,0.60927886,shopping_issues-item_question,FALSE,FALSE
+5551,2022-05-31T21:52:47Z,"Sure, what is your question?",expert,,,,
+5551,2022-05-31T21:52:47Z,Searching the FAQ pages ...,expert,,,,
+5551,2022-05-31T21:52:47Z,System Action: search shirt,expert,,,,
+5551,2022-05-31T21:52:47Z,"the 54 dollar calvin klein shirt, how wide is the collar?",client,0.504852,shopping_issues-item_question,FALSE,FALSE
+5551,2022-05-31T21:52:47Z,FAQ answer related to shirt (how4) was selected.,expert,,,,
+5551,2022-05-31T21:52:47Z,"The standard size is 15"". It's designed for comfort and they're not tight. We have larger and smaller sizes available as well.",expert,,,,
+5551,2022-05-31T21:52:47Z,I hope that answers your question!,expert,,,,
+5551,2022-05-31T21:52:47Z,Is there anything else I can help with?,expert,,,,
+5551,2022-05-31T21:52:47Z,"nope that's it, thanks!",client,0.3791103,conversational-ok,TRUE,FALSE
+5551,2022-05-31T21:52:47Z,"Thanks, have a great day!",expert,,,,
