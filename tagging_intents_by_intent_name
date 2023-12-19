@@ -1,7 +1,7 @@
 """
 tagging intents by using intent name as the search string
 
-When you need to add/remove tag to intents in bunch where the name of the intents have a common substring, this script can be used.
+Helps you to add/remove tag to intents in bunch where the name of the intents have a common substring.
 This script downloads the workspace and produces labelled HF JSON with the required intents tagged
 Then this HF JSON should be merged with the existing model in the GUI using the following steps
     -> Import -> Model -> Upload an intent file -> Humanfirst JSON
@@ -101,13 +101,15 @@ def main(delimiter: str, add_tag: str,
 
             labelled_workspace.intents[intent_name].tags = intent_tags_after_del
 
+            # case 1: delete tag is not present in any of the intents
             if del_flag == 0 and delete_tag != "":
                 error_msg = f"{delete_tag} is not present in any of the intents"
                 raise RuntimeError(error_msg)
 
+            # case 2: either tags are deleted or added to the intents or both
             elif add_flag == 0 or del_flag == 1:
                 # if del_flag is 1 then there exists an intent which has a tag that needs to be deleted
-                # if add_flag is 0 then there exists an intent to which a tag needs too be added
+                # if add_flag is 0 then there exists an intent to which a tag needs to be added
                 full_intent = {
                     "id": labelled_workspace.intents[intent_name].id,
                     "name": labelled_workspace.intents[intent_name].name,
@@ -120,6 +122,14 @@ def main(delimiter: str, add_tag: str,
                                      intent=full_intent,
                                      update_mask="tags")
                 print(f"Tags are updated for the intent - {full_intent['name']}")
+
+            # case 3: tags are neither deleted nor added to the intents
+            elif add_flag == 1 and del_flag == 0:
+                raise RuntimeError(f"No addition or deletion of tags to the intents with substring - {search_string}")
+
+            # case 4: Unknown case
+            else:
+                raise RuntimeError("Unknown case")
 
 
 if __name__ == '__main__':
