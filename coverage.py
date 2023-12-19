@@ -26,7 +26,7 @@ import humanfirst
 @click.option('-x', '--searchtext', type=str, default='', help='text to search for in conversations')
 @click.option('-s', '--startisodate', type=str, default='', help='Date range to extract conversations from')
 @click.option('-e', '--endisodate', type=str, default='', help='Date range to extract conversations from')
-@click.option('-q', '--quit_after_pages', type=int, default=0, help='Date range to extract conversations from')
+@click.option('-q', '--quit_after_pages', type=int, default=0, help='Specify the number of pages to quit after')
 @click.option('-d', '--debug', is_flag=True, default=False, help='Debug')
 @click.option('-l','--delimiter',type=str,default="-",help='Intent name delimiter')
 def main(username: str, password: str, namespace: bool, playbook: str,
