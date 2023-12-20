@@ -11,7 +11,6 @@ python ./json_to_csv.py
 import click
 import pandas
 import json
-import humanfirst
 
 # custom imports
 
@@ -29,10 +28,6 @@ def main(input_filename: str):
     assert input_filename != output_filename
     df.to_csv(output_filename,index=False, header=True)
     print(f'wrote to: {output_filename}')
-
-    workspace = humanfirst.objects.HFWorkspace().from_json(workspace_json,delimiter="-")
-    assert isinstance(workspace, humanfirst.objects.HFWorkspace)
-    print(workspace.get_fully_qualified_intent_name("intent-B7UM4L5SPNBWPHIOMNIQMDN6"))
 
 if __name__ == '__main__':
     main() # pylint: disable=no-value-for-parameter
