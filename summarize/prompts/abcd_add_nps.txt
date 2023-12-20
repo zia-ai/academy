@@ -1,0 +1,19 @@
+Delimited by three backticks is a online chat conversation between a "client" of an online fashion retailer and one of it's "expert" customer service agents.
+
+```
+{{ conversation }}
+```
+
+Imagine that you are a customer and provide a numerical NPS score based on the conversation. 
+
+The initial emotional state of the customer will have a large influence on the final score.
+Consider the following indicators in your decision
+Customers whose problems that are not resolved are extremely likely to give a low score.
+Customer problems that are not resolved on the call i.e. they need a report filling to another department are likely to be give a low score
+Customers whose Problems relate to money that are not resolved are extremely likely to give a low score.
+Conversations that take a long time to reach resolution are more likely to be given a low score. 
+Customers who express frustration or feel they are not being treated fairly are extremely likely to give a low score. 
+Customers will only give a 9 or a 10 in very rare occasions. 
+
+
+Provide only the number as an answer
