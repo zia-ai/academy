@@ -37,7 +37,7 @@ import humanfirst
 @click.option('-r', '--role_col', type=str, required=False, default='',
               help='Which column the role in ')
 @click.option('-p', '--role_mapper', type=str, required=False, default='',
-              help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert}"')
+              help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert"')
 @click.option('-e', '--encoding', type=str, required=False, default='utf8',
               help='Input CSV encoding')
 @click.option('--filtering', type=str, required=False, default='', help='column:value,column:value;column:value,column:value')
@@ -272,7 +272,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
         external_id = f'example-{row[convo_id_col]}-{row["idx"]}'
         context = humanfirst.objects.HFContext(
             context_id=row[convo_id_col],
-            context_type='conversation',
+            type='conversation',
             role=row["role"]
         )
 
