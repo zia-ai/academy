@@ -42,8 +42,8 @@ def main(filename: str) -> None:
 
     # group by
     df = df[["intent_name","stripped","utterance"]].groupby(["intent_name","stripped"]).count()
-
     print(df)
+    print(df.sort_values("utterance",ascending=False).head(50))
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
