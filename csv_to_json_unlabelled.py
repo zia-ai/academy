@@ -272,7 +272,7 @@ def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '
         external_id = f'example-{row[convo_id_col]}-{row["idx"]}'
         context = humanfirst.objects.HFContext(
             context_id=row[convo_id_col],
-            context_type='conversation',
+            type='conversation',
             role=row["role"]
         )
 
