@@ -17,6 +17,9 @@ From the response, it extracts the follwoing information:
     intent: intent name
     seq: utterance sequence number in a conversation - 0 to n-1
 
+Using the above extracted information the script produces coverage metric of the model
+,i.e., percentage of utterances that are above specific confidence threshold
+
 Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *****************************************************************************
@@ -46,16 +49,19 @@ import humanfirst
 @click.option('-s', '--startisodate', type=str, default='', help='Date range to extract conversations from')
 @click.option('-e', '--endisodate', type=str, default='', help='Date range to extract conversations from')
 @click.option('-q', '--quit_after_pages', type=int, default=0, help='Specify the number of pages to quit after')
+@click.option('-t', '--confidence_threshold', type=float, default=0.4, help='Confidence threshold = 0.0 to 1.0')
 @click.option('-d', '--debug', is_flag=True, default=False, help='Debug')
 @click.option('-l','--delimiter',type=str,default="-",help='Intent name delimiter')
 def main(username: str, password: str, output_filedir: str,
          namespace: bool, playbook: str,
          convsetsource: str, searchtext: str, startisodate: str,
-         endisodate: str, quit_after_pages: int, debug: bool, delimiter: str):
+         endisodate: str, quit_after_pages: int,
+         debug: bool, delimiter: str, confidence_threshold: float):
     '''Main function'''
     write_coverage_csv(username, password, namespace, playbook,
                        convsetsource, searchtext, startisodate, endisodate, delimiter=delimiter,
-                       quit_after_pages=quit_after_pages, debug=debug, output_filedir=output_filedir)
+                       quit_after_pages=quit_after_pages, debug=debug,
+                       confidence_threshold=confidence_threshold, output_filedir=output_filedir)
 
 
 def write_coverage_csv(username: str,
@@ -68,6 +74,7 @@ def write_coverage_csv(username: str,
                        endisodate: str,
                        delimiter: str,
                        output_filedir: str,
+                       confidence_threshold: float,
                        separator: str = ',',
                        page_size: int = 50,
                        quit_after_pages: int = 0,
@@ -95,6 +102,10 @@ def write_coverage_csv(username: str,
     print(df)
     print(f'Wrote to: {output_file_uri}')
 
+    df_client = copy.deepcopy(df.loc[df["role"]=="client"]).reset_index(drop=True)
+    total_client_utterance = df_client.shape[0]
+    utt_above_threshold_count = df_client.loc[df_client["score"] >= confidence_threshold].shape[0]
+    print(f"Coverage is {round((utt_above_threshold_count/total_client_utterance)*100,2)}%")
 
 def get_conversationset_df(
         hf_api : humanfirst.apis.HFAPI,
