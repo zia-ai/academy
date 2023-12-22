@@ -8,6 +8,7 @@ Set HF_USERNAME and HF_PASSWORD as environment variables
 # standard imports
 import json
 import copy
+from os.path import isdir, join
 
 # third part imports
 import pandas
@@ -21,6 +22,8 @@ import humanfirst
 @click.option('-p', '--password', type=str, default='',
               help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
+@click.option('-o', '--output_filedir', type=str, required=True,
+              help='Ouput file directory. The result gets stored in this directory')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-c', '--convsetsource', type=str, default='', help='Filter results by a certain conversationset')
 @click.option('-x', '--searchtext', type=str, default='', help='text to search for in conversations')
@@ -29,13 +32,14 @@ import humanfirst
 @click.option('-q', '--quit_after_pages', type=int, default=0, help='Specify the number of pages to quit after')
 @click.option('-d', '--debug', is_flag=True, default=False, help='Debug')
 @click.option('-l','--delimiter',type=str,default="-",help='Intent name delimiter')
-def main(username: str, password: str, namespace: bool, playbook: str,
+def main(username: str, password: str, output_filedir: str,
+         namespace: bool, playbook: str,
          convsetsource: str, searchtext: str, startisodate: str,
          endisodate: str, quit_after_pages: int, debug: bool, delimiter: str):
     '''Main function'''
     write_coverage_csv(username, password, namespace, playbook,
                        convsetsource, searchtext, startisodate, endisodate, delimiter=delimiter,
-                       quit_after_pages=quit_after_pages, debug=debug)
+                       quit_after_pages=quit_after_pages, debug=debug, output_filedir=output_filedir)
 
 
 def write_coverage_csv(username: str,
@@ -47,7 +51,7 @@ def write_coverage_csv(username: str,
                        startisodate: str,
                        endisodate: str,
                        delimiter: str,
-                       output_path: str = './data',
+                       output_filedir: str,
                        separator: str = ',',
                        page_size: int = 50,
                        quit_after_pages: int = 0,
@@ -56,6 +60,9 @@ def write_coverage_csv(username: str,
     inferred from the provided playbook then write a csv containing prediction data to the path provided with the
     separator provided'''
 
+    if not isdir(output_filedir):
+        raise RuntimeError(f"Provied output directory {output_filedir} does not exists")
+
     hf_api = humanfirst.apis.HFAPI(username=username, password=password)
     playbook_dict = hf_api.get_playbook(namespace, playbook)
 
@@ -63,13 +70,10 @@ def write_coverage_csv(username: str,
                                 searchtext, startisodate, endisodate, playbook_dict, delimiter,
                                 page_size=page_size, quit_after_pages=quit_after_pages, debug=debug)
 
-    if not output_path.endswith('/'):
-        output_path = output_path + '/'
-
     workspace_name = str(playbook_dict["name"]).replace(" ","_")
     workspace_name = workspace_name.replace("-","_")
 
-    output_file_uri = f'{output_path}{workspace_name}.csv'
+    output_file_uri = join(output_filedir,f'{workspace_name}.csv')
 
     df.to_csv(output_file_uri, sep=separator, encoding="utf8", index=False)
     print(df)
@@ -108,9 +112,12 @@ def get_conversationset_df(
         convsetsource=convsetsource,
         page_size=page_size
     )
-    # with open("./data/testing_coverage_123.json",mode="w",encoding="utf8") as fileobj:
+
+    # helps in anl;aysing trhe response and debug the query endpoint
+    # with open("./data/testing_coverage.json",mode="w",encoding="utf8") as fileobj:
     #     json.dump(response_json,fileobj,indent=2)
     # quit()
+
     results = extract_results(
         results, intent_name_index, response_json, debug=debug)
     assert isinstance(response_json, dict)
@@ -173,8 +180,11 @@ def extract_results(results: list, intent_name_index: dict, response_json, debug
             try:
                 if "value" in result["annotatedConversation"]["conversation"]["inputs"][i].keys():
                     conv_obj["utterance"] = result["annotatedConversation"]["conversation"]["inputs"][i]["value"]
+                    conv_obj["utterance_created_at"] = result[
+                        "annotatedConversation"]["conversation"]["inputs"][i]["createdAt"]
                 else:
                     conv_obj["utterance"] = ""
+                    conv_obj["utterance_created_at"] = ""
                 conv_obj["role"] = result["annotatedConversation"]["conversation"]["inputs"][i]["source"]
                 if "matches" in result["annotatedConversation"]["annotations"]["inputs_intents"]["inputs"][i].keys():
                     conv_obj["intent_id"] = result["annotatedConversation"]["annotations"]["inputs_intents"]["inputs"][i]["matches"][0]["intentId"] # pylint: disable=line-too-long
