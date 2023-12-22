@@ -1,6 +1,22 @@
 """
 python coverage.py
 
+Pre-requisite:
+Have a trained playbook with a dataset linked to it.
+
+This script uses QueryConversations endpoint to get the processed data in the HF data pipeline
+From the response, it extracts the follwoing information:
+    convoid : conversation ID
+    conv_created_at: time at which the conversation was started
+    conv_updated_at: time at which the conversation was llast updated
+    utterance: utterance text
+    utterance_created_at: time at which the utterance was created
+    role: either client or expert
+    intent_id: Predicted intent ID
+    score: Confidence score
+    intent: intent name
+    seq: utterance sequence number in a conversation - 0 to n-1
+
 Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *****************************************************************************
