@@ -80,7 +80,16 @@ def main(input_filepath: str, summaries_dir: str, workspaces_dir: str, clientsuf
         example_id = example["id"]
         assert isinstance(example_id, str)
         example_id = example_id.split('-')[1]
-        example["metadata"][metadata_name] = df.loc[example_id,metadata_name]
+        try:
+            example["metadata"][metadata_name] = df.loc[example_id,metadata_name]
+        except KeyError as e:
+            print("Working through example:")
+            print(example)
+            print(f"Couldn't find example_id: {example_id}")
+            print(f"In this dataframe:")
+            print(df)
+            print(e)
+            quit()
 
 
     # work out a file name
