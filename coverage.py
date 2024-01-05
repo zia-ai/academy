@@ -140,7 +140,7 @@ def get_conversationset_df(
         page_size=page_size
     )
 
-    # helps in anl;aysing trhe response and debug the query endpoint
+    # helps in analysing the response and debug the query endpoint
     # with open("./data/testing_coverage.json",mode="w",encoding="utf8") as fileobj:
     #     json.dump(response_json,fileobj,indent=2)
     # quit()
