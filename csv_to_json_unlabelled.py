@@ -40,7 +40,8 @@ import humanfirst
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert"')
 @click.option('-e', '--encoding', type=str, required=False, default='utf8',
               help='Input CSV encoding')
-@click.option('--filtering', type=str, required=False, default='', help='column:value,column:value;column:value,column:value')
+@click.option('--filtering', type=str, required=False, default='',
+              help='column:value,column:value;column:value,column:value')
 @click.option('-h', '--striphtml', is_flag=True, default=False,
               help='Whether to strip html tags from the utterance col')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
