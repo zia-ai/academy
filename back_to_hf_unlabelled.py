@@ -1,16 +1,24 @@
-#!/usr/bin/env python # pylint: disable=missing-module-docstring
-# -*- coding: utf-8 -*-
-# *********************************************************************************************************************
-#
-# python back_to_hf.py
-# This script demonstrates
-# - Reading a unlabelled json as dataframe
-# - Addition of 3 new columns
-# - Providing 2 newly created columns as metadata to the back_to_hf function
-# - The back_to_hf function ignores the newly created column that is not available in the metadata list
-#   and produces the HF formatted json file
-#
-# *********************************************************************************************************************
+"""
+python back_to_hf.py
+
+This script demonstrates how to convert a dataframe created from unlabelled HF JSON back to HF JSON with addition of
+any newly created metadata.
+
+The back_to_hf function can be used in other scripts in order to convert dataframe read from HF JSON back to HF JSON
+back_to_hf accepts 3 args:
+  df: pandas.DataFrame
+  file_output: str
+  metadata_col: list
+If there isn't any newly created metadata, then the metadata column can be None or empty list
+
+Following is an demonstration of what this script does.
+- Reading unlabelled json as dataframe
+- Addition of 3 new columns
+- Providing 2 newly created columns as metadata to the back_to_hf function
+- The back_to_hf function ignores the newly created column that is not available in the metadata list
+  and produces the HF formatted json file
+"""
+# ******************************************************************************************************************120
 
 # standard imports
 import json
@@ -44,8 +52,11 @@ def main(filename: str) -> None:
                file_output=file_output,
                metadata_col=metadata_col_list)
 
-def back_to_hf(df: pandas.DataFrame, file_output: str, metadata_col: list):
+def back_to_hf(df: pandas.DataFrame, file_output: str, metadata_col: list = None):
     """Converts the data back to HumanFirst format"""
+
+    if metadata_col is None:
+        metadata_col = []
 
     df["id"] = df["id"].astype(str)
     df["text"] = df["text"].fillna("")

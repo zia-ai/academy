@@ -1,0 +1,136 @@
+"""
+tagging intents by using intent name as the search string
+
+Helps you to add/remove tag to intents in bunch where the name of the intents have a common substring.
+This script downloads the workspace and produces labelled HF JSON with the required intents tagged
+Then this HF JSON should be merged with the existing model in the GUI using the following steps
+    -> Import -> Model -> Upload an intent file -> Humanfirst JSON
+    -> Enable Merge intents by name, tags and entities -> Browse files
+    -> Choose the correct file and then upload
+
+Set HF_USERNAME and HF_PASSWORD as environment variables
+"""
+# ******************************************************************************************************************120
+
+# third part imports
+import click
+import humanfirst
+
+
+@click.command()
+@click.option('-d', '--delimiter', type=str, default="-",
+              help='Delimiter used in intent name')
+@click.option('-a', '--add_tag', type=str, default="",
+              help='Add tag names')
+@click.option('-d', '--delete_tag', type=str, default="",
+              help='Delete tag names')
+@click.option('-s', '--search_string', type=str, required=True,
+              help='search string in intent_name')
+@click.option('-u', '--username', type=str, default='',
+              help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='',
+              help='HumanFirst password if not setting HF_PASSWORD environment variable')
+@click.option('-n', '--namespace', type=str, required=True,
+              help='HumanFirst namespace')
+@click.option('-b', '--playbook', type=str, required=True,
+              help='HumanFirst playbook id')
+def main(delimiter: str, add_tag: str,
+         delete_tag: str, search_string: str,
+         username: str, password: str,
+         namespace: str, playbook: str):
+    '''Main function'''
+
+    if add_tag == "" and delete_tag == "":
+        error_msg = "Both add_tag and delete_tag are empty. Atleast one should be provided"
+        raise  RuntimeError(error_msg)
+
+    hf_api = humanfirst.apis.HFAPI(username=username, password=password)
+    playbook_dict = hf_api.get_playbook(namespace, playbook)
+    labelled_workspace = humanfirst.objects.HFWorkspace.from_json(playbook_dict,delimiter=delimiter)
+
+    if add_tag != "":
+        for idx,_ in labelled_workspace.tags.items():
+            if labelled_workspace.tags[idx].name == add_tag:
+                add_hf_tag =  labelled_workspace.tags[idx]
+                break
+        else:
+            add_hf_tag = labelled_workspace.tag(tag=add_tag)
+            hf_api.create_tag(namespace=namespace,
+                            playbook=playbook,
+                            tag_id=add_hf_tag.id,
+                            tag_name=add_hf_tag.name,
+                            tag_color=add_hf_tag.color)
+
+            msg1 = f"\'{add_hf_tag.name}\' is created for the playbook - \'{playbook}\'"
+            msg2 = f"in the namespace - \'{namespace}\'"
+            print(f"{msg1} {msg2}")
+    else:
+        add_hf_tag = labelled_workspace.tag(tag=add_tag)
+
+    # remove color from add_hf_tag
+    # this is beacuse the tags inside intent should have only the id and name
+    add_hf_tag = add_hf_tag.to_dict()
+    del add_hf_tag["color"]
+
+    for intent_name,_ in labelled_workspace.intents.items():
+        add_flag = 0
+        del_flag = 0
+        if intent_name.find(search_string) != -1:
+            # check if the tag is already present in the intent
+            intent_tags = labelled_workspace.intents[intent_name].tags
+            intent_tags_after_del = []
+            for _, intent_tag in enumerate(intent_tags):
+                intent_tag = intent_tag.to_dict()
+
+                # color peroperty should be removed from the tags inside intent property
+                # TODO: update humanfirst objects to not set the color property in the tags inside intent property
+                del intent_tag["color"]
+
+                if add_hf_tag["name"] != "":
+                    if intent_tag["name"] == add_hf_tag["name"]:
+                        print(f"\'{add_hf_tag['name']}\' tag is already present in the intent \'{intent_name}\'")
+                        add_flag = 1
+                else:
+                    add_flag = 1
+
+                if intent_tag["name"] == delete_tag:
+                    del_flag = 1
+                    continue
+
+                intent_tags_after_del.append(intent_tag)
+
+            labelled_workspace.intents[intent_name].tags = intent_tags_after_del
+
+            # case 1: delete tag is not present in any of the intents
+            if del_flag == 0 and delete_tag != "":
+                error_msg = f"{delete_tag} is not present in any of the intents"
+                raise RuntimeError(error_msg)
+
+            # case 2: either tags are deleted or added to the intents or both
+            elif add_flag == 0 or del_flag == 1:
+                # if del_flag is 1 then there exists an intent which has a tag that needs to be deleted
+                # if add_flag is 0 then there exists an intent to which a tag needs to be added
+                full_intent = {
+                    "id": labelled_workspace.intents[intent_name].id,
+                    "name": labelled_workspace.intents[intent_name].name,
+                    "tags": labelled_workspace.intents[intent_name].tags
+                }
+                if add_flag == 0:
+                    full_intent["tags"].append(add_hf_tag)
+                hf_api.update_intent(namespace=namespace,
+                                     playbook=playbook,
+                                     intent=full_intent,
+                                     update_mask="tags")
+                print(f"Tags are updated for the intent - {full_intent['name']}")
+
+            # case 3: tags are neither deleted nor added to the intents
+            elif add_flag == 1 and del_flag == 0:
+                raise RuntimeError(f"No addition or deletion of tags to the intents with substring - {search_string}")
+
+            # case 4: Unknown case
+            else:
+                raise RuntimeError("Unknown case")
+
+
+if __name__ == '__main__':
+    main()  # pylint: disable=no-value-for-parameter
