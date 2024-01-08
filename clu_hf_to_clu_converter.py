@@ -1,5 +1,5 @@
 """
-python clu_converter.py
+python clu_hf_to_clu_converter.py
 --filename <input_hf_workspace.json>
 --target _filename <clu_project_file.json>
 --language [Optional] en-us default
@@ -8,7 +8,7 @@ Merges HF training data in an existing CLU project json.
 Wipes all intents/utterances and replaces with HF data
 entities not implemented yet
 leaves all the project metdata from CLU untouched
-assumes all data is "Train" data.
+assumes all data is "Train" data unless a "Test" flag present
 
 """
 # *********************************************************************************************************************
@@ -61,15 +61,29 @@ def main(filename: str,
     # get a HFWorkspace object to get fully qualified intent names
     hf_workspace = humanfirst.objects.HFWorkspace.from_json(hf_json,delimiter)
 
+    # get the tag for Test dataset
+    test_tag_id = None
+    found = False
+    for tag in hf_json["tags"]:
+        if tag["name"] == "Test":
+            found = True
+            test_tag_id = tag["id"]
+            break
+    if found:
+        print(f'Found test_tag_id: {test_tag_id}\n')
+    else:
+        print(f'No test_tag_id found.\n')
+
     # examples section
     df_examples = pandas.json_normalize(hf_json["examples"])
-    df_examples["clu_utterance"] = df_examples.apply(utterance_mapper,args=[language,hf_workspace],axis=1)
+    print(df_examples)
+    df_examples["clu_utterance"] = df_examples.apply(utterance_mapper,args=[language,hf_workspace,test_tag_id],axis=1)
     # TODO: this to me looks like it should overwrite the whole of utterances
     # not sure anything is surviging - is it CLU/PVA doing it or is the json wrong?
     clu_json["utterances"] = df_examples["clu_utterance"].to_list()
 
     # find any intents that were in utterances
-    # this avoids creating any partents, but also doesn't create empty children
+    # this avoids creating any parents, but also doesn't create empty children
     clu_intent_names = set()
     for clu_utterance in clu_json["utterances"]:
         clu_intent_names.add(clu_utterance["intent"])
@@ -86,7 +100,7 @@ def main(filename: str,
     # TODO: These indent commands control output - suggest parameterising them with click
     # as arguements passed into the main function, then putting that variable.
     # click will let you set a default of 4 and then  you can override it on the command line
-    json.dump(clu_json,output_file_obj,indent=2)
+    json.dump(clu_json,output_file_obj,indent=4)
     print(f'Wrote to {output_file_name}')
 
 def intent_mapper(intent_name: str) -> dict:
@@ -97,9 +111,12 @@ def intent_mapper(intent_name: str) -> dict:
         "category": intent_name
     }
 
-def utterance_mapper(row: pandas.Series, language: str, hf_workspace: humanfirst.objects.HFWorkspace) -> dict:
+def utterance_mapper(row: pandas.Series, language: str, hf_workspace: humanfirst.objects.HFWorkspace, test_tag_id: str) -> dict:
     """Returns a clu_utterance as a dict with the language set to that passed
     and the fully qualified intent name of the id in humanfirst"""
+    intent_name = hf_workspace.get_fully_qualified_intent_name(row["intents"][0]["intent_id"])
+    if len(intent_name) > 50:
+        raise RuntimeError(f'intent name length of {len(intent_name)} exceeds 50 chars.  {intent_name}')
     return {
         "text": row["text"],
         "language": language,
