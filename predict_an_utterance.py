@@ -17,6 +17,7 @@ HF_BEARER=`zia auth print-access-token`
 
 python predict_utterance.py --bearer $HF_BEARER -i "Utterance"
 
+Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # *****************************************************************************
 
@@ -30,11 +31,12 @@ import humanfirst
 
 @click.command()
 @click.option('-i','--input_uttr',type=str,required=True,help='Input utterance')
-@click.option('-u', '--username', type=str, default='', help='HumanFirst username if not providing bearer token')
-@click.option('-p', '--password', type=str, default='', help='HumanFirst password if not providing bearer token')
+@click.option('-u', '--username', type=str, default='',
+              help='HumanFirst username if not setting HF_USERNAME environment variable')
+@click.option('-p', '--password', type=str, default='',
+              help='HumanFirst password if not setting HF_PASSWORD environment variable')
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
-@click.option('-t', '--bearertoken', type=str, default='', help='Bearer token to authorise with')
 @click.option('-v', '--verbose',is_flag=True,default=False,help='Increase logging level')
 @click.option('-m', '--maxresults',type=int,default=3,help='Maximum number of classes per utterance to display')
 @click.option('-d', '--model_id',type=str,default=None,help='modelId of a specific model to query')
@@ -44,7 +46,6 @@ def main(input_uttr: str,
          password: int,
          namespace: bool,
          playbook: str,
-         bearertoken: str,
          verbose: bool,
          maxresults: int,
          model_id: str,
@@ -52,10 +53,10 @@ def main(input_uttr: str,
     """Main Function"""
 
     # do authorisation
-    headers = humanfirst.apis.process_auth(bearertoken=bearertoken,username=username,password=password)
+    hf_api = humanfirst.apis.HFAPI(username=username,password=password)
 
     # get the prediction
-    response_dict = humanfirst.apis.predict(headers, input_uttr, namespace, playbook, model_id, revision_id)
+    response_dict = hf_api.predict(input_uttr, namespace, playbook, model_id, revision_id)
 
     print("")
     print(f'Predict end point matches returned: {len(response_dict["matches"])}')
@@ -64,17 +65,16 @@ def main(input_uttr: str,
     print(f'modelId:    {response_dict["modelId"]}')
     print(f'revisionId: {response_dict["revisionId"]}')
 
-    # print(json.dumps(humanfirst.apis.get_revisions(headers,namespace,playbook),indent=2))
-    # print(json.dumps(humanfirst.apis.get_nlu_engine(headers,
-    #                                                 namespace,
-    #                                                 playbook,
-    #                                                 nlu_id="nlu-RGS26OMK55H3ZKGSAMSBAKC6"),
-    #                                                 indent=2))
+    # print(json.dumps(hf_api.get_revisions(namespace,playbook),indent=2))
+    # print(json.dumps(hf_api.get_nlu_engine(namespace,
+    #                                        playbook,
+    #                                        nlu_id="nlu-RGS26OMK55H3ZKGSAMSBAKC6"),
+    #                                        indent=2))
 
     # cycle through the intents returned and also retreive metadata and display
     i =0
     for intent in response_dict['matches']:
-        intent_full = humanfirst.apis.get_intent(headers, namespace, playbook, intent['id'])
+        intent_full = hf_api.get_intent(namespace, playbook, intent['id'])
         if i >= maxresults:
             break
         metadata = {}
