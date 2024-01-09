@@ -19,6 +19,7 @@ import warnings
 
 # 3rd party imports
 import pandas
+import numpy
 import click
 
 # custom imports
@@ -44,7 +45,8 @@ TEST="Test"
 def main(filename: str,
          target_filename: str,
          language: str,
-         delimiter: str) -> None:
+         delimiter: str,
+         indent: str) -> None:
     """Main Function"""
 
     # verify the input files look like json
@@ -102,7 +104,7 @@ def main(filename: str,
     # write output verion
     output_file_name = target_filename.replace(".json","_output.json")
     output_file_obj = open(output_file_name,mode='w',encoding='utf8')
-    json.dump(clu_json,output_file_obj,indent=4)
+    json.dump(clu_json,output_file_obj,indent=indent)
     print(f'Wrote to {output_file_name}')
 
 def intent_mapper(intent_name: str) -> dict:
@@ -131,8 +133,10 @@ def utterance_mapper(row: pandas.Series,
                     print("Found")
                     dataset = TEST
                     break
+        elif pandas.isna(row["tags"]):
+            pass
         else:
-            warnings.warn(f'Found utterance with tags not list: {row}')
+            warnings.warn(f'Found utterance with tags not list or Na: {row}')
 
     intent_name = hf_workspace.get_fully_qualified_intent_name(row["intents"][0]["intent_id"])
     if len(intent_name) > 50:
