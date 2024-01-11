@@ -170,7 +170,6 @@ def entity_mapper(hf_entity: dict, language: str) -> dict:
 
         # fill values with values
         for synonym in hf_key_value_object["synonyms"]:
-            print(f'j: {j}')
             clu_sublist_object["synonyms"][0]["values"].append(synonym["value"])
 
         # insert sublist into entity
