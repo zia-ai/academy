@@ -16,6 +16,7 @@ assumes all data is "Train" data unless a "Test" flag present
 # standard imports
 import json
 import warnings
+import copy
 
 # 3rd party imports
 import pandas
@@ -42,11 +43,14 @@ TEST="Test"
               help='Delimiter for intent hierarchy')
 @click.option('-i', '--indent', type=int, required=False, default='4',
               help='Indentation for output json default = 4')
+@click.option('-s', '--skip', is_flag=True, required=False, default=False,
+              help='Skip name length checks')
 def main(filename: str,
          target_filename: str,
          language: str,
          delimiter: str,
-         indent: str) -> None:
+         indent: str,
+         skip: bool) -> None:
     """Main Function"""
 
     # verify the input files look like json
@@ -86,7 +90,7 @@ def main(filename: str,
     # examples section
     df_examples = pandas.json_normalize(hf_json["examples"])
     print(df_examples)
-    df_examples["clu_utterance"] = df_examples.apply(utterance_mapper,args=[language,hf_workspace,test_tag_id],axis=1)
+    df_examples["clu_utterance"] = df_examples.apply(utterance_mapper,args=[language,hf_workspace,test_tag_id,skip],axis=1)
     clu_json["utterances"] = df_examples["clu_utterance"].to_list()
 
     # find any intents that were in utterances
@@ -100,6 +104,20 @@ def main(filename: str,
         clu_intents.append(intent_mapper(intent_name))
     #
     clu_json["assets"]["intents"] = clu_intents
+
+    # entities
+    for hf_entity in hf_json["entities"]:
+        # search to see if exists
+        found_entity = False
+        for i,clu_entity in enumerate(clu_json["assets"]["entities"]):
+            # if found replace
+            if clu_entity["category"] == hf_entity["name"]:
+                found_entity = True
+                clu_json["assets"]["entities"][i] = entity_mapper(hf_entity,language)
+                break
+        # if not append
+        if not found_entity:
+            clu_json["assets"]["entities"].append(entity_mapper(hf_entity,language))
 
     # write output verion
     output_file_name = target_filename.replace(".json","_output.json")
@@ -115,10 +133,57 @@ def intent_mapper(intent_name: str) -> dict:
         "category": intent_name
     }
 
+def entity_mapper(hf_entity: dict, language: str) -> dict:
+    """converts hf entity format to clu entity format"""
+    # known_entity_key_types = ["prebuilts","list","requiredComponents"]
+    # script_supported_types = ["list"]
+
+    # check type and skip if unknown
+    # known_entity = False
+    # for entity_type in known_entity_key_types:
+    #     if entity_type in entity:
+    #         known_entity = True
+    # if not known_entity:
+    #     warnings.warn(f'Unknown entity type keys are: {entity.keys()}')
+    #     continue:
+
+    # build entity object
+    clu_entity_object = {
+        "category": hf_entity["name"],
+        "compositionSetting": "combineComponents",
+        "list": {
+            "sublists": []
+        }
+    }
+
+    # fill list with key values
+    for hf_key_value_object in hf_entity["values"]:
+        clu_sublist_object = {
+            "listKey": hf_key_value_object["key_value"],
+            "synonyms": [
+                {
+                    "language": language,
+                    "values": []
+                }
+            ]
+        }
+
+        # fill values with values
+        for synonym in hf_key_value_object["synonyms"]:
+            clu_sublist_object["synonyms"][0]["values"].append(synonym["value"])
+
+        # insert sublist into entity
+        clu_entity_object["list"]["sublists"].append(copy.deepcopy(clu_sublist_object))
+
+    # return copy of entity
+    return copy.deepcopy(clu_entity_object)
+
+
 def utterance_mapper(row: pandas.Series,
                      language: str,
                      hf_workspace: humanfirst.objects.HFWorkspace,
-                     test_tag_id: str) -> dict:
+                     test_tag_id: str,
+                     skip: bool) -> dict:
     """Returns a clu_utterance as a dict with the language set to that passed
     and the fully qualified intent name of the id in humanfirst"
     if the utterance is labelled as Test in HF this will be
@@ -140,7 +205,8 @@ def utterance_mapper(row: pandas.Series,
 
     intent_name = hf_workspace.get_fully_qualified_intent_name(row["intents"][0]["intent_id"])
     if len(intent_name) > 50:
-        raise RuntimeError(f'intent name length of {len(intent_name)} exceeds 50 chars.  {intent_name}')
+        if not skip:
+            raise RuntimeError(f'intent name length of {len(intent_name)} exceeds 50 chars.  {intent_name}')
     return {
         "text": row["text"],
         "language": language,
