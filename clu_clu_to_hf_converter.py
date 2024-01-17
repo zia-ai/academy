@@ -70,9 +70,11 @@ def main(filename: str,
     # make Train and Test consistent colours
     color_mapper = {
         "Train": "#C3E2C2", # a pastel green for Train
-        "Test": "#7ec4e6" # a pastel blue for Test ame color as test-regresion in Academy Ex04
+        "Test": "#7ec4e6", # a pastel blue for Test ame color as test-regresion in Academy Ex04
     }
     for tag in tags:
+        if pandas.isna(tag):
+            continue
         try:
             color = color_mapper[tag]
         except KeyError:
@@ -184,11 +186,17 @@ def utterance_mapper(row: pandas.Series,
     and the fully qualified intent name of the id in humanfirst"""
     fully_qualified_intent_name = str(row["intent"])
     intent_hierarchy = fully_qualified_intent_name.split(delimiter)
+    try:
+        tag_name = row["dataset"]
+        if pandas.isna(tag_name):
+            tag_name = "Train"
+    except KeyError:
+        tag_name = "Train"
     hf_workspace.example(
         row["text"],
         intents=[hf_workspace.intent(intent_hierarchy)],
         created_at=created_at,
-        tags=[{"id": hf_workspace.tag(row["dataset"]).id }]
+        tags=[{"id": hf_workspace.tag(tag_name).id }]
     )
 
 if __name__ == '__main__':
