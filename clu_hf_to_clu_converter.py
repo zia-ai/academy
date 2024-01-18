@@ -91,12 +91,12 @@ def main(filename: str,
     df_examples = pandas.json_normalize(hf_json["examples"])
     print(df_examples)
     df_examples["clu_utterance"] = df_examples.apply(utterance_mapper,args=[language,hf_workspace,test_tag_id,skip],axis=1)
-    clu_json["utterances"] = df_examples["clu_utterance"].to_list()
+    clu_json["assets"]["utterances"] = df_examples["clu_utterance"].to_list()
 
     # find any intents that were in utterances
     # this avoids creating any parents, but also doesn't create empty children
     clu_intent_names = set()
-    for clu_utterance in clu_json["utterances"]:
+    for clu_utterance in clu_json["assets"]["utterances"]:
         clu_intent_names.add(clu_utterance["intent"])
     # set to list
     clu_intents = []
