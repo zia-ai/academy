@@ -1,0 +1,129 @@
+The following is a summary of an email chain from the U.S Department of State which has been unclassified.
+
+{{ text }}
+
+Based on this summary please respond with the summary rewritten to remove any quotes or commas, then a comma, followed by the best fitting category from the following list:
+
+Government and Politics
+Government and Politics/International Relations
+Government and Politics/U.S. Department of State
+Government and Politics/Foreign Policy
+Government and Politics/International Security
+Government and Politics/Elections
+Government and Politics/Military and Defense
+Government and Politics/Political Campaigns
+Government and Politics/Government Officials
+Scheduling and Meetings
+Scheduling and Meetings/Meetings Coordination
+Scheduling and Meetings/Event Attendance
+Scheduling and Meetings/International Calls
+Scheduling and Meetings/Appointments
+Legislation and Policy
+Legislation and Policy/Domestic Policy
+Legislation and Policy/International Policy
+Legislation and Policy/Human Rights
+Legislation and Policy/Conflict and Crisis Management
+Legislation and Policy/Economic Policy
+Legislation and Policy/Security Policy
+Legislation and Policy/Health Policy
+Legislation and Policy/Environmental Policy
+Diplomacy
+Diplomacy/Diplomatic Engagements
+Diplomacy/Foreign Ministers Communication
+Diplomacy/Strategic Alliances
+Diplomacy/Cultural Diplomacy
+Diplomacy/International Summits
+Diplomacy/Conflict Resolution
+Communications and Media
+Communications and Media/Public Relations
+Communications and Media/Media Criticism
+Communications and Media/Internal Communications
+Communications and Media/Media Coverage
+Events and Speeches
+Events and Speeches/Event Planning
+Events and Speeches/Speech Writing
+Events and Speeches/Public Events
+Events and Speeches/Private Events
+Health and Safety
+Health and Safety/Public Health
+Health and Safety/Health Infrastructure
+Health and Safety/Women's Health
+Health and Safety/Safety Standards
+Development and Aid
+Development and Aid/Humanitarian Aid
+Development and Aid/Foreign Aid
+Development and Aid/International Development
+Development and Aid/Economic Development
+Legal and Judicial Issues
+Legal and Judicial Issues/International Law
+Legal and Judicial Issues/Legal Proceedings
+Legal and Judicial Issues/Judicial Decisions
+Security
+Security/National Security
+Security/Border Security
+Security/Conflict Minerals
+Security/Counterterrorism
+Humanitarian Issues
+Humanitarian Issues/Disaster Response
+Humanitarian Issues/Refugee Support
+Humanitarian Issues/Human Trafficking
+Humanitarian Issues/Cholera Outbreaks
+Science and Technology
+Science and Technology/Innovations in Aid
+Science and Technology/Remote Access Technology
+Social Issues
+Social Issues/Human Rights Violations
+Social Issues/Child Labor
+Social Issues/Child Welfare
+Social Issues/Anti-Gay Legislation
+Personal Correspondence
+Personal Correspondence/New Year Greetings
+Personal Correspondence/Mother's Day Wishes
+Personal Correspondence/Appreciation Notes
+Ceremonies and Celebrations
+Ceremonies and Celebrations/Dinners and Luncheons
+Ceremonies and Celebrations/Graduations
+Ceremonies and Celebrations/Retirement
+Ceremonies and Celebrations/Holiday Observances
+Military and Warfare
+Military and Warfare/Military Strategy
+Military and Warfare/War Efforts
+Military and Warfare/Peacekeeping Operations
+Economic Issues
+Economic Issues/Financial Crises
+Economic Issues/Economic Sanctions
+Economic Issues/Economic Cooperation
+Environmental Issues
+Environmental Issues/Climate Change
+Environmental Issues/Environmental Agreements
+Cultural Affairs
+Cultural Affairs/Museum Partnerships
+Cultural Affairs/Art Projects
+Public Health and Safety
+Public Health and Safety/Epidemics and Pandemics
+Public Health and Safety/Healthcare Policies
+Public Health and Safety/Hospital Infrastructure
+Infrastructure
+Infrastructure/Energy Infrastructure
+Infrastructure/Port Development
+Infrastructure/National Projects
+Education and Youth
+Education and Youth/Educational Programs
+Education and Youth/Youth Outreach
+Employment and Labor
+Employment and Labor/Job Creation
+Employment and Labor/Workplace Policies
+Transportation and Travel
+Transportation and Travel/Travel Coordination
+Transportation and Travel/Flight Arrangements
+International Commerce
+International Commerce/Trade Agreements
+International Commerce/Economic Partnerships
+Philanthropy and Fundraising
+Philanthropy and Fundraising/Donor Engagement
+Philanthropy and Fundraising/Public Awareness Campaigns
+Miscellaneous
+Miscellaneous/Memorabilia and Gifts
+Miscellaneous/General Inquiries
+Other/OTHER
+Other/NOT_ENOUGH_INFORMATION
