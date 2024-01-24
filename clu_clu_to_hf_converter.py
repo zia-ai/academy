@@ -182,8 +182,7 @@ def utterance_mapper(row: pandas.Series,
                      hf_workspace: humanfirst.objects.HFWorkspace,
                      created_at: datetime.datetime,
                      delimiter: str) -> None:
-    """Returns a clu_utterance as a dict with the language set to that passed
-    and the fully qualified intent name of the id in humanfirst"""
+    """Builds HF example"""
     fully_qualified_intent_name = str(row["intent"])
     intent_hierarchy = fully_qualified_intent_name.split(delimiter)
     try:
