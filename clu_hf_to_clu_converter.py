@@ -6,7 +6,7 @@ python clu_hf_to_clu_converter.py
 
 Merges HF training data in an existing CLU project json.
 Wipes all intents/utterances and replaces with HF data
-entities not implemented yet
+entities implemented only for list type
 leaves all the project metdata from CLU untouched
 assumes all data is "Train" data unless a "Test" flag present
 
@@ -20,7 +20,6 @@ import copy
 
 # 3rd party imports
 import pandas
-import numpy
 import click
 
 # custom imports
@@ -90,7 +89,9 @@ def main(filename: str,
     # examples section
     df_examples = pandas.json_normalize(hf_json["examples"])
     print(df_examples)
-    df_examples["clu_utterance"] = df_examples.apply(utterance_mapper,args=[language,hf_workspace,test_tag_id,skip],axis=1)
+    df_examples["clu_utterance"] = df_examples.apply(utterance_mapper,
+                                                     args=[language,hf_workspace,test_tag_id,skip],
+                                                     axis=1)
     clu_json["assets"]["utterances"] = df_examples["clu_utterance"].to_list()
 
     # find any intents that were in utterances
@@ -185,8 +186,8 @@ def utterance_mapper(row: pandas.Series,
                      test_tag_id: str,
                      skip: bool) -> dict:
     """Returns a clu_utterance as a dict with the language set to that passed
-    and the fully qualified intent name of the id in humanfirst"
-    if the utterance is labelled as Test in HF this will be
+    and the fully qualified intent name of the id in humanfirst
+    if the utterance is tagged as Test in HF this will be
     put in test data set"""
 
     # Check fit the data is labelled Train/Test - all with no labels will be Train
