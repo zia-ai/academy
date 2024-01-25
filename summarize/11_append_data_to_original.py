@@ -24,23 +24,34 @@ JSON_END = '```'
 @click.option('-s', '--summaries_dir', type=str, required=True, help='Summaries input file path')
 @click.option('-c', '--column_target_name', type=str, required=True, help='Column name to add to original')
 @click.option('-f', '--filter_json', is_flag=True, required=False, default=False, help='Whether to extract json')
+@click.option('-g', '--index_is_integer', is_flag=True, required=False,
+              default=False, help='If index column is an integer')
 def main(jointo:str,
          index_col: str,
          summaries_dir: str,
          column_target_name: str,
-         filter_json: bool):
+         filter_json: bool,
+         index_is_integer: bool):
     '''Main function'''
 
     # read original workspace
-    if jointo.endswith(".xslx"):
-        df = pandas.read_excel(jointo)
+    if jointo.endswith(".xlsx"):
+        print("XLSX mode")
+        df = pandas.read_excel(jointo,dtype=str)
         output_file_name = jointo.replace(".xlsx","_output.csv")
     elif jointo.endswith(".csv"):
-        df = pandas.read_csv(jointo,encoding='utf8')
+        print("CSV mode")
+        df = pandas.read_csv(jointo,encoding='utf8',dtype=str)
         output_file_name = jointo.replace(".csv","_output.csv")
     else:
         raise RuntimeError(f"Unsupported file type {jointo}")
+    if index_is_integer:
+        df = df[~df[index_col].isna()]
+        print(df[index_col].unique())
+        df[index_col] = pandas.to_numeric(df[index_col])
+
     df.set_index(index_col,inplace=True,drop=True)
+    df.sort_index(inplace=True)
 
     # read summaries
     assert os.path.isdir(summaries_dir)
@@ -80,16 +91,22 @@ def main(jointo:str,
                 summaries.append(text)
             file.close()
 
-
-
     # turn that into new dataframe
     if filter_json:
-        df_newdata = pandas.DataFrame(zip(summaries,explanations),
-                                      index=completed_ids,
-                                      columns=[column_target_name,f'{column_target_name}_explanation'])
+        df_newdata = pandas.DataFrame(zip(completed_ids,summaries,explanations),
+                                      columns=[index_col,column_target_name,f'{column_target_name}_explanation'])
     else:
-        df_newdata = pandas.DataFrame(summaries,index=completed_ids,columns=[column_target_name])
+        df_newdata = pandas.DataFrame(zip(completed_ids,summaries),columns=[index_col,column_target_name])
+        print(df)
+    if index_is_integer:
+        df_newdata[index_col] = pandas.to_numeric(df_newdata[index_col])
+        df_newdata.set_index(index_col,inplace=True)
+        df_newdata.sort_index(inplace=True)
+    print("NEWDATA:")
     print(df_newdata)
+
+    print("EXISTING_DATA:")
+    print(df)
 
     # join that to original
     df = df.join(df_newdata)
