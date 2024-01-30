@@ -29,6 +29,14 @@ def main(path: str, delimiter: str):
             metadata_keys.remove("body")
             metadata_keys=",".join(metadata_keys)
 
+            named_people = set(df["creator_name"].unique().tolist())
+            role_mapper = ''
+            for name in named_people:
+                role_mapper = role_mapper + f'{name}:expert,'
+            role_mapper = role_mapper + '*:client'
+
+
+
             csv_to_json_unlabelled.process(
                 filename=os.path.join(path,file_name),
                 metadata_keys=metadata_keys,
