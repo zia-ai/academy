@@ -90,6 +90,8 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     df['role'] = 'client'
 
     print(df)
+    print(df["type"].unique())
+    print(df.columns)
 
     # filtering
     if filtering != '':
@@ -110,6 +112,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
             assert isinstance(filtering, dict)
             df_filt = deepcopy(df)
             for key, value in filtering.items():
+                print(df["type"].unique())
                 df_filt = df_filt[df_filt[key] == value]
             df_filter.append(df_filt)
             print("\n")
