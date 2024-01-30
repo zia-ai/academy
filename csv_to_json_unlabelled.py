@@ -49,6 +49,14 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          role_mapper: str, encoding: str, filtering: str, striphtml: bool) -> None:
     """Main Function"""
 
+    process(filename, metadata_keys, utterance_col, delimiter,
+         convo_id_col, created_at_col, unix_date, role_col,
+         role_mapper, encoding, filtering, striphtml)
+
+def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
+         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool) -> None:
+
     excel = False
     if filename.endswith('.xlsx'):
         print("Processing excel")
