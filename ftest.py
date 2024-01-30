@@ -3,10 +3,14 @@ ftest.py
 """
 # ******************************************************************************************************************120
 
+# standard imports
+import os
+
 # 3rd party imports
 import click
 import pandas
-import os
+
+# custom imports
 import csv_to_json_unlabelled
 
 @click.command()
@@ -14,7 +18,6 @@ import csv_to_json_unlabelled
 @click.option('-d', '--delimiter', type=str, default='',help="file to read")
 def main(path: str, delimiter: str):
     """Main Function"""
-
 
     assert os.path.isdir(path)
     list_filenames = os.listdir(path)
