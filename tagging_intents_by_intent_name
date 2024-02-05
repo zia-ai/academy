@@ -40,6 +40,10 @@ def main(delimiter: str, add_tag: str,
          namespace: str, playbook: str):
     '''Main function'''
 
+    if search_string == "":
+        error_msg = "Search string should not be empty"
+        raise RuntimeError(error_msg)
+
     if add_tag == "" and delete_tag == "":
         error_msg = "Both add_tag and delete_tag are empty. Atleast one should be provided"
         raise  RuntimeError(error_msg)
@@ -54,7 +58,7 @@ def main(delimiter: str, add_tag: str,
                 add_hf_tag =  labelled_workspace.tags[idx]
                 break
         else:
-            add_hf_tag = labelled_workspace.tag(tag=add_tag)
+            add_hf_tag = labelled_workspace.tag(tag=add_tag, is_tag_ref=False)
             hf_api.create_tag(namespace=namespace,
                             playbook=playbook,
                             tag_id=add_hf_tag.id,
@@ -65,7 +69,7 @@ def main(delimiter: str, add_tag: str,
             msg2 = f"in the namespace - \'{namespace}\'"
             print(f"{msg1} {msg2}")
     else:
-        add_hf_tag = labelled_workspace.tag(tag=add_tag)
+        add_hf_tag = labelled_workspace.tag(tag=add_tag, is_tag_ref=False)
 
     # remove color from add_hf_tag
     # this is beacuse the tags inside intent should have only the id and name
@@ -81,10 +85,6 @@ def main(delimiter: str, add_tag: str,
             intent_tags_after_del = []
             for _, intent_tag in enumerate(intent_tags):
                 intent_tag = intent_tag.to_dict()
-
-                # color peroperty should be removed from the tags inside intent property
-                # TODO: update humanfirst objects to not set the color property in the tags inside intent property
-                del intent_tag["color"]
 
                 if add_hf_tag["name"] != "":
                     if intent_tag["name"] == add_hf_tag["name"]:
@@ -103,7 +103,7 @@ def main(delimiter: str, add_tag: str,
 
             # case 1: delete tag is not present in any of the intents
             if del_flag == 0 and delete_tag != "":
-                error_msg = f"{delete_tag} is not present in any of the intents"
+                error_msg = f"{delete_tag} is not present in any of the intents with sub string {search_string}"
                 raise RuntimeError(error_msg)
 
             # case 2: either tags are deleted or added to the intents or both
