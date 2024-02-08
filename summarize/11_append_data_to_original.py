@@ -56,6 +56,7 @@ def main(jointo:str,
     # read summaries
     assert os.path.isdir(summaries_dir)
     file_names = os.listdir(summaries_dir)
+    print(f'Total filenames: {len(file_names)}')
     completed_ids = []
     summaries = []
     explanations = []
@@ -93,15 +94,21 @@ def main(jointo:str,
 
     # turn that into new dataframe
     if filter_json:
+        f'DF Generationa for Filter JSON'
         df_newdata = pandas.DataFrame(zip(completed_ids,summaries,explanations),
                                       columns=[index_col,column_target_name,f'{column_target_name}_explanation'])
     else:
+        f'DF Generationa for for normal mode'
         df_newdata = pandas.DataFrame(zip(completed_ids,summaries),columns=[index_col,column_target_name])
         print(df)
+    # Set index
     if index_is_integer:
+        print(f'Transforming index')
         df_newdata[index_col] = pandas.to_numeric(df_newdata[index_col])
-        df_newdata.set_index(index_col,inplace=True)
-        df_newdata.sort_index(inplace=True)
+    print(f'Setting index on new data: {index_col}')
+    df_newdata.set_index(index_col,inplace=True)
+    df_newdata.sort_index(inplace=True)
+
     print("NEWDATA:")
     print(df_newdata)
 
