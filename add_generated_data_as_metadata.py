@@ -7,6 +7,7 @@ Doesn't work for merge stash as there won't be source conversation id metadata i
 
 # standard imports
 import json
+import re
 
 # 3rd party imports
 import pandas
@@ -25,21 +26,23 @@ def main(filename: str, generated_data: str) -> None:
     with open(filename, mode="r", encoding="utf8") as file:
         data = json.load(file)
     df = pandas.json_normalize(data=data["examples"], sep="-")
+    print(f"Loaded data to annotate:              {filename}")
+    print(f"Shape is:                             {df.shape}")
+    if "context-context_id" not in df.columns:
+        raise RuntimeError("Context id column is not present in the unlabelled dataset")
+    print(f'Unique context-context_id:            {df["context-context_id"].nunique()}')
 
-
-    # load input data
+    # load generated data
     with open(generated_data, mode="r", encoding="utf8") as file:
         gen_data = json.load(file)
     df_gen = pandas.json_normalize(data=gen_data["examples"], sep="-")
-
-
-    if "context-context_id" not in df.columns:
-        raise RuntimeError("Context id column is not present in the unlabelled dataset")
-
+    print(f"Loaded query result:                  {generated_data}")
+    print(f"Shape is:                             {df_gen.shape}")
     if "metadata-sourceConversationId" not in df_gen.columns:
         raise RuntimeError("Source Conversation ID metadata is not present in the generated dataset")
+    print(f'Unique metadata-sourceConversationId: {df_gen["metadata-sourceConversationId"].nunique()}')
 
-
+    # Check generated metadata fields not already on target - TODO: don't really understand why this is here
     all_gen_metadata = [
         'metadata-generationRunId',
         'metadata-generationTime',
@@ -52,35 +55,117 @@ def main(filename: str, generated_data: str) -> None:
         'metadata-pipelineStepId'
     ]
 
-    unlabelled_columns = df.columns
+    # so have df_gen and df - df_gen got newline split utterances - assumption.
+    # so we have text and sourceConversationId and a sequence number, and a key to
+    df_gen = df_gen[["metadata-sourceConversationId","text","id","created_at"]]
 
-    for met in all_gen_metadata:
-        if met in unlabelled_columns:
-            err_msg1 = f"{met} from generated data conflicts with the {met} from unalbelled data."
-            err_msg2 = f"{met} should not exist in unlabelled data"
-            raise RuntimeError(f"{err_msg1} {err_msg2}")
+    # observation keys interested in
+    observation_keys = [
+		"conversation_dead_end:",
+		"conversation_dead_end_reasoning:",
+		"conversation_loops:",
+		"conversation_loops_reasoning:",
+		"conversation_stall:",
+		"conversation_stall_reasoning:",
+		"escalation_capability:",
+		"escalation_capability_reasoning:",
+		"incomplete_utterance:",
+		"incomplete_utterance_reasoning:",
+		"interrupt_handling:",
+		"interrupt_handling_reasoning:",
+		"staying_on_topic:",
+		"staying_on_topic_reasoning:",
+		"tone_and_language:",
+		"tone_and_language_reasoning:",
+		"understanding:",
+		"understanding_reasoning:",
+		"total_score:",
+		"total_score_reasoning:"
+    ]
+
+    # make a regex
+    # start of text, followed by an observation_key and an optional space
+    re_string = f'^({"|".join(observation_keys)})[ ]*'
+    re_key = re.compile(re_string)
+
+    # TODO: this apply regex probably less effecient than individual logic on the columns and the pandas str matching fucntion.
+    df_gen = df_gen.apply(match_me,args=[re_key],axis=1)
+
+    # Make metadata TODO: de brain-fart this - some sort of transposing assembling thing?
+    source_convos_list = df_gen["metadata-sourceConversationId"].unique()
+    metadata_index = {}
+    for convo_id in source_convos_list:
+        df_temp = df_gen[df_gen["metadata-sourceConversationId"]==convo_id].copy(deep=True)
+        assert isinstance(df_temp,pandas.DataFrame)
+        df_temp.sort_values("key",inplace=True)
+        metadata_index[convo_id] = {}
+        for i,row in df_temp.iterrows():
+            if row.valid_key:
+                metadata_index[convo_id][row.key]=row.value
+    df_metadata = pandas.DataFrame.from_dict(metadata_index,orient="index")
+    print("Prepared metadata")
+    print(f"Shape is: {df_metadata.shape}")
 
 
-    df_gen.rename(columns={'text': 'metadata-gen_text'}, inplace=True)
-    gen_columns = df_gen.columns
-    gen_metadata = []
-    for met in gen_columns:
-        if met.startswith("metadata-"):
-            if met not in unlabelled_columns and met not in ['metadata-exampleId','metadata-exampleText']:
-                gen_metadata.append(met)
+    # Work out which original metadata columns to delete
+    print("Dropping columns")
+    metadata_columns_to_keep = []
+    columns_list = df.columns.to_list()
+    metadata_columns_to_delete = []
+    for column in columns_list:
+        if column in metadata_columns_to_keep:
+            continue
+        else:
+            if column.startswith("metadata-"):
+                metadata_columns_to_delete.append(column)
 
-    df_gen = df_gen[gen_metadata]
+    # drop them
+    df.drop(columns=metadata_columns_to_delete,inplace=True)
+    print("Remaining Columns")
+    print(df.columns.to_list())
 
-    merged_df = pandas.merge(df,
-                            df_gen,
-                            how="inner",
-                            left_on="context-context_id",
-                            right_on="metadata-sourceConversationId").reset_index(drop=True)
+    # join the new metadata on
+    df = df.join(df_metadata,on="context-context_id")
+    df["metadata-context_id"] = df["context-context_id"]
+    df = df.fillna("")
+    print(f'Final df has shape: {df.shape}')
+    print(f'Unique context-contedxt_ids in final is: {df["context-context_id"].nunique()}')
 
-    merged_df.drop(columns=["metadata-sourceConversationId"],inplace=True)
+    # displaying a sample across one field
+    gb = df[["metadata-total_score","metadata-total_score_reasoning"]].groupby("metadata-total_score").count()
+    print(gb)
+    print(gb["metadata-total_score_reasoning"].sum())
 
+    # convo_ids not processed
+    df_not_processed = df[df["metadata-total_score"]==""]
+    print(df_not_processed[["context-context_id","text"]])
+
+    # make a dict again
+    workspace_dict = {
+        "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+        "examples": back_to_hf_unlabelled.df_to_formatted_json(df,sep="-")
+    }
+    print(f'Len of examples is {len(workspace_dict["examples"])}')
+
+    # write output
     output_path = filename.replace(".json","_gen_metadata.json")
-    back_to_hf_unlabelled.back_to_hf(merged_df,output_path,[])
+    with open(output_path,mode="w",encoding="utf8") as file_out:
+        json.dump(workspace_dict,file_out,indent=2)
+        print(f'Wrote to: {output_path}')
+
+
+def match_me(row: pandas.Series, re_key: re) -> pandas.Series:
+    row["valid_key"] = False
+    row["key"] = ""
+    row["value"] = ""
+    matches = re_key.search(row["text"])
+    if matches:
+        row["valid_key"] = True
+        row["key"] = matches[1]
+        row["key"] = str(row["key"]).strip(":")
+        row["key"] = f'metadata-{row["key"]}'
+        row["value"] = str(row["text"]).replace(matches[0],"")
+    return row
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter

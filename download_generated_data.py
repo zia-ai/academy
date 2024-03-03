@@ -41,6 +41,7 @@ def main(username: str,
 
     # check which authorization method using
     hf_api = humanfirst.apis.HFAPI(username, password)
+    print('Connected')
 
     res = hf_api.export_query_conversation_inputs(
         namespace=namespace,
@@ -48,10 +49,15 @@ def main(username: str,
         pipeline_id=pipeline,
         pipeline_step_id=pipeline_step_id,
         prompt_id=prompt_id,
-        generation_run_id=generation_run_id)
+        generation_run_id=generation_run_id,
+        dedup_by_hash=False,
+        dedup_by_convo=False)
+    print('Download complete')
 
-    with open(os.path.join(output_dir,f"{namespace}_{playbook}.json"),mode="w",encoding="utf8") as f:
+    output_filename=os.path.join(output_dir,f"{namespace}_{playbook}.json")
+    with open(output_filename,mode="w",encoding="utf8") as f:
         json.dump(res.json(),f,indent=2)
+        print(f'Wrote to: {output_filename}')
 
 if __name__ == '__main__':
     main() # pylint: disable=no-value-for-parameter
