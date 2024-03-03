@@ -87,6 +87,8 @@ def main(filename: str, generated_data: str) -> None:
     # start of text, followed by an observation_key and an optional space
     re_string = f'^({"|".join(observation_keys)})[ ]*'
     re_key = re.compile(re_string)
+    print("Re String")
+    print(re_string)
 
     # TODO: this apply regex probably less effecient than individual logic on the columns and the pandas str matching fucntion.
     df_gen = df_gen.apply(match_me,args=[re_key],axis=1)
@@ -123,11 +125,15 @@ def main(filename: str, generated_data: str) -> None:
     df.drop(columns=metadata_columns_to_delete,inplace=True)
     print("Remaining Columns")
     print(df.columns.to_list())
+    print(f'Shape is: {df.shape}')
 
     # join the new metadata on
+    print("Joining Data")
     df = df.join(df_metadata,on="context-context_id")
     df["metadata-context_id"] = df["context-context_id"]
     df = df.fillna("")
+    print("Joined Columns")
+    print(df.columns.to_list())
     print(f'Final df has shape: {df.shape}')
     print(f'Unique context-contedxt_ids in final is: {df["context-context_id"].nunique()}')
 
