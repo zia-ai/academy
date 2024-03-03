@@ -6,4 +6,4 @@ Delimited by three backticks is a online chat conversation between a "client" of
 
 Please provide a list of what actions the expert took to try and solve the client's issue
 
-Please give your answer as a "-" bulletted list
+Please give your answer as a "-" bulleted list
