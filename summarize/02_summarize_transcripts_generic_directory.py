@@ -22,7 +22,7 @@ import humanfirst
 @click.option('-s', '--summaries_dir', type=str, default='./summaries', help='Summaries input file path')
 @click.option('-w', '--workspaces_dir', type=str, default='./workspaces', help='Workspace output file path')
 @click.option('-e', '--explode', is_flag=True, type=bool, default=False,
-              help='Explode a - bulletted list stripping bullets')
+              help='Explode a - bulleted list stripping bullets')
 @click.option('-m', '--mapper', type=str, default='',
               help='CSV File to lookup ID and produce an intent for that ID from it')
 @click.option('-i', '--id_col_name', type=str, default='', help='Column in csv file with context-id in')
