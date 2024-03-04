@@ -62,30 +62,26 @@ def main(filename: str, generated_data: str) -> None:
     # observation keys interested in
     observation_keys = [
 		"conversation_dead_end:",
-		"conversation_dead_end_reasoning:",
 		"conversation_loops:",
-		"conversation_loops_reasoning:",
 		"conversation_stall:",
-		"conversation_stall_reasoning:",
 		"escalation_capability:",
-		"escalation_capability_reasoning:",
 		"incomplete_utterance:",
-		"incomplete_utterance_reasoning:",
 		"interrupt_handling:",
-		"interrupt_handling_reasoning:",
 		"staying_on_topic:",
-		"staying_on_topic_reasoning:",
 		"tone_and_language:",
-		"tone_and_language_reasoning:",
 		"understanding:",
-		"understanding_reasoning:",
 		"total_score:",
-		"total_score_reasoning:"
+    ]
+
+    response_keys = [
+        "total_score:",
+        "issues:",
+        "reasoning:"
     ]
 
     # make a regex
     # start of text, followed by an observation_key and an optional space
-    re_string = f'^({"|".join(observation_keys)})[ ]*'
+    re_string = f'^({"|".join(response_keys)})[ ]*'
     re_key = re.compile(re_string)
     print("Re String")
     print(re_string)
@@ -138,9 +134,9 @@ def main(filename: str, generated_data: str) -> None:
     print(f'Unique context-contedxt_ids in final is: {df["context-context_id"].nunique()}')
 
     # displaying a sample across one field
-    gb = df[["metadata-total_score","metadata-total_score_reasoning"]].groupby("metadata-total_score").count()
+    gb = df[["metadata-total_score","metadata-reasoning"]].groupby("metadata-total_score").count()
     print(gb)
-    print(gb["metadata-total_score_reasoning"].sum())
+    print(gb["metadata-reasoning"].sum())
 
     # convo_ids not processed
     df_not_processed = df[df["metadata-total_score"]==""]
@@ -171,6 +167,8 @@ def match_me(row: pandas.Series, re_key: re) -> pandas.Series:
         row["key"] = str(row["key"]).strip(":")
         row["key"] = f'metadata-{row["key"]}'
         row["value"] = str(row["text"]).replace(matches[0],"")
+    if row["key"] == "metadata-reasoning":
+        row["value"] = str(row["value"]).replace(",","")
     return row
 
 if __name__ == '__main__':
