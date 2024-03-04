@@ -1,0 +1,638 @@
+[
+    {
+      "name": "annotatedConversation",
+      "mode": "NULLABLE",
+      "type": "RECORD",
+      "description": null,
+      "fields": [
+        {
+          "name": "annotations",
+          "mode": "NULLABLE",
+          "type": "RECORD",
+          "description": null,
+          "fields": [
+            {
+              "name": "metrics",
+              "mode": "NULLABLE",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "explicitIntentInputCoverage",
+                  "mode": "NULLABLE",
+                  "type": "FLOAT",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "explicitIntentInputCount",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "personaCount",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "explicitPersonaCount",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "type",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "inputsCount",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "clientInputsCount",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "clientMeanResponseTime",
+                  "mode": "NULLABLE",
+                  "type": "FLOAT",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "agentInputsCount",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "agentMeanResponseTime",
+                  "mode": "NULLABLE",
+                  "type": "FLOAT",
+                  "description": null,
+                  "fields": []
+                }
+              ]
+            },
+            {
+              "name": "language",
+              "mode": "NULLABLE",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "type",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "inputs",
+                  "mode": "REPEATED",
+                  "type": "RECORD",
+                  "description": null,
+                  "fields": [
+                    {
+                      "name": "language",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    }
+                  ]
+                },
+                {
+                  "name": "language",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                }
+              ]
+            },
+            {
+              "name": "inputs_intents",
+              "mode": "NULLABLE",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "type",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "clientInputCount",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "inputs",
+                  "mode": "REPEATED",
+                  "type": "RECORD",
+                  "description": null,
+                  "fields": [
+                    {
+                      "name": "matches",
+                      "mode": "REPEATED",
+                      "type": "RECORD",
+                      "description": null,
+                      "fields": [
+                        {
+                          "name": "sourceIsExplicit",
+                          "mode": "NULLABLE",
+                          "type": "BOOLEAN",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "sourceId",
+                          "mode": "NULLABLE",
+                          "type": "STRING",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "parents",
+                          "mode": "REPEATED",
+                          "type": "RECORD",
+                          "description": null,
+                          "fields": [
+                            {
+                              "name": "sourceId",
+                              "mode": "NULLABLE",
+                              "type": "STRING",
+                              "description": null,
+                              "fields": []
+                            },
+                            {
+                              "name": "source",
+                              "mode": "NULLABLE",
+                              "type": "STRING",
+                              "description": null,
+                              "fields": []
+                            },
+                            {
+                              "name": "score",
+                              "mode": "NULLABLE",
+                              "type": "FLOAT",
+                              "description": null,
+                              "fields": []
+                            },
+                            {
+                              "name": "sourceIsExplicit",
+                              "mode": "NULLABLE",
+                              "type": "BOOLEAN",
+                              "description": null,
+                              "fields": []
+                            },
+                            {
+                              "name": "intentId",
+                              "mode": "NULLABLE",
+                              "type": "STRING",
+                              "description": null,
+                              "fields": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "source",
+                          "mode": "NULLABLE",
+                          "type": "STRING",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "modelId",
+                          "mode": "NULLABLE",
+                          "type": "STRING",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "score",
+                          "mode": "NULLABLE",
+                          "type": "FLOAT",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "intentId",
+                          "mode": "NULLABLE",
+                          "type": "STRING",
+                          "description": null,
+                          "fields": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "entities",
+              "mode": "NULLABLE",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "type",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "inputEntities",
+                  "mode": "REPEATED",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                }
+              ]
+            },
+            {
+              "name": "embedding_metrics",
+              "mode": "NULLABLE",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "type",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "inputMetrics",
+                  "mode": "REPEATED",
+                  "type": "RECORD",
+                  "description": null,
+                  "fields": [
+                    {
+                      "name": "nearestNeighbourDistances",
+                      "mode": "REPEATED",
+                      "type": "FLOAT",
+                      "description": null,
+                      "fields": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "distribution",
+              "mode": "NULLABLE",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "type",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "inputMetrics",
+                  "mode": "REPEATED",
+                  "type": "RECORD",
+                  "description": null,
+                  "fields": [
+                    {
+                      "name": "metrics",
+                      "mode": "REPEATED",
+                      "type": "RECORD",
+                      "description": null,
+                      "fields": [
+                        {
+                          "name": "valid",
+                          "mode": "NULLABLE",
+                          "type": "BOOLEAN",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "marginRatio",
+                          "mode": "NULLABLE",
+                          "type": "FLOAT",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "uncertainty",
+                          "mode": "NULLABLE",
+                          "type": "FLOAT",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "modelId",
+                          "mode": "NULLABLE",
+                          "type": "STRING",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "margin",
+                          "mode": "NULLABLE",
+                          "type": "FLOAT",
+                          "description": null,
+                          "fields": []
+                        },
+                        {
+                          "name": "entropy",
+                          "mode": "NULLABLE",
+                          "type": "FLOAT",
+                          "description": null,
+                          "fields": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "conversation",
+          "mode": "NULLABLE",
+          "type": "RECORD",
+          "description": null,
+          "fields": [
+            {
+              "name": "updatedAt",
+              "mode": "NULLABLE",
+              "type": "TIMESTAMP",
+              "description": null,
+              "fields": []
+            },
+            {
+              "name": "sources",
+              "mode": "REPEATED",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "pipelinePathSeq",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "sourcePath",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "source",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "importFormat",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "conversationSourceId",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "convertedPath",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "pipelinePath",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "id",
+                  "mode": "NULLABLE",
+                  "type": "INTEGER",
+                  "description": null,
+                  "fields": []
+                }
+              ]
+            },
+            {
+              "name": "createdAt",
+              "mode": "NULLABLE",
+              "type": "TIMESTAMP",
+              "description": null,
+              "fields": []
+            },
+            {
+              "name": "inputs",
+              "mode": "REPEATED",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "createdAt",
+                  "mode": "NULLABLE",
+                  "type": "TIMESTAMP",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "metadata",
+                  "mode": "NULLABLE",
+                  "type": "RECORD",
+                  "description": null,
+                  "fields": [
+                    {
+                      "name": "tuned_resolution",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "scenario_subflow",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "scenario_flow",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "scenario_order_city",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "nps_score",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "last_customer_utt",
+                      "mode": "NULLABLE",
+                      "type": "BOOLEAN",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "first_customer_utt",
+                      "mode": "NULLABLE",
+                      "type": "BOOLEAN",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "scenario_product_names",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "scenario_personal_member_level",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "conversation_turn",
+                      "mode": "NULLABLE",
+                      "type": "INTEGER",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "second_customer_utt",
+                      "mode": "NULLABLE",
+                      "type": "BOOLEAN",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "abcd_role",
+                      "mode": "NULLABLE",
+                      "type": "STRING",
+                      "description": null,
+                      "fields": []
+                    },
+                    {
+                      "name": "abcd_id",
+                      "mode": "NULLABLE",
+                      "type": "INTEGER",
+                      "description": null,
+                      "fields": []
+                    }
+                  ]
+                },
+                {
+                  "name": "source",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "value",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "id",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "normalizedId",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                },
+                {
+                  "name": "hash",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                }
+              ]
+            },
+            {
+              "name": "conversationSetSource",
+              "mode": "NULLABLE",
+              "type": "RECORD",
+              "description": null,
+              "fields": [
+                {
+                  "name": "conversationSetId",
+                  "mode": "NULLABLE",
+                  "type": "STRING",
+                  "description": null,
+                  "fields": []
+                }
+              ]
+            },
+            {
+              "name": "id",
+              "mode": "NULLABLE",
+              "type": "INTEGER",
+              "description": null,
+              "fields": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
