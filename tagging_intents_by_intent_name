@@ -8,6 +8,8 @@ Then this HF JSON should be merged with the existing model in the GUI using the 
     -> Enable Merge intents by name, tags and entities -> Browse files
     -> Choose the correct file and then upload
 
+Delimiter is important. Make sure the delimiter is not present in any of the parent/child intent names
+
 Set HF_USERNAME and HF_PASSWORD as environment variables
 """
 # ******************************************************************************************************************120
@@ -18,7 +20,7 @@ import humanfirst
 
 
 @click.command()
-@click.option('-d', '--delimiter', type=str, default="-",
+@click.option('-l', '--delimiter', type=str, default="-",
               help='Delimiter used in intent name')
 @click.option('-a', '--add_tag', type=str, default="",
               help='Add tag names')
@@ -40,6 +42,11 @@ def main(delimiter: str, add_tag: str,
          namespace: str, playbook: str):
     '''Main function'''
 
+    # print(delimiter)
+    if search_string == "":
+        error_msg = "Search string should not be empty"
+        raise RuntimeError(error_msg)
+
     if add_tag == "" and delete_tag == "":
         error_msg = "Both add_tag and delete_tag are empty. Atleast one should be provided"
         raise  RuntimeError(error_msg)
@@ -54,7 +61,7 @@ def main(delimiter: str, add_tag: str,
                 add_hf_tag =  labelled_workspace.tags[idx]
                 break
         else:
-            add_hf_tag = labelled_workspace.tag(tag=add_tag)
+            add_hf_tag = labelled_workspace.tag(tag=add_tag, is_tag_ref=False)
             hf_api.create_tag(namespace=namespace,
                             playbook=playbook,
                             tag_id=add_hf_tag.id,
@@ -65,26 +72,25 @@ def main(delimiter: str, add_tag: str,
             msg2 = f"in the namespace - \'{namespace}\'"
             print(f"{msg1} {msg2}")
     else:
-        add_hf_tag = labelled_workspace.tag(tag=add_tag)
+        add_hf_tag = labelled_workspace.tag(tag=add_tag, is_tag_ref=False)
 
     # remove color from add_hf_tag
     # this is beacuse the tags inside intent should have only the id and name
     add_hf_tag = add_hf_tag.to_dict()
     del add_hf_tag["color"]
 
-    for intent_name,_ in labelled_workspace.intents.items():
+    fully_qualified_name = labelled_workspace.get_intent_index(delimiter=delimiter)
+    intents_by_id = labelled_workspace.intents_by_id
+
+    for intent_id,intent_name in fully_qualified_name.items():
         add_flag = 0
         del_flag = 0
         if intent_name.find(search_string) != -1:
             # check if the tag is already present in the intent
-            intent_tags = labelled_workspace.intents[intent_name].tags
+            intent_tags = intents_by_id[intent_id].tags
             intent_tags_after_del = []
             for _, intent_tag in enumerate(intent_tags):
                 intent_tag = intent_tag.to_dict()
-
-                # color peroperty should be removed from the tags inside intent property
-                # TODO: update humanfirst objects to not set the color property in the tags inside intent property
-                del intent_tag["color"]
 
                 if add_hf_tag["name"] != "":
                     if intent_tag["name"] == add_hf_tag["name"]:
@@ -99,11 +105,11 @@ def main(delimiter: str, add_tag: str,
 
                 intent_tags_after_del.append(intent_tag)
 
-            labelled_workspace.intents[intent_name].tags = intent_tags_after_del
+            intents_by_id[intent_id].tags = intent_tags_after_del
 
             # case 1: delete tag is not present in any of the intents
             if del_flag == 0 and delete_tag != "":
-                error_msg = f"{delete_tag} is not present in any of the intents"
+                error_msg = f"{delete_tag} is not present in any of the intents with sub string {search_string}"
                 raise RuntimeError(error_msg)
 
             # case 2: either tags are deleted or added to the intents or both
@@ -111,9 +117,9 @@ def main(delimiter: str, add_tag: str,
                 # if del_flag is 1 then there exists an intent which has a tag that needs to be deleted
                 # if add_flag is 0 then there exists an intent to which a tag needs to be added
                 full_intent = {
-                    "id": labelled_workspace.intents[intent_name].id,
-                    "name": labelled_workspace.intents[intent_name].name,
-                    "tags": labelled_workspace.intents[intent_name].tags
+                    "id": intent_id,
+                    "name": intents_by_id[intent_id].name,
+                    "tags": intents_by_id[intent_id].tags
                 }
                 if add_flag == 0:
                     full_intent["tags"].append(add_hf_tag)
@@ -121,7 +127,7 @@ def main(delimiter: str, add_tag: str,
                                      playbook=playbook,
                                      intent=full_intent,
                                      update_mask="tags")
-                print(f"Tags are updated for the intent - {full_intent['name']}")
+                print(f"Tags are updated for the intent - {intent_name}")
 
             # case 3: tags are neither deleted nor added to the intents
             elif add_flag == 1 and del_flag == 0:
