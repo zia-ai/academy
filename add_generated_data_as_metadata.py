@@ -167,8 +167,11 @@ def match_me(row: pandas.Series, re_key: re) -> pandas.Series:
         row["key"] = str(row["key"]).strip(":")
         row["key"] = f'metadata-{row["key"]}'
         row["value"] = str(row["text"]).replace(matches[0],"")
+        row["value"] = str(row["value"]).strip(" ")
     if row["key"] == "metadata-reasoning":
         row["value"] = str(row["value"]).replace(",","")
+    if row["key"] == "metadata-issues":
+        row["value"] = str(row["value"]).replace(" ","")
     return row
 
 if __name__ == '__main__':
