@@ -6,11 +6,20 @@ python csv_to_json_unlabelled_hb.py
 
 # standard imports
 import re
+import os
+import sys
+import pathlib
 from dateutil import parser
 
 # 3rd party imports
 import pandas
 import click
+
+IMPORT_PATH = os.path.dirname(os.path.realpath(__file__))
+HF_MODULE_PATH = str(pathlib.Path(IMPORT_PATH).parent)
+sys.path.insert(1, HF_MODULE_PATH)
+
+# custom imports
 import codepage
 
 @click.command()
@@ -44,14 +53,14 @@ def main(filename: str,
     df["codepage_nl_br_html"] = df["codepage_nl_br"].apply(execute_strip,args=[re_strip_html_tags])
 
     # Split
-    initial_date_defintion = '[ ]*\[[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}\]:[ ]*'
-    regex_string = f'(^{botname}|^{username}|\|\|{botname}|\|\|{username}|{initial_date_defintion})'
+    initial_date_defintion = '[ ]*\[[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}\]:[ ]*' # pylint: disable=anomalous-backslash-in-string
+    regex_string = f'(^{botname}|^{username}|\|\|{botname}|\|\|{username}|{initial_date_defintion})' # pylint: disable=anomalous-backslash-in-string
     print(regex_string)
     re_split = re.compile(regex_string)
     df["split"] = df["codepage_nl_br_html"].apply(execute_split,args=[re_split])
 
     # Consolidate
-    second_date_definition = '\[([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2})\]:'
+    second_date_definition = '\[([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2})\]:' # pylint: disable=anomalous-backslash-in-string
     re_get_date = re.compile(second_date_definition)
     re_is_name = re.compile(f'{botname}|{username}')
     df["consolidate"] = df["split"].apply(consolidate,args=[re_get_date,re_is_name])
