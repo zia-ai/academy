@@ -1,0 +1,10 @@
+Delimited by three backticks is a list of summaries of email chains.
+
+```
+{{ text }} 
+```
+
+Propose a hierarchical taxonomy that could be used to group them.
+
+Give your answer in this format with one class per line
+parent_class/child_class
