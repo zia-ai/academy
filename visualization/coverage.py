@@ -89,23 +89,49 @@ def write_coverage_csv(username: str,
     hf_api = humanfirst.apis.HFAPI(username=username, password=password)
     playbook_dict = hf_api.get_playbook(namespace, playbook)
 
-    df = get_conversationset_df(hf_api, namespace, playbook, convsetsource,
+    df, response_json_list = get_conversationset_df(hf_api, namespace, playbook, convsetsource,
                                 searchtext, startisodate, endisodate, playbook_dict, delimiter,
                                 page_size=page_size, quit_after_pages=quit_after_pages, debug=debug)
+
+    assert isinstance(df, pandas.DataFrame)
+    assert isinstance(response_json_list, list)
 
     workspace_name = str(playbook_dict["name"]).replace(" ","_")
     workspace_name = workspace_name.replace("-","_")
 
-    output_file_uri = join(output_filedir,f'{workspace_name}.csv')
+    output_file_uri_csv = join(output_filedir,f'{workspace_name}.csv')
 
-    df.to_csv(output_file_uri, sep=separator, encoding="utf8", index=False)
+    output_file_uri_json = join(output_filedir,f'{workspace_name}.json')
+
+    output_file_uri_jsonl = join(output_filedir,f'{workspace_name}.jsonl')
+
+    print(f"Total number of conversation is {len(response_json_list)}")
+    print(f"Total number of records returned by query end point is {len(response_json_list)}")
+    with open(output_file_uri_json,mode="w",encoding="utf8") as fileobj:
+        json.dump(response_json_list,fileobj,indent=2)
+    print(f'Raw results(JSON) are stored at: {output_file_uri_json}')
+
+    # Write the JSON objects as JSONL
+    with open(output_file_uri_jsonl, 'w', encoding="utf8") as jsonl_file:
+        for item in response_json_list:
+            json.dump(item, jsonl_file)
+            jsonl_file.write('\n')
+    print(f'Raw results(JSONL) are stored at: {output_file_uri_jsonl}')
+
+    df.to_csv(output_file_uri_csv, sep=separator, encoding="utf8", index=False)
     print(df)
-    print(f'Wrote to: {output_file_uri}')
+    print(f'Extracted results are stored at : {output_file_uri_csv}')
 
     df_client = copy.deepcopy(df.loc[df["role"]=="client"]).reset_index(drop=True)
+    total_utterance = df.shape[0]
     total_client_utterance = df_client.shape[0]
+    total_expert_utterance = total_utterance - total_client_utterance
+    print(f"Total number of utterance is {total_utterance}")
+    print(f"Total number of client utterance is {total_client_utterance}")
+    print(f"Total number of expert utterance is {total_expert_utterance}")
     utt_above_threshold_count = df_client.loc[df_client["score"] >= confidence_threshold].shape[0]
-    print(f"Coverage is {round((utt_above_threshold_count/total_client_utterance)*100,2)}%")
+    coverage = round((utt_above_threshold_count/total_client_utterance)*100,2)
+    print(f"Coverage is {coverage}% at confidence threshold {confidence_threshold}")
 
 def get_conversationset_df(
         hf_api : humanfirst.apis.HFAPI,
@@ -119,7 +145,7 @@ def get_conversationset_df(
         delimiter: str,
         page_size: int = 50,
         quit_after_pages: int = 0,
-        debug: bool = False) -> pandas.DataFrame:
+        debug: bool = False) -> tuple:
     '''Download the inferred statistics for the conversation set source for the provided
     playbook and return a data frame.  Pages through the very large data science data
     with each page of page_size'''
@@ -144,6 +170,17 @@ def get_conversationset_df(
     # with open("./data/testing_coverage.json",mode="w",encoding="utf8") as fileobj:
     #     json.dump(response_json,fileobj,indent=2)
     # quit()
+
+    # bigquery doesn't accept a field name with @ symbol
+    # @type property occurs in 6 places in a single record returned query end point
+    # Replace Unsupported empty struct type for field 
+    # - 'annotatedConversation.annotations.entities.inputEntities' with None
+    if "results" in response_json:
+        response_json["results"] = rename_type_property(response_json["results"])
+    else:
+        print(json.dumps(response_json,indent=2))
+        print("Results keyword does not exist")
+    response_json_list = response_json["results"]
 
     results = extract_results(
         results, intent_name_index, response_json, debug=debug)
@@ -176,12 +213,51 @@ def get_conversationset_df(
             print(f'totalCount: {response_json["totalCount"]}')
             break
         else:
+            # bigquery doesn't accept a field name with @ symbol
+            # @type property occurs in 6 places in a single record returned query end point
+            # Replace Unsupported empty struct type for field
+            # - 'annotatedConversation.annotations.entities.inputEntities' with None
+            response_json["results"] = rename_type_property(response_json["results"])
+            response_json_list.extend(response_json["results"])
+
             results = extract_results(
                 results, intent_name_index, response_json)
         print(f'Page {i}: {len(results)}')
         i = i + 1
 
-    return pandas.DataFrame(results)
+    return pandas.DataFrame(results), response_json_list
+
+
+def rename_type_property(results: list) -> list:
+    """Rename @type property and 
+       Replace Unsupported empty struct type for field
+        - 'annotatedConversation.annotations.entities.inputEntities' with None
+    """
+
+    property_list = ["distribution",
+                     "embedding_metrics",
+                     "entities",
+                     "inputs_intents",
+                     "language",
+                     "metrics"]
+
+    for i,_ in enumerate(results):
+        for prop in property_list:
+            type_value = results[i]["annotatedConversation"]["annotations"][prop].pop("@type")
+            results[i]["annotatedConversation"]["annotations"][prop]["type"] = type_value
+
+            count = 0
+            if prop == "entities":
+                input_entities = results[i]["annotatedConversation"]["annotations"][prop]["inputEntities"]
+                for _,val in enumerate(input_entities):
+                    if val == dict():
+                        count = count + 1
+
+                if count == len(input_entities):
+                    # setting up list of null values instead of empty list throughs error
+                    results[i]["annotatedConversation"]["annotations"][prop]["inputEntities"] = []
+
+    return results
 
 
 def dump_this(text: str, filename: str):
