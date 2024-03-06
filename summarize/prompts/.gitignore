@@ -2,4 +2,4 @@
 !.gitignore
 !abcd_*
 !performance_test_*
-
+!enron*
