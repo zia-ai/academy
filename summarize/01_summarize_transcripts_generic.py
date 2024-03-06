@@ -52,6 +52,8 @@ DIR_PATH = os.path.dirname(os.path.realpath(__file__))
               help='Configurable sleep per thread per call')
 @click.option('-u', '--timeout_seconds', type=int, default=15, required=False,
               help='Configurable timeout for openai calls')
+@click.option('-f', '--filterstring', type=str, default='', required=False,
+              help='Filter in columnname:value1,valuen format df will be reduced to only those acceptable values')
 def main(input_filepath: str,
          openai_api_key: str,
          num_cores: int,
@@ -66,12 +68,13 @@ def main(input_filepath: str,
          dummy: bool,
          verbose: bool,
          sleep_seconds: int,
-         timeout_seconds: int
+         timeout_seconds: int,
+         filterstring: str
          ) -> None:
     '''Main Function'''
     process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
             sample_size, model_override, log_file_path, drop_list, output_file_path,
-            rewrite, dummy, verbose, sleep_seconds, timeout_seconds)
+            rewrite, dummy, verbose, sleep_seconds, timeout_seconds, filterstring)
 
 def process(input_filepath: str,
             openai_api_key: str,
@@ -87,7 +90,8 @@ def process(input_filepath: str,
             dummy: bool,
             verbose: bool,
             sleep_seconds: int = 0,
-            timeout_seconds: int = 15):
+            timeout_seconds: int = 15,
+            filterstring: str = ''):
     '''Summarization of Conversations'''
 
     # set log level
@@ -160,6 +164,26 @@ def process(input_filepath: str,
         df.set_index(["context-context_id", "seq"], drop=False, inplace=True)
     else:
         raise RuntimeError(f"Unrecognised type: {input_filepath}")
+    print(df)
+    print(df.columns)
+
+    # filter input if necessary
+    if filterstring != '':
+
+        # get filter column and value
+        filterlist = filterstring.split(':')
+        if len(filterlist) != 2 or not isinstance(filterlist,list):
+            raise RuntimeError(f'Only accepts a single columnname:value1,valuen.. filter received: {filterstring}')
+        filter_column = filterlist[0]
+        filter_value = filterlist[1]
+
+        # test if a single value or list of values
+        filter_value_list = filter_value.split(',')
+        assert isinstance(filter_value_list,list)
+        print(f'Have {len(filter_value_list)} acceptable values: {filter_value_list}')
+        print(f'Before filtering df.shape(0): {df.shape}')
+        df = df[df[filter_column].isin(filter_value_list)]
+        print(f'After  filtering df.shape(0): {df.shape}')
 
     # work out what's been run before
     output_file_path = os.path.join(DIR_PATH,output_file_path)
@@ -306,7 +330,7 @@ def get_completed_files(output_file_path: str) -> pandas.DataFrame:
     completed_ids = []
     for file_name in file_names:
         if file_name.endswith(".txt"):
-            completed_ids.append(file_name[0:-4])
+            completed_ids.append(file_name.replace(".txt",""))
     completed_df = pandas.DataFrame(
         completed_ids, columns=['context-context_id'])
     completed_df['completed'] = True
