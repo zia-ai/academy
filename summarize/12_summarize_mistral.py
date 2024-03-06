@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80*************************************120
 #
-# python ./summarize/summarize_transcripts_generic.py                                    # pylint: disable=invalid-name
+# python ./summarize/12_summarize_mistral.py                                             # pylint: disable=invalid-name
 #
 # text mode received limited testing
 #
 # *********************************************************************************************************************
 
 # standard imports
-import time
 import json
 import os
 import logging
@@ -20,20 +19,21 @@ import datetime
 import re
 
 # 3rd party imports
-import openai
 import pandas
 import numpy
 import click
 import tiktoken
 import humanfirst
+from mistralai.client import MistralClient
+from mistralai.models.chat_completion import ChatMessage
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 @click.command()
 @click.option('-i', '--input_filepath', type=str, required=True,
               help='Path containing HF Unlabelled conversations in json format or a txt format if utterances')
-@click.option('-a', '--openai_api_key', type=str, required=True, help='OpenAI API key')
-@click.option('-p', '--prompt', type=str, default='./prompts/abcd_example_prompt.txt',
+@click.option('-a', '--api_key', type=str, required=True, help='Mistral API key')
+@click.option('-p', '--prompt', type=str, default='./prompts/abcd_01_issue_example_prompt.txt',
               help='location of prompt file to read')
 @click.option('-t', '--output_tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
@@ -48,14 +48,8 @@ DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 @click.option('-d', '--dummy', is_flag=True, type=bool, default=False, help='Skip the actual openai call')
 @click.option('-v', '--verbose', is_flag=True, type=bool, default=False,
               help='Set logging level to DEBUG otherwise INFO')
-@click.option('-e', '--sleep_seconds', type=int, default=0, required=False,
-              help='Configurable sleep per thread per call')
-@click.option('-u', '--timeout_seconds', type=int, default=15, required=False,
-              help='Configurable timeout for openai calls')
-@click.option('-f', '--filterstring', type=str, default='', required=False,
-              help='Filter in columnname:value1,valuen format df will be reduced to only those acceptable values')
 def main(input_filepath: str,
-         openai_api_key: str,
+         api_key: str,
          num_cores: int,
          prompt: str,
          output_tokens: int,
@@ -66,18 +60,15 @@ def main(input_filepath: str,
          output_file_path: str,
          rewrite: bool,
          dummy: bool,
-         verbose: bool,
-         sleep_seconds: int,
-         timeout_seconds: int,
-         filterstring: str
-         ) -> None:
+         verbose: bool) -> None:
     '''Main Function'''
-    process(input_filepath, openai_api_key, num_cores, prompt, output_tokens,
+    process(input_filepath, api_key, num_cores, prompt, output_tokens,
             sample_size, model_override, log_file_path, drop_list, output_file_path,
-            rewrite, dummy, verbose, sleep_seconds, timeout_seconds, filterstring)
+            rewrite, dummy, verbose)
+
 
 def process(input_filepath: str,
-            openai_api_key: str,
+            api_key: str,
             num_cores: int,
             prompt: str,
             output_tokens: int,
@@ -88,10 +79,7 @@ def process(input_filepath: str,
             output_file_path: str,
             rewrite: bool,
             dummy: bool,
-            verbose: bool,
-            sleep_seconds: int = 0,
-            timeout_seconds: int = 15,
-            filterstring: str = ''):
+            verbose: bool):
     '''Summarization of Conversations'''
 
     # set log level
@@ -132,7 +120,6 @@ def process(input_filepath: str,
     assert prompt_found
     logging.info("Prompt is: \n %s", prompt)
 
-    openai.api_key = openai_api_key
 
     # load input data
     if input_filepath.endswith(".json"):
@@ -164,26 +151,6 @@ def process(input_filepath: str,
         df.set_index(["context-context_id", "seq"], drop=False, inplace=True)
     else:
         raise RuntimeError(f"Unrecognised type: {input_filepath}")
-    print(df)
-    print(df.columns)
-
-    # filter input if necessary
-    if filterstring != '':
-
-        # get filter column and value
-        filterlist = filterstring.split(':')
-        if len(filterlist) != 2 or not isinstance(filterlist,list):
-            raise RuntimeError(f'Only accepts a single columnname:value1,valuen.. filter received: {filterstring}')
-        filter_column = filterlist[0]
-        filter_value = filterlist[1]
-
-        # test if a single value or list of values
-        filter_value_list = filter_value.split(',')
-        assert isinstance(filter_value_list,list)
-        print(f'Have {len(filter_value_list)} acceptable values: {filter_value_list}')
-        print(f'Before filtering df.shape(0): {df.shape}')
-        df = df[df[filter_column].isin(filter_value_list)]
-        print(f'After  filtering df.shape(0): {df.shape}')
 
     # work out what's been run before
     output_file_path = os.path.join(DIR_PATH,output_file_path)
@@ -213,12 +180,6 @@ def process(input_filepath: str,
     if dummy:
         df["skip"] = dummy
 
-    # set a sleep on every api call
-    df["sleep_seconds"] = sleep_seconds
-
-    # set a timeout on every api call
-    df["timeout_seconds"] = timeout_seconds
-
     # take the next sample size to process
     if sample_size > 0:
         context_ids = context_ids[0:sample_size]
@@ -237,12 +198,12 @@ def process(input_filepath: str,
         df["prompt_line"] = df["context-role"] + ": " + df["text"]
 
         # reduce our data frame just to the data we need
-        df = df[["prompt_line", "skip", "completed", "sleep_seconds", "timeout_seconds"]]
+        df = df[["prompt_line", "skip", "completed"]]
 
     elif mode == "text":
         df["prompt_line"] = df["text"]
         # reduce our data frame just to the data we need
-        df = df[["context-context_id","prompt_line", "skip", "completed", "sleep_seconds", "timeout_seconds"]]
+        df = df[["context-context_id","prompt_line", "skip", "completed"]]
 
     else:
         raise RuntimeError(f"Not recognised mode: {mode}")
@@ -252,7 +213,7 @@ def process(input_filepath: str,
     if mode == "conversation":
         # join all the prompt_lines together into the conversation text by
         # the context-context_id, skip and whether completed
-        df = df.groupby(["context-context_id", "skip", "completed", "sleep_seconds", "timeout_seconds"]
+        df = df.groupby(["context-context_id", "skip", "completed"]
                         )['prompt_line'].apply('\n'.join).reset_index()
         df.set_index("context-context_id", inplace=True, drop=False)
         df.rename(columns={"prompt_line": "conversation"}, inplace=True)
@@ -285,7 +246,6 @@ def process(input_filepath: str,
     else:
         raise RuntimeError(f"Not recognised mode: {mode}")
 
-
     # estimate the tokens - use the 4k one, and then bump up if needed with factor of safety
     df['tokens'] = df["prompt"].apply(count_tokens,
                                       args=[tiktoken.encoding_for_model("gpt-3.5-turbo")])
@@ -315,10 +275,12 @@ def process(input_filepath: str,
     # verbose setting
     df["verbose"] = verbose
 
+    print(df)
+
     # parallelization
     pool = Pool(num_cores)
     dfs = numpy.array_split(df, num_cores)
-    pool_results = pool.map(parallelise_calls, [(df, logger) for df in dfs])
+    pool_results = pool.map(parallelise_calls, [(df, logger, api_key) for df in dfs])
     pool.close()
     pool.join()
     df = pandas.concat(pool_results, axis=1)
@@ -330,7 +292,7 @@ def get_completed_files(output_file_path: str) -> pandas.DataFrame:
     completed_ids = []
     for file_name in file_names:
         if file_name.endswith(".txt"):
-            completed_ids.append(file_name.replace(".txt",""))
+            completed_ids.append(file_name[0:-4])
     completed_df = pandas.DataFrame(
         completed_ids, columns=['context-context_id'])
     completed_df['completed'] = True
@@ -353,17 +315,17 @@ def merge_prompt_and_string(text: str, prompt: str, re_tag: re) -> str:
 
 def parallelise_calls(args) -> pandas.DataFrame:
     '''Parallelise dataframe processing'''
-    df,logger = args
-    return df.apply(call_api, axis=1, args=[logger])
+    df,logger, api_key = args
+    client = MistralClient(api_key=api_key)
+    return df.apply(call_api, axis=1, args=[logger, client])
 
 
-def call_api(row: pandas.Series, logger: logging) -> pandas.Series:
-    '''Call OpenAI API for summarization'''
+def call_api(row: pandas.Series, logger: logging, client: MistralClient) -> pandas.Series:
+    '''Call Mistral API for summarization'''
 
     start_time = perf_counter()
     logger.info(
-        "Call model: %s convo: %s, sleep: %i and timeout: %i",
-        row["model"], row.name, row["sleep_seconds"], row["timeout_seconds"])
+        "Calling OpenAI model %s to summarize conversation: %s", row["model"], row.name)
     if row["verbose"]:
         logger.info("Prompt: %s", row["prompt"])
 
@@ -371,7 +333,7 @@ def call_api(row: pandas.Series, logger: logging) -> pandas.Series:
     row["total_tokens"] = 0
     if not row["skip"]:
         try:
-            row = summarize(row, output_tokens=row["max_tokens"])
+            row = summarize(row, output_tokens=row["max_tokens"], client=client)
         except Exception as e:  # pylint: disable=broad-except
             logger.error('Exception for %s is %s', row.name, e)
             return row["summary"]
@@ -389,9 +351,6 @@ def call_api(row: pandas.Series, logger: logging) -> pandas.Series:
     logger.info('Summary is saved at: %s', row["summary_path"])
     end_time = perf_counter()
     logger.info('Took %.2f seconds', end_time-start_time)
-    if row["sleep_seconds"] > 0:
-        logger.info('Sleeping for %i seconds', row["sleep_seconds"])
-        time.sleep(row["sleep_seconds"])
     return row
 
 
@@ -400,36 +359,29 @@ def calculate_which_model(row: pandas.Series, output_tokens: int) -> str:
 
     tokens=row["tokens"]
     # dec to bin conversion gives margin of error
-    if tokens + output_tokens < 4000:
-        return "gpt-3.5-turbo"
-    elif tokens + output_tokens < 16000:
-        return "gpt-3.5-turbo-16k"
-    elif tokens + output_tokens < 32000:
-        return "gpt-4-32k"
+    if tokens + output_tokens < 32000:
+        return "mistral-small"
     else:
         error_string = f'Data tokens {tokens + output_tokens}'
         error_string = f'{error_string} exceeds OpenAI model limit 32000 - convo id is {row.name}'
         raise RuntimeError(error_string)
 
 
-def summarize(row: pandas.Series, output_tokens: int) -> str:
+def summarize(row: pandas.Series, output_tokens: int, client: MistralClient) -> str:
     '''Summarizes single conversation using prompt'''
 
-    response = openai.ChatCompletion.create(
+    user_message = ChatMessage(role = "user", content = row["prompt"])
+    messages = [user_message]
+    response = client.chat(
         model=row["model"],
-        messages=[
-            {"role": "user", "content": row["prompt"]}
-        ],
+        messages=messages,
         temperature=0.0,
         max_tokens=output_tokens,
-        top_p=1,
-        frequency_penalty=0.0,
-        presence_penalty=0.0
-        # timeout=row["timeout_seconds"]
     )
     row["summary"] = response.choices[0].message.content + "\n"
     row["total_tokens"] = response.usage.total_tokens
     return row
+
 
 def count_tokens(text: str, encoding):
     """Returns the number of tokens in a text string."""
