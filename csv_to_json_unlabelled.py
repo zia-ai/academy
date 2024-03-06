@@ -273,7 +273,12 @@ def decide_role_filter_values(row: pandas.Series, column_name: str, role_filter:
 def parse_dates(date: str) -> datetime.datetime:
     """Parse the date"""
 
-    return parser.parse(timestr=date, dayfirst=True)
+    try:
+        candidate_date = parser.parse(timestr=date, dayfirst=True)
+    except:
+        print(f"WARNING-could not parse:{date}")
+        candidate_date = parser.parse(timestr="1999-01-01")
+    return candidate_date
 
 def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '', created_at_col: str = ''):
     '''Build the examples'''
