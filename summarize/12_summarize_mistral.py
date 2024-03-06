@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # ***************************************************************************80*************************************120
 #
-# python ./summarize/summarize_transcripts_generic.py                                    # pylint: disable=invalid-name
+# python ./summarize/12_summarize_mistral.py                                             # pylint: disable=invalid-name
 #
 # text mode received limited testing
 #
@@ -19,7 +19,6 @@ import datetime
 import re
 
 # 3rd party imports
-import openai
 import pandas
 import numpy
 import click
@@ -34,7 +33,7 @@ DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 @click.option('-i', '--input_filepath', type=str, required=True,
               help='Path containing HF Unlabelled conversations in json format or a txt format if utterances')
 @click.option('-a', '--api_key', type=str, required=True, help='Mistral API key')
-@click.option('-p', '--prompt', type=str, default='./prompts/abcd_example_prompt.txt',
+@click.option('-p', '--prompt', type=str, default='./prompts/abcd_01_issue_example_prompt.txt',
               help='location of prompt file to read')
 @click.option('-t', '--output_tokens', type=int, default=500, help='Tokens to reserve for output')
 @click.option('-n', '--num_cores', type=int, default=2, help='Number of cores for parallelisation')
@@ -322,7 +321,7 @@ def parallelise_calls(args) -> pandas.DataFrame:
 
 
 def call_api(row: pandas.Series, logger: logging, client: MistralClient) -> pandas.Series:
-    '''Call OpenAI API for summarization'''
+    '''Call Mistral API for summarization'''
 
     start_time = perf_counter()
     logger.info(
