@@ -1,0 +1,7 @@
+The following is an email chain extracted from Jeff Skilling's email folders.
+
+{{ text }}
+
+Please provide a short, single line, description of the key topic under discussion in the email chain.
+
+If there isn't enough meaningful information in the email to make a summary just say NOT_ENOUGH_INFORMATION
