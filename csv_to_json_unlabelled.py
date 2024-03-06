@@ -44,10 +44,20 @@ import humanfirst
               help='column:value,column:value;column:value,column:value')
 @click.option('-h', '--striphtml', is_flag=True, default=False,
               help='Whether to strip html tags from the utterance col')
+@click.option('-b', '--drop_blanks', is_flag=True, type=bool, default=False,
+              help='Whether to drop blanks')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool) -> None:
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool) -> None:
     """Main Function"""
+    process(filename, metadata_keys, utterance_col, delimiter,
+         convo_id_col, created_at_col, unix_date, role_col,
+         role_mapper, encoding, filtering, striphtml, drop_blanks)
+
+def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
+         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool) -> None:
+    """Helper function to allow calling by directory"""
 
     excel = False
     if filename.endswith('.xlsx'):
@@ -109,6 +119,11 @@ def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
 
         print(f'After filtering: {df.shape[0]}')
         print('\n')
+
+    if drop_blanks:
+        print(f'before blanks shape: {df.shape}')
+        df = df[~(df["body"] == "")]
+        print(f'after dropping blanks shape: {df.shape}')
 
     # remove html if necessary
     if striphtml:
