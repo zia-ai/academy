@@ -100,7 +100,7 @@ def split_ada_text(row: pandas.Series, speakers: list, re_splitter: re) -> list:
     list_of_texts = re_splitter.split(row["Chat Transcript"])
     try:
         convo_date = parser.parse(row["Date"]) # will add on seconds based on added_text
-    except:
+    except: # pylint: disable=bare-except
         convo_date = parser.parse("1999-01-01")
     speaker = ""
     split_text = ""
