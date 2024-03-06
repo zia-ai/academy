@@ -1,0 +1,58 @@
+Delimited by three backticks is a short summary of an email conversation from Jeff Skilling's email file.
+
+```
+{{ conversation }}
+```
+
+Please categorise it into the best fitting of the following categories.
+
+Business/Executive Appointments
+Business/Financial Updates
+Business/HR Issues
+Business/Investment Opportunities
+Business/Legal Issues
+Business/Market Analysis
+Business/Mergers and Acquisitions
+Business/Partnerships
+Business/Project Updates
+Business/Risk Management
+Business/Strategic Discussions
+Business/Technology Initiatives
+Business/Venture Capital
+Communications/Email Updates
+Communications/Internal Communications
+Communications/Interviews
+Communications/Press Releases
+Communications/Public Relations Campaigns
+Communications/Video Messages
+Events/Awards Ceremonies
+Events/Charity Events
+Events/Community Events
+Events/Conferences
+Events/Forums
+Events/Gatherings
+Events/Homecoming
+Events/Meetings
+Events/Panel Discussions
+Events/Seminars
+Events/Sports Events
+Events/Training Sessions
+Events/YPO Events
+Fraternity/Alumni Updates
+Fraternity/Event Planning
+Fraternity/Membership
+Fraternity/Memories
+Fraternity/Reunions
+Personal/Congratulatory Messages
+Personal/Family Updates
+Personal/Fundraising Efforts
+Personal/Gratitude Messages
+Personal/Health Updates
+Personal/Reflections
+Personal/Travel Updates
+
+If it doesn't fit well into one of these categories, or there isn't enough information to determine a category answer with
+Other/Other
+
+Keep your answer just to the category name
+
