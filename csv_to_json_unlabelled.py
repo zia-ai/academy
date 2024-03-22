@@ -44,19 +44,24 @@ import humanfirst
               help='column:value,column:value;column:value,column:value')
 @click.option('-h', '--striphtml', is_flag=True, default=False,
               help='Whether to strip html tags from the utterance col')
-@click.option('-b', '--drop_blanks', is_flag=True, type=bool, default=False,
+@click.option('-b', '--drop_blanks', is_flag=True, type=bool
+              , default=False,
               help='Whether to drop blanks')
+@click.option('-a', '--concatenate_cols', type=str, required=False, default='',
+              help='If to concat cols into utterance field.')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool) -> None:
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
+         concatenate_cols: str) -> None:
     """Main Function"""
     process(filename, metadata_keys, utterance_col, delimiter,
          convo_id_col, created_at_col, unix_date, role_col,
-         role_mapper, encoding, filtering, striphtml, drop_blanks)
+         role_mapper, encoding, filtering, striphtml, drop_blanks, concatenate_cols)
 
 def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool) -> None:
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
+         concatenate_cols: str) -> None:
     """Helper function to allow calling by directory"""
 
     excel = False
@@ -70,7 +75,15 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         metadata_keys = list(metadata_keys.split(","))
     used_cols = metadata_keys
     assert isinstance(used_cols, list)
-    for col in [utterance_col, convo_id_col, created_at_col, role_col]:
+    if concatenate_cols != '':
+        concatenate_cols = concatenate_cols.split(',')
+        assert len(concatenate_cols)>1
+
+    check_cols = [utterance_col, convo_id_col, created_at_col, role_col]
+    if concatenate_cols != '':
+        check_cols.extend(concatenate_cols)
+
+    for col in check_cols:
         if col != '':
             used_cols.append(col)
     print(f'used_cols: {used_cols}')
@@ -91,6 +104,11 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     df['role'] = 'client'
 
     print(df)
+
+    # concatenate
+    if concatenate_cols != '':
+        df[f'{utterance_col}_old'] = df[utterance_col]
+        df[utterance_col] = concatenate_cols[0] + ":\n" + df[concatenate_cols[0]] + "\n" + concatenate_cols[1] + ":\n" + df[concatenate_cols[1]]
 
     # filtering
     if filtering != '':
@@ -275,7 +293,7 @@ def parse_dates(date: str) -> datetime.datetime:
 
     try:
         candidate_date = parser.parse(timestr=date, dayfirst=True)
-    except:
+    except Exception:
         print(f"WARNING-could not parse:{date}")
         candidate_date = parser.parse(timestr="1999-01-01")
     return candidate_date
