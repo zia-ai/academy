@@ -6,22 +6,25 @@ python ./json_to_csv.py
 """
 # *********************************************************************************************************************
 # standard imports
+import json
 
 # third party imports
 import click
 import pandas
-import json
+
 
 # custom imports
 
 
 @click.command()
 @click.option('-f', '--input_filename', type=str, required=True, help='Input File')
-def main(input_filename: str):
+@click.option('-l', '--object_list_key', type=str, required=False,
+              default="examples", help='Object list key to load from')
+def main(input_filename: str, object_list_key: str):
     file = open(input_filename, mode = "r", encoding = "utf8")
     workspace_json = json.load(file)
     file.close()
-    df = pandas.json_normalize(workspace_json["examples"])
+    df = pandas.json_normalize(workspace_json[object_list_key])
     print(df)
     assert input_filename.endswith(".json")
     output_filename = input_filename.replace(".json", "_output.csv")
