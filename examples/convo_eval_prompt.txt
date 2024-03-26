@@ -1,0 +1,90 @@
+Delimited by three backticks is a online chat conversation between a "user" of an online vending machine called Charlie and one of it's "agent" chatbots.
+
+You will be asked to evaluate the conversation transcript based on the criteria below.
+
+```
+{{ conversation }}
+```
+
+
+conversation_loops: The ability of the chatbot to avoid conversational loops and move the conversation forward without repeating or cycling through the same content.
+
+Score 0: The agent repeats the same responses or questions twice or more times in a row
+Score 1: The agent progresses the conversation effectively, no repetitive loops.
+
+
+conversation_dead_end: Conversations must to never leave the user waiting for a reply or prompt for action from the chatbot. The last speaker in a transcript should not be the user
+
+Score 0: If the last utterance is by the user, except where the last user utterance is goodbye or similar
+Score 1: If the last utterance in the conversation is the agent
+
+
+conversation_stall: The conversation stalls due to the user waiting for the chatbot to reply
+Score 0: The user has to ask the agent where they are
+Score 1: The user does not ask the agent where they are
+
+
+escalation_capability: Recognizing when to transition complex or unresolved issues to human agents.
+
+Score 0: The agent fails to identify or act upon situations necessitating human intervention. These situations include the user requesting to speak to a human or the user requesting a refund.
+Score 1: The agent recognizes and smoothly transitions to human support when necessary. If there are no situations requiring an escalation score a 1.
+
+
+interrupt_handling: Ability to manage and adapt to sudden changes or interruptions in the conversation flow.
+
+Score 0: The agent is unable to handle interruptions or sudden topic shifts, leading to irrelevant responses or asking for information that was relevant to the previous topic.
+Score 1: Gracefully accommodates interruptions or topic changes, ensuring smooth conversational transitions. If there are no interruptions or sudden topic shifts score with a 1.
+
+
+incomplete_utterance: The chatbot responses should not end mid-sentence
+
+Score 0: The agent response gets cut off mid sentence
+Score 1: The agent response does not get cut off mid sentence
+
+
+staying_on_topic: The chatbot should always maintain a conversation that is related to the main topic of the vending machine which is what it offers, how it works and what to do if you have a question.
+
+Score 0: If the conversation goes off topic the agent does not try to prompt the user to return to the main topics
+Score 1: The conversation remains on topic or the chatbot attempts to prompt the user to remain on topic or indicates that they are unable to assist
+
+
+tone_and_language: Appropriately matching the chatbot's tone and language to the user’s context, emotional state and expectations.
+
+Score 0: The agent uses tone or language unaligned with the user’s context, emotional state or expectations, disrupting engagement.
+Score 1: The agent adapts tone and language to match the user’s situation and preferences.
+
+
+understanding: Accurately understanding and interpreting the users meaning to grasp and respond to the user's intended message.
+
+Score 0: The agent consistently misinterprets or misunderstands user inputs, leading to off-target responses.
+Score 1: Demonstrates high accuracy in understanding and interpreting user inputs, ensuring responses are relevant and helpful.
+
+
+total_score: Total Score should be calculated by totalling all the individual criteria
+
+If for some reason you cannot give a score, score the criteria 0
+If you cannot provide reasoning, give "unknown" for the reasoning.
+
+Provide your answer in the following key value format.
+
+conversation_dead_end: <score>
+conversation_dead_end_reasoning: <reasoning>
+conversation_loops: <score>
+conversation_loops_reasoning: <reasoning>
+conversation_stall: <score>
+conversation_stall_reasoning: <reasoning>
+escalation_capability: <score>
+escalation_capability_reasoning: <reasoning>
+incomplete_utterance: <score>
+incomplete_utterance_reasoning: <reasoning>
+interrupt_handling: <score>
+interrupt_handling_reasoning: <reasoning>
+staying_on_topic: <score>
+staying_on_topic_reasoning: <reasoning>
+tone_and_language: <score>
+tone_and_language_reasoning: <reasoning>
+understanding: <score>
+understanding_reasoning: <reasoning>
+total_score: <score>
+total_score_reasoning: <reasoning>
+
