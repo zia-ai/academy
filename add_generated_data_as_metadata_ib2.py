@@ -1,5 +1,5 @@
 """
-python add_generated_data_as_metadata_ib.py
+python add_generated_data_as_metadata_ib2.py
 
 Version that works with key values
 
@@ -27,11 +27,14 @@ import back_to_hf_unlabelled
               help='Comma delimitered list of columns to enrich data with')
 @click.option('-c', '--cleanse_fields', type=str, required=True,
               help='Comma delimitered list of columns to cleanse')
+@click.option('-p', '--drop_no_metadata_fields', is_flag=True, type=bool, required=False, default=False,
+              help='Whether to drop data without metadata')
 def main(filename: str,
          generated_data: str,
          delimiter: str,
          observation_fields: str,
-         cleanse_fields: str) -> None:
+         cleanse_fields: str,
+         drop_no_metadata_fields: bool) -> None:
     """Main Function"""
 
     # load input data
@@ -63,56 +66,33 @@ def main(filename: str,
         raise RuntimeError(f'{join_field} is not present in the generated dataset')
     print(f'Unique {join_field}: {df_gen[join_field].nunique()}')
 
+    # drop
+    if drop_no_metadata_fields:
+        ids_we_need = df_gen[join_field].unique().tolist()
+        df = df[df["context-context_id"].isin(ids_we_need)]
+        print("After drop")
+        print(f'Unique context-context_id:            {df["context-context_id"].nunique()}')
 
     # observation keys interested in
     observation_fields = observation_fields.split(',')
 
     # fields to cleanse
     cleanse_fields = cleanse_fields.split(',')
+    for cleanse in cleanse_fields:
+        df_gen[cleanse] = df_gen[cleanse].apply(cleanse_value)
 
-    # check they are all present in loaded generated
-    metadata_key_field = f'metadata{delimiter}key'
-    print(f'metadata_key_filed: {metadata_key_field}')
-    print(df_gen.columns.to_list())
-    print(f'Metadata key fields unique: {df_gen[metadata_key_field].unique()}')
-    print(f'{df_gen[[metadata_key_field,"id"]].groupby(metadata_key_field).count()}')
-    observation_key_results = df_gen[metadata_key_field].unique().tolist()
-    print(observation_fields)
-    for obs in observation_fields:
-        print(obs)
-        assert(obs in observation_key_results)
+    # just want the two observation fields
+    df_gen.set_index(join_field,inplace=True,drop=True)
+    df_gen = df_gen[observation_fields]
 
-    # make a regex
-    # start of text, followed by an observation_key and an optional space
-    re_string = f'^({"|".join(observation_fields)})[ ]*'
-    re_key = re.compile(re_string)
-    print("Re String")
-    print(re_string)
+    # rename the observation fields
+    for field in observation_fields:
+        df_gen.rename(columns={field:f'metadata-{field}'},inplace=True)
 
-    # so we want
-    # sourceConversationID, and the metadata fields split to columns
-    df_obs = df_gen[[join_field,]]
-    df_obs = df_obs.set_index(join_field,drop=True)
-    for obs in observation_fields:
-        print(f'Working on {obs}')
-        df_temp = df_gen[df_gen[metadata_key_field]==obs]
-        obs_name = f'metadata-{obs}'
-        df_temp = df_temp.rename(columns={"text":obs_name})
-        df_temp = df_temp[[join_field,obs_name]]
-        df_temp = df_temp.set_index(join_field,drop=True)
-        if obs in cleanse_fields:
-            df_temp[obs_name] = df_temp[obs_name].apply(cleanse_value)
-        df_obs = df_obs.join(df_temp.copy())
-
-    print(df_obs)
-    print(df["context-context_id"])
-    quit()
     # join the new metadata on
     print("Joining Data")
-    df = df.join(df_obs,on="context-context_id")
-    print(df["metadata-Resolved?"])
-    quit()
-    df["metadata-context_id"] = df["context-context_id"]
+    df = df.join(df_gen,on="context-context_id")
+    # df["metadata-context_id"] = df["context-context_id"]
     df = df.fillna("")
     print("Joined Columns")
     print(df.columns.to_list())
