@@ -1,18 +1,27 @@
 """
-python csv_to_json_combine_large_convos.py
+python csv_to_json_large_convos_to_single_utterance.py
 
+Converts very large phone or chat conversations from csv format to HF JSON.
+Stores entire conversations as a single utterance.
+Splits large csv files to multiple JSON files to easily load data. (must specify limits if needed)
+
+Requires CSV with Columns Headers for utterance column and convo id
 """
 # *********************************************************************************************************************
-import click
+# standard imports
 import csv
 import json
 import time
 import datetime
 import os
 
+#third-party imports
+import click
+
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
-@click.option('-l', '--limit', type=int, required=True, help='Conversation Split Limit Number (ex 6000)')
+@click.option('-l', '--limit', type=int, required=False, help='Conversation Split Limit Number (ex 6000). A new file \
+                                                                will be created once limit is reached')
 @click.option('-u', '--utterance_col', type=str, required=True,
               help='Column name containing utterances')
 @click.option('-c', '--convo_id_col', type=str, required=True, default='',
@@ -27,7 +36,7 @@ import os
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert"')
 def main(filename: str, limit: int, utterance_col: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str):
+         role_mapper: str) -> None:
 
     file_name = filename
     #Check if filename is a path
@@ -42,12 +51,20 @@ def main(filename: str, limit: int, utterance_col: str,
 
     json_file_name = file_name_split + "-hf-export.json"
 
-    convo_dict = combine_conversations(filename,utterance_col,convo_id_col,created_at_col,unix_date,role_col,role_mapper)
-    export_to_hf_json_limit(convo_dict,json_file_name,limit=limit)
+    convo_dict = combine_conversations(filename,utterance_col,convo_id_col,created_at_col,unix_date,
+                                       role_col,role_mapper)
+
+    if limit == 0 or limit == None:
+        export_to_hf_json(convo_dict,json_file_name)
+    else:
+        export_to_hf_json_limit(convo_dict,json_file_name,limit=limit)
 
 
 
-def combine_conversations(filename: str,utterance_col,convo_id_col,created_at_col,unix_date,role_col,role_mapper):
+def combine_conversations(filename: str,utterance_col:str,convo_id_col:str,created_at_col:str,
+                          unix_date:bool,role_col:str,role_mapper:str) -> dict:
+    """Read each utterance and builds a single string for each conversation stored in a dictionary"""
+
     csv_file = filename
     convo_dict = {}
     no_of_unique_conversations = 0
@@ -105,7 +122,6 @@ def combine_conversations(filename: str,utterance_col,convo_id_col,created_at_co
                     else:
                         current_speaker = default_speaker
             except IndexError as e:
-                print(e)
                 error_log.append((row_number,row))
                 continue
 
@@ -161,7 +177,7 @@ def combine_conversations(filename: str,utterance_col,convo_id_col,created_at_co
 
 
 
-    err_file_name = "Error Log--" + csv_file
+    err_file_name = "Error Log--" + str(datetime.datetime.now().isoformat()) + ".csv"
     if(len(error_log) > 0):
 
         directory = "data"
@@ -180,7 +196,8 @@ def combine_conversations(filename: str,utterance_col,convo_id_col,created_at_co
     return convo_dict
 
 
-def export_to_hf_json(conversation_dict, json_file):
+def export_to_hf_json(conversation_dict: dict, json_file:str) -> None:
+    """Takes the dictionary and creates a HF JSON output file to the data folder - without limits version"""
 
     examples = []
     for conversation_id in conversation_dict:
@@ -198,10 +215,19 @@ def export_to_hf_json(conversation_dict, json_file):
         "examples": examples
     }
 
-    with open(json_file, 'w', encoding='utf-8') as jsonfile:
+    directory = "data"
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    changed_file = json_file.split('.')[0] + ".json"
+    changed_file = os.path.join(directory, changed_file)
+
+    with open(changed_file, 'w', encoding='utf-8') as jsonfile:
         json.dump(data, jsonfile, indent=2)
 
-def export_to_hf_json_limit(conversation_dict, json_file, limit):
+def export_to_hf_json_limit(conversation_dict: dict, json_file: str, limit:int) -> None:
+    """Takes the dictionary and creates a HF JSON output file to the data folder - with limits version"""
     no_of_files = 0
     example_dict = {}
     conversation_counter = 0
@@ -248,7 +274,6 @@ def export_to_hf_json_limit(conversation_dict, json_file, limit):
             os.makedirs(directory)
 
         changed_file = os.path.join(directory, changed_file)
-
 
         with open(changed_file, 'w', encoding='utf-8') as jsonfile:
             json.dump(data, jsonfile, indent=2)
