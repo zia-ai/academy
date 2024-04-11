@@ -154,6 +154,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
             print('\n')
         else:
             df['created_at'] = df[created_at_col].apply(parse_dates)
+            print(df['created_at'])
 
         # check roles
         if role_col == '':
@@ -270,14 +271,21 @@ def decide_role_filter_values(row: pandas.Series, column_name: str, role_filter:
     else:
         return False
 
-def parse_dates(date: str) -> datetime.datetime:
+def parse_dates(date: str | datetime.datetime) -> datetime.datetime:
     """Parse the date"""
 
+    if isinstance(date,datetime.datetime):
+        return date
+
     try:
-        candidate_date = parser.parse(timestr=date, dayfirst=True)
+        candidate_date = parser.parse(timestr=date, dayfirst=False)
+        print(candidate_date)
     except:
-        print(f"WARNING-could not parse:{date}")
-        candidate_date = parser.parse(timestr="1999-01-01")
+        try:
+            candidate_date = parser.parse(timestr=date[0:-1], dayfirst=False)
+        except:
+            print(f"WARNING-could not parse: {date}")
+            candidate_date = parser.parse(timestr="1999-01-01")
     return candidate_date
 
 def build_examples(row: pandas.Series, utterance_col: str, convo_id_col: str = '', created_at_col: str = ''):

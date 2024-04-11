@@ -37,7 +37,6 @@ google-cloud-dialogflow-cx = "1.18.0"
 ratelimit = "*"
 plotly="*"
 kaleido="*"
-openai="*"
 tiktoken="*"
 tdqm="*"
 spacy_langdetect="*"
@@ -46,6 +45,8 @@ asyncclick="*"
 anyio="*"
 openpyxl="*"
 humanfirst = "*"
+mail-parser-reply = "*"
+openai = "*"
 
 [dev-packages]
 
