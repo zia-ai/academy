@@ -63,6 +63,7 @@ def main(input_location: str,
     back_to_hf_unlabelled.back_to_hf(df,output_location)
 
 def sample_dataframe(df: pandas.DataFrame, sample: int) -> pandas.DataFrame:
+    """Sample by conversation ids"""
     if sample > 0:
         context_ids = df["context-context_id"].unique()
         context_ids = context_ids[0:sample]
