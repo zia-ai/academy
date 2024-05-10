@@ -1,5 +1,5 @@
 """
-trim.py
+extract_first_and_second_client_utt.py
 
 Any long set of conversations (for instance ABCD) that you want to take just the first or second client utterances.
 
