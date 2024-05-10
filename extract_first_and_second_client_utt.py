@@ -1,7 +1,13 @@
 """
 trim.py
+
+Any long set of conversations (for instance ABCD) that you want to take just the first or second client utterances.
+
+Notes: 
+Input files should be in HF json format with first_client_utt,second_client_utt,idx metadata fields
+These metadata are automatically available if the input data files are produced using csv_to_json_unlabelled.py script
 """
-# *****************************************************************************
+# *********************************************************************************************************************
 
 # standard imports
 import os
@@ -15,14 +21,18 @@ import pandas
 import back_to_hf_unlabelled
 
 @click.command()
-@click.option('-i','--input_location',type=str,required=True,help='a file or a directory')
+@click.option('-i','--input_location',type=str,required=True,
+              help='a file or a directory containing conversation in HF JSON format')
 @click.option('-h','--sample',type=int,required=False,default=0,help='Sample head')
 @click.option('-s','--sep',type=str,required=False,default="-",help='Seperator')
 @click.option('-f','--file_num',type=int,required=False,default=0,help='Files to stop after')
+@click.option('-r','--remove_list',type=str,required=False,default="WELCOME,NO_RESPONSE,NO_RESPONSE_FINAL",
+        help='List of utterances to be excluded from the final dataset')
 def main(input_location: str,
          sample: int,
          sep: str,
-         file_num: int):
+         file_num: int,
+         remove_list: str):
     """Main Function"""
 
     # deal with file or directory
@@ -34,6 +44,8 @@ def main(input_location: str,
         for c in candidate_list:
             if c.endswith(".json"):
                 work_list.append(os.path.join(input_location,c))
+
+    work_list.sort()
     print("Worklist of files is:")
     print(work_list)
 
@@ -50,7 +62,7 @@ def main(input_location: str,
     df = sample_dataframe(df,sample)
 
     # do the stuff
-    df = process(df)
+    df = process(df,remove_list)
 
     # output location
     if os.path.isfile(input_location):
@@ -73,32 +85,25 @@ def sample_dataframe(df: pandas.DataFrame, sample: int) -> pandas.DataFrame:
     df.drop(columns=["intidx"],inplace=True)
     return df
 
-def process(df: pandas.DataFrame):
-    """Do the things"""
-    # df = strip_string(df,"WELCOME")
-    # df = truncate_at_idx(df,3)
-    # df = df[df["context-context_id"]=="CA6687da219a88323bc6a93d6d4a161611"]
+def process(df: pandas.DataFrame, remove_list: str):
+    """Extracts first or second client utterances"""
 
     # make it just the first or second customer utterances
     df = df[(df["metadata-first_client_utt"]=="True") | (df["metadata-second_client_utt"]=="True")]
 
-    # blah
     print(df[["text","context-context_id","metadata-idx","metadata-first_client_utt","metadata-second_client_utt"]])
 
-    # groupby summary
+    # groupby text
     print(df[["text","metadata-idx"]].groupby("text").count().sort_values("metadata-idx",ascending=False))
 
-    # eliminate these
-    for t in ["WELCOME","NO_RESPONSE","NO_RESPONSE_FINAL"]:
-        df = strip_string(df,t)
+    # eliminate the utterances from the remove list
+    if remove_list != "":
+        remove_list = remove_list.split(",")
+        for t in remove_list:
+            df = strip_string(df,t)
 
     return df
 
-
-def truncate_at_idx(df: pandas.DataFrame, truncate_after: int) -> pandas.DataFrame:
-    """Remove IDX after this"""
-    df = df[df["metadata-idx"] <= truncate_after]
-    return df
 
 def strip_string(df: pandas.DataFrame, strip_this: str) -> pandas.DataFrame:
     """Strips any utterances matching exactly string"""
