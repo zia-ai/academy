@@ -13,7 +13,7 @@ import click
 
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
-def main(filename: str) -> None:
+def main(filename: str) -> None: # pylint: disable=unused-argument
     """Main Function"""
     print("Hello World")
 
