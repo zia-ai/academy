@@ -1,5 +1,5 @@
 """
-python w_splitter.py
+python ./archive/w_splitter.py
 
 """
 # ******************************************************************************************************************120
@@ -29,7 +29,7 @@ def main(filename: str) -> None:
     re_splitter_splitter = re.compile("(User|Assistant)_([0-9])+:[ ]*")
 
     # variales for things looking for
-    id = None
+    id = None # pylint: disable=redefined-builtin
     w_role = None
     w_turn = None
     text = None
@@ -54,7 +54,7 @@ def main(filename: str) -> None:
             matches = re_splitter_splitter.match(candi)
             if matches:
                 #skip first one otherwise assign values
-                if w_role != None:
+                if w_role != None: # pylint: disable=singleton-comparison
                     ids.append(id)
                     w_roles.append(w_role)
                     w_turns.append(w_turn)
