@@ -35,14 +35,17 @@ import humanfirst
 @click.option('-p', '--password', type=str, default='',
               help='HumanFirst password if not setting HF_PASSWORD environment variable')
 # optional to override defaults
-@click.option('-c', '--clip', type=float, required=False, default=0.35, help='Clip Point')
+@click.option('-c', '--clip', type=int, required=False, default=70, help='Clip Point')
 @click.option('-d', '--hierarchical_delimiter', type=str, required=False, default='-',
               help='Delimiter for hierarchical intents')
+@click.option('-u', '--unique', is_flag=True, type=bool, required=False, default=False,
+              help='Set for unique coverage rather than total coverage')
 def main(
          username: str, password: str,
          namespace: str, playbook: str,
          hierarchical_delimiter: str,
-         clip: float):
+         clip: float,
+         unique: bool):
     """Main Function"""
 
     # do authorisation
@@ -79,11 +82,8 @@ def main(
                                                      coverage_type=1, # TOTAL
                                                      data_selection=1, # ALL
                                                      model_id=default_nlu_engine)
-    df = pandas.read_csv(io.StringIO(coverage_export),delimiter=",")
-    dump = './data/whatever.csv'
-    df.to_csv(dump)
-    print(dump)
 
+    df = pandas.read_csv(io.StringIO(coverage_export),delimiter=",")
 
     # get workspace to lookup names
     workspace_dict = hf_api.get_playbook(namespace=namespace,
@@ -93,11 +93,14 @@ def main(
     assert isinstance(workspace,humanfirst.objects.HFWorkspace)
     print("Downloaded workspace")
 
-    analysis_field = "unique_utterance_score_histogram_thresholded_sum"
-    # unique_utterance_count
-    # unique_utterance_hier_count
-    # unique_utterance_score_histogram_thresholded_sum
-    # unique_utterance_hier_score_histogram_thresholded_sum
+    # Two different names in case unique or total set variables for them adjusting names
+    unique_prefix = ''
+    if unique:
+        unique_prefix = 'unique_'
+    utterance_count = unique_prefix + 'utterance_count'
+    utterance_hier_count = unique_prefix + 'utterance_hier_count'
+    utterance_score_histogram_thresholded_sum = unique_prefix + 'utterance_score_histogram_thresholded_sum'
+    utterance_hier_score_histogram_thresholded_sum = unique_prefix + 'utterance_hier_score_histogram_thresholded_sum'
 
     # get FQN
     df["fqn_list"] = df["intent_id"].apply(workspace.get_fully_qualified_intent_name).str.split(hierarchical_delimiter)
@@ -107,34 +110,32 @@ def main(
     max_levels = df["fqn_list"].apply(len).max()
     levels = list(range(0,max_levels,1))
     print(levels)
-    pandas.set_option('display.max_rows',1000)
-    print(df[levels + [analysis_field]])
 
     # work out other
     other = {
         'intent_id':'other',
         'model_id': df.loc[0,"model_id"],
-        'unique_utterance_count': 0,
-        'unique_utterance_hier_count': 0,
-        'unique_utterance_score_histogram_thresholded_sum': 0,
-        'unique_utterance_hier_score_histogram_thresholded_sum':0
+        utterance_count: 0,
+        utterance_hier_count: 0,
+        utterance_score_histogram_thresholded_sum: 0,
+        utterance_hier_score_histogram_thresholded_sum: 0
     }
-    print(df['unique_utterance_count'].sum())
-    print(df['unique_utterance_score_histogram_thresholded_sum'].sum())
-    other[analysis_field] = df['unique_utterance_count'].sum() - df['unique_utterance_score_histogram_thresholded_sum'].sum()
+    other[utterance_score_histogram_thresholded_sum] = df[utterance_count].sum() - df[utterance_score_histogram_thresholded_sum].sum()
     for level in levels:
         if level == 0:
             other[level] = 'other'
         else:
             other[level] = None
     df = pandas.concat([df,pandas.json_normalize(other)],axis=0).reset_index()
+    pandas.set_option('display.max_rows',1000)
+    print(df[levels + [utterance_score_histogram_thresholded_sum]])
 
 
     # drop any rows with 0
-    df = df[~(df[analysis_field]==0)]
+    df = df[~(df[utterance_score_histogram_thresholded_sum]==0)]
 
     # Create the treemap plot using Plotly - using px.Constant("<br>") makes a prettier hover info for the root level
-    fig = px.treemap(df, path=[px.Constant("<br>")] + levels, values='unique_utterance_count')
+    fig = px.treemap(df, path=[px.Constant("<br>")] + levels, values=utterance_score_histogram_thresholded_sum)
 
     # format main body of treemap and add labels
     # colours set using template
@@ -176,10 +177,12 @@ def main(
     fig.update_layout(margin = dict(t=38, l=10, r=10, b=15))
 
     # ouptut to ./data/based on workspace name
-    playbook_name_replaced = playbook_name.replace(" ","_")
     output_filename=os.path.join('data','html',f'{playbook}_{playbook_name.replace(" ","_")}.html')
     fig.write_html(output_filename)
     print(f'Wrote to: {output_filename}')
+
+    # overall totals
+    print(f'Total number of utterances is: {df[utterance_count].sum()}')
 
 
 if __name__ == '__main__':

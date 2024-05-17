@@ -1,10 +1,10 @@
-Delimited by three hashes is a phone conversation between a client "User" of an online fashion company and one of its' expert "Agent" customer support agents.
+Delimited by three backticks is a phone conversation between a client "User" of an online fashion company and one of its' expert "Agent" customer support agents.
 
 You will be asked to evaluate the conversation transcript based on the criteria below.
 
-###
-{{ sourceConversation }}
-###
+```
+{{ conversation }}
+```
 
 Criteria
 upset_by_end:  The User remains upset or frustrated at the end of the conversation
@@ -14,11 +14,12 @@ escalation: User threatens escalating the issue in some way.
 Based on evaluating the conversation using the criteria please respond with
 
 A total_score of 1,2,3,4 or 5 with 1 being the worst and 5 being the best, if you cannot score the conversation for some reason give it 0
-A comma separated list of criteria keys which were issues with in the conversation, if there are no issues then respond with "none"
-A short, single paragraph, description of your reasoning.
+A true or false key for each of the criteria
 
 Provide your answer in the following key value format.
 
 total_score: <score>
-issues: <comma separated list of criteria keys>
+upset_by_end: True|False
+issue_unresolved: True|False
+escalation: True|False
 reasoning: <reasoning>
