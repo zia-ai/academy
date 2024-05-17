@@ -1,6 +1,13 @@
 """
 python heatmap.py -f <download_from_hf> -m <lookup for model>
 
+Want this to
+Download the full unlabelled (and to know how much of that is there compared to labelled add a record)
+Deal with FQN
+Auto detect the levels
+Be multi threaded for performance
+Deal with the dates.
+
 
 """
 # ******************************************************************************************************************120
@@ -11,31 +18,82 @@ python heatmap.py -f <download_from_hf> -m <lookup for model>
 import click
 import pandas
 import plotly.express as px
+import json
+import io
 
 # custom imports
 import humanfirst
 
 @click.command()
+# Mandatory
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
-@click.option('-c', '--clip', type=float, required=False, default=0.35, help='Clip Point')
+@click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
+@click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
+# Set in env variables normally
 @click.option('-u', '--username', type=str, default='',
               help='HumanFirst username if not setting HF_USERNAME environment variable')
 @click.option('-p', '--password', type=str, default='',
               help='HumanFirst password if not setting HF_PASSWORD environment variable')
-@click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
-@click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
+# optional to override defaults
+@click.option('-c', '--clip', type=float, required=False, default=0.35, help='Clip Point')
 @click.option('-d', '--hierarchical_delimiter', type=str, required=False, default='-',
               help='Delimiter for hierarchical intents')
 @click.option('-w', '--which_nlu', type=str, required=False, default='',
               help='NLU name like nlu-57QM7EN3UFEZPGH7PI3FCJGV(HumanFirst NLU) if blank will just take the first')
+@click.option('-s', '--start_isodate', type=str,
+              default=None, help='Date range to extract conversations from')
+@click.option('-e', '--end_isodate', type=str,
+              default=None, help='Date range to extract conversations to')
 def main(filename: str, clip: float,
          username: str, password: str, namespace: str, playbook: str,
          hierarchical_delimiter: str,
-         which_nlu: str) -> None:
+         which_nlu: str,
+         start_isodate: str, end_isodate: str) -> None:
     """Main Function"""
 
     # do authorisation
     hf_api = humanfirst.apis.HFAPI(username=username,password=password)
+
+    # check how many converation sets
+    playbook_info = hf_api.get_playbook_info(playbook=playbook,namespace=namespace)
+    print(json.dumps(playbook_info["conversationSets"]))
+
+    # Check for trained NLU runids
+    runs = hf_api.list_trained_nlu(namespace=namespace,playbook=playbook)
+    df_runs = pandas.json_normalize(runs)
+    print(df_runs)
+
+    # check how many nlus - could look up get default here
+    nlu_engines = hf_api.get_nlu_engines(namespace=namespace,playbook=playbook)
+    for nlu in nlu_engines:
+        print(hf_api.get_nlu_engine(namespace=namespace,playbook=playbook,nlu_id=nlu["id"]))
+
+    # try and get coverage - here we are letting it default NLU id and run-id - it doesn't report which run_id used
+    coverage_request = hf_api.get_intents_coverage_request(namespace=namespace,playbook=playbook,data_selection=1)
+    df_coverage_request = pandas.json_normalize(coverage_request["intents"])
+    print(df_coverage_request)
+
+    # get the actual coverage_export
+    coverage_export = hf_api.export_intents_coverage(namespace=namespace,playbook=playbook)
+    df_coverage = pandas.read_csv(io.StringIO(coverage_export),delimiter=",")
+    print(df_coverage)
+
+    quit()
+
+
+
+
+
+    # query conversation set
+    response_json = hf_api.query_conversation_set(
+        namespace,
+        playbook,
+        start_isodate=start_isodate,
+        end_isodate=end_isodate,
+        convsetsource=conversation_set_id
+    )
+    print(response_json)
+    quit()
 
     # get workspace to lookup names
     workspace_dict = hf_api.get_playbook(namespace=namespace,
