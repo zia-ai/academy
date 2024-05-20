@@ -1,5 +1,7 @@
 """
-python heatmap.py -f <download_from_hf> -m <lookup for model>
+python coverage_query_heatmap.py
+-f <download_from_hf>
+-m <lookup for model>
 
 Want this to
 Download the full unlabelled (and to know how much of that is there compared to labelled add a record)
@@ -54,37 +56,53 @@ def main(filename: str, clip: float,
     # do authorisation
     hf_api = humanfirst.apis.HFAPI(username=username,password=password)
 
-    # check how many converation sets
+    # check how many converation sets there are
     playbook_info = hf_api.get_playbook_info(playbook=playbook,namespace=namespace)
-    print(json.dumps(playbook_info["conversationSets"]))
+    num_conversation_sets = len(playbook_info["conversationSets"])
+    if num_conversation_sets == 0:
+        raise RuntimeError("No conversationset attached")
+    elif num_conversation_sets > 1:
+        print(f'Warning: {num_conversation_sets} attached - check whether intentional')
+    print("\nConvosets:")
+    print(json.dumps(playbook_info["conversationSets"], indent=2))
+    conversation_set_id = playbook_info["conversationSets"][0]["id"]
+    print(f'Using conversation_set_id: {conversation_set_id}')
 
-    # Check for trained NLU runids
+    # get the playbook name.
+    playbook_name = playbook_info["name"]
+    assert isinstance(playbook_name,str)
+
+    # Check for trained NLU engines with runids
     runs = hf_api.list_trained_nlu(namespace=namespace,playbook=playbook)
     df_runs = pandas.json_normalize(runs)
-    print(df_runs)
+    # TODO: doesn't currently do anything with this run_id
+    # could look up the latest fort he latest nluIds
 
-    # check how many nlus - could look up get default here
+    # check how many nlus and get the default
     nlu_engines = hf_api.get_nlu_engines(namespace=namespace,playbook=playbook)
+    df_nlu_engines = pandas.json_normalize(nlu_engines)
+    default_nlu_engine = None
     for nlu in nlu_engines:
-        print(hf_api.get_nlu_engine(namespace=namespace,playbook=playbook,nlu_id=nlu["id"]))
+        if nlu["isDefault"] is True:
 
-    # try and get coverage - here we are letting it default NLU id and run-id - it doesn't report which run_id used
-    coverage_request = hf_api.get_intents_coverage_request(namespace=namespace,playbook=playbook,data_selection=1)
-    df_coverage_request = pandas.json_normalize(coverage_request["intents"])
-    print(df_coverage_request)
+            default_nlu_engine = nlu["id"]
 
-    # get the actual coverage_export
-    coverage_export = hf_api.export_intents_coverage(namespace=namespace,playbook=playbook)
-    df_coverage = pandas.read_csv(io.StringIO(coverage_export),delimiter=",")
-    print(df_coverage)
+            # check if default has parents
+            if not "hierarchicalRemapScore" in nlu:
+                err = 'Please ensure "include parent intents in predictions"'
+                err = err + 'is set and set to false on your NLU engine'
+                raise RuntimeError(err)
+            elif not nlu["hierarchicalRemapScore"] is False:
+                err = '"include parent intents in predictions" is set to True on your NLU engine'
+                err = err + '- needs to be set to False'
+                raise RuntimeError(err)
 
-    quit()
+            break
+    if default_nlu_engine is None:
+        raise RuntimeError("Can't find default nlu engine")
+    print(f'\nDefault NLU engine: {default_nlu_engine}')
 
-
-
-
-
-    # query conversation set
+    # query conversation set - i.e download every value to batch predict them
     response_json = hf_api.query_conversation_set(
         namespace,
         playbook,
