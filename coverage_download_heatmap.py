@@ -1,5 +1,9 @@
 """
-python heatmap.py -f <download_from_hf> -m <lookup for model>
+python coverage_download_heatmap.py
+ -n <namespace>
+ -b <playbook id>
+
+Make sure you have setup your nlu engine excluding parents
 
 Want this to
 Download the full unlabelled (and to know how much of that is there compared to labelled add a record)
@@ -13,14 +17,14 @@ Deal with the dates.
 # ******************************************************************************************************************120
 
 # standard imports
+import io
+import os
+import json
 
 # 3rd party imports
 import click
 import pandas
 import plotly.express as px
-import io
-import os
-import json
 
 # custom imports
 import humanfirst
@@ -40,47 +44,77 @@ import humanfirst
               help='Delimiter for hierarchical intents')
 @click.option('-u', '--unique', is_flag=True, type=bool, required=False, default=False,
               help='Set for unique coverage rather than total coverage')
+# experimental
+@click.option('-g', '--generated', is_flag=True, type=bool, required=False, default=False,
+              help='Download generated data instead of unlabelled')
 def main(
          username: str, password: str,
          namespace: str, playbook: str,
          hierarchical_delimiter: str,
          clip: float,
-         unique: bool):
+         unique: bool,
+         generated: bool):
     """Main Function"""
 
     # do authorisation
     hf_api = humanfirst.apis.HFAPI(username=username,password=password)
 
-    # check how many converation sets
+    # check how many converation sets there are
     playbook_info = hf_api.get_playbook_info(playbook=playbook,namespace=namespace)
-    print(json.dumps(playbook_info["conversationSets"]))
+    num_conversation_sets = len(playbook_info["conversationSets"])
+    if num_conversation_sets == 0:
+        raise RuntimeError("No conversationset attached")
+    elif num_conversation_sets > 1:
+        print(f'Warning: {num_conversation_sets} attached - check whether intentional')
+    print(json.dumps(playbook_info["conversationSets"], indent=2))
+
+    # get the playbook name.
     playbook_name = playbook_info["name"]
     assert isinstance(playbook_name,str)
 
-    # Check for trained NLU runids
+    # Check for trained NLU engines with runids
     runs = hf_api.list_trained_nlu(namespace=namespace,playbook=playbook)
     df_runs = pandas.json_normalize(runs)
+    something = df_runs.loc[0,"nluIds"]
+    print(something)
+    print(type(something))
+    # df_runs["nluIds_as_string"] = df_runs["nluIds"].to_list()
     print(df_runs)
+    print(df_runs.columns)
 
-    # check how many nlus - could look up get default here
+    # check how many nlus and find default
     nlu_engines = hf_api.get_nlu_engines(namespace=namespace,playbook=playbook)
     df_nlu_engines = pandas.json_normalize(nlu_engines)
     print(df_nlu_engines)
     default_nlu_engine = None
     for nlu in nlu_engines:
-        if nlu["isDefault"] == True:
+        if nlu["isDefault"] is True:
             default_nlu_engine = nlu["id"]
             print(f'\nDefault NLU engine: {default_nlu_engine}')
+
+            # check if default has parents
+            if not "hierarchicalRemapScore" in nlu:
+                err = 'Please ensure "include parent intents in predictions"'
+                err = err + 'is set and set to false on your NLU engine'
+                raise RuntimeError(err)
+            elif not nlu["hierarchicalRemapScore"] is False:
+                err = '"include parent intents in predictions" is set to True on your NLU engine'
+                err = err + '- needs to be set to False'
+                raise RuntimeError(err)
+
             break
-    if default_nlu_engine == None:
+    if default_nlu_engine is None:
         raise RuntimeError("Can't find default nlu engine")
 
     # get the coverage_export
+    data_selection = 1 # DATA_TYPE_ALL - this is what the GUI defaults to.
+    if generated:
+        data_selection = 3 # DATA_TYPE_GENERATED
     coverage_export = hf_api.export_intents_coverage(namespace=namespace,
                                                      playbook=playbook,
                                                      confidence_threshold=clip,
                                                      coverage_type=1, # TOTAL
-                                                     data_selection=1, # ALL
+                                                     data_selection=data_selection, # ALL
                                                      model_id=default_nlu_engine)
 
     df = pandas.read_csv(io.StringIO(coverage_export),delimiter=",")
@@ -128,11 +162,12 @@ def main(
             other[level] = None
     df = pandas.concat([df,pandas.json_normalize(other)],axis=0).reset_index()
     pandas.set_option('display.max_rows',1000)
-    print(df[levels + [utterance_score_histogram_thresholded_sum]])
-
 
     # drop any rows with 0
+    print(df[levels + [utterance_score_histogram_thresholded_sum]])
     df = df[~(df[utterance_score_histogram_thresholded_sum]==0)]
+    print("Dropped zero values")
+    print(df[levels + [utterance_score_histogram_thresholded_sum]])
 
     # Create the treemap plot using Plotly - using px.Constant("<br>") makes a prettier hover info for the root level
     fig = px.treemap(df, path=[px.Constant("<br>")] + levels, values=utterance_score_histogram_thresholded_sum)
