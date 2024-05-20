@@ -5,6 +5,7 @@ venv
 data/*
 !data
 !data/.gitignore
+data/html/*
 !data/html
 !data/html/.gitignore
 summarize/logs/*
