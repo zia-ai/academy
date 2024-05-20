@@ -5,13 +5,16 @@ python coverage_download_heatmap.py
 
 Make sure you have setup your nlu engine excluding parents
 
-Want this to
-Download the full unlabelled (and to know how much of that is there compared to labelled add a record)
-Deal with FQN
-Auto detect the levels
-Be multi threaded for performance
-Deal with the dates.
+This script downloads the data from the intent Tab for unique or total coverage.
+It looks up the full qualified name (FQN) for the intent based on a provided delimiter
+It calculates other heatmap box for a given clip
+It can be used to generate data for total or unique
+and for generated or unlabelled data.
+It then builds a heatmap using plotly auto detecting the number of levels in the hierarchy
 
+-d <delimiter>      used for parent to child intent generation of fqn
+-u                  flag to switch from default total behaviour to unique
+-g                  flag to switch from unlabelled to generated data
 
 """
 # ******************************************************************************************************************120
@@ -66,6 +69,7 @@ def main(
         raise RuntimeError("No conversationset attached")
     elif num_conversation_sets > 1:
         print(f'Warning: {num_conversation_sets} attached - check whether intentional')
+    print("\nConvosets:")
     print(json.dumps(playbook_info["conversationSets"], indent=2))
 
     # get the playbook name.
@@ -75,22 +79,17 @@ def main(
     # Check for trained NLU engines with runids
     runs = hf_api.list_trained_nlu(namespace=namespace,playbook=playbook)
     df_runs = pandas.json_normalize(runs)
-    something = df_runs.loc[0,"nluIds"]
-    print(something)
-    print(type(something))
-    # df_runs["nluIds_as_string"] = df_runs["nluIds"].to_list()
-    print(df_runs)
-    print(df_runs.columns)
+    # TODO: doesn't currently do anything with this run_id
+    # could look up the latest fort he latest nluIds
 
-    # check how many nlus and find default
+    # check how many nlus and get the default
     nlu_engines = hf_api.get_nlu_engines(namespace=namespace,playbook=playbook)
     df_nlu_engines = pandas.json_normalize(nlu_engines)
-    print(df_nlu_engines)
     default_nlu_engine = None
     for nlu in nlu_engines:
         if nlu["isDefault"] is True:
+
             default_nlu_engine = nlu["id"]
-            print(f'\nDefault NLU engine: {default_nlu_engine}')
 
             # check if default has parents
             if not "hierarchicalRemapScore" in nlu:
@@ -105,6 +104,7 @@ def main(
             break
     if default_nlu_engine is None:
         raise RuntimeError("Can't find default nlu engine")
+    print(f'\nDefault NLU engine: {default_nlu_engine}')
 
     # get the coverage_export
     data_selection = 1 # DATA_TYPE_ALL - this is what the GUI defaults to.
@@ -143,7 +143,7 @@ def main(
     # get levels
     max_levels = df["fqn_list"].apply(len).max()
     levels = list(range(0,max_levels,1))
-    print(levels)
+
 
     # work out other
     other = {
@@ -164,10 +164,11 @@ def main(
     pandas.set_option('display.max_rows',1000)
 
     # drop any rows with 0
-    print(df[levels + [utterance_score_histogram_thresholded_sum]])
+    before_drop = df.shape[0]
     df = df[~(df[utterance_score_histogram_thresholded_sum]==0)]
-    print("Dropped zero values")
-    print(df[levels + [utterance_score_histogram_thresholded_sum]])
+    after_drop = df.shape[0]
+    print(f'Dropped categories with no results, before: {before_drop} after: {after_drop}')
+
 
     # Create the treemap plot using Plotly - using px.Constant("<br>") makes a prettier hover info for the root level
     fig = px.treemap(df, path=[px.Constant("<br>")] + levels, values=utterance_score_histogram_thresholded_sum)
@@ -210,6 +211,9 @@ def main(
     )
     #change margin size - make the plot bigger within the frame
     fig.update_layout(margin = dict(t=38, l=10, r=10, b=15))
+
+    # print final data this is based on
+    print(df[levels + [utterance_score_histogram_thresholded_sum]])
 
     # ouptut to ./data/based on workspace name
     output_filename=os.path.join('data','html',f'{playbook}_{playbook_name.replace(" ","_")}.html')
