@@ -77,14 +77,13 @@ def main(
     assert isinstance(playbook_name,str)
 
     # Check for trained NLU engines with runids
-    runs = hf_api.list_trained_nlu(namespace=namespace,playbook=playbook)
-    df_runs = pandas.json_normalize(runs)
+    # runs = hf_api.list_trained_nlu(namespace=namespace,playbook=playbook)
+    # df_runs = pandas.json_normalize(runs)
     # TODO: doesn't currently do anything with this run_id
     # could look up the latest fort he latest nluIds
 
     # check how many nlus and get the default
     nlu_engines = hf_api.get_nlu_engines(namespace=namespace,playbook=playbook)
-    df_nlu_engines = pandas.json_normalize(nlu_engines)
     default_nlu_engine = None
     for nlu in nlu_engines:
         if nlu["isDefault"] is True:
@@ -154,7 +153,8 @@ def main(
         utterance_score_histogram_thresholded_sum: 0,
         utterance_hier_score_histogram_thresholded_sum: 0
     }
-    other[utterance_score_histogram_thresholded_sum] = df[utterance_count].sum() - df[utterance_score_histogram_thresholded_sum].sum()
+    usht = utterance_score_histogram_thresholded_sum
+    other[usht] = df[utterance_count].sum() - df[usht].sum()
     for level in levels:
         if level == 0:
             other[level] = 'other'
@@ -216,7 +216,7 @@ def main(
     print(df[levels + [utterance_score_histogram_thresholded_sum]])
 
     # ouptut to ./data/based on workspace name
-    output_filename=os.path.join('data','html',f'{playbook}_{playbook_name.replace(" ","_")}.html')
+    output_filename=os.path.join('data','html',f'{playbook}_coverage_download_{playbook_name.replace(" ","_")}.html')
     fig.write_html(output_filename)
     print(f'Wrote to: {output_filename}')
 
