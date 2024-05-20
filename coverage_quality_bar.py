@@ -1,15 +1,27 @@
 """
-python coverage_query_heatmap.py
--f <download_from_hf>
--m <lookup for model>
+python coverage_quality_bar.py
+-n <namespace id>
+-b <playbook>
+-s <field to create stack bars on>
+-l <pipeline name with the summarisation against the model
 
-Want this to
-Download the full unlabelled (and to know how much of that is there compared to labelled add a record)
-Deal with FQN
-Auto detect the levels
-Be multi threaded for performance
-Deal with the dates.
+Example:
+python coverage_quality_bar.py -n humanfirst-abcd-summarised -b playbook-UHP4VVQM2VFRXMOXNBFUOBRH -s total_score -l key_issue
 
+Function:
+Downloads the generatd data for a pipeline name and extracts the class for the model in the worksapce against it.
+Also downloads the workspace in order to work out the intent names
+Then downloads the unlabelled data with an assumed metadata annotation like total_score
+And produces a horizontal two level bar chart
+
+Limitations:
+Plotly horizontal bar charts only support two levels
+This only works with conversations
+
+Options:
+-c <clip level                 this script it is in 0.35 format float>
+-d <hierarchical delimiter>    how to join your fully qualified intent names
+-w <nlu id>                    if you want to select a particular NLU on workspaces which have many
 
 """
 # ******************************************************************************************************************120
@@ -22,7 +34,7 @@ import os
 # 3rd party imports
 import click
 import pandas
-import plotly.express as px
+import plotly.graph_objects # express can't do multi category
 
 # custom imports
 import humanfirst
@@ -31,7 +43,9 @@ import humanfirst
 # Mandatory
 @click.option('-n', '--namespace', type=str, required=True, help='HumanFirst namespace')
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
+@click.option('-s', '--stack_field', type=str, required=True, help='Metadata field to stack bars on i.e total score')
 @click.option('-l', '--pipeline', type=str, required=True, help='Name of pipeline to get results from')
+
 # Set in env variables normally
 @click.option('-u', '--username', type=str, default='',
               help='HumanFirst username if not setting HF_USERNAME environment variable')
@@ -44,6 +58,7 @@ import humanfirst
 @click.option('-w', '--which_nlu', type=str, required=False, default='',
               help='NLU name like nlu-57QM7EN3UFEZPGH7PI3FCJGV(HumanFirst NLU) if blank will just take the first')
 def main(namespace: str, playbook: str,
+         stack_field: str,
          pipeline: str,
          username: str, password: str,
          clip: float,
@@ -107,6 +122,7 @@ def main(namespace: str, playbook: str,
     assert isinstance(workspace,humanfirst.objects.HFWorkspace)
     print("Downloaded workspace")
 
+
     # work out which pipelines there are
     pipelines = hf_api.list_playbook_pipelines(namespace=namespace,playbook_id=playbook)
     if len(pipelines) == 0:
@@ -125,6 +141,7 @@ def main(namespace: str, playbook: str,
     else:
         print(f'Found pipeline: {pipeline} id: {pipeline_id} step_id: {pipeline_step_id}')
 
+    # download the pipeline data
     data = hf_api.export_query_conversation_inputs(
         namespace=namespace,
         playbook_id=playbook,
@@ -132,20 +149,22 @@ def main(namespace: str, playbook: str,
         pipeline_step_id=pipeline_step_id,
         download_format=2,
         dedup_by_hash=False,
-        dedup_by_convo=False
+        dedup_by_convo=False,
+        source_kind = 2 # SOURCE_KIND_GENERATED
     )
-    df = pandas.read_csv(io.StringIO(data),delimiter=",")
-    print(f'Downloaded csv for pipeline run: {df.shape}')
+    df_pipeline = pandas.read_csv(io.StringIO(data),delimiter=",")
+    print(f'Downloaded csv for pipeline run: {df_pipeline.shape}')
+    csv_pipeline = df_pipeline.shape[0]
 
     # Get the correct column names
     if which_nlu == '':
         which_nlu = default_nlu_engine
-    col_list = df.columns.to_list()
+    col_list = df_pipeline.columns.to_list()
     top_matching_intent_id = get_col_name("top_matching_intent_id",col_list,which_nlu)
     top_matching_intent_score = get_col_name("top_matching_intent_score",col_list,which_nlu)
 
     # calc clips
-    df = df.apply(apply_clip,
+    df_pipeline = df_pipeline.apply(apply_clip,
                   args=[
                             clip,
                             top_matching_intent_score,
@@ -153,76 +172,82 @@ def main(namespace: str, playbook: str,
                             workspace
                         ],
                   axis=1)
+    print('Calculated clips')
+
+    # Now get the metadata data (which we have put on using batch actions)
+    data = hf_api.export_query_conversation_inputs(
+        namespace=namespace,
+        playbook_id=playbook,
+        exists_filter_key_name=stack_field,
+        download_format=2,
+        dedup_by_hash=False,
+        dedup_by_convo=False,
+        source_kind=1 # SOURCE_KIND_UNLABELLED
+    )
+    df = pandas.read_csv(io.StringIO(data),delimiter=",")
+    print(f'Downloaded csv from unlabelled: {df.shape}')
+    csv_unlabelled = df.shape[0]
+    if csv_pipeline != csv_unlabelled:
+        print(f'Warning: csv_pipeline: {csv_pipeline} csv_unlabelled: {csv_unlabelled}')
 
     # expand dynamicaly that to a list and then columns per level
-    df["fqn_list"] = df["fqn"].str.split(hierarchical_delimiter)
-    df = df.join(pandas.DataFrame(df["fqn_list"].values.tolist()))
-
-    # rename columns
-    col_mapper = {
-        top_matching_intent_score: "score"
-    }
-    df.rename(inplace=True,columns=col_mapper)
+    df_pipeline["fqn_list"] = df_pipeline["fqn"].str.split(hierarchical_delimiter)
+    df_pipeline = df_pipeline.join(pandas.DataFrame(df_pipeline["fqn_list"].values.tolist()))
 
     # get levels
-    max_levels = df["fqn_list"].apply(len).max()
+    max_levels = df_pipeline["fqn_list"].apply(len).max()
     levels = list(range(0,max_levels,1))
+    if len(levels) > 2:
+        print("Warning: Plotly cannot support more than two levels.  Grouping your data by the top 2 levels")
+        levels = list(range(0,2,1))
     print(levels)
 
-    # group it
-    placeholder = 'none_placeholder'
+    # join the classification to the rating
+    metadata_stack_field = f'metadata:{stack_field}'
+    df = df[["context_id",metadata_stack_field]]
+    df_pipeline = df_pipeline[["metadata:sourceConversationId"]+levels]
+    df_pipeline.set_index("metadata:sourceConversationId",inplace=True)
+    df = df.join(df_pipeline,on="context_id")
+
+
+
+    # this is the pivot
+    placeholder = '-'
     for level in levels:
         df[level].fillna(placeholder,inplace=True)
-    gb = df[levels + ["id"]].groupby(levels,as_index=False).count()
-    gb.rename(columns={"id":"id_count"},inplace=True)
-    pandas.options.display.max_rows = 1000
+    print(df)
+    pivot = pandas.pivot_table(df,values="context_id",fill_value=0,
+                              index=levels,columns=[metadata_stack_field],aggfunc="count")
+    # for level in levels:
+    #     pivot.loc[pivot[level] == placeholder,level] = None
+    pandas.set_option('display.max_rows',1000)
+    print(pivot)
+
+    # horizontal
+    # y categories
+    y = []
     for level in levels:
-        gb.loc[gb[level] == placeholder,level] = None
-    print("Groupings are")
-    print(gb)
+        y.append(pivot.index.get_level_values(level))
 
-    # Create the treemap plot using Plotly - using px.Constant("<br>") makes a prettier hover info for the root level
-    fig = px.treemap(gb, path=[px.Constant("<br>")] + levels, values='id_count')
+    # continous to discrete colour scale
+    colors = plotly.colors.n_colors('rgb(255, 0, 0)', 'rgb(0, 255, 0)', len(pivot.columns.to_list()) , colortype = 'rgb')
 
-    # format main body of treemap and add labels
-    # colours set using template
-    fig.update_traces(marker={"cornerradius":3})
-    fig.update_layout(template='plotly', width=1500, height=750)
-    fig.update_traces(textinfo="label + percent root")
-    fig.update_traces(root_color="#343D54")
+    fig = plotly.graph_objects.Figure()
 
+    # y cat
+    for i,col in enumerate(pivot.columns.to_list()):
+        fig.add_bar(
+            y=y,
+            x=pivot[col].to_list(),
+            name=f'{stack_field} {col}',
+            orientation='h',
+            marker_color=colors[i]
+        )
 
-    # set the label font and size
-    fig.data[0]['textfont']['size'] = 12
-    fig.data[0]['textfont']['family'] = 'Calibri'
-
-    #format title, hover info fonts and background
-    fig.update_layout(
-    title= "Overview of categories by total count",
-    title_y=0.98,
-    title_font_color = 'white',
-    title_font_size = 24,
-    hoverlabel=dict(
-            font_size=16,
-            font_family="Calibri"
-        ),
-    paper_bgcolor="#343D54",
-    )
-
-    # Update the hover info
-    fig.data[0].hovertemplate = (
-    '<b>%{label}</b>'
-        '<br>' +
-    'Count: %{value}' +
-    '<br>' +
-    'Percent of all utterances: <i>%{percentRoot:.1%} </i>'+
-    '<br>' +
-    'Percent of all parent category: <i>%{percentParent:.1%} </i>'+
-    '<br>'
-    )
-    #change margin size - make the plot bigger within the frame
-    fig.update_layout(margin = dict(t=38, l=10, r=10, b=15))
-    output_filename=os.path.join('data','html',f'{playbook}_coverage_query_{playbook_name.replace(" ","_")}_{pipeline}.html')
+    fig.update_layout(barmode="stack")
+    fig.update_yaxes(dtick=1)
+    file_part = f'{playbook}_coverage_bar_{playbook_name.replace(" ","_")}_{pipeline}_{stack_field}.html'
+    output_filename=os.path.join('data','html',file_part)
     fig.write_html(output_filename)
     print(f'Wrote to: {output_filename}')
 
