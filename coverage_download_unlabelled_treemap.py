@@ -110,7 +110,8 @@ def main(namespace: str, playbook: str,
         download_format=2,
         dedup_by_hash=False,
         dedup_by_convo=False,
-        source_kind=1 # SOURCE_KIND_UNLABELLED
+        source_kind=1, # SOURCE_KIND_UNLABELLED,
+        exclude_phrase_objects=True
     )
     df = pandas.read_csv(io.StringIO(data),delimiter=",")
     print(f'Downloaded csv from unlabelled: {df.shape}')
@@ -136,12 +137,14 @@ def main(namespace: str, playbook: str,
     # expand dynamicaly that to a list and then columns per level
     df["fqn_list"] = df["fqn"].str.split(hierarchical_delimiter)
     df = df.join(pandas.DataFrame(df["fqn_list"].values.tolist()))
-    print(df[["fqn",top_matching_intent_score,"text"]])
 
     # get levels
     max_levels = df["fqn_list"].apply(len).max()
     levels = list(range(0,max_levels,1))
     print(f'Levels are: {levels}')
+
+    # print it
+    print(df[levels+[top_matching_intent_score,"text"]])
 
     # group the data removing the Nones and then putting them back.
     placeholder = 'none_placeholder'

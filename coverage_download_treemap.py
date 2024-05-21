@@ -117,6 +117,9 @@ def main(
                                                      model_id=default_nlu_engine)
 
     df = pandas.read_csv(io.StringIO(coverage_export),delimiter=",")
+    print(f'Downloaded data: {df.shape}')
+
+
 
     # get workspace to lookup names
     workspace_dict = hf_api.get_playbook(namespace=namespace,
@@ -124,7 +127,7 @@ def main(
                                          hierarchical_delimiter=hierarchical_delimiter)
     workspace = humanfirst.objects.HFWorkspace.from_json(workspace_dict,delimiter=hierarchical_delimiter)
     assert isinstance(workspace,humanfirst.objects.HFWorkspace)
-    print("Downloaded workspace")
+    print(f"Downloaded workspace")
 
     # Two different names in case unique or total set variables for them adjusting names
     unique_prefix = ''
@@ -134,6 +137,10 @@ def main(
     utterance_hier_count = unique_prefix + 'utterance_hier_count'
     utterance_score_histogram_thresholded_sum = unique_prefix + 'utterance_score_histogram_thresholded_sum'
     utterance_hier_score_histogram_thresholded_sum = unique_prefix + 'utterance_hier_score_histogram_thresholded_sum'
+    print(f'{utterance_count}: {df[utterance_count].sum()}')
+    print(f'{utterance_hier_count}: {df[utterance_hier_count].sum()}')
+    print(f'{utterance_score_histogram_thresholded_sum}: {df[utterance_score_histogram_thresholded_sum].sum()}')
+    print(f'{utterance_hier_score_histogram_thresholded_sum}: {df[utterance_hier_score_histogram_thresholded_sum].sum()}')
 
     # get FQN
     df["fqn_list"] = df["intent_id"].apply(workspace.get_fully_qualified_intent_name).str.split(hierarchical_delimiter)
