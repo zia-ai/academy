@@ -204,7 +204,6 @@ def main(namespace: str, playbook: str,
     fig.update_traces(textinfo="label + percent root")
     fig.update_traces(root_color="#343D54")
 
-
     # set the label font and size
     fig.data[0]['textfont']['size'] = 12
     fig.data[0]['textfont']['family'] = 'Calibri'

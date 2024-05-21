@@ -4,7 +4,7 @@ python coverage_download_unlabelled_treemap.py
 -b <playbook>
 
 Example:
-python coverage_quality_bar.py -n humanfirst-abcd-summarised -b playbook-UHP4VVQM2VFRXMOXNBFUOBRH
+python coverage_download_unlabelled_treemap.py -n humanfirst-abcd-summarised -b playbook-UHP4VVQM2VFRXMOXNBFUOBRH
 
 Options:
 -c <clip level                 this script it is in 0.35 format float>
@@ -147,13 +147,14 @@ def main(namespace: str, playbook: str,
     placeholder = 'none_placeholder'
     for level in levels:
         df[level].fillna(placeholder,inplace=True)
-    gb = df[levels+["id"]].groupby(levels,as_index=False).count()
+    gb = df[levels + ["id"]].groupby(levels,as_index=False).count().reset_index(drop=True)
+    gb.rename(inplace=True,columns={"id":"id_count"})
     for level in levels:
         gb.loc[gb[level] == placeholder,level] = None
     print(gb)
 
     # Create the treemap plot using Plotly - using px.Constant("<br>") makes a prettier hover info for the root level
-    fig = px.treemap(gb, path=[px.Constant("<br>")] + levels, values="id")
+    fig = px.treemap(gb, path=[px.Constant("<br>")] + levels, values="id_count")
 
     # format main body of treemap and add labels
     # colours set using template
@@ -161,6 +162,7 @@ def main(namespace: str, playbook: str,
     fig.update_layout(template='plotly', width=1500, height=750)
     fig.update_traces(textinfo="label + percent root")
     fig.update_traces(root_color="#343D54")
+
 
     # set the label font and size
     fig.data[0]['textfont']['size'] = 12
@@ -194,11 +196,11 @@ def main(namespace: str, playbook: str,
     fig.update_layout(margin = dict(t=38, l=10, r=10, b=15))
 
     # output
-    file_part = f'{playbook}_coverage_bar_{playbook_name.replace(" ","_")}_from_data_tab.html'
+    file_part = f'{playbook}_coverage_download_{playbook_name.replace(" ","_")}_from_data_tab.html'
     output_filename=os.path.join('data','html',file_part)
     fig.write_html(output_filename)
     print(f'Wrote to: {output_filename}')
-    print(f'Total number of utterances is: {df["id"].sum()}')
+    print(f'Total number of utterances is: {df["id"].count()}')
 
 def apply_clip(row: pandas.Series,
                clip: float,
