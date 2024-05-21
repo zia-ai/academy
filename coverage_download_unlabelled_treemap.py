@@ -1,28 +1,27 @@
 """
-python coverage_download_heatmap.py
- -n <namespace>
- -b <playbook id>
+python coverage_download_unlabelled_treemap.py
+-n <namespace id>
+-b <playbook>
 
-Make sure you have setup your nlu engine excluding parents
+Example:
+python coverage_quality_bar.py -n humanfirst-abcd-summarised -b playbook-UHP4VVQM2VFRXMOXNBFUOBRH
 
-This script downloads the data from the intent Tab for unique or total coverage.
-It looks up the full qualified name (FQN) for the intent based on a provided delimiter
-It calculates other heatmap box for a given clip
-It can be used to generate data for total or unique
-and for generated or unlabelled data.
-It then builds a heatmap using plotly auto detecting the number of levels in the hierarchy
+Options:
+-c <clip level                 this script it is in 0.35 format float>
+-d <hierarchical delimiter>    how to join your fully qualified intent names
+-w <nlu id>                    if you want to select a particular NLU on workspaces which have many
 
--d <delimiter>      used for parent to child intent generation of fqn
--u                  flag to switch from default total behaviour to unique
--g                  flag to switch from unlabelled to generated data
+Functionality
+Does the same as coverage_download_treemap instead of downloading from the pre-calculated coverage
+Downloads from the data tab for unlabelled but doesn't remove the labelled data and gives the chart people expect
 
 """
 # ******************************************************************************************************************120
 
 # standard imports
+import json
 import io
 import os
-import json
 
 # 3rd party imports
 import click
@@ -42,21 +41,16 @@ import humanfirst
 @click.option('-p', '--password', type=str, default='',
               help='HumanFirst password if not setting HF_PASSWORD environment variable')
 # optional to override defaults
-@click.option('-c', '--clip', type=int, required=False, default=70, help='Clip Point')
+@click.option('-c', '--clip', type=float, required=False, default=0.35, help='Clip Point as 0.00 format')
 @click.option('-d', '--hierarchical_delimiter', type=str, required=False, default='-',
               help='Delimiter for hierarchical intents')
-@click.option('-u', '--unique', is_flag=True, type=bool, required=False, default=False,
-              help='Set for unique coverage rather than total coverage')
-# experimental
-@click.option('-g', '--generated', is_flag=True, type=bool, required=False, default=False,
-              help='Download generated data instead of unlabelled')
-def main(
+@click.option('-w', '--which_nlu', type=str, required=False, default='',
+              help='NLU name like nlu-57QM7EN3UFEZPGH7PI3FCJGV(HumanFirst NLU) if blank will just take the first')
+def main(namespace: str, playbook: str,
          username: str, password: str,
-         namespace: str, playbook: str,
-         hierarchical_delimiter: str,
          clip: float,
-         unique: bool,
-         generated: bool):
+         hierarchical_delimiter: str,
+         which_nlu: str) -> None:
     """Main Function"""
 
     # do authorisation
@@ -71,16 +65,12 @@ def main(
         print(f'Warning: {num_conversation_sets} attached - check whether intentional')
     print("\nConvosets:")
     print(json.dumps(playbook_info["conversationSets"], indent=2))
+    conversation_set_id = playbook_info["conversationSets"][0]["id"]
+    print(f'Using conversation_set_id: {conversation_set_id}')
 
     # get the playbook name.
     playbook_name = playbook_info["name"]
     assert isinstance(playbook_name,str)
-
-    # Check for trained NLU engines with runids
-    # runs = hf_api.list_trained_nlu(namespace=namespace,playbook=playbook)
-    # df_runs = pandas.json_normalize(runs)
-    # TODO: doesn't currently do anything with this run_id
-    # could look up the latest fort he latest nluIds
 
     # check how many nlus and get the default
     nlu_engines = hf_api.get_nlu_engines(namespace=namespace,playbook=playbook)
@@ -105,19 +95,6 @@ def main(
         raise RuntimeError("Can't find default nlu engine")
     print(f'\nDefault NLU engine: {default_nlu_engine}')
 
-    # get the coverage_export
-    data_selection = 1 # DATA_TYPE_ALL - this is what the GUI defaults to.
-    if generated:
-        data_selection = 3 # DATA_TYPE_GENERATED
-    coverage_export = hf_api.export_intents_coverage(namespace=namespace,
-                                                     playbook=playbook,
-                                                     confidence_threshold=clip,
-                                                     coverage_type=1, # TOTAL
-                                                     data_selection=data_selection, # ALL
-                                                     model_id=default_nlu_engine)
-
-    df = pandas.read_csv(io.StringIO(coverage_export),delimiter=",")
-
     # get workspace to lookup names
     workspace_dict = hf_api.get_playbook(namespace=namespace,
                                          playbook=playbook,
@@ -126,52 +103,57 @@ def main(
     assert isinstance(workspace,humanfirst.objects.HFWorkspace)
     print("Downloaded workspace")
 
-    # Two different names in case unique or total set variables for them adjusting names
-    unique_prefix = ''
-    if unique:
-        unique_prefix = 'unique_'
-    utterance_count = unique_prefix + 'utterance_count'
-    utterance_hier_count = unique_prefix + 'utterance_hier_count'
-    utterance_score_histogram_thresholded_sum = unique_prefix + 'utterance_score_histogram_thresholded_sum'
-    utterance_hier_score_histogram_thresholded_sum = unique_prefix + 'utterance_hier_score_histogram_thresholded_sum'
+    # Download from unenabled.
+    data = hf_api.export_query_conversation_inputs(
+        namespace=namespace,
+        playbook_id=playbook,
+        download_format=2,
+        dedup_by_hash=False,
+        dedup_by_convo=False,
+        source_kind=1 # SOURCE_KIND_UNLABELLED
+    )
+    df = pandas.read_csv(io.StringIO(data),delimiter=",")
+    print(f'Downloaded csv from unlabelled: {df.shape}')
 
-    # get FQN
-    df["fqn_list"] = df["intent_id"].apply(workspace.get_fully_qualified_intent_name).str.split(hierarchical_delimiter)
+    # Get the correct column names
+    if which_nlu == '':
+        which_nlu = default_nlu_engine
+    col_list = df.columns.to_list()
+    top_matching_intent_id = get_col_name("top_matching_intent_id",col_list,which_nlu)
+    top_matching_intent_score = get_col_name("top_matching_intent_score",col_list,which_nlu)
+
+    # calc clips
+    df = df.apply(apply_clip,
+                  args=[
+                            clip,
+                            top_matching_intent_score,
+                            top_matching_intent_id,
+                            workspace
+                        ],
+                  axis=1)
+    print('Calculated clips')
+
+    # expand dynamicaly that to a list and then columns per level
+    df["fqn_list"] = df["fqn"].str.split(hierarchical_delimiter)
     df = df.join(pandas.DataFrame(df["fqn_list"].values.tolist()))
+    print(df[["fqn",top_matching_intent_score,"text"]])
 
     # get levels
     max_levels = df["fqn_list"].apply(len).max()
     levels = list(range(0,max_levels,1))
+    print(f'Levels are: {levels}')
 
-
-    # work out other
-    other = {
-        'intent_id':'other',
-        'model_id': df.loc[0,"model_id"],
-        utterance_count: 0,
-        utterance_hier_count: 0,
-        utterance_score_histogram_thresholded_sum: 0,
-        utterance_hier_score_histogram_thresholded_sum: 0
-    }
-    usht = utterance_score_histogram_thresholded_sum
-    other[usht] = df[utterance_count].sum() - df[usht].sum()
+    # group the data removing the Nones and then putting them back.
+    placeholder = 'none_placeholder'
     for level in levels:
-        if level == 0:
-            other[level] = 'other'
-        else:
-            other[level] = None
-    df = pandas.concat([df,pandas.json_normalize(other)],axis=0).reset_index()
-    pandas.set_option('display.max_rows',1000)
-
-    # drop any rows with 0
-    before_drop = df.shape[0]
-    df = df[~(df[utterance_score_histogram_thresholded_sum]==0)]
-    after_drop = df.shape[0]
-    print(f'Dropped categories with no results, before: {before_drop} after: {after_drop}')
-
+        df[level].fillna(placeholder,inplace=True)
+    gb = df[levels+["id"]].groupby(levels,as_index=False).count()
+    for level in levels:
+        gb.loc[gb[level] == placeholder,level] = None
+    print(gb)
 
     # Create the treemap plot using Plotly - using px.Constant("<br>") makes a prettier hover info for the root level
-    fig = px.treemap(df, path=[px.Constant("<br>")] + levels, values=utterance_score_histogram_thresholded_sum)
+    fig = px.treemap(gb, path=[px.Constant("<br>")] + levels, values="id")
 
     # format main body of treemap and add labels
     # colours set using template
@@ -179,7 +161,6 @@ def main(
     fig.update_layout(template='plotly', width=1500, height=750)
     fig.update_traces(textinfo="label + percent root")
     fig.update_traces(root_color="#343D54")
-
 
     # set the label font and size
     fig.data[0]['textfont']['size'] = 12
@@ -212,17 +193,39 @@ def main(
     #change margin size - make the plot bigger within the frame
     fig.update_layout(margin = dict(t=38, l=10, r=10, b=15))
 
-    # print final data this is based on
-    print(df[levels + [utterance_score_histogram_thresholded_sum]])
-
-    # ouptut to ./data/based on workspace name
-    output_filename=os.path.join('data','html',f'{playbook}_coverage_download_{playbook_name.replace(" ","_")}.html')
+    # output
+    file_part = f'{playbook}_coverage_bar_{playbook_name.replace(" ","_")}_from_data_tab.html'
+    output_filename=os.path.join('data','html',file_part)
     fig.write_html(output_filename)
     print(f'Wrote to: {output_filename}')
+    print(f'Total number of utterances is: {df["id"].sum()}')
 
-    # overall totals
-    print(f'Total number of utterances is: {df[utterance_count].sum()}')
+def apply_clip(row: pandas.Series,
+               clip: float,
+               top_matching_intent_score: str,
+               top_matching_intent_id: str,
+               workspace: humanfirst.objects.HFWorkspace) -> pandas.Series:
+    """Apply clip"""
+    if float(row[top_matching_intent_score]) >= clip:
+        row["fqn"] = workspace.get_fully_qualified_intent_name(row[top_matching_intent_id])
+    else:
+        row["fqn"] = 'other'
+    return row
 
+def get_col_name(starts_with: str, col_list: list, which_nlu: str = '') -> str:
+    """Work out the name of the first NLU engine"""
+    for col in col_list:
+        assert isinstance(col,str)
+        if col.startswith(starts_with):
+            if which_nlu == '':
+                print(col)
+                return col
+            else:
+                if which_nlu in col:
+                    print(col)
+                    return col
+    print(col_list)
+    raise RuntimeError(f'No column starting: {starts_with} maybe you did not train the NLU engine')
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
