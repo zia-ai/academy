@@ -46,11 +46,14 @@ import humanfirst
               help='Delimiter for hierarchical intents')
 @click.option('-w', '--which_nlu', type=str, required=False, default='',
               help='NLU name like nlu-57QM7EN3UFEZPGH7PI3FCJGV(HumanFirst NLU) if blank will just take the first')
+@click.option('-f', '--field', type=str, required=False, default='',
+              help='Switch from intents to field')
 def main(namespace: str, playbook: str,
          username: str, password: str,
          clip: float,
          hierarchical_delimiter: str,
-         which_nlu: str) -> None:
+         which_nlu: str,
+         field: str) -> None:
     """Main Function"""
 
     # do authorisation
@@ -146,18 +149,30 @@ def main(namespace: str, playbook: str,
     # print it
     print(df[levels+[top_matching_intent_score,"text"]])
 
-    # group the data removing the Nones and then putting them back.
-    placeholder = 'none_placeholder'
-    for level in levels:
-        df[level].fillna(placeholder,inplace=True)
-    gb = df[levels + ["id"]].groupby(levels,as_index=False).count().reset_index(drop=True)
-    gb.rename(inplace=True,columns={"id":"id_count"})
-    for level in levels:
-        gb.loc[gb[level] == placeholder,level] = None
-    print(gb)
+    if field == '':
+        # group the data removing the Nones and then putting them back.
+        placeholder = 'none_placeholder'
+        for level in levels:
+            df[level].fillna(placeholder,inplace=True)
+        gb = df[levels + ["id"]].groupby(levels,as_index=False).count().reset_index(drop=True)
+        gb.rename(inplace=True,columns={"id":"id_count"})
+        for level in levels:
+            gb.loc[gb[level] == placeholder,level] = None
+        print(gb)
 
-    # Create the treemap plot using Plotly - using px.Constant("<br>") makes a prettier hover info for the root level
-    fig = px.treemap(gb, path=[px.Constant("<br>")] + levels, values="id_count")
+
+        # Create the treemap plot using Plotly - using px.Constant("<br>") makes a prettier hover info for the root level
+        fig = px.treemap(gb, path=[px.Constant("<br>")] + levels, values="id_count")
+    else:
+        print(df.columns)
+        if len(field.split(",")) > 1:
+            field = field.split(",")
+        else:
+            field = [field]
+        gb = df[field+["id"]].groupby(field,as_index=False).count().reset_index(drop=True)
+        gb.rename(inplace=True,columns={"id":"id_count"})
+        print(gb)
+        fig = px.treemap(gb, path=[px.Constant("<br>")] + field, values="id_count")
 
     # format main body of treemap and add labels
     # colours set using template
