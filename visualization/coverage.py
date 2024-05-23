@@ -46,8 +46,8 @@ import humanfirst
 @click.option('-b', '--playbook', type=str, required=True, help='HumanFirst playbook id')
 @click.option('-c', '--convsetsource', type=str, default='', help='Filter results by a certain conversationset')
 @click.option('-x', '--searchtext', type=str, default='', help='text to search for in conversations')
-@click.option('-s', '--startisodate', type=str, default='', help='Date range to extract conversations from')
-@click.option('-e', '--endisodate', type=str, default='', help='Date range to extract conversations from')
+@click.option('-s', '--startisodate', type=str, default='1970-01-01T00:00:00Z', help='Date range to extract conversations from')
+@click.option('-e', '--endisodate', type=str, default='2049-12-31T23:59:59Z', help='Date range to extract conversations to')
 @click.option('-q', '--quit_after_pages', type=int, default=0, help='Specify the number of pages to quit after')
 @click.option('-t', '--confidence_threshold', type=float, default=0.4, help='Confidence threshold = 0.0 to 1.0')
 @click.option('-d', '--debug', is_flag=True, default=False, help='Debug')
@@ -59,7 +59,9 @@ def main(username: str, password: str, output_filedir: str,
          debug: bool, delimiter: str, confidence_threshold: float):
     '''Main function'''
     write_coverage_csv(username, password, namespace, playbook,
-                       convsetsource, searchtext, startisodate, endisodate, delimiter=delimiter,
+                       convsetsource, searchtext,
+                       startisodate=startisodate, endisodate=endisodate,
+                       delimiter=delimiter,
                        quit_after_pages=quit_after_pages, debug=debug,
                        confidence_threshold=confidence_threshold, output_filedir=output_filedir)
 
@@ -70,11 +72,11 @@ def write_coverage_csv(username: str,
                        playbook: str,
                        convsetsource: str,
                        searchtext: str,
-                       startisodate: str,
-                       endisodate: str,
                        delimiter: str,
                        output_filedir: str,
-                       confidence_threshold: float,
+                       startisodate: str = '1970-01-01T00:00:00Z',
+                       endisodate: str = '2049-12-31T23:59:59Z',
+                       confidence_threshold: float = 0.4,
                        separator: str = ',',
                        page_size: int = 50,
                        quit_after_pages: int = 0,
@@ -173,7 +175,7 @@ def get_conversationset_df(
 
     # bigquery doesn't accept a field name with @ symbol
     # @type property occurs in 6 places in a single record returned query end point
-    # Replace Unsupported empty struct type for field 
+    # Replace Unsupported empty struct type for field
     # - 'annotatedConversation.annotations.entities.inputEntities' with None
     if "results" in response_json:
         response_json["results"] = rename_type_property(response_json["results"])
@@ -229,7 +231,7 @@ def get_conversationset_df(
 
 
 def rename_type_property(results: list) -> list:
-    """Rename @type property and 
+    """Rename @type property and
        Replace Unsupported empty struct type for field
         - 'annotatedConversation.annotations.entities.inputEntities' with None
     """
