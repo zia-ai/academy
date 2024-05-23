@@ -28,8 +28,11 @@ import humanfirst
 def main(username: str, password: str, namespace: str, output_path: str) -> None:
     """Main function"""
 
+    # authorise
     hf_api = humanfirst.apis.HFAPI(username=username, password=password)
-    conversation_set_list = hf_api.get_conversion_set_list(namespace)
+
+    # Get a list of conversation sets
+    conversation_set_list = hf_api.get_conversation_set_list(namespace)
     df = pandas.json_normalize(data=conversation_set_list, sep="-")
     df.rename(columns={"id": "conversation_set_id"}, inplace=True)
     df["conversation_source_id"] = df["sources"].apply(get_source_id)

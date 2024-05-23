@@ -4,6 +4,4 @@ Delimited by three backticks is a online chat conversation between a client "Use
 {{ conversation }}
 ```
 
-What is the key issue causing the client to contact the fashion retailer?
-
-Please give your answer as a single line without bullets or numbers
+Generate plantUML code for the steps an Agent typically follows to solve this type of problem
