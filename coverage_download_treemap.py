@@ -1,5 +1,5 @@
 """
-python coverage_download_heatmap.py
+python coverage_download_treemap.py
  -n <namespace>
  -b <playbook id>
 

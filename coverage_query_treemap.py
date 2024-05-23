@@ -5,7 +5,7 @@ python coverage_query_treemap.py
 -l <pipeline name with the summarisation against the model
 
 Example:
-python coverage_query_heatmap.py -n humanfirst-abcd-summarised -b playbook-UHP4VVQM2VFRXMOXNBFUOBRH  -l key_issue
+python coverage_query_treemap.py -n humanfirst-abcd-summarised -b playbook-UHP4VVQM2VFRXMOXNBFUOBRH  -l key_issue
 
 Function:
 Downloads the generatd data for a pipeline name and extracts the class for the model in the worksapce against it.
