@@ -1,25 +1,26 @@
-Delimited by three backticks is a phone conversation between a client "User" of an online fashion company and one of its' expert "Agent" customer support agents.
-
-You will be asked to evaluate the conversation transcript based on the criteria below.
+Delimited by three backticks is a conversation between a User and an Agent for a medical assistant training organisation.
 
 ```
 {{ conversation }}
 ```
 
+You will be asked to evaluate the conversation based on the criteria below.
+
 Criteria
 upset_by_end:  The User remains upset or frustrated at the end of the conversation
 issue_unresolved:  The User's key issue was not resolved by the end of the conversation
-escalation: User threatens escalating the issue in some way.
+escalation: the conversation appears to need escalating to another party to be resolved.
 
 Based on evaluating the conversation using the criteria please respond with
 
 A total_score of 1,2,3,4 or 5 with 1 being the worst and 5 being the best, if you cannot score the conversation for some reason give it 0
-A true or false key for each of the criteria
+And a key with True and False for each of the criteria leading to that rating if there is not enough information to judge, score the value False
+Please provide your reasoning.
 
 Provide your answer in the following key value format.
 
 total_score: <score>
 upset_by_end: True|False
-issue_unresolved: True|False
+issue_unresolved:  True|False
 escalation: True|False
 reasoning: <reasoning>
