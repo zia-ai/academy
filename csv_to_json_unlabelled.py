@@ -46,17 +46,21 @@ import humanfirst
               help='Whether to strip html tags from the utterance col')
 @click.option('-b', '--drop_blanks', is_flag=True, type=bool, default=False,
               help='Whether to drop blanks')
+@click.option('-z', '--minimize_meta', is_flag=True, type=bool, default=False,
+              help='Reduce the number of metadata keys')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool) -> None:
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
+         minimize_meta: bool) -> None:
     """Main Function"""
     process(filename, metadata_keys, utterance_col, delimiter,
          convo_id_col, created_at_col, unix_date, role_col,
-         role_mapper, encoding, filtering, striphtml, drop_blanks)
+         role_mapper, encoding, filtering, striphtml, drop_blanks,minimize_meta)
 
 def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool) -> None:
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
+         minimize_meta: bool) -> None:
     """Helper function to allow calling by directory"""
 
     excel = False
@@ -132,6 +136,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
 
     # if convos index them
     if convo_id_col != '':
+        print('Processing as conversation')
 
         # must have created_at date if convo index
         if created_at_col == '':
@@ -153,6 +158,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
             print(df)
             print('\n')
         else:
+            print("Copying created_at column")
             df['created_at'] = df[created_at_col].apply(parse_dates)
 
         # check roles
@@ -210,26 +216,35 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         df['second_expert_utt'] = df.apply(decide_role_filter_values,args=['idx_expert','expert',1],axis=1)
 
         # make sure convo id on the metadata as well for summarisation linking
-        metadata_keys.append(convo_id_col)
+        if not minimize_meta:
+            metadata_keys.append(convo_id_col)
 
-        # extend metadata_keys to indexed fields for conversations.
-        # generated custom indexing fields
-        metadata_keys.extend(
-            ['idx',
-             'first_client_utt', 'second_client_utt',
-             'first_expert_utt', 'second_expert_utt',
-            ]
+            # extend metadata_keys to indexed fields for conversations.
+            # generated custom indexing fields
+            metadata_keys.extend(
+                ['idx',
+                'first_client_utt', 'second_client_utt',
+                'first_expert_utt', 'second_expert_utt',
+                ]
             )
+    else:
+        print('Processing as utterances')
 
     # build metadata for utterances or conversations
-    dict_of_file_level_values = {
-        'loaded_date': datetime.datetime.now().isoformat(),
-        'script_name': 'csv_to_json_unlaballed.py'
-    }
+    if not minimize_meta:
+        dict_of_file_level_values = {
+            'loaded_date': datetime.datetime.now().isoformat(),
+            'script_name': 'csv_to_json_unlaballed.py'
+        }
+    else:
+        dict_of_file_level_values = {}
+        metadata_keys.remove(utterance_col)
     print("Capturing these metadata keys")
     print(metadata_keys)
     print("Capturing these file level values for metaddata")
     print(dict_of_file_level_values)
+    print(f'created_at_col: {created_at_col}')
+
     df['metadata'] = df.apply(create_metadata, args=[
                               metadata_keys, dict_of_file_level_values], axis=1)
 
