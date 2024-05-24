@@ -8,6 +8,9 @@
 #                   delete_file(), get_conversion_set_id(), get_conversion_source_id()
 #  Description:     Upload files to HumanFirst
 #
+# TODO: this needs rewriting for the latest version of humanfirst-module and academy coding standards
+# However this does work and provides a useful example of how to do.
+#
 # **********************************************************************************************************************
 
 # standard imports
