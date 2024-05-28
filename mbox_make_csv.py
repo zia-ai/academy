@@ -42,11 +42,38 @@ def main(directory: str,
     print(f'Wrote to: {output_filename}')
     print(df)
     tokens = df["tokens"].sum()
+
+    # lets bucket tokens
+    df["tokens_bucket"] = df["tokens"].apply(bucket_tokens)
+
+    #gb
+    gb = df[["filename","tokens_bucket"]].groupby("tokens_bucket").count()
+    print(gb)
+
+
     print(f'Total tokens: {tokens}')
     if 'tokens_shrunk' in df.columns.to_list():
         tokens_shrunk = df["tokens_shrunk"].sum()
         print(f'Shrunk tokens: {tokens_shrunk}')
         print(f'Diff:          {tokens - tokens_shrunk}')
+
+
+def bucket_tokens(tokens: int) -> int:
+    """Bucket tokens"""
+    if tokens >= 8191:
+        return 9000
+    elif tokens >= 4095:
+        return 4095
+    elif tokens >= 2047:
+        return 2047
+    elif tokens >= 1024:
+        return 1024
+    elif tokens >= 7:
+        return 7
+    elif tokens >= 1:
+        return 1
+    else:
+        return 0
 
 
 def process_dir(directory:str, reverse: bool, all_dicts: list):

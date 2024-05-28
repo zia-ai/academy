@@ -9,6 +9,9 @@ Write to the new breaking out new fields
 - list of every email involved anywhere in the message
 - sorting out the formatting
 
+TODO: if this where with dataframe could multi thread.
+But could also with months by slicing through a map of the sub docs?
+
 """
 # ******************************************************************************************************************120
 
@@ -17,6 +20,7 @@ import os
 import json
 import typing
 import re
+import pathlib
 
 # 3rd party imports
 import click
@@ -71,6 +75,8 @@ re_long_links = re.compile(
 # work out embeddings
 embeddings = tiktoken.encoding_for_model("gpt-4o")
 
+TRUNCATE_AT_TOKENS = 8191
+
 @click.command()
 
 @click.option('-d', '--directory', type=str, required=True, help='Directory')
@@ -96,18 +102,26 @@ def main(directory: str,
 
 def work_out_target(re_replace_original: re, directory: str, output_directory: str):
     """Just replaces output_directory in directory using re without recompiling it"""
-    return re_replace_original.sub(directory,output_directory)
+    return re_replace_original.sub(output_directory,directory)
 
 def do_all_these_things(record: dict) -> dict:
     """ Orchestratator function"""
+
+    # if the text is too_big it's just not worth dealing with - going to truncate it at tokens
+    if record["tokens"] >= TRUNCATE_AT_TOKENS:
+        record["content"] = embeddings.decode(embeddings.encode(record["content"])[0:TRUNCATE_AT_TOKENS-1])
+        print(f'Trimmed: {record["filename"]}')
 
     # get the participants
     record["from_participants"] = extract_emails(record["From"])
     if len(record["from_participants"]) > 0:
         record["from_participant"] = record["from_participants"][0]
     record["to_participants"] = extract_emails(record["To"])
+    record["to_participants_str"] = ','.join(record["to_participants"])
     record["cc_participants"] = extract_emails(record["Cc"])
+    record["cc_participants_str"] = ','.join(extract_emails(record["Cc"]))
     record["participants"] = extract_emails(record["content"])
+    record["participants_str"] = ','.join(record["participants"])
 
     # work on links
     record["shrunk_content"] = replace_long_links(record["content"])
@@ -132,9 +146,9 @@ def replace_long_links(content: str) -> list:
     # has no groups so should return the list
     return re_long_links.sub("link",content)
 
-def write_output(record: dict, re_replace_original: re, directory: str, output_directory: str, fn: str):
+def write_output(record: dict, re_replace_original: re, fqp: str, output_directory: str):
     """Writes the file"""
-    output_fqp = os.path.join(work_out_target(re_replace_original,directory,output_directory),fn)
+    output_fqp = work_out_target(re_replace_original,fqp,output_directory)
     with open(output_fqp,mode='w',encoding='utf8') as file_out:
         json.dump(record,file_out,indent=2)
 
@@ -152,7 +166,8 @@ def process_dir(directory:str, reverse: bool,
     # check output
     working_output_dir = work_out_target(re_replace_original, directory, output_directory)
     if not os.path.isdir(working_output_dir):
-        os.mkdir(working_output_dir)
+        thispath = pathlib.Path(working_output_dir)
+        thispath.mkdir(parents=True)
         print(f'Created: {working_output_dir}')
 
     # create list
@@ -171,7 +186,7 @@ def process_dir(directory:str, reverse: bool,
                     json_dict = json.load(file_in)
                     json_dict['filename'] = fn
                     json_dict = call_this(json_dict)
-                    write_output(json_dict,re_replace_original,directory,output_directory,fn)
+                    write_output(json_dict,re_replace_original,fqp,output_directory)
                     dir_count = dir_count + 1
         elif os.path.isdir(fqp):
             sub_count = process_dir(fqp,reverse,re_replace_original,output_directory,call_this,max_records)
