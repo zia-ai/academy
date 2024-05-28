@@ -190,7 +190,8 @@ def parse_message(msg: Message,output_dict: collections.OrderedDict, embeddings)
     """Parse and object and produce simplified dict"""
 
     # key fields for each message - only if exist
-    fields_care_about = ['From','To','Date','Subject']
+    fields_care_about = ['From','To','Cc','Date','Subject']
+
     for key in fields_care_about:
         if key in msg.keys():
             output_dict[key]=msg.get_all(key)[0]
@@ -230,6 +231,7 @@ def build_content(output_dict: collections.OrderedDict(), text: str) -> str:
     content = ''
     content = content + 'From: ' + output_dict['From'] + "\n"
     content = content + 'To: ' + output_dict['To'] + "\n"
+    content = content + 'CC: ' + output_dict['Cc'] + "\n"
     content = content + 'timestamp: ' + output_dict['timestamp'] + "\n"
     content = content + 'Subject: ' + output_dict['Subject'] + "\n"
     content = content + 'Body: ' + text
@@ -261,6 +263,7 @@ def get_skeleton() -> collections.OrderedDict():
     skeleton = collections.OrderedDict()
     skeleton['From'] = ''
     skeleton['To'] = ''
+    skeleton['Cc'] = ''
     skeleton['Date'] = ''
     skeleton['Subject'] = ''
     skeleton['parts'] = []

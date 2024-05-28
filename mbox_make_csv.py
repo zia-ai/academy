@@ -1,7 +1,8 @@
 """
-python count_tokens.py
+python mbox_make_csv.py
 
-Recursively scan a directory and load the json
+Recursively scan a directory and load the json and turn into a CSV which can then be
+csv_json_to_unlabelled
 
 """
 # ******************************************************************************************************************120
@@ -40,11 +41,18 @@ def main(directory: str,
     df.to_csv(output_filename,index=False,header=True)
     print(f'Wrote to: {output_filename}')
     print(df)
-    print(f'Total tokens: {df["tokens"].sum()}')
+    tokens = df["tokens"].sum()
+    print(f'Total tokens: {tokens}')
+    if 'tokens_shrunk' in df.columns.to_list():
+        tokens_shrunk = df["tokens_shrunk"].sum()
+        print(f'Shrunk tokens: {tokens_shrunk}')
+        print(f'Diff:          {tokens - tokens_shrunk}')
+
 
 def process_dir(directory:str, reverse: bool, all_dicts: list):
+    """Cycle through the directories"""
     dir_count = 0
-    assert(os.path.isdir(directory))
+    assert os.path.isdir(directory)
     list_files = os.listdir(directory)
     list_files.sort(reverse=reverse)
     for fn in list_files:
