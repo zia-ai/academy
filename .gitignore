@@ -19,7 +19,12 @@ summarize/prompts/*
 hf
 zia
 hf-linux-amd64
+google-credentials.json
 .google-credentials.json
+credentials.json
+.credentials.json
+token.json
+.token.json
 onprem/*
 *.zip
 *.gz
