@@ -48,6 +48,9 @@ ALPHA_TRANSLATE = ["A","B","C","D","E","F","G",
                    "AT","AU","AV",
                    "AW","AX","AY","AZ"]
 
+GOOGLE_PROJECT_CREDENTIALS_FILE = ".google-credentials.json"
+TOKEN_FILE = ".token.json"
+
 SUPPORTED_SHEET_TYPES = ["GRID"]
 # "SHEET_TYPE_UNSPECIFIED","GRID","OBJECT","DATA_SOURCE" v4
 # https://sheets.googleapis.com/$discovery/rest?version=v4
@@ -73,9 +76,9 @@ def main(sheet_id: str,
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time. It contains the scopes it was created with.
-    if os.path.exists("token.json"):
+    if os.path.exists(TOKEN_FILE):
         # read from token.json (.gitignored)
-        creds = Credentials.from_authorized_user_file(".token.json")
+        creds = Credentials.from_authorized_user_file(TOKEN_FILE)
         # check if it has the scopes we need.
         if write_mode:
             if not READWRITE_SCOPE in creds.scopes:
@@ -91,7 +94,7 @@ def main(sheet_id: str,
             # via a project
             # it doesn't control access to the actual sheet
             flow = InstalledAppFlow.from_client_secrets_file(
-                ".google-credentials.json", scopes
+                GOOGLE_PROJECT_CREDENTIALS_FILE, scopes
             )
             # Control the port that is being used here
             # you will need to add this to your redirect URIs
@@ -101,7 +104,7 @@ def main(sheet_id: str,
             creds = flow.run_local_server(port=33589)
 
         # Save the credentials for the next run
-        with open("token.json",mode="w", encoding="utf8") as token:
+        with open(TOKEN_FILE,mode="w", encoding="utf8") as token:
             token.write(creds.to_json())
 
     try:
