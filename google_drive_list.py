@@ -15,8 +15,6 @@ Uses file search: https://developers.google.com/drive/api/guides/search-files
 
 # standard imports
 import os.path
-import see
-import pandas
 
 # 3rd party imports
 import click
@@ -41,7 +39,7 @@ AUTH_SERVER_PORT = 33589
 
 # MimeTypes
 GOOGLE_DOC_FILE_MINE = "application/vnd.google-apps.document"
-GOOGLE_SHEET_FILE_MINE = "application/vnd.google-apps.sheet"
+GOOGLE_SHEET_FILE_MINE = "application/vnd.google-apps.spreadsheet"
 GOOGLE_FOLDER_MIME = "application/vnd.google-apps.folder"
 
 @click.command()
@@ -65,8 +63,8 @@ def main(
     print(f'These are the scopes: {scopes}')
 
     creds = None
-    if os.path.exists(".token.json"):
-        creds = Credentials.from_authorized_user_file(".token.json", scopes)
+    if os.path.exists(TOKEN_FILE):
+        creds = Credentials.from_authorized_user_file(TOKEN_FILE, scopes)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -76,57 +74,72 @@ def main(
             )
             creds = flow.run_local_server(port=AUTH_SERVER_PORT)
         # Save the credentials for the next run
-        with open(".token.json", "w") as token:
+        with open(TOKEN_FILE, mode="w",encoding="utf8") as token:
             token.write(creds.to_json())
 
-    # https://developers.google.com/drive/api/guides/search-files
     try:
         service = build("drive", "v3", credentials=creds)
 
-        # q = f"mimeType = 'application/vnd.google-apps.folder' and '{directory_id}' in parents"
-        q=f"\'{folder_id}\' in parents"
-        # q="name contains 'Slack Reminder'" # search for things containing document
-        print(type(q))
-        print(q)
-        # Call the Drive v3 API
-        drive = service.files()
-        results = drive.list(pageSize=10,
-            corpora="allDrives",
-            # supportsTeamDrivesRequired=True,
-            q=q,
-            # driveId={drive_id},
-            includeItemsFromAllDrives=True,
-            supportsAllDrives=True
-            # fields="nextPageToken, files(id, name)")
-        ).execute()
-
-        # Files appears to get directories.
-        # mimeType used to distinquish
-
-        items = results.get("files", [])
-        # Don't need to requery to get metadata but can like this.
-        # print(drive.get(supportsAllDrives=True,fileId="1QnWoIiGN-FnAba9msagh7tsZznn_gzqOb2JBjs2mWXE").execute())
-
-        if not items:
-            print("No files found.")
-            return
-
-        for item in items:
-            if item['mimeType'] == GOOGLE_DOC_FILE_MINE:
-                print("DOC")
-            elif item['mimeType'] == GOOGLE_FOLDER_MIME:
-                print("DIR")
-            elif item['mimeType'] == GOOGLE_SHEET_FILE_MINE:
-                print("SHEET")
-            else:
-                print(f'WTF: {item["mimeType"]}')
-            print(f"{item['name']} ({item['id']})")
-
+        read_directory(service, drive_id, folder_id, GOOGLE_SHEET_FILE_MINE)
 
     except HttpError as error:
         # TODO(developer) - Handle errors from drive API.
         print(f"An error occurred: {error}")
 
+def read_directory(service, drive_id: str, folder_id=str,
+                   looking_for_mime: str = None, counter: int = 0, indent: str = ""):
+    """Recursively loop through a directory optionally looking for """
+
+    # https://developers.google.com/drive/api/guides/search-files
+
+    # Can search by mimetype - here we are filtering after
+    # q = f"mimeType = 'application/vnd.google-apps.folder' and '{directory_id}' in parents"
+    q=f"trashed=false and \'{folder_id}\' in parents"
+
+    # do a general search
+    # q="name contains 'Slack Reminder'" # search for things containing document
+
+    # Call the Drive v3 API for this directory
+    drive = service.files()
+    results = drive.list(pageSize=1000,
+        corpora="drive",
+        q=q,
+        driveId=drive_id,
+        includeItemsFromAllDrives=True,
+        supportsAllDrives=True
+        # fields="nextPageToken, files(id, name)")
+    ).execute()
+
+    # Files appears to get directories.
+    # mimeType used to distinquish
+
+    items = results.get("files", [])
+    # Don't need to requery to get metadata but can like this.
+
+    folder = drive.get(supportsAllDrives=True,fileId=folder_id).execute()
+    print(f'{indent}Searching: {folder["name"]}')
+
+    if not items:
+        print("No files found.")
+        return
+
+    for item in items:
+        if item['mimeType'] == GOOGLE_FOLDER_MIME:
+            read_directory(service, item["driveId"], item["id"],
+                           looking_for_mime=looking_for_mime, counter=counter, indent=indent+"  ")
+        elif looking_for_mime is None:
+            do_whatever(item,indent)
+        elif item['mimeType'] == looking_for_mime:
+            do_whatever(item,indent)
+        else:
+            continue
+
+    return counter
+
+def do_whatever(item,indent):
+    """Replace with the function you want"""
+    indented_filename = indent+'  '+item['name']
+    print(f"{indented_filename:<50} {item['id']:<25} {item['mimeType']}")
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
