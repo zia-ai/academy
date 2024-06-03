@@ -8,6 +8,9 @@ data/*
 data/html/*
 !data/html
 !data/html/.gitignore
+data/timesheets/*
+!data/timesheets
+!data/timesheets/.gitignore
 summarize/logs/*
 !summarize/logs/.gitignore
 summarize/workspaces/*

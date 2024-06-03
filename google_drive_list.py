@@ -14,21 +14,17 @@ Uses file search: https://developers.google.com/drive/api/guides/search-files
 # ******************************************************************************************************************120
 
 # standard imports
-import os.path
 
 # 3rd party imports
 import click
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 # custom imports
+import google_sheets_read
 
 # If modifying these scopes, delete the file token.json.
 READ_ONLY_SCOPE = "https://www.googleapis.com/auth/drive.metadata.readonly"
-READWRITE_SCOPE = ""
 
 # Where credentials come from
 GOOGLE_PROJECT_CREDENTIALS_FILE = ".google-credentials.json"
@@ -47,48 +43,37 @@ GOOGLE_FOLDER_MIME = "application/vnd.google-apps.folder"
               help='The ID of the google drive you want to query')
 @click.option('-f', '--folder_id', type=str, required=True,
               help='The ID of the directory in your google drive you want to list')
-@click.option('-w', '--write_mode', is_flag=True, type=bool, required=False, default=False,
-              help='Whether to open sheet in write mode')
 def main(
         drive_id: str,
-        folder_id: str,
-        write_mode: bool
+        folder_id: str
     ):
     """Shows basic usage of the Drive v3 API.
     Prints the names and ids of the first 10 files the user has access to.
     """
-    scopes = [READ_ONLY_SCOPE]
-    if write_mode:
-        scopes.append(READWRITE_SCOPE)
-    print(f'These are the scopes: {scopes}')
 
-    creds = None
-    if os.path.exists(TOKEN_FILE):
-        creds = Credentials.from_authorized_user_file(TOKEN_FILE, scopes)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                ".google-credentials.json", scopes
-            )
-            creds = flow.run_local_server(port=AUTH_SERVER_PORT)
-        # Save the credentials for the next run
-        with open(TOKEN_FILE, mode="w",encoding="utf8") as token:
-            token.write(creds.to_json())
+    # creds
+    creds = google_sheets_read.check_creds([READ_ONLY_SCOPE],GOOGLE_PROJECT_CREDENTIALS_FILE,TOKEN_FILE)
 
+    # print(json.dump(creds))
+
+    # build service and read directory
     try:
         service = build("drive", "v3", credentials=creds)
+        items = read_directory(service, drive_id, folder_id, GOOGLE_SHEET_FILE_MINE)
+        print(f'Total found: {len(items)}')
 
-        read_directory(service, drive_id, folder_id, GOOGLE_SHEET_FILE_MINE)
+        for item in items:
+            do_whatever(item)
 
     except HttpError as error:
         # TODO(developer) - Handle errors from drive API.
         print(f"An error occurred: {error}")
 
-def read_directory(service, drive_id: str, folder_id=str,
-                   looking_for_mime: str = None, counter: int = 0, indent: str = ""):
+    #
+
+def read_directory(service, drive_id: str, folder_id: str, looking_for_mime: str = None) -> list:
     """Recursively loop through a directory optionally looking for """
+    return_items = []
 
     # https://developers.google.com/drive/api/guides/search-files
 
@@ -117,7 +102,7 @@ def read_directory(service, drive_id: str, folder_id=str,
     # Don't need to requery to get metadata but can like this.
 
     folder = drive.get(supportsAllDrives=True,fileId=folder_id).execute()
-    print(f'{indent}Searching: {folder["name"]}')
+    print(f'Searching: {folder["name"]}')
 
     if not items:
         print("No files found.")
@@ -125,21 +110,20 @@ def read_directory(service, drive_id: str, folder_id=str,
 
     for item in items:
         if item['mimeType'] == GOOGLE_FOLDER_MIME:
-            read_directory(service, item["driveId"], item["id"],
-                           looking_for_mime=looking_for_mime, counter=counter, indent=indent+"  ")
+            return_items.extend(read_directory(service, item["driveId"], item["id"],
+                           looking_for_mime=looking_for_mime))
         elif looking_for_mime is None:
-            do_whatever(item,indent)
+            return_items.append(item)
         elif item['mimeType'] == looking_for_mime:
-            do_whatever(item,indent)
+            return_items.append(item)
         else:
             continue
 
-    return counter
+    return return_items
 
-def do_whatever(item,indent):
+def do_whatever(item):
     """Replace with the function you want"""
-    indented_filename = indent+'  '+item['name']
-    print(f"{indented_filename:<50} {item['id']:<25} {item['mimeType']}")
+    print(f"{item['name']:<50} {item['id']:<25} {item['mimeType']}")
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
