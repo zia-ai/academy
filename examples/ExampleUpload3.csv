@@ -1,0 +1,21 @@
+﻿myid,somedate,text,rolehere,scenario
+66,24/05/2013 09:15,RED LORRY YELLOW LORRY,client,login_issue
+66,24/05/2013 09:15,Wht do you mean,expert,login_issue
+66,24/05/2013 09:15,No way,client,login_issue
+66,24/05/2013 09:15,I hate this car,expert,login_issue
+399,24/05/2013 10:15,I can't access my account,client,login_issue
+399,24/05/2013 10:15,Do you know your username?,expert,login_issue
+399,24/05/2013 10:15,Yes,client,login_issue
+399,24/05/2013 10:15,OK this is what you do.,expert,login_issue
+433,24/05/2015 16:15,I want to return this shirt,client,returns
+433,24/05/2015 16:15,OK do you have the original packaging?,expert,returns
+433,24/05/2015 16:15,No I don't have the original packaging,client,returns
+433,24/05/2015 16:15,OK this is what you do.,expert,returns
+544,24/05/2017 07:53,"I ordered this, but it's the wrong color, and I'm not sure if I like it",client,return-low-confidence
+544,24/05/2017 07:53,OK do you have the original packaging?,expert,return-low-confidence
+544,24/05/2017 07:53,"Yes, all in the original packaging",client,return-low-confidence
+544,24/05/2017 07:53,OK this is what you do.,expert,return-low-confidence
+866,24/05/2018 09:23,My refund hasn't been credited to my account yet,client,payments
+866,24/05/2018 09:23,OK when did the refund get issues,expert,payments
+866,24/05/2018 09:23,3rd of March - it's been 8 weeks,client,payments
+866,24/05/2018 09:23,I'm really sorry - this is what you do.,expert,payments

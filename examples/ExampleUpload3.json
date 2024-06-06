@@ -1,0 +1,525 @@
+{
+  "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+  "examples": [
+    {
+      "id": "example-66-0",
+      "text": "RED LORRY YELLOW LORRY",
+      "created_at": "2013-05-24T09:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "66",
+        "scenario": "login_issue",
+        "text": "RED LORRY YELLOW LORRY",
+        "somedate": "24/05/2013 09:15",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "66",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-66-1",
+      "text": "Wht do you mean",
+      "created_at": "2013-05-24T09:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "66",
+        "scenario": "login_issue",
+        "text": "Wht do you mean",
+        "somedate": "24/05/2013 09:15",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "66",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-66-2",
+      "text": "No way",
+      "created_at": "2013-05-24T09:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "66",
+        "scenario": "login_issue",
+        "text": "No way",
+        "somedate": "24/05/2013 09:15",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "66",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-66-3",
+      "text": "I hate this car",
+      "created_at": "2013-05-24T09:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "66",
+        "scenario": "login_issue",
+        "text": "I hate this car",
+        "somedate": "24/05/2013 09:15",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "66",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-399-0",
+      "text": "I can't access my account",
+      "created_at": "2013-05-24T10:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "399",
+        "scenario": "login_issue",
+        "text": "I can't access my account",
+        "somedate": "24/05/2013 10:15",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "399",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-399-1",
+      "text": "Do you know your username?",
+      "created_at": "2013-05-24T10:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "399",
+        "scenario": "login_issue",
+        "text": "Do you know your username?",
+        "somedate": "24/05/2013 10:15",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "399",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-399-2",
+      "text": "Yes",
+      "created_at": "2013-05-24T10:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "399",
+        "scenario": "login_issue",
+        "text": "Yes",
+        "somedate": "24/05/2013 10:15",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "399",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-399-3",
+      "text": "OK this is what you do.",
+      "created_at": "2013-05-24T10:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "399",
+        "scenario": "login_issue",
+        "text": "OK this is what you do.",
+        "somedate": "24/05/2013 10:15",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "399",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-433-0",
+      "text": "I want to return this shirt",
+      "created_at": "2015-05-24T16:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "433",
+        "scenario": "returns",
+        "text": "I want to return this shirt",
+        "somedate": "24/05/2015 16:15",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "433",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-433-1",
+      "text": "OK do you have the original packaging?",
+      "created_at": "2015-05-24T16:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "433",
+        "scenario": "returns",
+        "text": "OK do you have the original packaging?",
+        "somedate": "24/05/2015 16:15",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "433",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-433-2",
+      "text": "No I don't have the original packaging",
+      "created_at": "2015-05-24T16:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "433",
+        "scenario": "returns",
+        "text": "No I don't have the original packaging",
+        "somedate": "24/05/2015 16:15",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "433",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-433-3",
+      "text": "OK this is what you do.",
+      "created_at": "2015-05-24T16:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "433",
+        "scenario": "returns",
+        "text": "OK this is what you do.",
+        "somedate": "24/05/2015 16:15",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "433",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-544-0",
+      "text": "I ordered this, but it's the wrong color, and I'm not sure if I like it",
+      "created_at": "2017-05-24T07:53:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "544",
+        "scenario": "return-low-confidence",
+        "text": "I ordered this, but it's the wrong color, and I'm not sure if I like it",
+        "somedate": "24/05/2017 07:53",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "544",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-544-1",
+      "text": "OK do you have the original packaging?",
+      "created_at": "2017-05-24T07:53:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "544",
+        "scenario": "return-low-confidence",
+        "text": "OK do you have the original packaging?",
+        "somedate": "24/05/2017 07:53",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "544",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-544-2",
+      "text": "Yes, all in the original packaging",
+      "created_at": "2017-05-24T07:53:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "544",
+        "scenario": "return-low-confidence",
+        "text": "Yes, all in the original packaging",
+        "somedate": "24/05/2017 07:53",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "544",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-544-3",
+      "text": "OK this is what you do.",
+      "created_at": "2017-05-24T07:53:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "544",
+        "scenario": "return-low-confidence",
+        "text": "OK this is what you do.",
+        "somedate": "24/05/2017 07:53",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "544",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-866-0",
+      "text": "My refund hasn't been credited to my account yet",
+      "created_at": "2018-05-24T09:23:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "866",
+        "scenario": "payments",
+        "text": "My refund hasn't been credited to my account yet",
+        "somedate": "24/05/2018 09:23",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "866",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-866-1",
+      "text": "OK when did the refund get issues",
+      "created_at": "2018-05-24T09:23:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "866",
+        "scenario": "payments",
+        "text": "OK when did the refund get issues",
+        "somedate": "24/05/2018 09:23",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "866",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-866-2",
+      "text": "3rd of March - it's been 8 weeks",
+      "created_at": "2018-05-24T09:23:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "866",
+        "scenario": "payments",
+        "text": "3rd of March - it's been 8 weeks",
+        "somedate": "24/05/2018 09:23",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "866",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-866-3",
+      "text": "I'm really sorry - this is what you do.",
+      "created_at": "2018-05-24T09:23:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:18.767926",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "866",
+        "scenario": "payments",
+        "text": "I'm really sorry - this is what you do.",
+        "somedate": "24/05/2018 09:23",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "866",
+        "type": "conversation",
+        "role": "expert"
+      }
+    }
+  ]
+}

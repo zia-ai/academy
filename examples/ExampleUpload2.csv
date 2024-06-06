@@ -1,0 +1,21 @@
+﻿myid,somedate,text,rolehere,scenario
+66,24-05-13 09:15:00,"I've lost my password, can you help me.",client,login_issue
+66,24-05-13 09:15:01,Do you know your username?,expert,login_issue
+66,24-05-13 09:15:02,Yes,client,login_issue
+66,24-05-13 09:15:03,OK this is what you do.,expert,login_issue
+77,24-05-13 10:15:00,I can't access my account,client,login_issue
+77,24-05-13 10:15:01,Do you know your username?,expert,login_issue
+77,24-05-13 10:15:02,Yes,client,login_issue
+77,24-05-13 10:15:03,OK this is what you do.,expert,login_issue
+88,24-05-15 16:15:00,I want to return this shirt,client,returns
+88,24-05-15 16:15:01,OK do you have the original packaging?,expert,returns
+88,24-05-15 16:15:02,No I don't have the original packaging,client,returns
+88,24-05-15 16:15:03,OK this is what you do.,expert,returns
+111,24-05-17 07:53:00,"I ordered this, but it's the wrong color, and I'm not sure if I like it",client,return-low-confidence
+111,24-05-17 07:53:01,OK do you have the original packaging?,expert,return-low-confidence
+111,24-05-17 07:53:02,"Yes, all in the original packaging",client,return-low-confidence
+111,24-05-17 07:53:03,OK this is what you do.,expert,return-low-confidence
+222,24-05-18 09:23:00,My refund hasn't been credited to my account yet,client,payments
+222,24-05-18 09:23:01,OK when did the refund get issues,expert,payments
+222,24-05-18 09:23:02,3rd of March - it's been 8 weeks,client,payments
+222,24-05-18 09:23:03,I'm really sorry - this is what you do.,expert,payments
