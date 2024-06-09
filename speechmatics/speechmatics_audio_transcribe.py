@@ -1,20 +1,10 @@
 """
 python speechmatics_to_hf_csv.py
 
-Transcribes an audio using speechmatics#
-
-Speechmatcis API conflicted with academy default env settings
-Recommend setting up dedicated venv for it - then this all just works including in visual studio code
-
-python -m venv sm
-source sm/bin/activate
-python -m pip install --upgrade pip
-pip install -r ./speechmatics/speechmatics_requirements.txt
-
+Transcribes a single audio .wav or .mp3 and writes it to the same path but as .json
 
 """
-# TODO: Accept folder with mp3 files and produce transcripts to an output folder
-#       If a transcript exists in output folder, then do not run a transcription job for the corresponding mp3 file
+
 # *********************************************************************************************************************
 
 # standard imports
@@ -22,75 +12,54 @@ import json
 
 # 3rd party imports
 import click
-from speechmatics.models import ConnectionSettings
-from speechmatics.batch_client import BatchClient
-from httpx import HTTPStatusError
 
+# custom imports
+import speechmatics_helpers
 
 @click.command()
-@click.option('-f', '--file_path', type=str, required=True, help='Speechmatics json folder')
+# mandatory
+@click.option('-f', '--audio_file_path', type=str, required=True, help='Speechmatics json folder')
+@click.option('-a', '--api_key', type=str, required=True, help='Speechmatics API token')
+# optional
 @click.option('-l', '--language', type=str, default="en", help='Audio language')
-@click.option('-a', '--auth_token', type=str, required=True, help='Speechmatics API token')
 @click.option('-d', '--diarization', type=str, default="channel",\
               help='Speechmatics diarization options - channel/speaker')
 @click.option('-e', '--entities', is_flag=True, default=False, help='Detects entities')
 @click.option('-s', '--operation', type=str, default = "standard", help='Speechmatics operation - standard or enhanced')
 @click.option('-p', '--punctuation_sensitivity', type=float, default = 0.5, help='punctuation sensitivity')
-def main(file_path: str,
+def main(audio_file_path: str,
+         api_key: str,
          language: str,
-         auth_token: str,
          diarization: str,
          entities: bool,
          operation: str,
          punctuation_sensitivity: float) -> None:
     """Main Function"""
 
-    settings = ConnectionSettings(
-        url="https://asr.api.speechmatics.com/v2",
-        auth_token=auth_token,
-    )
+    settings = speechmatics_helpers.get_connection_settings(api_key)
 
     # Define transcription parameters
-    conf = {
-        "type": "transcription",
-        "transcription_config": {
-            "diarization": diarization,
-            "enable_entities": entities,
-            "language": language,
-            "operating_point": operation,
-            "output_locale": "en-US",
-            "punctuation_overrides": {
-                "permitted_marks": [
-                    ",",
-                    ".",
-                    "?",
-                    "!"
-                ],
-                "sensitivity": punctuation_sensitivity
-            }
-        }
-    }
+    transcription_config = speechmatics_helpers.get_transcription_configuration(
+        language=language,
+        diarization=diarization,
+        entities=entities,
+        operation=operation,
+        punctuation_sensitivity=punctuation_sensitivity
+    )
 
     # Open the client using a context manager
-    with BatchClient(settings) as client:
-        # list all the jobs
-        # list_of_jobs = client.list_jobs()
-        try:
-            job_id = client.submit_job(
-                audio=file_path,
-                transcription_config=conf,
-            )
-            print(f"job {job_id} submitted successfully, waiting for transcript")
+    transcript = speechmatics_helpers.get_transcript(audio_file_path,settings,transcription_config)
 
-            # Note that in production, you should set up notifications instead of polling.
-            # Notifications are described here: https://docs.speechmatics.com/features-other/notifications
-            transcript = client.wait_for_completion(job_id, transcription_format="json-v2")
-            file_output= file_path.replace(".mp3",".json")
-            with open(file_output,mode="w",encoding="utf8") as f:
-                json.dump(transcript,f,indent=2)
-        except HTTPStatusError:
-            print("Invalid API key - Check your auth_token at the top of the code!")
-
+    # write output
+    if audio_file_path.endswith(".mp3"):
+        file_output= audio_file_path.replace(".mp3",".json")
+    elif audio_file_path.endswith(".wav"):
+        file_output= audio_file_path.replace(".wav",".json")
+    else:
+        raise RuntimeError("Unrecognised autio type")
+    assert(file_output != audio_file_path)
+    with open(file_output,mode="w",encoding="utf8") as f:
+        json.dump(transcript,f,indent=2)
 
 if __name__ == '__main__':
     main() # pylint: disable=no-value-for-parameter

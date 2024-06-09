@@ -2,4 +2,5 @@ pandas
 click
 speechmatics-python
 humanfirst
+tqdm
 google-cloud-storage

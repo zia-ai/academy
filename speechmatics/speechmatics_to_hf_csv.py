@@ -17,20 +17,22 @@ import click
 
 @click.command()
 @click.option('-f', '--folder_path', type=str, required=True, help='Speechmatics json folder')
-def main(folder_path: str) -> None:
+@click.option('-o', '--output_filename', type=str, required=True, help='FQN Where to save the output csv')
+def main(folder_path: str, output_filename: str) -> None:
     """Main Function"""
 
     # List all files in the directory
     file_paths = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if file.endswith('.json')]
+    print(f'To process: {len(file_paths)}')
     df_list = []
     for file_path in file_paths:
-        print(f"Working on this file {file_path}")
+        print(f"Processing: {file_path}")
         df_list.append(process(file_path))
 
     final_df = pandas.concat(df_list,ignore_index=True)
 
     print(final_df)
-    output_filename = os.path.join(folder_path,"vocodia_output.csv")
+    output_filename = os.path.join(output_filename)
     final_df.to_csv(output_filename,index=False, header=True)
 
 
@@ -41,8 +43,6 @@ def process(file_path: str) -> pandas.DataFrame:
         data = json.load(utterance_file)
 
     df = pandas.json_normalize(data["results"], sep="-")
-    print(df.columns)
-    print(df.shape)
     df["confidence"] = df["alternatives"].apply(lambda x: x[0]["confidence"])
     df["content"] = df["alternatives"].apply(lambda x: x[0]["content"])
     df["language"] = df["alternatives"].apply(lambda x: x[0]["language"])
@@ -56,7 +56,7 @@ def process(file_path: str) -> pandas.DataFrame:
     base_datetime = datetime.now()
 
     # Convert start_time to datetime
-    merged_df['created_at'] = merged_df['start_time'].apply(
+    merged_df['timestamp'] = merged_df['start_time'].apply(
         lambda x: f"{(base_datetime + timedelta(seconds=x)).isoformat()}Z")
     # merged_df["created_at"] = merged_df["created_at"].astype(str)
 
@@ -66,10 +66,11 @@ def process(file_path: str) -> pandas.DataFrame:
     merged_df["accuracy_level"] = data["metadata"]["transcription_config"]["operating_point"]
 
     # generate conversation id
-    merged_df["convo_id"] = f"convo-{uuid.uuid4()}"
+    merged_df["convo_guid"] = f"convo-{uuid.uuid4()}"
 
     # assign speakers
     merged_df["speaker"] = merged_df["channel"].apply(lambda x: "client" if x == "channel_1" else "expert")
+    print(f'Rows for this conversation: {merged_df.shape[0]}')
 
     return merged_df
 
