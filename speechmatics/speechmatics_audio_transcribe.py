@@ -1,16 +1,17 @@
 """
 python speechmatics_to_hf_csv.py
 
-Transcribes an audio ussing speechmatics
+Transcribes an audio using speechmatics#
 
-Speechmatics python SDK doesn't include lot of functionalities which they have in their github
-So install speechmatics directly from the source instead of pip
+Speechmatcis API conflicted with academy default env settings
+Recommend setting up dedicated venv for it - then this all just works including in visual studio code
 
-Follow the below steps to install speechmatics into desired environment
-Git clone speechmatics - https://github.com/speechmatics/speechmatics-python/tree/master
-Installation steps are avaliable in the README.md of the speechmatics github
-    Ensure to have the academy venv open
-    Then cd speechmatics and run "python setup.py install"
+python -m venv sm
+source sm/bin/activate
+python -m pip install --upgrade pip
+pip install -r ./speechmatics/speechmatics_requirements.txt
+
+
 """
 # TODO: Accept folder with mp3 files and produce transcripts to an output folder
 #       If a transcript exists in output folder, then do not run a transcription job for the corresponding mp3 file

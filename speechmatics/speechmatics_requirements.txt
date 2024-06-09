@@ -1,0 +1,4 @@
+pandas
+click
+speechmatics-python
+humanfirst
