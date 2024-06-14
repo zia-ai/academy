@@ -37,7 +37,7 @@ import math
 @click.option('-a', '--apikey', type=str, required=True, help='OpenAI api key')
 @click.option('-c', '--cosine_clip', type=float, required=True, help='Cosine Clip to show')
 @click.option('-b', '--bucket_granularity', type=int, required=False, default=5, help='Division to bucket into')
-@click.option('-t', '--trim_to', type=int, required=False, default=8195, help='How Many Tokens Wanted')
+@click.option('-t', '--trim_to', type=int, required=False, default=8190, help='How Many Tokens Wanted')
 @click.option('-d', '--delimiter', type=str, required=False, default=':', help='Metadata Context Delimiter')
 @click.option('-n', '--number_per_api_call', type=int, required=False, default=1024, help='How many to send to openai at once')
 def main(input_filename: str, lhs_col: str, rhs_col: str, sample: int, apikey: str, cosine_clip: float,
@@ -160,6 +160,9 @@ def get_embedding(text: str, model: str):
 def get_batch_embedding(text_list: list, model: str):
     "Get a batch embedding"
     # https://platform.openai.com/docs/api-reference/embeddings/create
+    if isinstance(text_list, str):
+        text_list = [text_list]
+    assert isinstance(text_list,list)
     output_embeddings = openai.Embedding.create(input = text_list, model=model).data
     output_list = []
     for embedding in output_embeddings:
