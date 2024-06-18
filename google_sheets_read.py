@@ -74,6 +74,8 @@ def main(sheet_id: str,
     print(f'Scopes: {scopes}')
 
     # authenticate
+    # check downloaded .googe-credentials file
+    # https://console.cloud.google.com/apis/credentials
     creds = check_creds(scopes=scopes,
                         credential_location=GOOGLE_PROJECT_CREDENTIALS_FILE,
                         token_location=TOKEN_FILE)

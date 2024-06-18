@@ -52,18 +52,31 @@ DAYS = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"]
               help='Comman separated list of users to compile timesheets for')
 @click.option('-y', '--year', type=str, required=True,
               help='Year to compile timesheets for')
-@click.option('-w', '--week', type=str, required=True,
-              help='week to compile timesheets for')
+@click.option('-w', '--week', type=int, required=False, default=None,
+              help='week to compile timesheets for 1-53')
+@click.option('-m', '--month', type=int, required=False, default=None,
+              help='week to compile timesheets for 1-12')
 def main(
         drive_id: str,
         folder_id: str,
         users: str,
         year: str,
-        week: str
+        week: str,
+        month: str
     ):
     """Shows basic usage of the Drive v3 API.
     Prints the names and ids of the first 10 files the user has access to.
     """
+
+    # Must have week or month
+    if not week and not month:
+        raise RuntimeError("One of week or month must be specified")
+    if week and month:
+        raise RuntimeError("Only one of week and month is allowed") 
+    if week and not (week in range(1,54)):
+        raise RuntimeError("Week must be in range 1-53")
+    if month and not (month in range(1,13)):
+        raise RuntimeError("Month must be in range 1-12")
 
     # auth
     scopes = [DRIVE_READ_ONLY_SCOPE,SHEETS_READ_ONLY_SCOPE]
