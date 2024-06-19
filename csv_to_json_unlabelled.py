@@ -200,14 +200,32 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         # 0s for expert
         df['idx_client'] = df.groupby(
             [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
-        df['first_client_utt'] = df.apply(decide_role_filter_values,args=['idx_client','client',0],axis=1)
-        df['second_client_utt'] = df.apply(decide_role_filter_values,args=['idx_client','client',1],axis=1)
+        df['idx_max_client'] = df.groupby([convo_id_col])[
+            'idx_client'].transform(numpy.max)
+        df['first_client_utt'] = df.apply(decide_role_filter_values,
+                                          args=['idx_client','client',0,"idx_max_client"],
+                                          axis=1)
+        df['second_client_utt'] = df.apply(decide_role_filter_values,
+                                           args=['idx_client','client',1,"idx_max_client"],
+                                           axis=1)
+        df['last_client_utt'] = df.apply(decide_role_filter_values,
+                                         args=['idx_client','client',-1,"idx_max_client"],
+                                         axis=1)
 
         # same for expert
         df['idx_expert'] = df.groupby(
             [convo_id_col, 'role']).cumcount().where(df.role == 'expert', 0)
-        df['first_expert_utt'] = df.apply(decide_role_filter_values,args=['idx_expert','expert',0],axis=1)
-        df['second_expert_utt'] = df.apply(decide_role_filter_values,args=['idx_expert','expert',1],axis=1)
+        df['idx_max_expert'] = df.groupby([convo_id_col])[
+            'idx_expert'].transform(numpy.max)
+        df['first_expert_utt'] = df.apply(decide_role_filter_values,
+                                          args=['idx_expert','expert',0,'idx_max_expert'],
+                                          axis=1)
+        df['second_expert_utt'] = df.apply(decide_role_filter_values,
+                                           args=['idx_expert','expert',1,'idx_max_expert'],
+                                           axis=1)
+        df['last_expert_utt'] = df.apply(decide_role_filter_values,
+                                         args=['idx_expert','expert',-1,'idx_max_expert'],
+                                         axis=1)
 
         # make sure convo id on the metadata as well for summarisation linking
         metadata_keys.append(convo_id_col)
@@ -218,6 +236,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
             ['idx',
              'first_client_utt', 'second_client_utt',
              'first_expert_utt', 'second_expert_utt',
+             'last_client_utt', 'last_expert_utt'
             ]
             )
 
@@ -263,9 +282,11 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     file_out.close()
     print(f"Write complete to {filename_out}")
 
-def decide_role_filter_values(row: pandas.Series, column_name: str, role_filter: str, value_filter: str) -> bool:
-    """Determine whether this is the 0,1,2 where the role is also somthing"""
-    if row[column_name] == value_filter and row["role"] == role_filter:
+def decide_role_filter_values(row: pandas.Series, column_name: str, role_filter: str, value_filter: str, idx_max_col_name: str) -> bool:
+    """Determine whether this is the 0,1,2 where the role is also somt hing"""
+    if value_filter >=0 and row[column_name] == value_filter and row["role"] == role_filter:
+        return True
+    elif value_filter < 0 and row[column_name] == row[idx_max_col_name] and row["role"] == role_filter:
         return True
     else:
         return False
