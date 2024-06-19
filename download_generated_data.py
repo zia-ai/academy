@@ -56,7 +56,11 @@ def main(username: str,
 
     output_filename=os.path.join(output_dir,f"{namespace}_{playbook}.json")
     with open(output_filename,mode="w",encoding="utf8") as f:
+<<<<<<< HEAD
+        json.dump(res.json(),f,indent=2)
+=======
         json.dump(res,f,indent=2)
+>>>>>>> master
         print(f'Wrote to: {output_filename}')
 
 if __name__ == '__main__':
