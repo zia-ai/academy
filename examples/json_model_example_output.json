@@ -59,8 +59,7 @@
       "id": "intent-0",
       "name": "GROUP1",
       "metadata": {},
-      "tags": [],
-      "parent_intent_id": null
+      "tags": []
     },
     {
       "id": "intent-1",
@@ -73,8 +72,7 @@
       "id": "intent-2",
       "name": "GROUP2",
       "metadata": {},
-      "tags": [],
-      "parent_intent_id": null
+      "tags": []
     },
     {
       "id": "intent-3",
