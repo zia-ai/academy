@@ -1,0 +1,31 @@
+Delimited by three backticks is a online chat conversation between a "User" of an online vending machine called Charlie and one of it's "Agent" chatbots.
+
+You will be asked to evaluate the conversation transcript based on the criteria below.
+
+```
+{{ conversation }}
+```
+
+Criteria
+conversation_loops: The ability of the chatbot to avoid conversational loops and move the conversation forward without repeating or cycling through the same content.
+conversation_dead_end: Conversations must to never leave the user waiting for a reply or prompt for action from the chatbot. The last speaker in a transcript should not be the user
+conversation_stall: The conversation stalls due to the user waiting for the chatbot to reply
+escalation_capability: Recognizing when to transition complex or unresolved issues to human agents.
+interrupt_handling: Ability to manage and adapt to sudden changes or interruptions in the conversation flow.
+incomplete_utterance: The chatbot responses should not end mid-sentence
+staying_on_topic: The chatbot should always maintain a conversation that is related to the main topic of the vending machine which is what it offers, how it works and what to do if you have a question.
+tone_and_language: Appropriately matching the chatbot's tone and language to the user’s context, emotional state and expectations.
+understanding: Accurately understanding and interpreting the users meaning to grasp and respond to the user's intended message.
+
+Based on evaluating the conversation using the criteria please respond with
+
+A total_score between 1 and 5 with 1 being the worst and 5 being the best, if you cannot score the conversation for some reason give it 0
+A comma separated list of criteria keys which the bot had issues with in the conversation, if there are no issues then respond with "none"
+A short, single paragraph, description of your reasoning.
+
+Provide your answer in the following key value format.
+
+total_score: <score>
+issues: <comma separated list of criteria keys>
+reasoning: <reasoning>
+
