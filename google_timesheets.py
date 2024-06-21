@@ -113,15 +113,18 @@ def main(
         for i,w in enumerate(weeks):
             cal_dict[w] = cal[i]
         print(cal_dict)
-
     if week:
         weeks.append(str(week))
         print(weeks)
 
-
+    # create google service
     service = build("sheets", "v4", credentials=creds)
+
+    # if week get just that week
     if week:
         df = get_consolidated_df_for_week(items, users, year, week, service)  
+
+    # if month loop through all the weeks 
     if month:
         df = pandas.DataFrame()
         # for each week get the datsheet
@@ -156,11 +159,19 @@ def main(
             # fill NaN
             df_week.fillna(0,inplace=True)
 
+            # join week onto month consolidation
             if i == 0:
                 df = df_week
             else:
                 df = df.join(df_week,how='outer')
-            print(df)
+        
+        # work out total as final column
+        df["total"] = df.sum(axis=1)
+
+        # eliminate any zero rows
+        
+        # df = df.loc[df["total"]>0,:]
+        print(df)
 
     if week:
         # output
@@ -200,13 +211,13 @@ def get_consolidated_df_for_week(items: list, users: list, year: int, week: str,
             
             # slice the bit we want
             df_timesheet = df_timesheet.loc[0:i-1,["client_code","task_code"] + DAYS]
-            
+
             # add the name of the user
             df_timesheet["name"] = matches[1]
 
             # zero all the empty cells
             for day in DAYS:
-                df_timesheet.loc[df_timesheet[day]=="",day] = 0
+                df_timesheet.loc[(df_timesheet[day]=="") | (df_timesheet[day].isna()),day] = 0
             
             # work out total
             df_timesheet["total"] = 0
@@ -214,8 +225,11 @@ def get_consolidated_df_for_week(items: list, users: list, year: int, week: str,
                 df_timesheet[day] = df_timesheet[day].astype(float)
                 df_timesheet["total"] = df_timesheet["total"] + df_timesheet[day]
 
-            df = pandas.concat([df,df_timesheet])
 
+            # drop any zero total rows
+            df_timesheet = df_timesheet.loc[df_timesheet["total"]>0,:]
+            df = pandas.concat([df,df_timesheet])
+            print(df)
     return df
 
 
