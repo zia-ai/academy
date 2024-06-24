@@ -1,5 +1,30 @@
 """
-python mbox.py
+python mbox_splitter.py --filename <yourmboxfullpath>
+
+This will read a very large mailbox file squentially from first prinicples.
+It will write out to a directory in the same location as the filenmae named 
+output or any --run_name within which will be folders by year, with subfolders by month
+in each folder will be a json file per email.
+It provides for progress reporting and keeps memory use low whilst relying on 
+It provides email corruption tolerance and restartability 
+(note where the last run got up to and provide that email)
+Other options can be used to control restart or test limited runs but are not required
+--max_lines        use to run on a sample head of the file
+--max_emails       use to run on a sample of x emails of the file
+--dummy            skips processing and just tests the directory looping
+--count_increment  how often to give a count increment
+--begin_line       which line of the file to start on, providing restartability.
+
+@click.option('-n', '--max_emails', type=int, required=False, default=0,
+              help='Max emails')
+@click.option('-r', '--run_name', type=str, required=False, default="output",
+              help='Run name otherwise defaults to output')
+@click.option('-d', '--dummy', is_flag=True, required=False, default=False,
+              help='Skip all processing')
+@click.option('-c', '--count_increment', type=int, required=False, default=10000000,
+              help='How often to give a report on process')
+@click.option('-b', '--begin_line', type=int, required=False, default=0,
+              help='How often to give a report on process')
 
 https://www.loc.gov/preservation/digital/formats/fdd/fdd000383.shtml#:~:text=MBOX%20(sometimes%20known%20as%20Berkeley,the%20end%20of%20the%20file.
 
@@ -227,7 +252,7 @@ def parse_message(msg: Message,output_dict: collections.OrderedDict, embeddings)
             parse_message(part,output_dict,embeddings)
     return output_dict
 
-def build_content(output_dict: collections.OrderedDict(), text: str) -> str:
+def build_content(output_dict: collections.OrderedDict, text: str) -> str:
     content = ''
     content = content + 'From: ' + output_dict['From'] + "\n"
     content = content + 'To: ' + output_dict['To'] + "\n"
@@ -259,7 +284,7 @@ def read_email_text(msg: Message):
             text = ""
     return text
 
-def get_skeleton() -> collections.OrderedDict():
+def get_skeleton() -> collections.OrderedDict:
     skeleton = collections.OrderedDict()
     skeleton['From'] = ''
     skeleton['To'] = ''

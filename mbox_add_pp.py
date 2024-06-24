@@ -8,8 +8,9 @@ Create a mirror folder structure so we don't lose the original
 Write to the new breaking out new fields
 - list of every email involved anywhere in the message
 - sorting out the formatting
+- removing the underlying link (which often contain a lot of trackers and use a lot of tokens)
 
-TODO: if this where with dataframe could multi thread.
+TODO: if this were a dataframe could multi thread.
 But could also with months by slicing through a map of the sub docs?
 
 """
