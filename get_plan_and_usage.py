@@ -21,8 +21,11 @@ import humanfirst
               help='HumanFirst username if not setting HF_USERNAME environment variable')
 @click.option('-p', '--password', type=str, default='',
               help='HumanFirst password if not setting HF_PASSWORD environment variable')
-def main(username: str, password: int):
-    '''Main'''
+@click.option('-o', '--output', type=str, default=None,
+              help='Defaults to no output, if provided for instance ./data/someclient it will output there')
+def main(username: str, password: int, output:str):
+    '''Gets plan information, workspace and conversationset usage
+    Optionall outputs to file'''
 
     # authorise
     hf_api = humanfirst.apis.HFAPI(username=username, password=password)
@@ -38,17 +41,28 @@ def main(username: str, password: int):
 
     # turn into dfs for df.to_csv or similar
     print("dataPoints.conversationSets")
-    print(pandas.json_normalize(usage_dict["dataPoints"]["conversationSets"]))
-    print("\n")
-    print("dataPoints.workspaces")
-    print(pandas.json_normalize(usage_dict["dataPoints"]["workspaces"]))
-    print("\n")
+    df_convo_summary = pandas.json_normalize(usage_dict["dataPoints"]["conversationSets"])
+    if output:
+        output_convo_name = f'{output}_convosets.csv'
+        df_convo_summary.to_csv(output_convo_name, index=False,header=True)
+        print(f'Wrote to: {output_convo_name}')
+    else:
+        print(df_workspace_summary)
+
+    print("\ndataPoints.workspaces")
+    df_workspace_summary = pandas.json_normalize(usage_dict["dataPoints"]["workspaces"])
+    if output:
+        output_workspaces_name = f'{output}_workspaces.csv'
+        df_workspace_summary.to_csv(output_workspaces_name,index=False,header=True)
+        print(f'Wrote to: {output_workspaces_name}')
+    else:
+        print(df_workspace_summary)
+            
+
     df = pandas.json_normalize(usage_dict)
-    print("Usage summary")
+    print("\nUsage summary")
     df.drop(columns=["dataPoints.conversationSets","dataPoints.workspaces"],inplace=True)
     print(df)
-    print("\n")
-
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
