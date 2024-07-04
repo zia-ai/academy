@@ -1,0 +1,31 @@
+Delimited by three backticks is a users draft of a review for an online opinion site with it's review_id, item_code, date_drafted, the stars_rating given and the amount_paid.
+
+```
+review_id: {{ meta "id" }}
+item_code: {{ meta "item" }}
+date_drafted: {{ meta "loaded_date" }}
+stars_rating: {{ meta "stars" }}
+amount_paid: {{ meta "paid" }}
+review: {{ text }}
+```
+The user has roughly drafted the review in lowercase without punctuation.
+
+Your job is to rewrite the review suitable for an online opinion website with proper casing, punctuation and paragraphs.  Be inspired by the original content and tone in the recreation and pay attention to the level of misspelling or grammar mistakes (or not) in the original to include similar in the output.
+
+From the review also try and infer the category of the item being reviewed (category), the manufacturer of the item (manufacturer), the model number (model) and generate a short one line title (title) for the updated review.  Where you can't reply "unknown"
+
+Please give your answer as correctly formatted JSON in the following format
+
+```json
+{
+    "review_id": <review_id>,
+    "item_code": <item_code>,
+    "date_drafted": <date_drafted>,
+    "stars_rating": <stars_rating>,
+    "amount_paid: <amount_paid>,
+    "review: <updated_review_text>,
+    "category": <category>,
+    "manufacturer": <manufacturer>,
+    "model": <model>,
+    "title": <title>
+}
