@@ -7,7 +7,6 @@ python template.py
 # standard imports
 import json
 import os
-import time
 
 # 3rd party imports
 import click
@@ -20,8 +19,6 @@ MODEL="gpt-4o"
 TIMEOUT=5
 TEMPERATURE = 1.0
 MAX_TOKENS= 4096
-RETRY_ATTEMPTS=3
-BACKOFF_BASE=2
 
 
 @click.command()
@@ -67,9 +64,10 @@ def main(filename: str,
                             paid=row["metadata.paid"],
                             text=row["text"])
 
-        # where we will write success or errors to      
+        # where we will write success or errors to
+        
 
-        # perform openai call (single thread with retries
+        # perform openai call (single thread)
         response_content_raw = get_openai_response(prompt)
 
         # see if actually json and write value or errors
@@ -85,30 +83,22 @@ def main(filename: str,
                 file_out.write(response_content_raw + "\n\n\n" + e.msg + "\n" + str(e.pos))
                 print(f'Invalid JSON: {output_filename} {e}')
 
-def get_openai_response(prompt, retries: int = 0) -> dict:
+def get_openai_response(prompt) -> dict:
     """Call open"""
-    try:
-        response = openai.ChatCompletion.create(
-            model=MODEL,
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
-            temperature=TEMPERATURE,
-            max_tokens=MAX_TOKENS,
-            top_p=1,
-            frequency_penalty=0.0,
-            presence_penalty=0.0,
-            response_format = { "type": "json_object" },
-            timeout=TIMEOUT
-        )
-        return response["choices"][0]["message"]["content"]
-    except Exception as e:
-        print(f'Retry {retries} exception: {e}')
-        retries = retries + 1
-        time.sleep(BACKOFF_BASE**retries)
-        return get_openai_response(prompt,retries)
-
-
+    response = openai.ChatCompletion.create(
+        model=MODEL,
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=TEMPERATURE,
+        max_tokens=MAX_TOKENS,
+        top_p=1,
+        frequency_penalty=0.0,
+        presence_penalty=0.0,
+        response_format = { "type": "json_object" },
+        timeout=TIMEOUT
+    )
+    return response["choices"][0]["message"]["content"]
 
 
 def get_prompt(id: str, item: str, loaded_date: str, stars: str, paid: str, text: str) -> str:
