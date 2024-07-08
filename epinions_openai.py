@@ -105,6 +105,8 @@ def get_openai_response(prompt, retries: int = 0) -> dict:
     except Exception as e:
         print(f'Retry {retries} exception: {e}')
         retries = retries + 1
+        if retries >= RETRY_ATTEMPTS:
+            raise RuntimeError("Out of retry attempts")
         time.sleep(BACKOFF_BASE**retries)
         return get_openai_response(prompt,retries)
 
