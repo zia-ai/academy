@@ -8,6 +8,7 @@ Extracts to csv
 Sentences organised by intent name
 Traits organised by traitgroup and trait name
 
+Designed to work on a complete kore.ai bot export file "botDialogue.json"
 
 """
 # ******************************************************************************************************************120
