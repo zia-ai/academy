@@ -22,6 +22,7 @@ from google.cloud import storage
 @click.command()
 @click.option('-b', '--bucket_name', type=str, required=True, help='Bucket Name')
 def main(bucket_name: str) -> None: # pylint: disable=unused-argument
+    """Main Function"""
 
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
