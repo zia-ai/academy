@@ -15,7 +15,7 @@ gcloud auth application-default login
 
 # 3rd party imports
 import click
-from google.cloud import storage
+from google.cloud import storage # pylint: disable=no-name-in-module
 
 # custom imports
 
@@ -31,7 +31,6 @@ def main(bucket_name: str) -> None: # pylint: disable=unused-argument
         # https://cloud.google.com/python/docs/reference/storage/latest/google.cloud.storage.blob.Blob
         print(b.name)
         print(b.bucket)
-    quit()
 
     # Construct a client side representation of a blob.
     # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
