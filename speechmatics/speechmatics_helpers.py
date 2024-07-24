@@ -16,9 +16,9 @@ pip install -r ./speechmatics/speechmatics_requirements.txt
 # standard imports
 
 # 3rd party imports
+from httpx import HTTPStatusError
 from speechmatics.models import ConnectionSettings
 from speechmatics.batch_client import BatchClient
-from httpx import HTTPStatusError
 
 SPEECHMATICS_URL = "https://asr.api.speechmatics.com/v2"
 
@@ -36,9 +36,9 @@ def get_transcription_configuration(
         diarization: str = "channel",
         entities: bool = False,
         operation: str = "standard",
-        punctuation_sensitivity: float = 0.5,
-        expected_languages: str = "",
-        default_language: str = "en"
+        punctuation_sensitivity: float = 0.5
+        # expected_languages: str = "",
+        # default_language: str = "en"
     ) -> dict:
     """"
     language: "en", "fr" etc. default "en"
@@ -75,12 +75,14 @@ def get_transcription_configuration(
     if language == "auto":
         raise RuntimeError("BatchClient doesn't accept auto right now")
         # Needs to have transcription config and language identification config
-    else:
-        conf["transcription_config"]["language"] = language
+    conf["transcription_config"]["language"] = language
 
     return conf
 
 def get_transcript(audio_file_path: str, settings: dict, transcription_config: dict) -> dict:
+    """
+    Get transcript for an audio file
+    """
 
     # Open the client using a context manager
     with BatchClient(settings) as client:
@@ -98,5 +100,5 @@ def get_transcript(audio_file_path: str, settings: dict, transcription_config: d
             transcript = client.wait_for_completion(job_id, transcription_format="json-v2")
             return transcript
         except HTTPStatusError as e:
-            print(f"Speechmatics API returned something bad")
-            print(e)
+            raise HTTPStatusError(f"Speechmatics API returned something bad - {e}")
+

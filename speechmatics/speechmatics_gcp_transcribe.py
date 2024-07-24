@@ -32,6 +32,7 @@ from google_storage_helpers import GoogleStorageHelper # GCP helpers
 @click.option('-b', '--bucket_name', type=str, required=True, help='Bucket name to read/write to')
 @click.option('-t', '--audio_type', type=str, required=True, help='.wav .mp3 to search for')
 @click.option('-w', '--working_dir', type=str, required=True, help='Dir to download to')
+@click.option('-v', '--vocab_file_path', type=str, required=False, default = "", help='Additional Vocabulary file path')
 @click.option('-i', '--impersonate', is_flag=True, default=False, help='Impersonate service account or not')
 @click.option('-s', '--impersonate_service_account', type=str, required=False, default="",
               help='Target service account to impersonate')
@@ -47,13 +48,23 @@ def main(
         process_n: int,
         write_back: bool,
         impersonate: bool,
-        impersonate_service_account: str) -> None:
+        impersonate_service_account: str,
+        vocab_file_path: str) -> None:
     """Main Function"""
 
     # setup speechmatics
     settings = speechmatics_helpers.get_connection_settings(api_key)
     transcription_configuration = speechmatics_helpers.get_transcription_configuration()
     # print(json.dumps(transcription_configuration,indent=2))
+
+    if vocab_file_path:
+        if os.path.exists(vocab_file_path):
+            with open(vocab_file_path, mode="r", encoding="utf8") as file:
+                additional_vocab = json.load(file)
+                transcription_configuration[
+                    "transcription_config"]["additional_vocab"] = additional_vocab["additional_vocab"]
+        else:
+            raise RuntimeError(f"{vocab_file_path} doesn't exist")
 
     gs_helper = GoogleStorageHelper(impersonate=impersonate,
                                     impersonate_service_account=impersonate_service_account)
