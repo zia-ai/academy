@@ -101,3 +101,27 @@ def get_transcript(audio_file_path: str, settings: dict, transcription_config: d
             return transcript
         except HTTPStatusError as e:
             print(f"Speechmatics API returned something bad - {e}")
+
+def batch_transcribe(audio_file_paths: list, settings: dict, transcription_config: dict, concurrency: int) -> dict:
+    """
+    Get transcript for an audio file
+    """
+
+    transcript = {}
+    # Open the client using a context manager
+    with BatchClient(settings) as client:
+        # list all the jobs
+        # list_of_jobs = client.list_jobs()
+
+        try:
+            for result in client.submit_jobs(audio_paths=audio_file_paths,
+                                             transcription_config=transcription_config,
+                                             concurrency=concurrency):
+                transcript[result[0]] = client.wait_for_completion(result[1], transcription_format="json-v2")
+
+        #     # Note that in production, you should set up notifications instead of polling.
+        #     # Notifications are described here: https://docs.speechmatics.com/features-other/notifications
+
+            return transcript
+        except HTTPStatusError as e:
+            print(f"Speechmatics API returned something bad - {e}")

@@ -1,5 +1,5 @@
 """
-python speechmatics_gcp_transcribe
+python speechmatics_gcp_transcribe.py
 
 This is a restartable transcriber wokring with google buckets
 
