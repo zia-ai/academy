@@ -100,5 +100,4 @@ def get_transcript(audio_file_path: str, settings: dict, transcription_config: d
             transcript = client.wait_for_completion(job_id, transcription_format="json-v2")
             return transcript
         except HTTPStatusError as e:
-            raise HTTPStatusError(f"Speechmatics API returned something bad - {e}")
-
+            print(f"Speechmatics API returned something bad - {e}")
