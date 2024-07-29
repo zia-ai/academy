@@ -31,6 +31,8 @@ import speechmatics_helpers
 @click.option('-e', '--entities', is_flag=True, default=False, help='Detects entities')
 @click.option('-s', '--operation', type=str, default = "standard", help='Speechmatics operation - standard or enhanced')
 @click.option('-p', '--punctuation_sensitivity', type=float, default = 0.5, help='punctuation sensitivity')
+@click.option('-n', '--process_n', type=int, required=False, default=0,
+              help='Maximum number of audio to process')
 def main(audio_folder_path: str,
          api_key: str,
          audio_type: str,
@@ -40,7 +42,8 @@ def main(audio_folder_path: str,
          operation: str,
          punctuation_sensitivity: float,
          vocab_file_path: str,
-         concurrency: int) -> None:
+         concurrency: int,
+         process_n: int) -> None:
     """Main Function"""
 
     start_time = datetime.now()
@@ -65,27 +68,40 @@ def main(audio_folder_path: str,
         else:
             raise RuntimeError(f"{vocab_file_path} doesn't exist")
 
-    file_paths = [os.path.join(audio_folder_path, file)
+    audio_file_paths = [os.path.join(audio_folder_path, file)
                   for file in os.listdir(audio_folder_path)
                   if file.endswith(audio_type)]
 
-    # Open the client using a context manager
-    print(f"Total number of audio to transcribe {len(file_paths)}")
-    transcripts = speechmatics_helpers.batch_transcribe(file_paths,settings,transcription_config,concurrency)
+    # Choose only untranscribed audios
+    untranscribed_audio_file_paths = []
+    for file in audio_file_paths:
+        if not os.path.exists(file.replace(audio_type,".json")):
+            untranscribed_audio_file_paths.append(file)
 
-    print(f"Number of Transcriptions successfully completed: {len(transcripts)}")
-    end_time = datetime.now()
-    print("Execution time for transcribing:", end_time - start_time)
+    print(f"Total untranscribed audios: {len(untranscribed_audio_file_paths)}")
 
-    start_time = datetime.now()
-    for file_path, transcript in transcripts.items():
-        assert isinstance(file_path,str)
-        file_output = file_path.replace(audio_type,".json")
-        with open(file_output,mode="w",encoding="utf8") as f:
-            json.dump(transcript,f,indent=2)
+    if process_n > 0:
+        untranscribed_audio_file_paths = untranscribed_audio_file_paths[:process_n]
 
-    end_time = datetime.now()
-    print("Execution time for writing all the transcripts:", end_time - start_time)
+    if untranscribed_audio_file_paths:
+        transcripts = speechmatics_helpers.batch_transcribe(untranscribed_audio_file_paths,
+                                                            settings,
+                                                            transcription_config,
+                                                            concurrency)
+
+        print(f"Number of Transcriptions successfully completed: {len(transcripts)}")
+        end_time = datetime.now()
+        print("Execution time for transcribing:", end_time - start_time)
+
+        start_time = datetime.now()
+        for file_path, transcript in transcripts.items():
+            assert isinstance(file_path,str)
+            file_output = file_path.replace(audio_type,".json")
+            with open(file_output,mode="w",encoding="utf8") as f:
+                json.dump(transcript,f,indent=2)
+
+        end_time = datetime.now()
+        print("Execution time for writing all the transcripts:", end_time - start_time)
 
 if __name__ == '__main__':
     main() # pylint: disable=no-value-for-parameter

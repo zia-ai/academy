@@ -19,6 +19,7 @@ Starts transcribing
 # standard imports
 import os
 import json
+from datetime import datetime
 
 # 3rd party imports
 import click
@@ -40,6 +41,9 @@ from google_storage_helpers import GoogleStorageHelper # GCP helpers
               help='Maximum number to process')
 @click.option('-u', '--write_back', is_flag=True, required=False, default=False,
               help='Whether to write back to GCP')
+@click.option('-p', '--transcribe', is_flag=True, required=False, default=False,
+              help='Transcribes downloaded audio')
+@click.option('-c', '--concurrency', type=int, default=5, help='Number of transcription jobs submitted at single time')
 def main(
         api_key: str,
         bucket_name: str,
@@ -47,9 +51,11 @@ def main(
         working_dir: str,
         process_n: int,
         write_back: bool,
+        concurrency: int,
         impersonate: bool,
         impersonate_service_account: str,
-        vocab_file_path: str) -> None:
+        vocab_file_path: str,
+        transcribe: bool) -> None:
     """Main Function"""
 
     # setup speechmatics
@@ -70,38 +76,119 @@ def main(
                                     impersonate_service_account=impersonate_service_account)
 
     df_worklist = gs_helper.get_blob_df_worklist(bucket_name, audio_type, max_results=process_n)
+
+    # Creating a list of all .wav files in the folder
+    audio_files = [f for f in os.listdir(working_dir) if f.endswith(audio_type)]
+
+    # Creating a list of all .json files in the folder
+    transcription_files = [f for f in os.listdir(working_dir) if f.endswith('.json')]
+
+    # Concert source name to audio file name format
+    df_worklist['filename'] = df_worklist['source_name'].apply(lambda x: x.replace("/","---"))
+
+    # Check if each file in the DataFrame is in the audio_files list from the local storage
+    df_worklist['downloaded_audio_locally'] = df_worklist['filename'].apply(lambda x: x in audio_files)
+
+    # Check if each file in the DataFrame is in the transcribed list from the local storage
+    df_worklist['completed_locally'] = df_worklist['filename'].apply(
+        lambda x: x.replace(".wav",".json") in transcription_files)
+
     print(df_worklist)
     print(f'Total: {df_worklist.shape[0]}')
-    print(f'To do: {df_worklist.loc[df_worklist["done"] == False].shape[0]}')
-    print(f'Done:  {df_worklist.loc[df_worklist["done"] == True].shape[0]}')
 
-    if process_n > 0:
-        df_worklist = df_worklist.sample(process_n)
+    # Audio file downloaded locally or not
+    print("Audio file downloaded locally")
+    print(f'To do: {df_worklist.loc[df_worklist["downloaded_audio_locally"] == False].shape[0]}') # pylint: disable=singleton-comparison
+    print(f'Done:  {df_worklist.loc[df_worklist["downloaded_audio_locally"] == True].shape[0]}') # pylint: disable=singleton-comparison
 
+    # Transcription available locally or not
+    print("Transcription available locally")
+    print(f'To do: {df_worklist.loc[df_worklist["completed_locally"] == False].shape[0]}') # pylint: disable=singleton-comparison
+    print(f'Done:  {df_worklist.loc[df_worklist["completed_locally"] == True].shape[0]}') # pylint: disable=singleton-comparison
+
+    # Transcription available in GCP bucket or not
+    print("Transcription available in GCP bucket")
+    print(f'To do: {df_worklist.loc[df_worklist["done"] == False].shape[0]}') # pylint: disable=singleton-comparison
+    print(f'Done:  {df_worklist.loc[df_worklist["done"] == True].shape[0]}') # pylint: disable=singleton-comparison
+
+    # if process_n > 0:
+    #     df_worklist = df_worklist.sample(process_n)
 
     for i,row in df_worklist.iterrows():
 
         # replace "/" with "---"
-        input_file = row["source_name"].replace("/","---")
+        input_file = row["filename"]
 
         # Download file
-        gs_helper.download_blob_to_file(bucket_name, row["source_name"], os.path.join(working_dir, input_file))
+        if not row["downloaded_audio_locally"]:
+            gs_helper.download_blob_to_file(bucket_name, row["source_name"], os.path.join(working_dir, input_file))
 
-        # TODO: auto detect language
-        transcript = speechmatics_helpers.get_transcript(os.path.join(working_dir, input_file),
-                                                        settings,
-                                                        transcription_configuration)
-        output_file = input_file.replace(audio_type,".json")
+            # Set 'downloaded_audio_locally' to True after successful download
+            df_worklist.at[i, 'downloaded_audio_locally'] = True
 
-        # Dump transcript locally
-        with open(os.path.join(working_dir,output_file),mode="w",encoding="utf8") as file_out:
-            json.dump(transcript,file_out,indent=2)
+            print(f'{row["source_name"]} Downloaded')
 
-        # upload the file again - don't have priviledges for test project - so makes everything irrelevant so far
-        if write_back:
+        if row["done"] and not row["completed_locally"]:
+            output_file = input_file.replace(audio_type,".json")
+            gs_helper.download_blob_to_file(bucket_name, row["target_name"], os.path.join(working_dir, output_file))
+
+            # Set 'completed_locally' to True after successful download
+            df_worklist.at[i, 'completed_locally'] = True
+
+            print(f'{row["target_name"]} Downloaded')
+
+    if transcribe:
+        # Filtering to find filenames where audio is downloaded but transcription is not completed locally
+        df_audio_downloaded_but_not_transcribed = df_worklist.loc[
+            (df_worklist["downloaded_audio_locally"] == True) & # pylint: disable=singleton-comparison
+            (df_worklist["completed_locally"] == False) & # pylint: disable=singleton-comparison
+            (df_worklist["done"] == False), # pylint: disable=singleton-comparison
+            "filename"
+        ]
+
+        audio_downloaded_but_not_transcribed = [
+            os.path.join(working_dir,file) for file in df_audio_downloaded_but_not_transcribed.to_list()]
+        index_audio_downloaded_but_not_transcribed = df_audio_downloaded_but_not_transcribed.index
+
+        if audio_downloaded_but_not_transcribed:
+            print(f"Transcribing: {len(audio_downloaded_but_not_transcribed)} audio files")
+            print(f"{audio_downloaded_but_not_transcribed}")
+            start_time = datetime.now()
+            transcripts = speechmatics_helpers.batch_transcribe(audio_downloaded_but_not_transcribed,
+                                                                settings,
+                                                                transcription_configuration,
+                                                                concurrency)
+
+            print(f"Number of Transcriptions successfully completed: {len(transcripts)}")
+            end_time = datetime.now()
+            print("Execution time for transcribing:", end_time - start_time)
+
+            for file_path, transcript in transcripts.items():
+                assert isinstance(file_path,str)
+                file_output = file_path.replace(audio_type,".json")
+                with open(file_output,mode="w",encoding="utf8") as f:
+                    json.dump(transcript,f,indent=2)
+                    print(f"{file_output} saved locally")
+                index_df = index_audio_downloaded_but_not_transcribed[
+                    audio_downloaded_but_not_transcribed.index(file_path)]
+                # Set 'completed_locally' to True after successful download
+                df_worklist.at[index_df, 'completed_locally'] = True
+
+    # upload the file again - don't have priviledges for test project - so makes everything irrelevant so far
+    if write_back:
+        # Filtering to find transcribed filenames
+        local_transcription_files = df_worklist.loc[
+            (df_worklist["downloaded_audio_locally"] == True) & # pylint: disable=singleton-comparison
+            (df_worklist["completed_locally"] == True) & # pylint: disable=singleton-comparison
+            (df_worklist["done"] == False), # pylint: disable=singleton-comparison
+            "filename"
+        ].to_list()
+        print("Uploading transcriptions to GCP")
+        for file in local_transcription_files:
+            assert isinstance(file, str)
+            output_file = file.replace(audio_type,".json")
             gs_helper.upload_file_to_blob(bucket_name,output_file,os.path.join(working_dir,output_file))
-
-        print(f'{i} Completed')
+            print(f"{output_file} is uploaded to GCP bucket")
 
 
 if __name__ == '__main__':
