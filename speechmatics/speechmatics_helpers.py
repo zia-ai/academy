@@ -20,6 +20,11 @@ from httpx import HTTPStatusError
 from speechmatics.models import ConnectionSettings
 from speechmatics.batch_client import BatchClient
 
+class TranscriptionError(Exception):
+    """
+    Indicates an error in transcription.
+    """
+
 SPEECHMATICS_URL = "https://asr.api.speechmatics.com/v2"
 
 def get_connection_settings(api_key: str) -> ConnectionSettings:
@@ -36,9 +41,10 @@ def get_transcription_configuration(
         diarization: str = "channel",
         entities: bool = False,
         operation: str = "standard",
-        punctuation_sensitivity: float = 0.5
-        # expected_languages: str = "",
-        # default_language: str = "en"
+        punctuation_sensitivity: float = 0.5,
+        low_confidence_action: str = "",
+        expected_languages: str = "",
+        default_language: str = "en"
     ) -> dict:
     """"
     language: "en", "fr" etc. default "en"
@@ -58,7 +64,6 @@ def get_transcription_configuration(
             "diarization": diarization,
             "enable_entities": entities,
             "operating_point": operation,
-            "output_locale": "en-US",
             "punctuation_overrides": {
                 "permitted_marks": [
                     ",",
@@ -71,10 +76,38 @@ def get_transcription_configuration(
         }
     }
 
+    if language == "en":
+        conf["transcription_config"]["output_locale"] = "en-US"
+    # Supported for English and Mandarin
+    # The three locales in English that are available are:
+
+    # British English (en-GB)
+    # US English (en-US)
+    # Australian English (en-AU)
+    # When transcribing in English, it is recommended to specify the locale.
+    # If no locale is specified then the spelling may be inconsistent within a transcript.
+
+    # The following locales are supported for Chinese Mandarin:
+
+    # Simplified Mandarin (cmn-Hans)
+    # Traditional Mandarin (cmn-Hant)
+
+
     # setup language or auto detection
     if language == "auto":
-        raise RuntimeError("BatchClient doesn't accept auto right now")
-        # Needs to have transcription config and language identification config
+        if low_confidence_action != "":
+            conf["language_identification_config"] = {
+                "low_confidence_action": low_confidence_action
+            }
+
+            if low_confidence_action == "use_default_language":
+                conf["language_identification_config"]["default_language"] = default_language
+
+        if expected_languages != "":
+            expected_languages = expected_languages.split(",")
+            if "language_identification_config" not in conf:
+                conf["language_identification_config"] = {}
+            conf["language_identification_config"]["expected_languages"] = expected_languages
     conf["transcription_config"]["language"] = language
 
     return conf
@@ -108,6 +141,7 @@ def batch_transcribe(audio_file_paths: list, settings: dict, transcription_confi
     """
 
     transcript = {}
+    rejected_transcriptions = {}
     # Open the client using a context manager
     with BatchClient(settings) as client:
         # list all the jobs
@@ -117,11 +151,14 @@ def batch_transcribe(audio_file_paths: list, settings: dict, transcription_confi
             for result in client.submit_jobs(audio_paths=audio_file_paths,
                                              transcription_config=transcription_config,
                                              concurrency=concurrency):
-                transcript[result[0]] = client.wait_for_completion(result[1], transcription_format="json-v2")
+                try:
+                    transcript[result[0]] = client.wait_for_completion(result[1], transcription_format="json-v2")
+                except Exception as e:
+                    rejected_transcriptions[result[0]] = e
 
         #     # Note that in production, you should set up notifications instead of polling.
         #     # Notifications are described here: https://docs.speechmatics.com/features-other/notifications
 
-            return transcript
+            return transcript, rejected_transcriptions
         except HTTPStatusError as e:
             print(f"Speechmatics API returned something bad - {e}")

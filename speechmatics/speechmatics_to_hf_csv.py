@@ -25,22 +25,30 @@ def main(folder_path: str, output_filename: str) -> None:
     file_paths = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if file.endswith('.json')]
     print(f'To process: {len(file_paths)}')
     df_list = []
+    unprocessed_results = []
     for file_path in file_paths:
-        print(f"Processing: {file_path}")
-        df_list.append(process(file_path))
+        with open(file_path, mode="r", encoding="utf-8") as utterance_file:
+            data = json.load(utterance_file)
+        if data["results"]:
+            print(f"Processing: {file_path}")
+            df_list.append(process(data))
+        else:
+            unprocessed_results.append(file_path)
 
-    final_df = pandas.concat(df_list,ignore_index=True)
+    if df_list:
+        final_df = pandas.concat(df_list,ignore_index=True)
 
-    print(final_df)
-    output_filename = os.path.join(output_filename)
-    final_df.to_csv(output_filename,index=False, header=True)
+        print(final_df)
+        output_filename = os.path.join(output_filename)
+        final_df.to_csv(output_filename,index=False, header=True)
+
+    print(f"Number of processed transcriptions                  : {len(df_list)}")
+    print(f"Number of unprocessed transcriptions (Empty results): {len(unprocessed_results)}")
+    print(f"Unprocessed files: \n{unprocessed_results}")
 
 
-def process(file_path: str) -> pandas.DataFrame:
+def process(data: str) -> pandas.DataFrame:
     """Speechmatics Json to HF consumable format"""
-
-    with open(file_path, mode="r", encoding="utf-8") as utterance_file:
-        data = json.load(utterance_file)
 
     df = pandas.json_normalize(data["results"], sep="-")
     df["confidence"] = df["alternatives"].apply(lambda x: x[0]["confidence"])
@@ -86,6 +94,7 @@ def merge_info(df:pandas.DataFrame) -> pandas.DataFrame:
         'content': custom_join(x),
         'start_time': x['start_time'].min(),
         'end_time': x['end_time'].max(),
+        'language': x["language"].iloc[0]
     }),include_groups=False).reset_index()
 
     merged_df = merged_df.sort_values(by="start_time").reset_index(drop=True)

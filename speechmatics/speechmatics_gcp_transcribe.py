@@ -43,7 +43,15 @@ from google_storage_helpers import GoogleStorageHelper # GCP helpers
               help='Whether to write back to GCP')
 @click.option('-p', '--transcribe', is_flag=True, required=False, default=False,
               help='Transcribes downloaded audio')
+@click.option('-l', '--language', type=str, default="en",
+              help='Audio language. Can this to "auto" for automatic language detection')
 @click.option('-c', '--concurrency', type=int, default=5, help='Number of transcription jobs submitted at single time')
+@click.option('-x', '--expected_languages', required = False, default="", help='Comma separated list of languages')
+@click.option('-o','--low_confidence_action', type=click.Choice(['allow', 'use_default_language', ""]), default='',
+              help="""Options - allow, use_default_language, ''. Triggered when auto detect fails
+              https://docs.speechmatics.com/features-other/lang-id#low-confidence-action""")
+@click.option('-h', '--default_language', required = False, default="en",
+              help='Default language to use in case automatic laguagee detection couldn\'t able to decide')
 def main(
         api_key: str,
         bucket_name: str,
@@ -55,13 +63,21 @@ def main(
         impersonate: bool,
         impersonate_service_account: str,
         vocab_file_path: str,
-        transcribe: bool) -> None:
+        transcribe: bool,
+        language: str,
+        expected_languages: str,
+        default_language: str,
+        low_confidence_action: str) -> None:
     """Main Function"""
 
     # setup speechmatics
     settings = speechmatics_helpers.get_connection_settings(api_key)
-    transcription_configuration = speechmatics_helpers.get_transcription_configuration()
-    # print(json.dumps(transcription_configuration,indent=2))
+    transcription_configuration = speechmatics_helpers.get_transcription_configuration(
+        language=language,
+        expected_languages=expected_languages,
+        low_confidence_action=low_confidence_action,
+        default_language=default_language
+    )
 
     if vocab_file_path:
         if os.path.exists(vocab_file_path):
@@ -71,6 +87,9 @@ def main(
                     "transcription_config"]["additional_vocab"] = additional_vocab["additional_vocab"]
         else:
             raise RuntimeError(f"{vocab_file_path} doesn't exist")
+
+    print("Transcription Configuration")
+    print(json.dumps(transcription_configuration,indent=2))
 
     gs_helper = GoogleStorageHelper(impersonate=impersonate,
                                     impersonate_service_account=impersonate_service_account)
@@ -152,16 +171,24 @@ def main(
 
         if audio_downloaded_but_not_transcribed:
             print(f"Transcribing: {len(audio_downloaded_but_not_transcribed)} audio files")
-            print(f"{audio_downloaded_but_not_transcribed}")
+            # print(f"{audio_downloaded_but_not_transcribed}")
             start_time = datetime.now()
-            transcripts = speechmatics_helpers.batch_transcribe(audio_downloaded_but_not_transcribed,
-                                                                settings,
-                                                                transcription_configuration,
-                                                                concurrency)
+            transcripts, rejected_transcriptions = speechmatics_helpers.batch_transcribe(
+                audio_downloaded_but_not_transcribed,
+                settings,
+                transcription_configuration,
+                concurrency
+            )
 
             print(f"Number of Transcriptions successfully completed: {len(transcripts)}")
+            print(f"Number of Transcriptions rejected: {len(rejected_transcriptions)}")
             end_time = datetime.now()
             print("Execution time for transcribing:", end_time - start_time)
+
+            if rejected_transcriptions:
+                print("List of rejected transcriptions")
+                for audio, err_msg in rejected_transcriptions.items():
+                    print(f"{audio} - {err_msg}")
 
             for file_path, transcript in transcripts.items():
                 assert isinstance(file_path,str)
