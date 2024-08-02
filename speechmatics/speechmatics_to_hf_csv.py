@@ -2,6 +2,11 @@
 python speechmatics_to_hf_csv.py
 
 Converts Speechmatics JSON to HF CSV
+
+Run script and see which channel represents the client and which one expert.
+Cause it varies for audios from different clients.
+Client A audios might have channel_1:client and channel_2:expert
+Client B audios might have channel_1:expert and channel_2:client
 """
 # *********************************************************************************************************************
 
@@ -17,8 +22,10 @@ import click
 
 @click.command()
 @click.option('-f', '--folder_path', type=str, required=True, help='Speechmatics json folder')
+@click.option('-c', '--client_channel', type=click.Choice(['channel_1', 'channel_2']), default = "channel_2",
+              help='Which channel has client utterances? channel_1 or channel_2?')
 @click.option('-o', '--output_filename', type=str, required=True, help='FQN Where to save the output csv')
-def main(folder_path: str, output_filename: str) -> None:
+def main(folder_path: str, output_filename: str, client_channel: str) -> None:
     """Main Function"""
 
     # List all files in the directory
@@ -31,7 +38,7 @@ def main(folder_path: str, output_filename: str) -> None:
             data = json.load(utterance_file)
         if data["results"]:
             print(f"Processing: {file_path}")
-            df_list.append(process(data))
+            df_list.append(process(data, client_channel))
         else:
             unprocessed_results.append(file_path)
 
@@ -46,8 +53,7 @@ def main(folder_path: str, output_filename: str) -> None:
     print(f"Number of unprocessed transcriptions (Empty results): {len(unprocessed_results)}")
     print(f"Unprocessed files: \n{unprocessed_results}")
 
-
-def process(data: str) -> pandas.DataFrame:
+def process(data: str, client_channel: str) -> pandas.DataFrame:
     """Speechmatics Json to HF consumable format"""
 
     df = pandas.json_normalize(data["results"], sep="-")
@@ -77,7 +83,7 @@ def process(data: str) -> pandas.DataFrame:
     merged_df["convo_guid"] = f"convo-{uuid.uuid4()}"
 
     # assign speakers
-    merged_df["speaker"] = merged_df["channel"].apply(lambda x: "client" if x == "channel_1" else "expert")
+    merged_df["speaker"] = merged_df["channel"].apply(lambda x: "client" if x == client_channel else "expert")
     print(f'Rows for this conversation: {merged_df.shape[0]}')
 
     return merged_df
