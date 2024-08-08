@@ -83,10 +83,71 @@ def process(data: str, client_channel: str) -> pandas.DataFrame:
     merged_df["convo_guid"] = f"convo-{uuid.uuid4()}"
 
     # assign speakers
-    merged_df["speaker"] = merged_df["channel"].apply(lambda x: "client" if x == client_channel else "expert")
+    merged_df["role"] = merged_df["channel"].apply(lambda x: "client" if x == client_channel else "expert")
     print(f'Rows for this conversation: {merged_df.shape[0]}')
 
+    convo_id_col = "convo_guid"
+
+    # index the speakers
+    merged_df['idx'] = merged_df.groupby([convo_id_col]).cumcount()
+    merged_df['idx_max'] = merged_df.groupby([convo_id_col])[
+        'idx'].transform("max")
+
+    # This info lets you filter for the first or last thing the client says
+    # this is very useful in boot strapping bot design
+    # 0s for expert
+    merged_df['idx_client'] = merged_df.groupby(
+        [convo_id_col, 'role']).cumcount().where(merged_df.role == 'client', 0)
+    merged_df['idx_max_client'] = merged_df.groupby([convo_id_col])[
+        'idx_client'].transform("max")
+    merged_df['first_client_utt'] = merged_df.apply(decide_role_filter_values,
+                                        args=['idx_client','client',0,"idx_max_client"],
+                                        axis=1)
+    merged_df['second_client_utt'] = merged_df.apply(decide_role_filter_values,
+                                        args=['idx_client','client',1,"idx_max_client"],
+                                        axis=1)
+    merged_df['last_client_utt'] = merged_df.apply(decide_role_filter_values,
+                                        args=['idx_client','client',-1,"idx_max_client"],
+                                        axis=1)
+
+    # same for expert
+    merged_df['idx_expert'] = merged_df.groupby(
+        [convo_id_col, 'role']).cumcount().where(merged_df.role == 'expert', 0)
+    merged_df['idx_max_expert'] = merged_df.groupby([convo_id_col])[
+        'idx_expert'].transform("max")
+    merged_df['first_expert_utt'] = merged_df.apply(decide_role_filter_values,
+                                        args=['idx_expert','expert',0,'idx_max_expert'],
+                                        axis=1)
+    merged_df['second_expert_utt'] = merged_df.apply(decide_role_filter_values,
+                                        args=['idx_expert','expert',1,'idx_max_expert'],
+                                        axis=1)
+    merged_df['last_expert_utt'] = merged_df.apply(decide_role_filter_values,
+                                        args=['idx_expert','expert',-1,'idx_max_expert'],
+                                        axis=1)
+
+    merged_df.drop(['idx',
+                    'idx_max',
+                    'idx_client',
+                    'idx_max_client',
+                    'idx_expert',
+                    'idx_max_expert'], axis=1, inplace=True)
+
     return merged_df
+
+
+def decide_role_filter_values(row: pandas.Series,
+                              column_name: str,
+                              role_filter: str,
+                              value_filter: str,
+                              idx_max_col_name: str) -> bool:
+    """Determine whether this is the 0,1,2 where the role is also somthing"""
+    if value_filter >=0 and row[column_name] == value_filter and row["role"] == role_filter:
+        return True
+    elif value_filter < 0 and row[column_name] == row[
+        idx_max_col_name] and row["role"] == role_filter:
+        return True
+    else:
+        return False
 
 
 def merge_info(df:pandas.DataFrame) -> pandas.DataFrame:
