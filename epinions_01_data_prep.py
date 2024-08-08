@@ -42,7 +42,8 @@ import humanfirst
 
 @click.command()
 @click.option('-f', '--filename', type=str, required=False, default='./data/epinions/epinions.txt', help='Input File Path')
-def main(filename: str) -> None: # pylint: disable=unused-argument
+@click.option('-n', '--noskip', is_flag=True, required=False, default=False, help='Input File Path')
+def main(filename: str, noskip: bool) -> None: # pylint: disable=unused-argument
     """Process epinions text"""
     
     
@@ -54,22 +55,31 @@ def main(filename: str) -> None: # pylint: disable=unused-argument
         "stars": numpy.float64,
         "words": str
     }
-    
-    # deleted header #item, user, paid, time, stars, words
-    file_in = open(filename,mode='r',encoding='utf8')
 
-    # parse each line in the format expected - frigged file to remove "/n "with " "
+    # parse each line in the format expected - frigged file to remove "/n " with " " using Textpad
+    # note - unclear why won't parse original file - haven't done byte level check
+    file_in = open(filename,mode='r',encoding="utf8")
+
     short = 0
     errors = 0
     completed = 0
     rows = []
     for i,line in enumerate(file_in):       
+        
+        # skip header "#item, user, paid, time, stars, words"
+        if i == 0:
+            continue
+        
+        # do split
         split_line = line.split(' ')
+        
+        # skip short lines
         if len(split_line) < 5:
             short = short + 1
             print(line)
             continue
-            
+
+        # try and get the data from lines with enouh cols.            
         row = {}
         try:
             
@@ -85,12 +95,14 @@ def main(filename: str) -> None: # pylint: disable=unused-argument
             completed = completed + 1
         except Exception as e:
             print("EXCEPTION")
-            print(i)
-            print(split_line[j])
-            print(e)
+            print(f'row:           {i}')
+            print(f'split_line[j]: {split_line[j]}')
+            print(f'Exception:     {e}')
             errors = errors + 1
+            print("Line:")
             print(line)
-            quit()
+            if noskip:
+                quit()
     file_in.close()
 
     # make dataframe
