@@ -8,3 +8,4 @@ google-auth
 google-auth-oauthlib
 google-auth-httplib2
 git-pylint-commit-hook
+pydub
