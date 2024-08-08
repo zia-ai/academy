@@ -20,6 +20,8 @@ Starts transcribing
 import os
 import json
 from datetime import datetime
+import logging
+import sys
 
 # 3rd party imports
 import click
@@ -34,6 +36,11 @@ from google_storage_helpers import GoogleStorageHelper # GCP helpers
 @click.option('-t', '--audio_type', type=str, required=True, help='.wav .mp3 to search for')
 @click.option('-w', '--working_dir', type=str, required=True, help='Dir to download to')
 @click.option('-v', '--vocab_file_path', type=str, required=False, default = "", help='Additional Vocabulary file path')
+@click.option('-g', '--log_folder_path', type=str, required=False, default = "./speechmatics/logs/", help='Log folder path')
+@click.option('-k', '--log_level',
+              type=click.Choice(['debug', 'info', 'warning', 'error', 'critical']),
+              default='info',
+              help='Log levels')
 @click.option('-i', '--impersonate', is_flag=True, default=False, help='Impersonate service account or not')
 @click.option('-s', '--impersonate_service_account', type=str, required=False, default="",
               help='Target service account to impersonate')
@@ -67,8 +74,35 @@ def main(
         language: str,
         expected_languages: str,
         default_language: str,
-        low_confidence_action: str) -> None:
+        low_confidence_action: str,
+        log_folder_path: str,
+        log_level: str) -> None:
     """Main Function"""
+
+    # set log level
+    if log_level == "debug":
+        log_level = logging.DEBUG
+    elif log_level == "info":
+        log_level = logging.INFO
+    elif log_level == "warning":
+        log_level = logging.WARNING
+    elif log_level == "error":
+        log_level = logging.ERROR
+    elif log_level == "critical":
+        log_level = logging.CRITICAL
+    else:
+        raise RuntimeError("Incorrect log level. Should be one of debug, info, warning, error, critical")
+
+    # Configure the root logger
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file_path = os.path.join(log_folder_path,f"{timestamp}.log")
+    setup_logging(log_file_path, log_level)
+
+    # Redirect stdout and stderr
+    redirect_output_to_log(log_file_path)
+
+    # Create a logger object
+    logger = logging.getLogger(__name__) # pylint: disable=unused-variable
 
     # setup speechmatics
     settings = speechmatics_helpers.get_connection_settings(api_key)
@@ -216,6 +250,33 @@ def main(
             output_file = file.replace(audio_type,".json")
             gs_helper.upload_file_to_blob(bucket_name,output_file,os.path.join(working_dir,output_file))
             print(f"{output_file} is uploaded to GCP bucket")
+
+
+def setup_logging(log_file_path: str, log_level: logging):
+    """Set Up logging"""
+    # Remove all existing handlers
+    root_logger = logging.getLogger()
+    if root_logger.hasHandlers():
+        root_logger.handlers.clear()
+
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_file_path, mode='a'),
+            # Remove StreamHandler to prevent double logging
+            # logging.StreamHandler()  # You can comment this out if you don't want logs in the terminal
+        ]
+    )
+
+    return log_file_path
+
+def redirect_output_to_log(log_file_path):
+    """Redirect output to log"""
+    # Redirect stdout and stderr to the log file
+    log_file = open(log_file_path, 'a', encoding="utf8")
+    os.dup2(log_file.fileno(), sys.stdout.fileno())
+    os.dup2(log_file.fileno(), sys.stderr.fileno())
 
 
 if __name__ == '__main__':
