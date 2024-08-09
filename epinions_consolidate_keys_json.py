@@ -30,6 +30,7 @@ def main(filename: str, sample: int) -> None: # pylint: disable=unused-argument
     dict_in = json.load(file_in)
     file_in.close()
     df = pandas.json_normalize(dict_in["examples"])
+    print(df)
 
     # work out valid invalid
     gb = df[["context.context_id","metadata.key"]].groupby("context.context_id",as_index=True).count()
