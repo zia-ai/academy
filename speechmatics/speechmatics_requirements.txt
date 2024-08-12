@@ -1,0 +1,11 @@
+pandas
+click
+speechmatics-python
+humanfirst
+tqdm
+google-cloud-storage
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+git-pylint-commit-hook
+pydub
