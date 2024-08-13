@@ -46,17 +46,22 @@ import humanfirst
               help='Whether to strip html tags from the utterance col')
 @click.option('-b', '--drop_blanks', is_flag=True, type=bool, default=False,
               help='Whether to drop blanks')
+@click.option('-z', '--skip_indexing', is_flag=True, type=bool, default=False,
+              help='Whether to skip indexing to reduce size output.')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool) -> None:
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
+         skip_indexing: bool) -> None:
     """Main Function"""
     process(filename, metadata_keys, utterance_col, delimiter,
          convo_id_col, created_at_col, unix_date, role_col,
-         role_mapper, encoding, filtering, striphtml, drop_blanks)
+         role_mapper, encoding, filtering, striphtml, drop_blanks,
+         skip_indexing)
 
 def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
          convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool) -> None:
+         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
+         skip_indexing: bool) -> None:
     """Helper function to allow calling by directory"""
 
     excel = False
@@ -195,49 +200,53 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         df['idx_max'] = df.groupby([convo_id_col])[
             'idx'].transform(numpy.max)
 
-        # This info lets you filter for the first or last thing the client says
-        # this is very useful in boot strapping bot design
-        # 0s for expert
-        df['idx_client'] = df.groupby(
-            [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
-        df['idx_max_client'] = df.groupby([convo_id_col])[
-            'idx_client'].transform(numpy.max)
-        df['first_client_utt'] = df.apply(decide_role_filter_values,
-                                          args=['idx_client','client',0,"idx_max_client"],
-                                          axis=1)
-        df['second_client_utt'] = df.apply(decide_role_filter_values,
-                                           args=['idx_client','client',1,"idx_max_client"],
-                                           axis=1)
-        df['last_client_utt'] = df.apply(decide_role_filter_values,
-                                         args=['idx_client','client',-1,"idx_max_client"],
-                                         axis=1)
+        if not skip_indexing:
+            # This info lets you filter for the first or last thing the client says
+            # this is very useful in boot strapping bot design
+            # 0s for expert
+            df['idx_client'] = df.groupby(
+                [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
+            df['idx_max_client'] = df.groupby([convo_id_col])[
+                'idx_client'].transform(numpy.max)
+            df['first_client_utt'] = df.apply(decide_role_filter_values,
+                                            args=['idx_client','client',0,"idx_max_client"],
+                                            axis=1)
+            df['second_client_utt'] = df.apply(decide_role_filter_values,
+                                            args=['idx_client','client',1,"idx_max_client"],
+                                            axis=1)
+            df['last_client_utt'] = df.apply(decide_role_filter_values,
+                                            args=['idx_client','client',-1,"idx_max_client"],
+                                            axis=1)
 
-        # same for expert
-        df['idx_expert'] = df.groupby(
-            [convo_id_col, 'role']).cumcount().where(df.role == 'expert', 0)
-        df['idx_max_expert'] = df.groupby([convo_id_col])[
-            'idx_expert'].transform(numpy.max)
-        df['first_expert_utt'] = df.apply(decide_role_filter_values,
-                                          args=['idx_expert','expert',0,'idx_max_expert'],
-                                          axis=1)
-        df['second_expert_utt'] = df.apply(decide_role_filter_values,
-                                           args=['idx_expert','expert',1,'idx_max_expert'],
-                                           axis=1)
-        df['last_expert_utt'] = df.apply(decide_role_filter_values,
-                                         args=['idx_expert','expert',-1,'idx_max_expert'],
-                                         axis=1)
+            # same for expert
+            df['idx_expert'] = df.groupby(
+                [convo_id_col, 'role']).cumcount().where(df.role == 'expert', 0)
+            df['idx_max_expert'] = df.groupby([convo_id_col])[
+                'idx_expert'].transform(numpy.max)
+            df['first_expert_utt'] = df.apply(decide_role_filter_values,
+                                            args=['idx_expert','expert',0,'idx_max_expert'],
+                                            axis=1)
+            df['second_expert_utt'] = df.apply(decide_role_filter_values,
+                                            args=['idx_expert','expert',1,'idx_max_expert'],
+                                            axis=1)
+            df['last_expert_utt'] = df.apply(decide_role_filter_values,
+                                            args=['idx_expert','expert',-1,'idx_max_expert'],
+                                            axis=1)
 
         # make sure convo id on the metadata as well for summarisation linking
         metadata_keys.append(convo_id_col)
 
         # extend metadata_keys to indexed fields for conversations.
         # generated custom indexing fields
-        metadata_keys.extend(
-            ['idx',
-             'first_client_utt', 'second_client_utt',
-             'first_expert_utt', 'second_expert_utt',
-             'last_client_utt', 'last_expert_utt'
-            ]
+        if skip_indexing:
+            metadata_keys.extend(['idx'])
+        else:
+            metadata_keys.extend(
+                ['idx',
+                'first_client_utt', 'second_client_utt',
+                'first_expert_utt', 'second_expert_utt',
+                'last_client_utt', 'last_expert_utt'
+                ]
             )
 
     # build metadata for utterances or conversations
@@ -246,6 +255,10 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         'script_name': 'csv_to_json_unlaballed.py'
     }
     print("Capturing these metadata keys")
+    
+    metadata_keys = list(set(metadata_keys))
+    if utterance_col in metadata_keys:
+        metadata_keys.remove(utterance_col)
     print(metadata_keys)
     print("Capturing these file level values for metaddata")
     print(dict_of_file_level_values)

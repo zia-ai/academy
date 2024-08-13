@@ -1,0 +1,60 @@
+# Prompt (gpt-4o-mini)
+
+## Situation
+This is some draft metadata about on an online review 
+
+## Review Metadata
+### item_code: 
+{{ meta "item_code" }}
+### title
+{{ meta "title" }}
+### category: 
+{{ meta "category" }}
+### manufacturer: 
+{{ meta "manufacturer" }}
+### model: 
+{{ meta "model" }}
+
+
+## Guidance
+
+Your job is to sort the review based on the metadata into the most appropriate available category for an online opinions site.
+
+## Available categories
+
+Action and Collectible Figures
+All Terrain Vehicles (ATVs)
+Apparel
+Hobbies, Arts & Crafts
+Audio, Hifi and AV components
+Automobiles and Vehicles
+Automobile and Vehicles Accessories
+Baby Equipment
+Bicycles
+Board and Card Games
+Boats
+Books
+Broadband, Cable or ISP services
+Cameras & Photography
+Cellular Phones
+Cleaning Products
+Computer Peripherals,  Accessories and Parts
+Entertainment
+Gardening
+Hair, Health and Beauty
+Handheld Computers and PDAs
+Heating and Air Conditioning
+Laptops and Desktop Computers
+Large Appliances
+Motorcycles & Scooters
+Other
+Pest Control
+Pet Supplies
+Small Appliances
+Software
+Toys
+Unknown
+
+## Output Format Requested
+
+Please give your answer as just the most appropriate available category text.
