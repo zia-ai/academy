@@ -1,6 +1,7 @@
 """
 python epinions_consolidate
 
+consolidates the prompt results from epinions_openai script
 """
 # ******************************************************************************************************************120
 
@@ -12,7 +13,7 @@ import json
 import click
 import pandas
 
-SCHEMA_KEYS = ["review_id","item_code","date_drafted","stars_rating", 
+SCHEMA_KEYS = ["review_id","item_code","date_drafted","stars_rating",
                "amount_paid","review","category","manufacturer","model","title"]
 
 # custom imports

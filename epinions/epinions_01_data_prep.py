@@ -41,12 +41,12 @@ import pandas
 import humanfirst
 
 @click.command()
-@click.option('-f', '--filename', type=str, required=False, default='./data/epinions/epinions.txt', help='Input File Path')
+@click.option('-f', '--filename', type=str, required=False, default='./data/epinions/epinions.txt',
+              help='Input File Path')
 @click.option('-n', '--noskip', is_flag=True, required=False, default=False, help='Input File Path')
 def main(filename: str, noskip: bool) -> None: # pylint: disable=unused-argument
     """Process epinions text"""
-    
-    
+
     dtypes = {
         "item": str,
         "user": str,
@@ -64,25 +64,24 @@ def main(filename: str, noskip: bool) -> None: # pylint: disable=unused-argument
     errors = 0
     completed = 0
     rows = []
-    for i,line in enumerate(file_in):       
-        
+    for i,line in enumerate(file_in):
         # skip header "#item, user, paid, time, stars, words"
         if i == 0:
             continue
-        
+
         # do split
         split_line = line.split(' ')
-        
+
         # skip short lines
         if len(split_line) < 5:
             short = short + 1
             print(line)
             continue
 
-        # try and get the data from lines with enouh cols.            
+        # try and get the data from lines with enouh cols.
         row = {}
         try:
-            
+
             for j,col in enumerate(dtypes.keys()):
                 if j in [0,1,2,4]:
                     row[col] = split_line[j]
@@ -90,10 +89,10 @@ def main(filename: str, noskip: bool) -> None: # pylint: disable=unused-argument
                     row[col] = datetime.datetime.fromtimestamp(int(split_line[j]))
                 else:
                     row[col] = ' '.join(split_line[5:]).strip()
-            assert isinstance(row[col],dtypes[col])
+            assert isinstance(row[col],dtypes[col]) # pylint: disable=undefined-loop-variable
             rows.append(row.copy())
             completed = completed + 1
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-exception-caught
             print("EXCEPTION")
             print(f'row:           {i}')
             print(f'split_line[j]: {split_line[j]}')
@@ -138,4 +137,3 @@ def main(filename: str, noskip: bool) -> None: # pylint: disable=unused-argument
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
-

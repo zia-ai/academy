@@ -1,18 +1,18 @@
 """
 python epinions_consolidate
 
+Consolidates the prompt results downloaded from HF tool 
 """
 # ******************************************************************************************************************120
 
 # standard imports
-import os
 import json
 
 # 3rd party imports
 import click
 import pandas
 
-SCHEMA_KEYS = ["review_id","item_code","date_drafted","stars_rating", 
+SCHEMA_KEYS = ["review_id","item_code","date_drafted","stars_rating",
                "amount_paid","review","category","manufacturer","model","title"]
 
 # custom imports
@@ -51,7 +51,7 @@ def main(filename: str, sample: int) -> None: # pylint: disable=unused-argument
     gb["valid"] = gb["count_metadata_keys"] == 10
     print(gb)
 
-    gb = gb[gb["valid"] == True]
+    gb = gb[gb["valid"] == True] # pylint: disable=singleton-comparison
     print(gb)
 
     print("Categories")
@@ -69,6 +69,7 @@ def main(filename: str, sample: int) -> None: # pylint: disable=unused-argument
     print(f'Wrote to: {output_filename}')
 
 def validate_row(row: pandas.Series) -> pandas.Series:
+    """Validate rows"""
     return row
 
 
