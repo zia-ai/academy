@@ -1,0 +1,13 @@
+The following is an online chat conversation between a client "User" of an online fashion retailer and one of it's expert "Agent" customer service agents.
+
+{{ conversation }}
+
+Was the client's issue fully resolved from the business' perspective?
+
+Please provide your reasoning, then give your answer as yes, no, or unclear in lower case.
+
+Give your answer in the following key-value pairs.
+
+reasoning: <reasoning>
+fully_resolved: yes|no|unclear
+
