@@ -26,19 +26,19 @@ import pandas
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
 def main(filename: str) -> None: # pylint: disable=unused-argument
     """Main Function"""
-    
+
     # load json
     file_in = open(filename,mode="r",encoding="utf8")
     dict_in = json.load(file_in)
     file_in.close()
-    
+
     # sentenaces
     df = pandas.json_normalize(dict_in["sentences"])
     print(df)  
     output_filename = filename.replace(".json","_training_output.csv")
     df.to_csv(output_filename,index=False)
     print(f'Wrote sentences to: {output_filename}')
-    
+
     # traits
     tgs=[]
     for tg in dict_in["traits"]:
@@ -47,7 +47,6 @@ def main(filename: str) -> None: # pylint: disable=unused-argument
         for t in traits.keys():
             for d in traits[t]["data"]:
                 output_obj = {}
-                output_obj
                 for k in ['state', 'matchStrategy', 'scoreThreshold', 'groupName','language']:
                     output_obj[k] = tg[k]
                 output_obj["trait_name"] = t
