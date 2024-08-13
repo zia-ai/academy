@@ -1,7 +1,7 @@
 """
 python enrich_metadata.py
 
-takes a .csv.fmt1 of data uploaded by csv uploader, joins it on a unique key to more metadata and
+takes a .csv.fmt1 or .csv of data uploaded by csv uploader, joins it on a unique key to more metadata and
 writes an output back to be uploaded by gui csv uploader.
 
 """
@@ -22,10 +22,10 @@ import pandas
               help='Column name in CSV of the context.contextid index col')
 def main(filename: str, metadata: str, index_col: str) -> None: # pylint: disable=unused-argument
     """Main Function"""
-    
+
     # Get metadata and set index
     df_metadata = pandas.read_csv(metadata,encoding="utf8")
-  
+
     # have to build the filename as we have up to 6 files per session
     df_metadata["filename"] = df_metadata["start_ts"].str[0:10] + "T" + df_metadata["t"] + ".wav"
 
@@ -39,8 +39,11 @@ def main(filename: str, metadata: str, index_col: str) -> None: # pylint: disabl
     # format of path is like
     # <root_folder_name>---recordings---<session_id>---<file_name>
     # so split by "---"
-    df_existing[["root_folder","sub_folder","SESSION_ID","filename"]] = df_existing["recording_file"].str.split("---",expand=True)
-    
+    df_existing[["root_folder",
+                 "sub_folder",
+                 "SESSION_ID",
+                 "filename"]] = df_existing["recording_file"].str.split("---",expand=True)
+
     # index by session_id, timestamp as it will be uploaded
     df_existing.set_index(["SESSION_ID","filename","timestamp"],inplace=True)
     print(df_existing)
@@ -48,9 +51,10 @@ def main(filename: str, metadata: str, index_col: str) -> None: # pylint: disabl
     # join the new metadata on SESSION_ID
     df_existing = df_existing.join(df_metadata,on=["SESSION_ID","filename"],how="left")
     print(df_existing)
-  
+
     # output the file
-    output_filename = filename.replace(".csv.fmt1","_output.csv")
+    inter_filename = filename.replace(".fmt1","")
+    output_filename = inter_filename.replace(".csv","_output.csv")
     assert output_filename != filename
     df_existing.to_csv(output_filename,header=True,index=True)
     print(f'Wrote to: {output_filename}')
