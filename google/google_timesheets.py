@@ -34,8 +34,8 @@ SHEETS_READ_ONLY_SCOPE = "https://www.googleapis.com/auth/spreadsheets.readonly"
 SHEETS_READWRITE_SCOPE = "https://www.googleapis.com/auth/spreadsheets"
 
 # Where credentials come from
-GOOGLE_PROJECT_CREDENTIALS_FILE = ".google-credentials.json"
-TOKEN_FILE = ".token.json"
+GOOGLE_PROJECT_CREDENTIALS_FILE = "google/.google-credentials.json"
+TOKEN_FILE = "google/.token.json"
 
 # Port that will start interactive authentication session.
 AUTH_SERVER_PORT = 33589
@@ -74,10 +74,10 @@ def main(
     if not week and not month:
         raise RuntimeError("One of week or month must be specified")
     if week and month:
-        raise RuntimeError("Only one of week and month is allowed") 
-    if week and not (week in range(1,54)):
+        raise RuntimeError("Only one of week and month is allowed")
+    if week and not (week in range(1,54)): # pylint: disable=superfluous-parens
         raise RuntimeError("Week must be in range 1-53")
-    if month and not (month in range(1,13)):
+    if month and not (month in range(1,13)): # pylint: disable=superfluous-parens
         raise RuntimeError("Month must be in range 1-12")
 
     # auth
@@ -139,7 +139,7 @@ def main(
 
             # for each day rename it's column to the month
             for j,day in enumerate(DAYS):
-      
+
                 # if 0 drop it as non-unique and not required
                 if cal_dict[w][j] == 0:
                     df_week.drop(columns=[day],inplace=True)
@@ -164,12 +164,12 @@ def main(
                 df = df_week
             else:
                 df = df.join(df_week,how='outer')
-        
+
         # work out total as final column
         df["total"] = df.sum(axis=1)
 
         # eliminate any zero rows
-        
+
         # df = df.loc[df["total"]>0,:]
         print(df)
 
@@ -193,7 +193,7 @@ def get_consolidated_df_for_week(items: list, users: list, year: int, week: str,
     # regex to check whether we care about the file
     re_checkfilename=re.compile(f'^({"|".join(users)})-{year}-{week:02}$')
     print(f'Regex compiled as {re_checkfilename}')
-    
+
     # cycle through all items downloading what we need
     for item in items:
         matches = re_checkfilename.match(item["name"])
@@ -208,7 +208,7 @@ def get_consolidated_df_for_week(items: list, users: list, year: int, week: str,
                     break
                 if pandas.isna(row["client_code"]) and pandas.isna(row["task_code"]):
                     break
-            
+
             # slice the bit we want
             df_timesheet = df_timesheet.loc[0:i-1,["client_code","task_code"] + DAYS]
 
@@ -218,7 +218,7 @@ def get_consolidated_df_for_week(items: list, users: list, year: int, week: str,
             # zero all the empty cells
             for day in DAYS:
                 df_timesheet.loc[(df_timesheet[day]=="") | (df_timesheet[day].isna()),day] = 0
-            
+
             # work out total
             df_timesheet["total"] = 0
             for day in DAYS:

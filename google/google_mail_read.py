@@ -22,8 +22,8 @@ import google_sheets_read
 # https://developers.google.com/sheets/api/scopes
 READ_ONLY_SCOPE = "https://www.googleapis.com/auth/gmail.readonly"
 
-GOOGLE_PROJECT_CREDENTIALS_FILE = ".google-credentials.json"
-TOKEN_FILE = ".token.json"
+GOOGLE_PROJECT_CREDENTIALS_FILE = "google/.google-credentials.json"
+TOKEN_FILE = "google/.token.json"
 
 
 @click.command()

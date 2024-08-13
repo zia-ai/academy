@@ -48,8 +48,8 @@ ALPHA_TRANSLATE = ["A","B","C","D","E","F","G",
                    "AT","AU","AV",
                    "AW","AX","AY","AZ"]
 
-GOOGLE_PROJECT_CREDENTIALS_FILE = ".google-credentials.json"
-TOKEN_FILE = ".token.json"
+GOOGLE_PROJECT_CREDENTIALS_FILE = "google/.google-credentials.json"
+TOKEN_FILE = "google/.token.json"
 
 SUPPORTED_SHEET_TYPES = ["GRID"]
 # "SHEET_TYPE_UNSPECIFIED","GRID","OBJECT","DATA_SOURCE" v4
