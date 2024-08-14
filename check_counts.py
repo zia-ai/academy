@@ -45,6 +45,7 @@ def main(filename: str, #TODO: remove me when able to download convoset
     print(f'inputCount:        {convoset["state"]["statistics"]["inputCount"]}')
 
     # TODO: at the moment can't download the convoset, so still have to do this from a file
+    # This was merged in 1.57
     file_in = open(filename,encoding='utf8')
     df = pandas.json_normalize(data=json.load(file_in)["examples"])
     file_in.close()
