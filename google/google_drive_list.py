@@ -27,15 +27,15 @@ import google_sheets_read
 READ_ONLY_SCOPE = "https://www.googleapis.com/auth/drive.metadata.readonly"
 
 # Where credentials come from
-GOOGLE_PROJECT_CREDENTIALS_FILE = ".google-credentials.json"
-TOKEN_FILE = ".token.json"
+GOOGLE_PROJECT_CREDENTIALS_FILE = "google/.google-credentials.json"
+TOKEN_FILE = "google/.token.json"
 
 # Port that will start interactive authentication session.
 AUTH_SERVER_PORT = 33589
 
 # MimeTypes
-GOOGLE_DOC_FILE_MINE = "application/vnd.google-apps.document"
-GOOGLE_SHEET_FILE_MINE = "application/vnd.google-apps.spreadsheet"
+GOOGLE_DOC_FILE_MIME = "application/vnd.google-apps.document"
+GOOGLE_SHEET_FILE_MIME = "application/vnd.google-apps.spreadsheet"
 GOOGLE_FOLDER_MIME = "application/vnd.google-apps.folder"
 
 @click.command()
@@ -59,7 +59,7 @@ def main(
     # build service and read directory
     try:
         service = build("drive", "v3", credentials=creds)
-        items = read_directory(service, drive_id, folder_id, GOOGLE_SHEET_FILE_MINE)
+        items = read_directory(service, drive_id, folder_id, GOOGLE_SHEET_FILE_MIME)
         print(f'Total found: {len(items)}')
 
         for item in items:

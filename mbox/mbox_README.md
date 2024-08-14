@@ -36,7 +36,7 @@ All filenmaes must be fully qualified with their directory i.e
 ./data/mbox/mymbox or 
 /home/ubuntu/mymbox.mbx
 
-Run ```python mbox_splitter.py --filename <mbox_filename>``` 
+Run ```python ./mbox/mbox_splitter.py --filename <mbox_filename>``` 
 
 Other options can be used to do dummy runs, adjust reporting frequence etc but are not required.
 This will take a while to run but give progress updates.
@@ -48,7 +48,7 @@ per email.  Years and months only created where emails exist.
 
 ## manage token size and enrich the json with additional information useful for analytics
 
-Run ```python mbox_add_pp.py --directory <input_dir> --output_directory <output_dir>``` 
+Run ```python ./mbox/mbox_add_pp.py --directory <input_dir> --output_directory <output_dir>``` 
 
 This runs through the directory created by the splitter.
 It creates a mirror directory with the name you provide.
@@ -61,7 +61,7 @@ Then it writes that to the mirror.
 
 ## turn into a CSV for upload to humanfirst.
 
-Run ```python mbox_make_csv.py --directory <input_dir>```
+Run ```python ./mbox/mbox_make_csv.py --directory <input_dir>```
 
 Loops through the directory created by mbox_add_pp and creates a csv of emails ready to either
 - upload in HF studio with the custom CSV loaded

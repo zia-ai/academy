@@ -28,9 +28,10 @@ def main(directory: str,
     process_dir(directory,reverse,embeddings)
 
 def process_dir(directory:str, reverse: bool, embeddings):
+    """Process Directory"""
     dir_count = 0
     dir_tokens = 0
-    assert(os.path.isdir(directory))
+    assert os.path.isdir(directory)
     list_files = os.listdir(directory)
     list_files.sort(reverse=reverse)
     for fn in list_files:

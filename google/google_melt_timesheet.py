@@ -27,7 +27,7 @@ def main(filename: str):
     # drop total column if exists
     if "total" in df.columns.to_list():
         df.drop(columns="total",inplace=True)
-    
+
     # melt the days into rows.
     id_vars = ["client_code","task_code","name"]
     value_vars = set(df.columns.to_list()) - set(id_vars)
@@ -45,7 +45,7 @@ def main(filename: str):
     # set the index
     df.set_index(["day"]+id_vars,inplace=True,drop=True)
 
-    
+
     # write it
     output_filename = filename.replace(".csv","-melted.csv")
     assert output_filename != filename
