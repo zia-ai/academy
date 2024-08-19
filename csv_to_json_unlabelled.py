@@ -126,7 +126,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
 
     if drop_blanks:
         print(f'before blanks shape: {df.shape}')
-        df = df[~(df["body"] == "")]
+        df = df[~(df[utterance_col] == "")]
         print(f'after dropping blanks shape: {df.shape}')
 
     # remove html if necessary
