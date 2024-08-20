@@ -14,9 +14,6 @@ optionally lets strip a particular string for instance any utterances which are 
 import click
 import pandas
 
-# custom imports
-from dateutil import parser
-
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='CSV Filename to operate on')
 @click.option('-c', '--convo_id_col', type=str, required=True, help='Conversation ID column')
@@ -41,11 +38,11 @@ def main(filename: str,
     for col in [convo_id_col,timestamp_col,client_col,expert_col]:
         try:
             assert col in cols
-        except AssertionError as e:
+        except AssertionError as e: # pylint: disable=unused-variable
             print(f'Couldn\'t find col {col}')
             print(cols)
             quit()
-    print(f'All columns found')
+    print('All columns found')
     print(df)
 
     # baseline expert timestamp
@@ -83,7 +80,7 @@ def main(filename: str,
     print(df)
 
     # write to output
-    output_filename = filename.replace(".csv", f"_output.csv")
+    output_filename = filename.replace(".csv", "_output.csv")
     assert filename != output_filename
     df.to_csv(output_filename,index=False,header=True)
     print(f'Wrote to: {output_filename}')

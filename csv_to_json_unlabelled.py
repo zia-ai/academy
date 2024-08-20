@@ -44,8 +44,10 @@ import humanfirst
               help='column:value,column:value;column:value,column:value')
 @click.option('-h', '--striphtml', is_flag=True, default=False,
               help='Whether to strip html tags from the utterance col')
-@click.option('-b', '--drop_blanks', is_flag=True, type=bool, default=False,
-              help='Whether to drop blanks')
+@click.option('-b', '--drop_blanks',
+              type=click.Choice(['NONE', 'DROP', 'BLANK']),
+              default='NONE',
+              help='Whether to drop or replace blanks')
 @click.option('-z', '--minimize_meta', is_flag=True, type=bool, default=False,
               help='Reduce the number of metadata keys')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
@@ -124,10 +126,16 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         print(f'After filtering: {df.shape[0]}')
         print('\n')
 
-    if drop_blanks:
-        print(f'before blanks shape: {df.shape}')
+    # handle drop_blanks
+    if drop_blanks == "DROP":
+        print(f'before dropping blanks shape: {df.shape}')
         df = df[~(df[utterance_col] == "")]
         print(f'after dropping blanks shape: {df.shape}')
+
+    elif drop_blanks == "BLANK":
+        print(f'before replacing blanks shape: {df.shape}')
+        df.loc[df[utterance_col] == "", utterance_col] = "BLANK"
+        print(f'after replacing blanks shape: {df.shape}')
 
     # remove html if necessary
     if striphtml:
