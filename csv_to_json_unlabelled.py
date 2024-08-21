@@ -102,33 +102,33 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
 
     print(df)
 
-    # filtering
+    # filtering goes AND between ; (rounds) and OR within ; sep by ,
+    # "langauage:fr;source_type:messenger,source_type:whatsapp"
+    # filter by french, then filter by source_type for all these source types
+    # filtering - is OR within ; and AND between steps - extract all the matching filters
     if filtering != '':
-        df_filter = []
-        print(f'Before filtering: {df.shape[0]}')
         multiple_filters = filtering.split(";")
-        print("\nMultiple Filters")
-        print(multiple_filters)
-        print("\n")
-        for filtering in multiple_filters:
-            filters = filtering.split(',')
-            filtering = {}
+        df_mult = df.copy(deep=True)
+        print(f'Before multiple filtering: {df.shape[0]}')
+        for mult in multiple_filters:
+            list_filters = []
+            filters = mult.split(',')
+            print(f'Length of filters within this round: {len(filters)}')
             for filt in filters:
-                pair = filt.split(':')
-                filtering[pair[0]] = pair[1]
-            print('Filtering on:')
-            print(filtering)
-            assert isinstance(filtering, dict)
-            df_filt = deepcopy(df)
-            for key, value in filtering.items():
-                df_filt = df_filt[df_filt[key] == value]
-            df_filter.append(df_filt)
+                key = filt.split(":")[0]
+                value = filt.split(":")[1]
+                df_filt = df_mult[df_mult[key] == value]
+                
+                # append to a list of dfs
+                list_filters.append(df_filt.copy(deep=True))
+
+                # logging
+                print(f'Filtered on {key} : {value}')
             print("\n")
-        df = pandas.concat(df_filter)
-
-
-        print(f'After filtering: {df.shape[0]}')
-        print('\n')
+            df_mult = pandas.concat(list_filters) # concat all the DFs
+            print(f'After filtering: {df_mult.shape[0]}')
+            print('\n')
+        df = df_mult
 
     # handle drop_blanks
     if drop_blanks == "DROP":
