@@ -30,6 +30,8 @@ import humanfirst
               help='Delimiter for the csv file')
 @click.option('-c', '--convo_id_col', type=str, required=False, default='',
               help='If conversations which is the id otherwise utterances and defaults to hash of utterance_col')
+@click.option('-s', '--sample', type=int, required=False, default=0,
+              help='How many to sample (if conversations full conversations)')
 @click.option('-t', '--created_at_col', type=str, required=False, default='',
               help='If there is a created date for utterance otherwise defaults to now')
 @click.option('-x', '--unix_date', is_flag=True, type=bool, required=False, default=False,
@@ -49,16 +51,18 @@ import humanfirst
 @click.option('-z', '--minimize_meta', is_flag=True, type=bool, default=False,
               help='Reduce the number of metadata keys')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
+         convo_id_col: str, sample: int,
+         created_at_col: str, unix_date: bool, role_col: str,
          role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
          minimize_meta: bool) -> None:
     """Main Function"""
     process(filename, metadata_keys, utterance_col, delimiter,
-         convo_id_col, created_at_col, unix_date, role_col,
+         convo_id_col, sample, created_at_col, unix_date, role_col,
          role_mapper, encoding, filtering, striphtml, drop_blanks,minimize_meta)
 
 def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
+         convo_id_col: str, sample: int, 
+         created_at_col: str, unix_date: bool, role_col: str,
          role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
          minimize_meta: bool) -> None:
     """Helper function to allow calling by directory"""
@@ -137,6 +141,14 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     # if convos index them
     if convo_id_col != '':
         print('Processing as conversation')
+
+        # sampling
+        if sample > 0:
+            print(f'Size before sampling: {df.shape}')
+            ids = df[convo_id_col].unique()
+            ids = numpy.random.choice(ids,sample)
+            df = df[df[convo_id_col].isin(ids)]
+            print(f'Size after  sampling: {df.shape}')
 
         # must have created_at date if convo index
         if created_at_col == '':
@@ -248,6 +260,10 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
             )
     else:
         print('Processing as utterances')
+
+        # sampling
+        if sample > 0:
+            df = df.sample(sample)
 
     # build metadata for utterances or conversations
     if not minimize_meta:
