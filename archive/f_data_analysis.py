@@ -1,6 +1,10 @@
 """
 python ./archive/f_data_analysis.py
 
+-d directory to scan
+-m find files with this pattern in for instance ".*<client>.*.csv$" case sensitive
+-b stop after this many files.
+
 """
 # ******************************************************************************************************************120
 
@@ -40,7 +44,7 @@ def main(directory: str, match_this: str, break_after: int) -> None:
     print(f'Unique content threads: {df["content_thread_id"].nunique()}')
 
     # create date_day
-    df["date_day"] = pandas.to_datetime(df["created_at"],dayfirst=True).dt.date
+    df["date_day"] = pandas.to_datetime(df["created_at"],dayfirst=True,format="mixed",errors="coerce").dt.date
 
     # messages a day
     gb1 = df[["date_day","content_thread_id"]].groupby(["date_day"]).count()
@@ -48,9 +52,9 @@ def main(directory: str, match_this: str, break_after: int) -> None:
     print(f'Average messages a day: {gb1["content_thread_id"].mean()}')
 
     # channels
-    gb2 = df[["source_type","content_thread_id"]].groupby(["source_type"]).count().reset_index()
-    print(gb2)
-    print(gb2["source_type"].unique())
+    gb2 = df[["source_type","source_name","content_thread_id"]].groupby(["source_type","source_name"]).count()
+    print(gb2.sort_values("content_thread_id",ascending=False).head(20))
+    # print(gb2["source_type"].unique())
 
     # converations a day
     gb3 = df[["date_day","content_thread_id","id"]].groupby(["date_day","content_thread_id"]).count().reset_index()

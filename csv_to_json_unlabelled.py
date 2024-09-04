@@ -30,6 +30,8 @@ import humanfirst
               help='Delimiter for the csv file')
 @click.option('-c', '--convo_id_col', type=str, required=False, default='',
               help='If conversations which is the id otherwise utterances and defaults to hash of utterance_col')
+@click.option('-s', '--sample', type=int, required=False, default=0,
+              help='How many to sample (if conversations full conversations)')
 @click.option('-t', '--created_at_col', type=str, required=False, default='',
               help='If there is a created date for utterance otherwise defaults to now')
 @click.option('-x', '--unix_date', is_flag=True, type=bool, required=False, default=False,
@@ -51,16 +53,18 @@ import humanfirst
 @click.option('-z', '--minimize_meta', is_flag=True, type=bool, default=False,
               help='Reduce the number of metadata keys')
 def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
+         convo_id_col: str, sample: int,
+         created_at_col: str, unix_date: bool, role_col: str,
          role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
          minimize_meta: bool) -> None:
     """Main Function"""
     process(filename, metadata_keys, utterance_col, delimiter,
-         convo_id_col, created_at_col, unix_date, role_col,
+         convo_id_col, sample, created_at_col, unix_date, role_col,
          role_mapper, encoding, filtering, striphtml, drop_blanks,minimize_meta)
 
 def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
+         convo_id_col: str, sample: int, 
+         created_at_col: str, unix_date: bool, role_col: str,
          role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
          minimize_meta: bool) -> None:
     """Helper function to allow calling by directory"""
@@ -98,33 +102,33 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
 
     print(df)
 
-    # filtering
+    # filtering goes AND between ; (rounds) and OR within ; sep by ,
+    # "langauage:fr;source_type:messenger,source_type:whatsapp"
+    # filter by french, then filter by source_type for all these source types
+    # filtering - is OR within ; and AND between steps - extract all the matching filters
     if filtering != '':
-        df_filter = []
-        print(f'Before filtering: {df.shape[0]}')
         multiple_filters = filtering.split(";")
-        print("\nMultiple Filters")
-        print(multiple_filters)
-        print("\n")
-        for filtering in multiple_filters:
-            filters = filtering.split(',')
-            filtering = {}
+        df_mult = df.copy(deep=True)
+        print(f'Before multiple filtering: {df.shape[0]}')
+        for mult in multiple_filters:
+            list_filters = []
+            filters = mult.split(',')
+            print(f'Length of filters within this round: {len(filters)}')
             for filt in filters:
-                pair = filt.split(':')
-                filtering[pair[0]] = pair[1]
-            print('Filtering on:')
-            print(filtering)
-            assert isinstance(filtering, dict)
-            df_filt = deepcopy(df)
-            for key, value in filtering.items():
-                df_filt = df_filt[df_filt[key] == value]
-            df_filter.append(df_filt)
+                key = filt.split(":")[0]
+                value = filt.split(":")[1]
+                df_filt = df_mult[df_mult[key] == value]
+                
+                # append to a list of dfs
+                list_filters.append(df_filt.copy(deep=True))
+
+                # logging
+                print(f'Filtered on {key} : {value}')
             print("\n")
-        df = pandas.concat(df_filter)
-
-
-        print(f'After filtering: {df.shape[0]}')
-        print('\n')
+            df_mult = pandas.concat(list_filters) # concat all the DFs
+            print(f'After filtering: {df_mult.shape[0]}')
+            print('\n')
+        df = df_mult
 
     # handle drop_blanks
     if drop_blanks == "DROP":
@@ -145,6 +149,14 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     # if convos index them
     if convo_id_col != '':
         print('Processing as conversation')
+
+        # sampling
+        if sample > 0:
+            print(f'Size before sampling: {df.shape}')
+            ids = df[convo_id_col].unique()
+            ids = numpy.random.choice(ids,sample)
+            df = df[df[convo_id_col].isin(ids)]
+            print(f'Size after  sampling: {df.shape}')
 
         # must have created_at date if convo index
         if created_at_col == '':
@@ -256,6 +268,10 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
             )
     else:
         print('Processing as utterances')
+
+        # sampling
+        if sample > 0:
+            df = df.sample(sample)
 
     # build metadata for utterances or conversations
     if not minimize_meta:
