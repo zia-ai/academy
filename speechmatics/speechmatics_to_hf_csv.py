@@ -3,6 +3,9 @@ python speechmatics_to_hf_csv.py
 
 Converts Speechmatics JSON to HF CSV
 
+Set up gcloud authentication.
+Steps in ./google_storage_helpers.py
+
 Run script and see which channel represents the client and which one expert.
 Cause it varies for audios from different clients.
 Client A audios might have channel_1:client and channel_2:expert
@@ -19,14 +22,30 @@ import os
 # third Party imports
 import pandas
 import click
+from google_storage_helpers import GoogleStorageHelper # GCP helpers
+
+BUCKET_BASE_URL = "https://storage.cloud.google.com/"
 
 @click.command()
 @click.option('-f', '--folder_path', type=str, required=True, help='Speechmatics json folder')
+@click.option('-b', '--bucket_name', type=str, default="",
+              help='Name of the bucket containing the audio files to create audio url')
 @click.option('-c', '--client_channel', type=click.Choice(['channel_1', 'channel_2']), default = "channel_2",
               help='Which channel has client utterances? channel_1 or channel_2?')
 @click.option('-o', '--output_filename', type=str, required=True, help='FQN Where to save the output csv')
-def main(folder_path: str, output_filename: str, client_channel: str) -> None:
+def main(folder_path: str, output_filename: str, client_channel: str, bucket_name: str) -> None:
     """Main Function"""
+
+    bucket_exists = 0
+    if bucket_name:
+        gs_helper = GoogleStorageHelper(impersonate=False,impersonate_service_account="")
+        # gs_helper.storage_client.bucket(bucket_name)
+        bucket_exists = gs_helper.is_bucket_exists(bucket_name=bucket_name)
+        if bucket_exists:
+            print(f"Bucket: {bucket_name} exists")
+        else:
+            print(f"Bucket: {bucket_name} doesn't exists. Check the given bucket name")
+
 
     # List all files in the directory
     file_paths = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if file.endswith('.json')]
@@ -38,7 +57,7 @@ def main(folder_path: str, output_filename: str, client_channel: str) -> None:
             data = json.load(utterance_file)
         if data["results"]:
             print(f"Processing: {file_path}")
-            df_list.append(process(data, client_channel))
+            df_list.append(process(data, client_channel, bucket_name, bucket_exists))
         else:
             unprocessed_results.append(file_path)
 
@@ -53,7 +72,7 @@ def main(folder_path: str, output_filename: str, client_channel: str) -> None:
     print(f"Number of unprocessed transcriptions (Empty results): {len(unprocessed_results)}")
     print(f"Unprocessed files: \n{unprocessed_results}")
 
-def process(data: str, client_channel: str) -> pandas.DataFrame:
+def process(data: str, client_channel: str, bucket_name: str, bucket_exists: int) -> pandas.DataFrame:
     """Speechmatics Json to HF consumable format"""
 
     df = pandas.json_normalize(data["results"], sep="-")
@@ -131,6 +150,17 @@ def process(data: str, client_channel: str) -> pandas.DataFrame:
                     'idx_max_client',
                     'idx_expert',
                     'idx_max_expert'], axis=1, inplace=True)
+
+    # Generate utterance level audio bucket URL
+    # Helps to listen to specific utterance in the audio
+    if bucket_exists:
+        merged_df["url"] = merged_df.apply(lambda x: os.path.join(
+            BUCKET_BASE_URL,
+            bucket_name,
+            f"{x['recording_file']}#t={x['start_time']}"),
+            axis=1)
+
+        # print(merged_df["url"])
 
     return merged_df
 
