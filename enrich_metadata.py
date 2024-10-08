@@ -20,7 +20,9 @@ import pandas
 @click.option('-m', '--metadata', type=str, required=True, help='Location of a CSV with IDs matching contextid')
 @click.option('-i', '--index_col', type=str, required=True, default="SESSION_ID",
               help='Column name in CSV of the context.contextid index col')
-def main(filename: str, metadata: str, index_col: str) -> None: # pylint: disable=unused-argument
+@click.option('-r', '--remove_columns', type=str, default="",
+              help='Provide list of columns names to be removed from output CSV')
+def main(filename: str, metadata: str, index_col: str, remove_columns: str) -> None: # pylint: disable=unused-argument
     """Main Function"""
 
     # Get metadata and set index
@@ -57,6 +59,14 @@ def main(filename: str, metadata: str, index_col: str) -> None: # pylint: disabl
     # join the new metadata on SESSION_ID
     df_existing = df_existing.join(df_metadata,on=["SESSION_ID","filename"],how="left")
     print(df_existing)
+
+    # remove unwanted column names
+    remove_columns_list = remove_columns.split(",")
+    if remove_columns_list:
+        for i,col in enumerate(remove_columns_list):
+            remove_columns_list[i] = col.strip()
+
+        df_existing.drop(columns=remove_columns_list,inplace=True)
 
     # output the file
     inter_filename = filename.replace(".fmt1","")

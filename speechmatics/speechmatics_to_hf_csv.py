@@ -25,6 +25,7 @@ import click
 from google_storage_helpers import GoogleStorageHelper # GCP helpers
 
 BUCKET_BASE_URL = "https://storage.cloud.google.com/"
+FOLDER_FILE_SPLIT_DELIMITER = "---"
 
 @click.command()
 @click.option('-f', '--folder_path', type=str, required=True, help='Speechmatics json folder')
@@ -33,12 +34,21 @@ BUCKET_BASE_URL = "https://storage.cloud.google.com/"
 @click.option('-c', '--client_channel', type=click.Choice(['channel_1', 'channel_2']), default = "channel_2",
               help='Which channel has client utterances? channel_1 or channel_2?')
 @click.option('-o', '--output_filename', type=str, required=True, help='FQN Where to save the output csv')
-def main(folder_path: str, output_filename: str, client_channel: str, bucket_name: str) -> None:
+@click.option('-i', '--impersonate', is_flag=True, default=False, help='Impersonate service account or not')
+@click.option('-s', '--impersonate_service_account', type=str, required=False, default="",
+              help='Target service account to impersonate')
+def main(folder_path: str,
+         output_filename: str,
+         client_channel: str,
+         bucket_name: str,
+         impersonate: str,
+         impersonate_service_account: str) -> None:
     """Main Function"""
 
     bucket_exists = 0
     if bucket_name:
-        gs_helper = GoogleStorageHelper(impersonate=False,impersonate_service_account="")
+        gs_helper = GoogleStorageHelper(impersonate=impersonate,
+                                        impersonate_service_account=impersonate_service_account)
         # gs_helper.storage_client.bucket(bucket_name)
         bucket_exists = gs_helper.is_bucket_exists(bucket_name=bucket_name)
         if bucket_exists:
@@ -154,10 +164,10 @@ def process(data: str, client_channel: str, bucket_name: str, bucket_exists: int
     # Generate utterance level audio bucket URL
     # Helps to listen to specific utterance in the audio
     if bucket_exists:
-        merged_df["url"] = merged_df.apply(lambda x: os.path.join(
+        merged_df["utterance_level_url"] = merged_df.apply(lambda x: os.path.join(
             BUCKET_BASE_URL,
             bucket_name,
-            f"{x['recording_file']}#t={x['start_time']}"),
+            f"{x['recording_file']}#t={x['start_time']}".replace(FOLDER_FILE_SPLIT_DELIMITER,"/")),
             axis=1)
 
         # print(merged_df["url"])
