@@ -29,6 +29,9 @@ def main(filename: str, metadata: str, index_col: str) -> None: # pylint: disabl
     # drop duplicated rows
     df_metadata = df_metadata.drop_duplicates()
 
+    # convert all columns into string type
+    df_metadata = df_metadata.astype(str)
+
     # have to build the filename as we have up to 6 files per session
     df_metadata["filename"] = df_metadata["start_ts"].str[0:10] + "T" + df_metadata["t"] + ".wav"
 
