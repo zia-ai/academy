@@ -32,8 +32,17 @@ def main(filename: str,
          ) -> None: # pylint: disable=unused-argument
     """Main Function"""
 
-    # read df and check cols    
-    df = pandas.read_csv(filename,dtype=str)
+    # read df and check cols and deal with excel
+    file_type = None
+    if filename.endswith(".xlsx"):
+        file_type = ".xlsx"
+        df = pandas.read_excel(filename,dtype=str) # remember - loading excel is slow.
+    elif filename.endswith(".csv"):
+        file_type = ".csv"
+        df = pandas.read_csv(filename,dtype=str,encoding="utf8")
+    else:
+        raise RuntimeError("Unsupported file format, only works with xlsx or utf8 csv")
+    
     cols = df.columns.to_list()
     for col in [convo_id_col,timestamp_col,client_col,expert_col]:
         try:
@@ -80,7 +89,7 @@ def main(filename: str,
     print(df)
 
     # write to output
-    output_filename = filename.replace(".csv", "_output.csv")
+    output_filename = filename.replace(file_type, '_output.csv')
     assert filename != output_filename
     df.to_csv(output_filename,index=False,header=True)
     print(f'Wrote to: {output_filename}')
