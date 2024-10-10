@@ -4,10 +4,12 @@ python enrich_metadata.py
 takes a .csv.fmt1 or .csv of data uploaded by csv uploader, joins it on a unique key to more metadata and
 writes an output back to be uploaded by gui csv uploader.
 
+# TODO: Make this script generic
 """
 # ******************************************************************************************************************120
 
 # standard imports
+from dateutil import parser
 
 # 3rd party imports
 import click
@@ -35,7 +37,7 @@ def main(filename: str, metadata: str, index_col: str, remove_columns: str) -> N
     df_metadata = df_metadata.astype(str)
 
     # have to build the filename as we have up to 6 files per session
-    df_metadata["filename"] = df_metadata["start_ts"].str[0:10] + "T" + df_metadata["t"] + ".wav"
+    df_metadata = df_metadata.apply(generate_filename, axis=1)
 
     # set index
     df_metadata.set_index(["SESSION_ID","filename"],inplace=True)
@@ -74,6 +76,13 @@ def main(filename: str, metadata: str, index_col: str, remove_columns: str) -> N
     assert output_filename != filename
     df_existing.to_csv(output_filename,header=True,index=True)
     print(f'Wrote to: {output_filename}')
+
+
+def generate_filename(row: pandas.Series) -> pandas.Series:
+    """Generate filename"""
+    row["filename"] = f"{parser.parse(row['call_date']).date()}T{row['call_time']}.wav"
+    return row
+
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
