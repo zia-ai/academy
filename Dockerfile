@@ -36,10 +36,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
         libbz2-dev \
         liblzma-dev \
         tk-dev \
-        libdb-dev \
-        gfortran \
-        cmake \
-        libopenblas-dev
+        libdb-dev
 
 # Install HF CLI tool
 ARG hf_cli_version
