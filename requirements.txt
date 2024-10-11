@@ -7,6 +7,9 @@ numpy
 pandas
 tdqm
 
+# humanfirst
+humanfirst
+
 # graphs and image handling
 matplotlib
 seaborn
@@ -23,6 +26,7 @@ see # inspect objects in code
 
 # machine learning
 tensorflow-hub
+scikit-learn
 
 # work with xml and html
 lxml
