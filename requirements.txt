@@ -3,13 +3,11 @@ wheel
 setuptools
 
 # pandas/numpy/scipy basics
-scipy
 numpy
 pandas
 tdqm
 
 # graphs and image handling
-kaleido
 matplotlib
 seaborn
 plotly
