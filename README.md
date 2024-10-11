@@ -9,14 +9,17 @@ This is bash (go fish or not)
 * `docker create --name hf-workbench0 -v "$(builtin cd ../..;pwd):/home/ubuntu/source/" -t -i hf-workbench bash`
 * `docker start hf-workbench0`
 
-### Virtual env
-* Delete venv `pyenv uninstall -f venv`
-* Create virtualenv `pyenv virtualenv venv` 
-* Activate venv `pyenv activate venv`
-* Update pip `pip install -U pip pipenv`
-* Install requirements: `pipenv install`
-* List existing virtualenvs: `pyenv virtualenvs`
-* Deactivate venv `pyenv deactivate`
+### Virtual env and Python install
+* Deactivate in case it is already there `source deactivate`
+* Delete venv `rm -rf ./venv`
+* Create venv `python -m venv venv`
+* Activate venv `source venv/bin/activate`
+* Update pip `python -m pip install --upgrade pip`
+* Install requirements: `python -m pip install -r requirements.txt`
+* Activate venv: `source venv/bin/activate`
+
+### Alternatives using pyenv and virtual env.
+You don't need to run this, but you can use pyenv instead of venv
 * More info about using virtualenv can be found [here](https://github.com/pyenv/pyenv-virtualenv#usage)
 
 ### VS Code extensions reminder
