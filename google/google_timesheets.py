@@ -246,15 +246,20 @@ def get_consolidated_df_for_week(items: list, users: list, year: int, week: str,
             df_timesheet = df_timesheet.loc[df_timesheet["total"]>0,:]
             print(df_timesheet)
 
-            # make a check for duplicate index lines
-            gb = df_timesheet.groupby(["client_code","task_code"]).count()
-            if gb["monday"].max() > 1:
-                print(f'These rows must be consolidated in {item["name"]}')
-                print(gb[gb["monday"]>1])
-                raise RuntimeError("Duplicate keys found")
+            # Consolidate duplicate rows by summing them
+            df_timesheet = df_timesheet.groupby(["client_code", "task_code", "name"]).agg({day: 'sum' for day in DAYS})
+            df_timesheet.reset_index(inplace=True)
 
-            df = pandas.concat([df,df_timesheet])
+            # Calculate the total again after aggregation
+            df_timesheet["total"] = df_timesheet[DAYS].sum(axis=1)
+
+            # Drop any rows with zero total
+            df_timesheet = df_timesheet.loc[df_timesheet["total"] > 0, :]
+
+            # Concatenate the consolidated DataFrame with the main DataFrame
+            df = pandas.concat([df, df_timesheet])
             print(f'Concatenated df.shape: {df.shape}')
+
     return df
 
 
