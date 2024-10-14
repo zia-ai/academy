@@ -9,7 +9,6 @@ Fix a date column if provided to isodate
 # *********************************************************************************************************************
 
 # standard imports
-import datetime
 from dateutil import parser
 
 # third Party imports
@@ -66,6 +65,7 @@ def main(filename: str, parts: int, date_col: str, text_col_clean_empty: str) ->
         print(f'Wrote to: {output_path}')
 
 def fix_date(datestring: str) -> str:
+    """Fix date"""
     return f'{parser.parse(datestring).isoformat()}Z'
 
 if __name__ == '__main__':
