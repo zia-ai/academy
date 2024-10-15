@@ -18,6 +18,7 @@ import re
 import os.path
 import calendar
 from dateutil import parser
+import json
 
 # 3rd party imports
 import click
@@ -83,6 +84,20 @@ def main(
     # auth
     scopes = [DRIVE_READ_ONLY_SCOPE,SHEETS_READ_ONLY_SCOPE]
     print(f'These are the scopes: {scopes}')
+
+    # frig the refresh_token so it alwaysso it doesn't fail if it expects 
+    # you to have one but you don't
+    if os.path.isfile(TOKEN_FILE):
+        token_file_in = open(TOKEN_FILE,encoding="utf8",mode="r")
+        token_dict = json.load(token_file_in)
+        token_file_in.close()
+        if not "refresh_token" in token_dict.keys():
+            token_dict["refresh_token"] = ""
+            token_file_out = open(TOKEN_FILE,encoding="utf8",mode="w")
+            json.dump(token_dict,token_file_out)
+            token_file_out.close()
+            print("Added refresh token")
+
     creds = google_sheets_read.check_creds(scopes,GOOGLE_PROJECT_CREDENTIALS_FILE,TOKEN_FILE)
 
     # get all timesheets
@@ -192,6 +207,7 @@ def get_consolidated_df_for_week(items: list, users: list, year: int, week: str,
 
     # regex to check whether we care about the file
     re_checkfilename=re.compile(f'^({"|".join(users)})-{year}-{week:02}$')
+    print(f"Starting on week: {year}-{week}")
     print(f'Regex compiled as {re_checkfilename}')
 
     # cycle through all items downloading what we need
@@ -228,8 +244,22 @@ def get_consolidated_df_for_week(items: list, users: list, year: int, week: str,
 
             # drop any zero total rows
             df_timesheet = df_timesheet.loc[df_timesheet["total"]>0,:]
-            df = pandas.concat([df,df_timesheet])
-            print(df)
+            print(df_timesheet)
+
+            # Consolidate duplicate rows by summing them
+            df_timesheet = df_timesheet.groupby(["client_code", "task_code", "name"]).agg({day: 'sum' for day in DAYS})
+            df_timesheet.reset_index(inplace=True)
+
+            # Calculate the total again after aggregation
+            df_timesheet["total"] = df_timesheet[DAYS].sum(axis=1)
+
+            # Drop any rows with zero total
+            df_timesheet = df_timesheet.loc[df_timesheet["total"] > 0, :]
+
+            # Concatenate the consolidated DataFrame with the main DataFrame
+            df = pandas.concat([df, df_timesheet])
+            print(f'Concatenated df.shape: {df.shape}')
+
     return df
 
 
