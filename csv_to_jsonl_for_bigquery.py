@@ -1,5 +1,10 @@
 """
-python sort_escaping.py
+python csv_to_jsonl_for_bigquery.py
+
+Turns a CSV with one row per utterance, into a JSONL with one JSON object per line containing all the columns as keys.
+
+Big query doesn't easily ingest anything that wasn't JSONL.
+So this is a way to generate JSONL objects which can then be easily uploaded to bigquery.
 
 """
 # ******************************************************************************************************************120
