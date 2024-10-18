@@ -53,7 +53,16 @@ def source_files():
             os.remove(f)
 
 def test_csv_to_json_unlabelled_no_role_mapper_with_perf_test(source_files):
-    """test_load_testdata"""
+    """test_load_testdata  equiv to:
+python csv_to_json_unlabelled.py \
+-f ./examples/ExampleUpload2.csv \
+-m "myid,scenario" \
+-u "text" \
+-c "myid" \
+-t "somedate" \
+-r "rolehere" \
+-e "utf8" \
+-y"""
 
     # see keys in test file
     process_response = csv_to_json_unlabelled.process(

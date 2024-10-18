@@ -231,7 +231,7 @@ def process(filename: str,
         # index the speakers
         df['idx'] = df.groupby([convo_id_col]).cumcount()
         df['idx_max'] = df.groupby([convo_id_col])[
-            'idx'].transform(numpy.max)
+            'idx'].transform("max")
 
         # This info lets you filter for the first or last thing the client says
         # this is very useful in boot strapping bot design
@@ -239,7 +239,7 @@ def process(filename: str,
         df['idx_client'] = df.groupby(
             [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
         df['idx_max_client'] = df.groupby([convo_id_col])[
-            'idx_client'].transform(numpy.max)
+            'idx_client'].transform("max")
         df['first_client_utt'] = df.apply(decide_role_filter_values,
                                           args=['idx_client','client',0,"idx_max_client"],
                                           axis=1)
@@ -254,7 +254,7 @@ def process(filename: str,
         df['idx_expert'] = df.groupby(
             [convo_id_col, 'role']).cumcount().where(df.role == 'expert', 0)
         df['idx_max_expert'] = df.groupby([convo_id_col])[
-            'idx_expert'].transform(numpy.max)
+            'idx_expert'].transform("max")
         df['first_expert_utt'] = df.apply(decide_role_filter_values,
                                           args=['idx_expert','expert',0,'idx_max_expert'],
                                           axis=1)
