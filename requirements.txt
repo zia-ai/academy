@@ -3,7 +3,7 @@ wheel
 setuptools
 
 # pandas/numpy/scipy basics
-numpy<=1.26.4
+numpy==2.0.2
 pandas
 tdqm
 
@@ -24,29 +24,23 @@ click # helpful script creation decorators
 git-pylint-commit-hook
 see # inspect objects in code
 
-# machine learning
-tensorflow-hub
-scikit-learn
+# dataclasses for humanfirst
+dataclasses
+dataclasses-json
 
 # work with xml and html
 lxml
 beautifulsoup4
 
-# dataclasses for humanfirst
-dataclasses
-dataclasses-json
-
-# audio transcription
-deepgram-sdk
-# note speechmatics versions have sepearate dedicated requirements
-
-# google
+# google 
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
 google-cloud-dialogflow-cx
 google-cloud-translate
-googletrans
+
+# audio transcription
+deepgram-sdk
 
 # kaggle, wikipedia and other datasets
 kaggle
@@ -57,15 +51,8 @@ mediawikiapi
 openai
 tiktoken
 
-# mistral.ai
-mistralai
-
 # microsoft formats
 openpyxl
-
-# annonymisation
-presidio-analyzer
-presidio-anonymizer
 
 # http calls and io
 ratelimit
@@ -76,9 +63,24 @@ asyncclick
 
 # nltk/spacy language processing
 nltk
+spacy # only supports numpy-2.0.2
 dframcy # make spacy work with dataframes
-spacy
 spacy_langdetect
 
+# machine learning
+scikit-learn
 
+# annonymisation - not updated for modern numpy
+presidio-analyzer
+presidio-anonymizer
 
+# note speechmatics versions have sepearate dedicated requirements
+# clashes with google client
+
+# only used in supervision now - remove
+# googletrans - this requires httpx=0.13.3
+
+# mistral.ai - wants an old python dateutil-2.8.2 but rest is using 2.9.0
+# mistralai 
+
+# tensorflow-hub # not updated to 2.0.2 numpy wants 1.26.4

@@ -65,8 +65,7 @@ RUN pyenv global $python_version
 
 # Update pip
 RUN pip install --upgrade pip
-RUN pip install --upgrade pip pipenv
-RUN pip install numpy==1.26.4
+RUN pip install numpy==2.0.2
 RUN pip install spacy
 RUN python -m spacy download en_core_web_md
 RUN python -m spacy download en_core_web_lg
