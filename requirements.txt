@@ -1,0 +1,84 @@
+# setuptools
+wheel
+setuptools
+
+# pandas/numpy/scipy basics
+numpy<=1.26.4
+pandas
+tdqm
+
+# humanfirst
+humanfirst
+
+# graphs and image handling
+matplotlib
+seaborn
+plotly
+plantweb
+
+# python quality and coding
+autopep8
+pylint
+pytest
+click # helpful script creation decorators
+git-pylint-commit-hook
+see # inspect objects in code
+
+# machine learning
+tensorflow-hub
+scikit-learn
+
+# work with xml and html
+lxml
+beautifulsoup4
+
+# dataclasses for humanfirst
+dataclasses
+dataclasses-json
+
+# audio transcription
+deepgram-sdk
+# note speechmatics versions have sepearate dedicated requirements
+
+# google
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+google-cloud-dialogflow-cx
+google-cloud-translate
+googletrans
+
+# kaggle, wikipedia and other datasets
+kaggle
+datasets
+mediawikiapi 
+
+# openai
+openai
+tiktoken
+
+# mistral.ai
+mistralai
+
+# microsoft formats
+openpyxl
+
+# annonymisation
+presidio-analyzer
+presidio-anonymizer
+
+# http calls and io
+ratelimit
+requests
+requests-toolbelt
+anyio
+asyncclick
+
+# nltk/spacy language processing
+nltk
+dframcy # make spacy work with dataframes
+spacy
+spacy_langdetect
+
+
+
