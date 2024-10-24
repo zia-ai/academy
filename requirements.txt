@@ -20,6 +20,7 @@ plantweb
 autopep8
 pylint
 pytest
+jsondiff
 click # helpful script creation decorators
 git-pylint-commit-hook
 see # inspect objects in code
