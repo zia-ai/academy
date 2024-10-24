@@ -11,7 +11,6 @@ So this is a way to generate JSONL objects which can then be easily uploaded to 
 
 # standard imports
 import csv
-import json
 import jsonlines
 from dateutil import parser
 
@@ -23,9 +22,9 @@ import pandas
 
 @click.command()
 @click.option('-f', '--filename', type=str, required=True, help='Input File Path')
-@click.option('-d', '--date_col', type=str, required=False, default="", 
+@click.option('-d', '--date_col', type=str, required=False, default="",
               help='Optional date_col to fix to isoformat')
-@click.option('-t', '--timezone', type=str, required=False, default="", 
+@click.option('-t', '--timezone', type=str, required=False, default="",
               help='Optional Time Zone for Dates')
 def main(filename: str, date_col: str, timezone: str) -> None: # pylint: disable=unused-argument
     """Main Function"""
@@ -47,12 +46,12 @@ def main(filename: str, date_col: str, timezone: str) -> None: # pylint: disable
 
     # build the objects
     json_out = []
-    for i,row in df.iterrows():
+    for _,row in df.iterrows():
         row_obj = {}
         for c in cols:
             row_obj[c] = row[c]
         json_out.append(row_obj)
-    
+
     # Write to JSONL
     output_filename = filename.replace(".csv","_jsonlified.json")
     assert filename != output_filename
@@ -60,7 +59,7 @@ def main(filename: str, date_col: str, timezone: str) -> None: # pylint: disable
     with open(output_filename,encoding="utf8",mode="w") as file_out:
         jsonlines.Writer(file_out).write_all(json_out)
         print(f'Wrote to: {output_filename}')
-    
+
 def format_date(datestring: str, timezone: str = "") -> str:
     """Format a datestring to an isoformat with optional timezone"""
     return f'{parser.parse(datestring).isoformat()}{timezone}'
