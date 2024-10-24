@@ -16,6 +16,7 @@ import math
 # 3rd party imports
 import pandas
 import click
+# TODO: sort out 1.26.4 numpy depednencies
 import tensorflow_hub as hub
 import numpy as np
 

@@ -19,7 +19,9 @@
         "first_client_utt": "True",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "66",
@@ -45,7 +47,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "True",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "66",
@@ -71,7 +75,9 @@
         "first_client_utt": "False",
         "second_client_utt": "True",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "66",
@@ -97,7 +103,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "True"
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
       },
       "context": {
         "context_id": "66",
@@ -123,7 +131,9 @@
         "first_client_utt": "True",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "77",
@@ -149,7 +159,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "True",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "77",
@@ -175,7 +187,9 @@
         "first_client_utt": "False",
         "second_client_utt": "True",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "77",
@@ -201,7 +215,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "True"
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
       },
       "context": {
         "context_id": "77",
@@ -227,7 +243,9 @@
         "first_client_utt": "True",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "88",
@@ -253,7 +271,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "True",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "88",
@@ -279,7 +299,9 @@
         "first_client_utt": "False",
         "second_client_utt": "True",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "88",
@@ -305,7 +327,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "True"
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
       },
       "context": {
         "context_id": "88",
@@ -331,7 +355,9 @@
         "first_client_utt": "True",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "111",
@@ -357,7 +383,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "True",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "111",
@@ -383,7 +411,9 @@
         "first_client_utt": "False",
         "second_client_utt": "True",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "111",
@@ -409,7 +439,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "True"
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
       },
       "context": {
         "context_id": "111",
@@ -435,7 +467,9 @@
         "first_client_utt": "True",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "222",
@@ -461,7 +495,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "True",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "222",
@@ -487,7 +523,9 @@
         "first_client_utt": "False",
         "second_client_utt": "True",
         "first_expert_utt": "False",
-        "second_expert_utt": "False"
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
       },
       "context": {
         "context_id": "222",
@@ -513,7 +551,9 @@
         "first_client_utt": "False",
         "second_client_utt": "False",
         "first_expert_utt": "False",
-        "second_expert_utt": "True"
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
       },
       "context": {
         "context_id": "222",

@@ -24,6 +24,8 @@ import numpy
 import click
 import tiktoken
 import humanfirst
+
+# TODO: fix reqiurements here.  Mistral client wants old dateutil
 from mistralai.client import MistralClient
 from mistralai.models.chat_completion import ChatMessage
 

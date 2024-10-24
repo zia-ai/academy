@@ -18,6 +18,7 @@ import json
 import click
 import pandas
 import numpy
+# TODO: sort out 1.26.4 numpy depednencies
 import tensorflow_hub # pylint: disable=import-error
 
 
