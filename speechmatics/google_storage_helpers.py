@@ -7,13 +7,18 @@ Setup ADC
 Install gcloud https://cloud.google.com/sdk/docs/install
 gloud init
 gcloud auth application-default login
+gcloud config set project PROJECT_ID
+gcloud auth application-default set-quota-project PROJECT_ID
 
+If getting 403 access issue when trying to access GCP buckets, then add 'Storage Object Viewer' role in IAM.
 """
 # ******************************************************************************************************************120
 
 # standard imports
 
 # 3rd party imports
+import google.api_core
+import google.api_core.exceptions
 import pandas
 from google.cloud import storage
 import google.auth
@@ -118,3 +123,22 @@ class GoogleStorageHelper():
 
         # do the thing
         blob.upload_from_filename(source_file_name)
+
+
+    def list_buckets(self) -> bool:
+        """return buckets list"""
+
+        # Get the bucket object
+        buckets = self.storage_client.list_buckets()
+        return buckets
+
+    def is_bucket_exists(self,bucket_name: str):
+        """Check if a GCP bucket exists."""
+        # Get the bucket object
+        bucket = self.storage_client.get_bucket(bucket_name)
+
+        # if bucket not found, then it throws google.api_core.exceptions.NotFound exception
+        # if bucket access forbidden, then it throws google.api_core.exceptions.Forbidden exception
+        if bucket.name == bucket_name:
+            return 1
+        return 0
