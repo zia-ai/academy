@@ -30,6 +30,8 @@ import click
 import speechmatics_helpers # Humanfirst Speechmatics helps
 from google_storage_helpers import GoogleStorageHelper # GCP helpers
 
+FOLDER_FILE_SPLIT_DELIMITER = "---"
+
 @click.command()
 @click.option('-a', '--api_key', type=str, required=True, help='Api key from speechmatics portal')
 @click.option('-b', '--bucket_name', type=str, required=True, help='Bucket name to read/write to')
@@ -137,7 +139,7 @@ def main(
     transcription_files = [f for f in os.listdir(working_dir) if f.endswith('.json')]
 
     # Concert source name to audio file name format
-    df_worklist['filename'] = df_worklist['source_name'].apply(lambda x: x.replace("/","---"))
+    df_worklist['filename'] = df_worklist['source_name'].apply(lambda x: x.replace("/",FOLDER_FILE_SPLIT_DELIMITER))
 
     # Check if each file in the DataFrame is in the audio_files list from the local storage
     df_worklist['downloaded_audio_locally'] = df_worklist['filename'].apply(lambda x: x in audio_files)
