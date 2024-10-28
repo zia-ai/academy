@@ -8,6 +8,7 @@ python csv_to_json_unlabelled.py
 import re
 import json
 import datetime
+import time
 from typing import Union
 from copy import deepcopy
 
@@ -26,22 +27,20 @@ import humanfirst
               help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')
 @click.option('-u', '--utterance_col', type=str, required=True,
               help='Column name containing utterances')
-@click.option('-d', '--delimiter', type=str, required=False, default=",",
-              help='Delimiter for the csv file')
 @click.option('-c', '--convo_id_col', type=str, required=False, default='',
               help='If conversations which is the id otherwise utterances and defaults to hash of utterance_col')
-@click.option('-s', '--sample', type=int, required=False, default=0,
-              help='How many to sample (if conversations full conversations)')
 @click.option('-t', '--created_at_col', type=str, required=False, default='',
               help='If there is a created date for utterance otherwise defaults to now')
-@click.option('-x', '--unix_date', is_flag=True, type=bool, required=False, default=False,
-              help='If created_at column is in unix epoch format')
-@click.option('-r', '--role_col', type=str, required=False, default='',
-              help='Which column the role in ')
+@click.option('-r', '--role_col', type=str, required=False, default='',  
+              help='Which column the role in ')            
 @click.option('-p', '--role_mapper', type=str, required=False, default='',
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert"')
 @click.option('-e', '--encoding', type=str, required=False, default='utf8',
               help='Input CSV encoding')
+@click.option('-d', '--delimiter', type=str, required=False, default=",",
+              help='Delimiter for the csv file')
+@click.option('-x', '--unix_date', is_flag=True, type=bool, required=False, default=False,
+              help='If created_at column is in unix epoch format')
 @click.option('--filtering', type=str, required=False, default='',
               help='column:value,column:value;column:value,column:value')
 @click.option('-h', '--striphtml', is_flag=True, default=False,
@@ -52,22 +51,43 @@ import humanfirst
               help='Whether to drop or replace blanks')
 @click.option('-z', '--minimize_meta', is_flag=True, type=bool, default=False,
               help='Reduce the number of metadata keys')
-def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, sample: int,
-         created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
-         minimize_meta: bool) -> None:
+@click.option('-y', '--why_so_long', is_flag=True, type=bool, default=False,
+              help='Return the number of nanoseconds to execute main process method otherwise returns 0')
+def main(filename: str, metadata_keys: str, utterance_col: str,
+         convo_id_col: str, created_at_col: str,
+         role_col: str, role_mapper: str, 
+         encoding: str, delimiter: str, unix_date: bool,
+         filtering: str, striphtml: bool, drop_blanks: bool,
+         minimize_meta: bool, why_so_long: bool) -> int:
     """Main Function"""
-    process(filename, metadata_keys, utterance_col, delimiter,
-         convo_id_col, sample, created_at_col, unix_date, role_col,
-         role_mapper, encoding, filtering, striphtml, drop_blanks,minimize_meta)
+    
 
-def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, sample: int, 
-         created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
-         minimize_meta: bool) -> None:
+    process(filename,metadata_keys,utterance_col,convo_id_col,created_at_col,
+            role_col,role_mapper,
+            encoding,delimiter,unix_date,
+            filtering, striphtml, drop_blanks,
+            minimize_meta, why_so_long)
+
+
+def process(filename: str, 
+            metadata_keys: str, 
+            utterance_col: str,                  
+            convo_id_col: str,
+            created_at_col: str,         
+            role_col: str,
+            role_mapper: str = "", 
+            encoding: str = "utr8", 
+            delimiter: str = ",",
+            unix_date: bool = False,
+            filtering: str = "",
+            striphtml: bool = False,
+            drop_blanks: str = "NONE",
+            minimize_meta: bool = False,
+            why_so_long: bool = False
+    ) -> None:
     """Helper function to allow calling by directory"""
+
+    start = time.perf_counter_ns()
 
     excel = False
     if filename.endswith('.xlsx'):
@@ -102,33 +122,33 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
 
     print(df)
 
-    # filtering goes AND between ; (rounds) and OR within ; sep by ,
-    # "langauage:fr;source_type:messenger,source_type:whatsapp"
-    # filter by french, then filter by source_type for all these source types
-    # filtering - is OR within ; and AND between steps - extract all the matching filters
+    # filtering
     if filtering != '':
+        df_filter = []
+        print(f'Before filtering: {df.shape[0]}')
         multiple_filters = filtering.split(";")
-        df_mult = df.copy(deep=True)
-        print(f'Before multiple filtering: {df.shape[0]}')
-        for mult in multiple_filters:
-            list_filters = []
-            filters = mult.split(',')
-            print(f'Length of filters within this round: {len(filters)}')
+        print("\nMultiple Filters")
+        print(multiple_filters)
+        print("\n")
+        for filtering in multiple_filters:
+            filters = filtering.split(',')
+            filtering = {}
             for filt in filters:
-                key = filt.split(":")[0]
-                value = filt.split(":")[1]
-                df_filt = df_mult[df_mult[key] == value]
-                
-                # append to a list of dfs
-                list_filters.append(df_filt.copy(deep=True))
-
-                # logging
-                print(f'Filtered on {key} : {value}')
+                pair = filt.split(':')
+                filtering[pair[0]] = pair[1]
+            print('Filtering on:')
+            print(filtering)
+            assert isinstance(filtering, dict)
+            df_filt = deepcopy(df)
+            for key, value in filtering.items():
+                df_filt = df_filt[df_filt[key] == value]
+            df_filter.append(df_filt)
             print("\n")
-            df_mult = pandas.concat(list_filters) # concat all the DFs
-            print(f'After filtering: {df_mult.shape[0]}')
-            print('\n')
-        df = df_mult
+        df = pandas.concat(df_filter)
+
+
+        print(f'After filtering: {df.shape[0]}')
+        print('\n')
 
     # handle drop_blanks
     if drop_blanks == "DROP":
@@ -149,14 +169,6 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     # if convos index them
     if convo_id_col != '':
         print('Processing as conversation')
-
-        # sampling
-        if sample > 0:
-            print(f'Size before sampling: {df.shape}')
-            ids = df[convo_id_col].unique()
-            ids = numpy.random.choice(ids,sample)
-            df = df[df[convo_id_col].isin(ids)]
-            print(f'Size after  sampling: {df.shape}')
 
         # must have created_at date if convo index
         if created_at_col == '':
@@ -219,7 +231,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         # index the speakers
         df['idx'] = df.groupby([convo_id_col]).cumcount()
         df['idx_max'] = df.groupby([convo_id_col])[
-            'idx'].transform(numpy.max)
+            'idx'].transform("max")
 
         # This info lets you filter for the first or last thing the client says
         # this is very useful in boot strapping bot design
@@ -227,7 +239,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         df['idx_client'] = df.groupby(
             [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
         df['idx_max_client'] = df.groupby([convo_id_col])[
-            'idx_client'].transform(numpy.max)
+            'idx_client'].transform("max")
         df['first_client_utt'] = df.apply(decide_role_filter_values,
                                           args=['idx_client','client',0,"idx_max_client"],
                                           axis=1)
@@ -242,7 +254,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         df['idx_expert'] = df.groupby(
             [convo_id_col, 'role']).cumcount().where(df.role == 'expert', 0)
         df['idx_max_expert'] = df.groupby([convo_id_col])[
-            'idx_expert'].transform(numpy.max)
+            'idx_expert'].transform("max")
         df['first_expert_utt'] = df.apply(decide_role_filter_values,
                                           args=['idx_expert','expert',0,'idx_max_expert'],
                                           axis=1)
@@ -268,10 +280,6 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
             )
     else:
         print('Processing as utterances')
-
-        # sampling
-        if sample > 0:
-            df = df.sample(sample)
 
     # build metadata for utterances or conversations
     if not minimize_meta:
@@ -320,6 +328,12 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     unlabelled.write_json(file_out)
     file_out.close()
     print(f"Write complete to {filename_out}")
+    
+    end = time.perf_counter_ns()
+    if why_so_long:
+        return end - start
+    else:
+        return 0
 
 def decide_role_filter_values(row: pandas.Series,
                               column_name: str,

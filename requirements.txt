@@ -1,0 +1,87 @@
+# setuptools
+wheel
+setuptools
+
+# pandas/numpy/scipy basics
+numpy==2.0.2
+pandas
+tdqm
+
+# humanfirst
+humanfirst
+
+# graphs and image handling
+matplotlib
+seaborn
+plotly
+plantweb
+
+# python quality and coding
+autopep8
+pylint
+pytest
+jsondiff
+click # helpful script creation decorators
+git-pylint-commit-hook
+see # inspect objects in code
+
+# dataclasses for humanfirst
+dataclasses
+dataclasses-json
+
+# work with xml and html
+lxml
+beautifulsoup4
+
+# google 
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+google-cloud-dialogflow-cx
+google-cloud-translate
+
+# audio transcription
+deepgram-sdk
+
+# kaggle, wikipedia and other datasets
+kaggle
+datasets
+mediawikiapi 
+
+# openai
+openai
+tiktoken
+
+# microsoft formats
+openpyxl
+
+# http calls and io
+ratelimit
+requests
+requests-toolbelt
+anyio
+asyncclick
+
+# nltk/spacy language processing
+nltk
+spacy # only supports numpy-2.0.2
+dframcy # make spacy work with dataframes
+spacy_langdetect
+
+# machine learning
+scikit-learn
+
+# annonymisation - not updated for modern numpy
+presidio-analyzer
+presidio-anonymizer
+
+# note speechmatics versions have sepearate dedicated requirements
+# clashes with google client
+
+# only used in supervision now - remove
+# googletrans - this requires httpx=0.13.3
+
+# mistral.ai - wants an old python dateutil-2.8.2 but rest is using 2.9.0
+# mistralai 
+
+# tensorflow-hub # not updated to 2.0.2 numpy wants 1.26.4
