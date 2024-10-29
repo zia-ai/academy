@@ -12,9 +12,19 @@ import json
 import pandas
 import humanfirst
 import requests
+import pytest
 
 # custom imports
 import simple_json_labelled
+
+# This is needed to run some tests - export it a sa ENV variable
+TEST_NAMESPACE = os.environ.get("HF_TEST_NAMESPACE")
+HF_LOG_FILE_ENABLE= os.environ.get("HF_LOG_FILE_ENABLE")
+HF_LOG_CONSOLE_ENABLE =   os.environ.get("HF_LOG_CONSOLE_ENABLE")
+HF_LOG_DIR = os.environ.get("HF_LOG_DIR")
+HF_LOG_LEVEL = os.environ.get("HF_LOG_LEVEL")
+HF_PASSWORD = os.environ.get("HF_PASSWORD")
+HF_USERNAME = os.environ.get("HF_USERNAME")
 
 # locate where we are
 here = os.path.abspath(os.path.dirname(__file__))
@@ -56,23 +66,28 @@ def test_write_json():
     assert examples[0]["created_at"] == "2023-06-05T14:26:07+00:00"
     assert examples[1]["created_at"] == "2023-06-05T14:26:08+00:00"
 
+@pytest.mark.skipif(not TEST_NAMESPACE, 
+                    reason="requires HF_TEST_NAMESPACE set to a valid namespace in the environment with some playbooks/workspaces")
 def test_override_timeouts():
-    """Test that we can override some timeouts"""
-
+    """Test that we can override some timeouts
+    requires HF_TEST_NAMESPACE env variable to be set
+    for instance to humanfirst or the default namespace
+    of your humanfirst organisation""" 
+        
     # start with very small timeout
     hf_api = humanfirst.apis.HFAPI(timeout=0.5)
     assert isinstance(hf_api,humanfirst.apis.HFAPI)
     
     # this should fail then
     try:
-        response = hf_api.list_playbooks(namespace='humanfirst')
+        response = hf_api.list_playbooks(namespace=TEST_NAMESPACE)
         # raise RuntimeError("Didn't time out")
     except requests.exceptions.ReadTimeout as e:
         print("Correctly timed out")
         print(e)
     
     # then should pass when we override at function level TODO: need to parameterize into a constant
-    response = hf_api.list_playbooks(namespace='humanfirst',timeout=20)
+    response = hf_api.list_playbooks(namespace=TEST_NAMESPACE,timeout=20)
     assert len(response) > 0
     
     # start with large timeout
@@ -80,4 +95,29 @@ def test_override_timeouts():
     assert isinstance(hf_api,humanfirst.apis.HFAPI)
     assert len(response) > 0
     
-    # TODO: turn logging on and off here with the variables
+# requires as env variables
+@pytest.mark.skipif(not TEST_NAMESPACE # eg humanfirst or your org namespace
+                    or not HF_LOG_CONSOLE_ENABLE # TRUE 
+                    or not HF_LOG_LEVEL # DEBUG
+                    or not HF_USERNAME # your username
+                    or not HF_PASSWORD, # your password 
+                    reason="requires TEST_NAMESPACE, HF_USERNAME, HF_PASSWORD< HF_LOG_CONSOLE_ENABLE and HF_LOG_LEVEL to generate logs")
+def test_console_logging():
+    """Run test with -s to see logging."""
+    hf_api = humanfirst.apis.HFAPI()   
+    response = hf_api.list_playbooks(namespace=TEST_NAMESPACE)
+
+# requires as env variables
+@pytest.mark.skipif(not TEST_NAMESPACE # eg humanfirst or your org namespace
+                    or not HF_LOG_FILE_ENABLE # TRUE 
+                    or not HF_LOG_LEVEL # DEBUG
+                    or not HF_LOG_DIR # some directory to check empty for instance ./data/logs
+                    or not HF_USERNAME # your username
+                    or not HF_PASSWORD, # your password 
+                    reason="requires TEST_NAMESPACE, HF_USERNAME, HF_PASSWORD, HF_LOG_FILE_ENABLE, HF_LOG_FILEand HF_LOG_LEVEL to generate logs")
+def test_file_logging():
+    """Run test to log to file and check"""
+    hf_api = humanfirst.apis.HFAPI()   
+    response = hf_api.list_playbooks(namespace=TEST_NAMESPACE)
+    list_files_after = os.listdir(HF_LOG_DIR)
+    # TODO: some check that things in here - have tested it does work
