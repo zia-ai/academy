@@ -10,6 +10,8 @@ import json
 
 # 3rd party imports
 import pandas
+import humanfirst
+import requests
 
 # custom imports
 import simple_json_labelled
@@ -53,3 +55,29 @@ def test_write_json():
     examples = output_json["examples"]
     assert examples[0]["created_at"] == "2023-06-05T14:26:07+00:00"
     assert examples[1]["created_at"] == "2023-06-05T14:26:08+00:00"
+
+def test_override_timeouts():
+    """Test that we can override some timeouts"""
+
+    # start with very small timeout
+    hf_api = humanfirst.apis.HFAPI(timeout=0.5)
+    assert isinstance(hf_api,humanfirst.apis.HFAPI)
+    
+    # this should fail then
+    try:
+        response = hf_api.list_playbooks(namespace='humanfirst')
+        # raise RuntimeError("Didn't time out")
+    except requests.exceptions.ReadTimeout as e:
+        print("Correctly timed out")
+        print(e)
+    
+    # then should pass when we override at function level TODO: need to parameterize into a constant
+    response = hf_api.list_playbooks(namespace='humanfirst',timeout=20)
+    assert len(response) > 0
+    
+    # start with large timeout
+    hf_api = humanfirst.apis.HFAPI(timeout=360)
+    assert isinstance(hf_api,humanfirst.apis.HFAPI)
+    assert len(response) > 0
+    
+    # TODO: turn logging on and off here with the variables
