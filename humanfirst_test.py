@@ -7,6 +7,9 @@ Set of pytest humanfirst.py tests
 # standard imports
 import os
 import json
+import sys
+import time
+
 
 # 3rd party imports
 import pandas
@@ -101,12 +104,18 @@ def test_override_timeouts():
                     or not HF_LOG_LEVEL # DEBUG
                     or not HF_USERNAME # your username
                     or not HF_PASSWORD, # your password 
-                    reason="requires TEST_NAMESPACE, HF_USERNAME, HF_PASSWORD< HF_LOG_CONSOLE_ENABLE and HF_LOG_LEVEL to generate logs")
+                    reason="requires HF_TEST_NAMESPACE, HF_USERNAME, HF_PASSWORD, HF_LOG_CONSOLE_ENABLE and HF_LOG_LEVEL to generate logs")
 def test_console_logging():
-    """Run test with -s to see logging."""
+    """Run test with -s to see a demonstration of console logging"""
+    # Demo only - no asserts.
+    
+    # authorise
     hf_api = humanfirst.apis.HFAPI()   
-    response = hf_api.list_playbooks(namespace=TEST_NAMESPACE)
+    
+    # run a call
+    hf_api.list_playbooks(namespace=TEST_NAMESPACE)
 
+    
 # requires as env variables
 @pytest.mark.skipif(not TEST_NAMESPACE # eg humanfirst or your org namespace
                     or not HF_LOG_FILE_ENABLE # TRUE 
@@ -114,10 +123,31 @@ def test_console_logging():
                     or not HF_LOG_DIR # some directory to check empty for instance ./data/logs
                     or not HF_USERNAME # your username
                     or not HF_PASSWORD, # your password 
-                    reason="requires TEST_NAMESPACE, HF_USERNAME, HF_PASSWORD, HF_LOG_FILE_ENABLE, HF_LOG_FILEand HF_LOG_LEVEL to generate logs")
+                    reason="requires HF_TEST_NAMESPACE, HF_USERNAME, HF_PASSWORD, HF_LOG_FILE_ENABLE, HF_LOG_DIR and HF_LOG_LEVEL to generate logs")
 def test_file_logging():
-    """Run test to log to file and check"""
+    """Run test to demonstrate file logging
+    Warning will delete any pre-existing logs in the log dir passed"""
+    
     hf_api = humanfirst.apis.HFAPI()   
-    response = hf_api.list_playbooks(namespace=TEST_NAMESPACE)
-    list_files_after = os.listdir(HF_LOG_DIR)
-    # TODO: some check that things in here - have tested it does work
+    hf_api.list_playbooks(namespace=TEST_NAMESPACE)
+    
+    # check files after
+    list_all_files_after = os.listdir(HF_LOG_DIR)
+    list_log_files_after = []
+    for f in list_all_files_after:
+        if f.endswith(".log"):
+            list_log_files_after.append(os.path.join(HF_LOG_DIR,f))
+    assert len(list_log_files_after) > 0
+       
+    # test contents
+    for f in list_log_files_after:
+        with open(f,mode="r",encoding="utf8") as log_file_in:
+            contents = log_file_in.read()
+            print(f"\n\nFile: {f}")
+            if len(contents) > 0:
+                print(contents)
+            else:
+                print("empty")    
+        
+        # cleanup
+        os.remove(f)
