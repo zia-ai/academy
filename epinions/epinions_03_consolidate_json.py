@@ -1,6 +1,7 @@
 """
 python epinions_consolidate
 
+consolidates the prompt results from epinions_openai script
 """
 # ******************************************************************************************************************120
 
@@ -12,7 +13,7 @@ import json
 import click
 import pandas
 
-SCHEMA_KEYS = ["review_id","item_code","date_drafted","stars_rating", 
+SCHEMA_KEYS = ["review_id","item_code","date_drafted","stars_rating",
                "amount_paid","review","category","manufacturer","model","title"]
 
 # custom imports
@@ -24,22 +25,34 @@ SCHEMA_KEYS = ["review_id","item_code","date_drafted","stars_rating",
               default=0, help='Sampling ')
 def main(directory: str, sample: int) -> None: # pylint: disable=unused-argument
     """Main Function"""
+
+    # list the files
     file_list = os.listdir(directory)
+
+    # process one by one
     json_objs = []
     counter = 0
     for file_name in file_list:
+
+        # exit if sample size reached
         if sample > 0 and counter >= sample:
             break
+
+        # get FQFN check is JSON and open it.
         fqfn = os.path.join(directory,file_name)
         if fqfn.endswith(".json") and not fqfn.endswith("error.json"):
             with open(fqfn,mode='r',encoding='utf8') as file_in:
+
+                # load the file
                 json_in = json.load(file_in)
                 assert isinstance(json_in, dict)
                 json_out = {}
 
-                # "" is then completely matching
+                # "" from this below is then completely matching based on symetric_difference from sets
                 # anything else shows the differences
                 json_out["schema_analysis"] = ",".join(list(set(json_in.keys()).symmetric_difference(set(SCHEMA_KEYS))))
+
+                # Test the result
                 if json_out["schema_analysis"] == "":
                     json_out["valid"] = True
                 else:

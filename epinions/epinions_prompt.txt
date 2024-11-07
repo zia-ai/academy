@@ -1,0 +1,41 @@
+# Prompt (gpt-4-0125-preview)
+
+## Situation
+This is a user's review draft for an online opinion site.  
+
+## Review Draft
+### review_id
+{{ meta "id" }}
+### item_code: 
+{{ meta "item" }}
+### date_drafted
+{{ meta "loaded_date" }}
+### stars_rating
+{{ meta "stars" }}
+### amount_paid 
+{{ meta "paid" }}
+### review_text_draft
+{{ text }}
+
+## Guidance
+
+Your job is to rewrite the review into paragraphs, with proper casing and punctuation suitable for an online opinion website that bans the use of colons (:) in it's reviews.
+
+From the review also try and infer the category of the item being reviewed (category), the manufacturer of the item (manufacturer), the model number (model) and generate a short one line title (title) for the updated review.  
+
+Where you can't reply "unknown"
+
+## Output Format Requested
+
+Please give your answer as text (no JSON) in the following format
+
+review_id: <review_id>
+item_code: <item_code>
+date_drafted: <date_drafted>
+stars_rating: <stars_rating_as_integer>
+amount_paid: <amount_paid_as_integer>
+review: <updated_review_text_without_any_colons>
+category: <category>
+manufacturer: <manufacturer>
+model: <model>
+title: <title>
