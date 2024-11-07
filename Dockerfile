@@ -37,7 +37,8 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
         liblzma-dev \
         tk-dev \
         libdb-dev \
-        ntpdate
+        ntpdate \
+        enca
 
 # Install HF CLI tool
 ARG hf_cli_version
