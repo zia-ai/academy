@@ -10,6 +10,8 @@ Run script and see which channel represents the client and which one expert.
 Cause it varies for audios from different clients.
 Client A audios might have channel_1:client and channel_2:expert
 Client B audios might have channel_1:expert and channel_2:client
+
+If using Speaker Diarization, these will be S1 and S2
 """
 # *********************************************************************************************************************
 
@@ -32,7 +34,7 @@ FOLDER_FILE_SPLIT_DELIMITER = "---"
 @click.option('-b', '--bucket_name', type=str, default="",
               help='Name of the bucket containing the audio files to create audio url')
 @click.option('-c', '--client_channel', type=click.Choice(['channel_1', 'channel_2', 'S1','S2']), default = "channel_2",
-              help='Which channel has client utterances? channel_1 or channel_2?')
+              help='Which channel has client utterances? channel_1 or channel_2? or S1 S2 in the case of speaker')
 @click.option('-o', '--output_filename', type=str, required=True, help='FQN Where to save the output csv')
 @click.option('-i', '--impersonate', is_flag=True, default=False, help='Impersonate service account or not')
 @click.option('-s', '--impersonate_service_account', type=str, required=False, default="",
@@ -199,9 +201,11 @@ def merge_info(df:pandas.DataFrame) -> pandas.DataFrame:
 
     # Group by channel, but only group consecutive rows in the same channel
     if "channel" not in df.columns.to_list():
-        print(df.columns.to_list())
+        print("Channel not found in source file, assuming that Speaker Diarization is used instead")
+        if not "speaker" in df.columns.to_list():
+            raise RuntimeError("Can't find speaker in source file - check you have diarization sufficient to proceed")
         df.rename(columns={"speaker":"channel"},inplace=True)
-        print(df.columns.to_list())
+        print("Renamed speaker to channel for speaker diarization")
     df['group'] = (df['channel'] != df['channel'].shift(1)).cumsum()   
 
     # Aggregate text, start_time, and end_time

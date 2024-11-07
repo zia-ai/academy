@@ -39,6 +39,7 @@ google-auth-httplib2
 google-auth-oauthlib
 google-cloud-dialogflow-cx
 google-cloud-translate
+google-cloud-storage
 
 # audio transcription
 deepgram-sdk
@@ -75,8 +76,9 @@ scikit-learn
 presidio-analyzer
 presidio-anonymizer
 
-# note speechmatics versions have sepearate dedicated requirements
-# clashes with google client
+# speechmatics - now compatible with main requirements
+pydub
+speechmatics-python
 
 # only used in supervision now - remove
 # googletrans - this requires httpx=0.13.3
