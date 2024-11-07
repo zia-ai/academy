@@ -1,0 +1,565 @@
+{
+  "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+  "examples": [
+    {
+      "id": "example-66-0",
+      "text": "I've lost my password, can you help me.",
+      "created_at": "2013-05-24T09:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "66",
+        "scenario": "login_issue",
+        "text": "I've lost my password, can you help me.",
+        "somedate": "24-05-13 09:15:00",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "66",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-66-1",
+      "text": "Do you know your username?",
+      "created_at": "2013-05-24T09:15:01Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "66",
+        "scenario": "login_issue",
+        "text": "Do you know your username?",
+        "somedate": "24-05-13 09:15:01",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "66",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-66-2",
+      "text": "Yes",
+      "created_at": "2013-05-24T09:15:02Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "66",
+        "scenario": "login_issue",
+        "text": "Yes",
+        "somedate": "24-05-13 09:15:02",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "66",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-66-3",
+      "text": "OK this is what you do.",
+      "created_at": "2013-05-24T09:15:03Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "66",
+        "scenario": "login_issue",
+        "text": "OK this is what you do.",
+        "somedate": "24-05-13 09:15:03",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "66",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-77-0",
+      "text": "I can't access my account",
+      "created_at": "2013-05-24T10:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "77",
+        "scenario": "login_issue",
+        "text": "I can't access my account",
+        "somedate": "24-05-13 10:15:00",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "77",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-77-1",
+      "text": "Do you know your username?",
+      "created_at": "2013-05-24T10:15:01Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "77",
+        "scenario": "login_issue",
+        "text": "Do you know your username?",
+        "somedate": "24-05-13 10:15:01",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "77",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-77-2",
+      "text": "Yes",
+      "created_at": "2013-05-24T10:15:02Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "77",
+        "scenario": "login_issue",
+        "text": "Yes",
+        "somedate": "24-05-13 10:15:02",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "77",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-77-3",
+      "text": "OK this is what you do.",
+      "created_at": "2013-05-24T10:15:03Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "77",
+        "scenario": "login_issue",
+        "text": "OK this is what you do.",
+        "somedate": "24-05-13 10:15:03",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "77",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-88-0",
+      "text": "I want to return this shirt",
+      "created_at": "2015-05-24T16:15:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "88",
+        "scenario": "returns",
+        "text": "I want to return this shirt",
+        "somedate": "24-05-15 16:15:00",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "88",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-88-1",
+      "text": "OK do you have the original packaging?",
+      "created_at": "2015-05-24T16:15:01Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "88",
+        "scenario": "returns",
+        "text": "OK do you have the original packaging?",
+        "somedate": "24-05-15 16:15:01",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "88",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-88-2",
+      "text": "No I don't have the original packaging",
+      "created_at": "2015-05-24T16:15:02Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "88",
+        "scenario": "returns",
+        "text": "No I don't have the original packaging",
+        "somedate": "24-05-15 16:15:02",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "88",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-88-3",
+      "text": "OK this is what you do.",
+      "created_at": "2015-05-24T16:15:03Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "88",
+        "scenario": "returns",
+        "text": "OK this is what you do.",
+        "somedate": "24-05-15 16:15:03",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "88",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-111-0",
+      "text": "I ordered this, but it's the wrong color, and I'm not sure if I like it",
+      "created_at": "2017-05-24T07:53:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "111",
+        "scenario": "return-low-confidence",
+        "text": "I ordered this, but it's the wrong color, and I'm not sure if I like it",
+        "somedate": "24-05-17 07:53:00",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "111",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-111-1",
+      "text": "OK do you have the original packaging?",
+      "created_at": "2017-05-24T07:53:01Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "111",
+        "scenario": "return-low-confidence",
+        "text": "OK do you have the original packaging?",
+        "somedate": "24-05-17 07:53:01",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "111",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-111-2",
+      "text": "Yes, all in the original packaging",
+      "created_at": "2017-05-24T07:53:02Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "111",
+        "scenario": "return-low-confidence",
+        "text": "Yes, all in the original packaging",
+        "somedate": "24-05-17 07:53:02",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "111",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-111-3",
+      "text": "OK this is what you do.",
+      "created_at": "2017-05-24T07:53:03Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "111",
+        "scenario": "return-low-confidence",
+        "text": "OK this is what you do.",
+        "somedate": "24-05-17 07:53:03",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "111",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-222-0",
+      "text": "My refund hasn't been credited to my account yet",
+      "created_at": "2018-05-24T09:23:00Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "222",
+        "scenario": "payments",
+        "text": "My refund hasn't been credited to my account yet",
+        "somedate": "24-05-18 09:23:00",
+        "rolehere": "client",
+        "idx": "0",
+        "first_client_utt": "True",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "222",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-222-1",
+      "text": "OK when did the refund get issues",
+      "created_at": "2018-05-24T09:23:01Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "222",
+        "scenario": "payments",
+        "text": "OK when did the refund get issues",
+        "somedate": "24-05-18 09:23:01",
+        "rolehere": "expert",
+        "idx": "1",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "True",
+        "second_expert_utt": "False",
+        "last_client_utt": "False",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "222",
+        "type": "conversation",
+        "role": "expert"
+      }
+    },
+    {
+      "id": "example-222-2",
+      "text": "3rd of March - it's been 8 weeks",
+      "created_at": "2018-05-24T09:23:02Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "222",
+        "scenario": "payments",
+        "text": "3rd of March - it's been 8 weeks",
+        "somedate": "24-05-18 09:23:02",
+        "rolehere": "client",
+        "idx": "2",
+        "first_client_utt": "False",
+        "second_client_utt": "True",
+        "first_expert_utt": "False",
+        "second_expert_utt": "False",
+        "last_client_utt": "True",
+        "last_expert_utt": "False"
+      },
+      "context": {
+        "context_id": "222",
+        "type": "conversation",
+        "role": "client"
+      }
+    },
+    {
+      "id": "example-222-3",
+      "text": "I'm really sorry - this is what you do.",
+      "created_at": "2018-05-24T09:23:03Z",
+      "intents": [],
+      "tags": [],
+      "metadata": {
+        "loaded_date": "2024-05-24T08:33:04.796401",
+        "script_name": "csv_to_json_unlaballed.py",
+        "myid": "222",
+        "scenario": "payments",
+        "text": "I'm really sorry - this is what you do.",
+        "somedate": "24-05-18 09:23:03",
+        "rolehere": "expert",
+        "idx": "3",
+        "first_client_utt": "False",
+        "second_client_utt": "False",
+        "first_expert_utt": "False",
+        "second_expert_utt": "True",
+        "last_client_utt": "False",
+        "last_expert_utt": "True"
+      },
+      "context": {
+        "context_id": "222",
+        "type": "conversation",
+        "role": "expert"
+      }
+    }
+  ]
+}

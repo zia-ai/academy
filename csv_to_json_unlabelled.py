@@ -8,6 +8,7 @@ python csv_to_json_unlabelled.py
 import re
 import json
 import datetime
+import time
 from typing import Union
 from copy import deepcopy
 
@@ -26,43 +27,67 @@ import humanfirst
               help='<metadata_col_1,metadata_col_2,...,metadata_col_n>')
 @click.option('-u', '--utterance_col', type=str, required=True,
               help='Column name containing utterances')
-@click.option('-d', '--delimiter', type=str, required=False, default=",",
-              help='Delimiter for the csv file')
 @click.option('-c', '--convo_id_col', type=str, required=False, default='',
               help='If conversations which is the id otherwise utterances and defaults to hash of utterance_col')
 @click.option('-t', '--created_at_col', type=str, required=False, default='',
               help='If there is a created date for utterance otherwise defaults to now')
-@click.option('-x', '--unix_date', is_flag=True, type=bool, required=False, default=False,
-              help='If created_at column is in unix epoch format')
-@click.option('-r', '--role_col', type=str, required=False, default='',
-              help='Which column the role in ')
+@click.option('-r', '--role_col', type=str, required=False, default='',  
+              help='Which column the role in ')            
 @click.option('-p', '--role_mapper', type=str, required=False, default='',
               help='If role column then role mapper in format "source_client:client,source_expert:expert,*:expert"')
 @click.option('-e', '--encoding', type=str, required=False, default='utf8',
               help='Input CSV encoding')
+@click.option('-d', '--delimiter', type=str, required=False, default=",",
+              help='Delimiter for the csv file')
+@click.option('-x', '--unix_date', is_flag=True, type=bool, required=False, default=False,
+              help='If created_at column is in unix epoch format')
 @click.option('--filtering', type=str, required=False, default='',
               help='column:value,column:value;column:value,column:value')
 @click.option('-h', '--striphtml', is_flag=True, default=False,
               help='Whether to strip html tags from the utterance col')
-@click.option('-b', '--drop_blanks', is_flag=True, type=bool, default=False,
-              help='Whether to drop blanks')
-@click.option('-z', '--skip_indexing', is_flag=True, type=bool, default=False,
-              help='Whether to skip indexing to reduce size output.')
-def main(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
-         skip_indexing: bool) -> None:
+@click.option('-b', '--drop_blanks',
+              type=click.Choice(['NONE', 'DROP', 'BLANK']),
+              default='NONE',
+              help='Whether to drop or replace blanks')
+@click.option('-z', '--minimize_meta', is_flag=True, type=bool, default=False,
+              help='Reduce the number of metadata keys')
+@click.option('-y', '--why_so_long', is_flag=True, type=bool, default=False,
+              help='Return the number of nanoseconds to execute main process method otherwise returns 0')
+def main(filename: str, metadata_keys: str, utterance_col: str,
+         convo_id_col: str, created_at_col: str,
+         role_col: str, role_mapper: str, 
+         encoding: str, delimiter: str, unix_date: bool,
+         filtering: str, striphtml: bool, drop_blanks: bool,
+         minimize_meta: bool, why_so_long: bool) -> int:
     """Main Function"""
-    process(filename, metadata_keys, utterance_col, delimiter,
-         convo_id_col, created_at_col, unix_date, role_col,
-         role_mapper, encoding, filtering, striphtml, drop_blanks,
-         skip_indexing)
+    
 
-def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: str,
-         convo_id_col: str, created_at_col: str, unix_date: bool, role_col: str,
-         role_mapper: str, encoding: str, filtering: str, striphtml: bool, drop_blanks: bool,
-         skip_indexing: bool) -> None:
+    process(filename,metadata_keys,utterance_col,convo_id_col,created_at_col,
+            role_col,role_mapper,
+            encoding,delimiter,unix_date,
+            filtering, striphtml, drop_blanks,
+            minimize_meta, why_so_long)
+
+
+def process(filename: str, 
+            metadata_keys: str, 
+            utterance_col: str,                  
+            convo_id_col: str,
+            created_at_col: str,         
+            role_col: str,
+            role_mapper: str = "", 
+            encoding: str = "utr8", 
+            delimiter: str = ",",
+            unix_date: bool = False,
+            filtering: str = "",
+            striphtml: bool = False,
+            drop_blanks: str = "NONE",
+            minimize_meta: bool = False,
+            why_so_long: bool = False
+    ) -> None:
     """Helper function to allow calling by directory"""
+
+    start = time.perf_counter_ns()
 
     excel = False
     if filename.endswith('.xlsx'):
@@ -125,10 +150,16 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         print(f'After filtering: {df.shape[0]}')
         print('\n')
 
-    if drop_blanks:
-        print(f'before blanks shape: {df.shape}')
-        df = df[~(df["body"] == "")]
+    # handle drop_blanks
+    if drop_blanks == "DROP":
+        print(f'before dropping blanks shape: {df.shape}')
+        df = df[~(df[utterance_col] == "")]
         print(f'after dropping blanks shape: {df.shape}')
+
+    elif drop_blanks == "BLANK":
+        print(f'before replacing blanks shape: {df.shape}')
+        df.loc[df[utterance_col] == "", utterance_col] = "BLANK"
+        print(f'after replacing blanks shape: {df.shape}')
 
     # remove html if necessary
     if striphtml:
@@ -137,6 +168,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
 
     # if convos index them
     if convo_id_col != '':
+        print('Processing as conversation')
 
         # must have created_at date if convo index
         if created_at_col == '':
@@ -158,6 +190,7 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
             print(df)
             print('\n')
         else:
+            print("Copying created_at column")
             df['created_at'] = df[created_at_col].apply(parse_dates)
 
         # check roles
@@ -198,49 +231,46 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
         # index the speakers
         df['idx'] = df.groupby([convo_id_col]).cumcount()
         df['idx_max'] = df.groupby([convo_id_col])[
-            'idx'].transform(numpy.max)
+            'idx'].transform("max")
 
-        if not skip_indexing:
-            # This info lets you filter for the first or last thing the client says
-            # this is very useful in boot strapping bot design
-            # 0s for expert
-            df['idx_client'] = df.groupby(
-                [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
-            df['idx_max_client'] = df.groupby([convo_id_col])[
-                'idx_client'].transform(numpy.max)
-            df['first_client_utt'] = df.apply(decide_role_filter_values,
-                                            args=['idx_client','client',0,"idx_max_client"],
-                                            axis=1)
-            df['second_client_utt'] = df.apply(decide_role_filter_values,
-                                            args=['idx_client','client',1,"idx_max_client"],
-                                            axis=1)
-            df['last_client_utt'] = df.apply(decide_role_filter_values,
-                                            args=['idx_client','client',-1,"idx_max_client"],
-                                            axis=1)
+        # This info lets you filter for the first or last thing the client says
+        # this is very useful in boot strapping bot design
+        # 0s for expert
+        df['idx_client'] = df.groupby(
+            [convo_id_col, 'role']).cumcount().where(df.role == 'client', 0)
+        df['idx_max_client'] = df.groupby([convo_id_col])[
+            'idx_client'].transform("max")
+        df['first_client_utt'] = df.apply(decide_role_filter_values,
+                                          args=['idx_client','client',0,"idx_max_client"],
+                                          axis=1)
+        df['second_client_utt'] = df.apply(decide_role_filter_values,
+                                           args=['idx_client','client',1,"idx_max_client"],
+                                           axis=1)
+        df['last_client_utt'] = df.apply(decide_role_filter_values,
+                                         args=['idx_client','client',-1,"idx_max_client"],
+                                         axis=1)
 
-            # same for expert
-            df['idx_expert'] = df.groupby(
-                [convo_id_col, 'role']).cumcount().where(df.role == 'expert', 0)
-            df['idx_max_expert'] = df.groupby([convo_id_col])[
-                'idx_expert'].transform(numpy.max)
-            df['first_expert_utt'] = df.apply(decide_role_filter_values,
-                                            args=['idx_expert','expert',0,'idx_max_expert'],
-                                            axis=1)
-            df['second_expert_utt'] = df.apply(decide_role_filter_values,
-                                            args=['idx_expert','expert',1,'idx_max_expert'],
-                                            axis=1)
-            df['last_expert_utt'] = df.apply(decide_role_filter_values,
-                                            args=['idx_expert','expert',-1,'idx_max_expert'],
-                                            axis=1)
+        # same for expert
+        df['idx_expert'] = df.groupby(
+            [convo_id_col, 'role']).cumcount().where(df.role == 'expert', 0)
+        df['idx_max_expert'] = df.groupby([convo_id_col])[
+            'idx_expert'].transform("max")
+        df['first_expert_utt'] = df.apply(decide_role_filter_values,
+                                          args=['idx_expert','expert',0,'idx_max_expert'],
+                                          axis=1)
+        df['second_expert_utt'] = df.apply(decide_role_filter_values,
+                                           args=['idx_expert','expert',1,'idx_max_expert'],
+                                           axis=1)
+        df['last_expert_utt'] = df.apply(decide_role_filter_values,
+                                         args=['idx_expert','expert',-1,'idx_max_expert'],
+                                         axis=1)
 
         # make sure convo id on the metadata as well for summarisation linking
-        metadata_keys.append(convo_id_col)
+        if not minimize_meta:
+            metadata_keys.append(convo_id_col)
 
-        # extend metadata_keys to indexed fields for conversations.
-        # generated custom indexing fields
-        if skip_indexing:
-            metadata_keys.extend(['idx'])
-        else:
+            # extend metadata_keys to indexed fields for conversations.
+            # generated custom indexing fields
             metadata_keys.extend(
                 ['idx',
                 'first_client_utt', 'second_client_utt',
@@ -248,12 +278,18 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
                 'last_client_utt', 'last_expert_utt'
                 ]
             )
+    else:
+        print('Processing as utterances')
 
     # build metadata for utterances or conversations
-    dict_of_file_level_values = {
-        'loaded_date': datetime.datetime.now().isoformat(),
-        'script_name': 'csv_to_json_unlaballed.py'
-    }
+    if not minimize_meta:
+        dict_of_file_level_values = {
+            'loaded_date': datetime.datetime.now().isoformat(),
+            'script_name': 'csv_to_json_unlaballed.py'
+        }
+    else:
+        dict_of_file_level_values = {}
+        metadata_keys.remove(utterance_col)
     print("Capturing these metadata keys")
     
     metadata_keys = list(set(metadata_keys))
@@ -262,6 +298,8 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     print(metadata_keys)
     print("Capturing these file level values for metaddata")
     print(dict_of_file_level_values)
+    print(f'created_at_col: {created_at_col}')
+
     df['metadata'] = df.apply(create_metadata, args=[
                               metadata_keys, dict_of_file_level_values], axis=1)
 
@@ -294,8 +332,18 @@ def process(filename: str, metadata_keys: str, utterance_col: str, delimiter: st
     unlabelled.write_json(file_out)
     file_out.close()
     print(f"Write complete to {filename_out}")
+    
+    end = time.perf_counter_ns()
+    if why_so_long:
+        return end - start
+    else:
+        return 0
 
-def decide_role_filter_values(row: pandas.Series, column_name: str, role_filter: str, value_filter: str, idx_max_col_name: str) -> bool:
+def decide_role_filter_values(row: pandas.Series,
+                              column_name: str,
+                              role_filter: str,
+                              value_filter: str,
+                              idx_max_col_name: str) -> bool:
     """Determine whether this is the 0,1,2 where the role is also somt hing"""
     if value_filter >=0 and row[column_name] == value_filter and row["role"] == role_filter:
         return True
@@ -309,7 +357,7 @@ def parse_dates(date: str) -> datetime.datetime:
 
     try:
         candidate_date = parser.parse(timestr=date, dayfirst=True)
-    except:
+    except Exception: # pylint: disable=broad-exception-caught
         print(f"WARNING-could not parse:{date}")
         candidate_date = parser.parse(timestr="1999-01-01")
     return candidate_date
@@ -380,4 +428,4 @@ def execute_regex(text_to_run_on: str, re_to_run: re) -> str:
     return re_to_run.sub('',text_to_run_on)
 
 if __name__ == '__main__':
-    main()  # pylint: disable=no-value-for-parameter
+    main() # pylint: disable=no-value-for-parameter

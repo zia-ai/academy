@@ -1,0 +1,26 @@
+The following is an online chat conversation between a client "User" of an online fashion retailer and one of it's expert "Agent" customer service agents.
+
+{{ conversation }}
+
+Was the client's issue fully resolved from the business' perspective?
+
+Consider the following criteria
+If the User had a question that appears to have been answered and the User is grateful it should be classified as fully resolved.
+
+If a user wants to return something, or change something on an order but is ineligible to then as long as the reason why they can't return it is clearly stated the conversation should be considered fully resolved.
+
+If there is a technical problem and it is determined to like on the User side and not with the fashion retailers website the conversation should be considered fully resolved.
+
+If the user has questions about an item and the question cannot be answered, or is only partially answered the conversation is not fully resolved
+
+If it is unclear what the User is asking for, or they fail to answer the Agent's questions trying to establish their problem, then the conversation should be classified unclear.
+
+If the conversation has to be escalated to a manager to attempt to resolve the issue, then the conversation should be classified escalated
+
+Please provide your reasoning, then give your answer as yes, no, escalated, or unclear in lower case.
+
+Give your answer in the following key-value pairs.
+
+reasoning: <reasoning>
+fully_resolved: yes|no|unclear|escalated
+

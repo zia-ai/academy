@@ -14,6 +14,7 @@ from os.path import join
 # 3rd party imports
 import pandas
 import click
+# TODO: install this depdency separately.
 from googletrans import Translator
 import humanfirst
 
