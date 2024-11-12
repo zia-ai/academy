@@ -4,7 +4,7 @@
 66,24-05-13 09:15:02,"",IVR_EARLY_TERMINATE,
 66,24-05-13 09:15:03,"login.  Do you hear me OK?",CUSTOMER,login_issue
 66,24-05-13 09:15:04,"I'm sorry I didn't get that, can you say it again?",SYSTEM,
-66,24-05-13 09:15:12,"LOGIN ISSUE!!!!,CUSTOMER,login_issue
+66,24-05-13 09:15:12,"LOGIN ISSUE!!!!"",CUSTOMER,login_issue
 66,24-05-13 09:15:17,"Hi, I can help you with your login issue, do you know your password?",BOT,login_issue
 66,24-05-13 09:15:20,"O just piss off and put me through to a Human",CUSTOMER,handover_request
 66,24-05-13 09:15:25,"Transfering you...",SYSTEM,handover_request
