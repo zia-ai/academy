@@ -291,6 +291,10 @@ def process(filename: str,
         dict_of_file_level_values = {}
         metadata_keys.remove(utterance_col)
     print("Capturing these metadata keys")
+    
+    metadata_keys = list(set(metadata_keys))
+    if utterance_col in metadata_keys:
+        metadata_keys.remove(utterance_col)
     print(metadata_keys)
     print("Capturing these file level values for metaddata")
     print(dict_of_file_level_values)

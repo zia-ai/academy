@@ -1,0 +1,20 @@
+﻿myid,somedate,text,rolehere,scenario
+66,24-05-13 09:15:00,"Welcome to the ABCD IVR system, in a small number of words please tell me your issue?",SYSTEM,
+66,24-05-13 09:15:01,"I can't",CUSTOMER,
+66,24-05-13 09:15:02,"",IVR_EARLY_TERMINATE,
+66,24-05-13 09:15:03,"login.  Do you hear me OK?",CUSTOMER,login_issue
+66,24-05-13 09:15:04,"I'm sorry I didn't get that, can you say it again?",SYSTEM,
+66,24-05-13 09:15:12,"LOGIN ISSUE!!!!,CUSTOMER,login_issue
+66,24-05-13 09:15:17,"Hi, I can help you with your login issue, do you know your password?",BOT,login_issue
+66,24-05-13 09:15:20,"O just piss off and put me through to a Human",CUSTOMER,handover_request
+66,24-05-13 09:15:25,"Transfering you...",SYSTEM,handover_request
+66,24-05-13 09:15:25,"Hello this is Jane...",jane@abcd-support.co.uk,handover_request
+77,24-05-13 10:15:00,"Welcome to the ABCD IVR system, in a small number of words please tell me your issue?",SYSTEM,
+77,24-05-13 10:15:01,"",IVR_EARLY_TERMINATE,
+77,24-05-13 10:15:02,"",CUSTOMER,incomprehensible
+77,24-05-13 10:15:03,"I'm sorry are you still there?",SYSTEM,login_issue
+77,24-05-13 10:15:02,"",CUSTOMER,incomprehensible
+77,24-05-13 10:15:05,"Transfering you...",SYSTEM,incomprehensible
+77,24-05-13 10:15:13,"Hi there Stewart speaking...",Jane@abcd-support.co.uk,handover_request
+77,24-05-13 10:15:50,"Crumnbs I can barely hear you are you there",stewart@abcd-support.co.uk,handover_request
+77,24-05-13 10:15:51,"",IVR_EARLY_TERMINATE,hangup
