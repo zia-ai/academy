@@ -37,4 +37,4 @@ ic/*
 .env
 output.txt
 !.git/hooks/pre-commit
-
+**.log
