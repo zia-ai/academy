@@ -10,6 +10,8 @@ Run script and see which channel represents the client and which one expert.
 Cause it varies for audios from different clients.
 Client A audios might have channel_1:client and channel_2:expert
 Client B audios might have channel_1:expert and channel_2:client
+
+If using Speaker Diarization, these will be S1 and S2
 """
 # *********************************************************************************************************************
 
@@ -31,8 +33,8 @@ FOLDER_FILE_SPLIT_DELIMITER = "---"
 @click.option('-f', '--folder_path', type=str, required=True, help='Speechmatics json folder')
 @click.option('-b', '--bucket_name', type=str, default="",
               help='Name of the bucket containing the audio files to create audio url')
-@click.option('-c', '--client_channel', type=click.Choice(['channel_1', 'channel_2']), default = "channel_2",
-              help='Which channel has client utterances? channel_1 or channel_2?')
+@click.option('-c', '--client_channel', type=click.Choice(['channel_1', 'channel_2', 'S1','S2']), default = "channel_2",
+              help='Which channel has client utterances? channel_1 or channel_2? or S1 S2 in the case of speaker')
 @click.option('-o', '--output_filename', type=str, required=True, help='FQN Where to save the output csv')
 @click.option('-i', '--impersonate', is_flag=True, default=False, help='Impersonate service account or not')
 @click.option('-s', '--impersonate_service_account', type=str, required=False, default="",
@@ -86,9 +88,13 @@ def process(data: str, client_channel: str, bucket_name: str, bucket_exists: int
     """Speechmatics Json to HF consumable format"""
 
     df = pandas.json_normalize(data["results"], sep="-")
+    print(df.columns.to_list())
     df["confidence"] = df["alternatives"].apply(lambda x: x[0]["confidence"])
     df["content"] = df["alternatives"].apply(lambda x: x[0]["content"])
     df["language"] = df["alternatives"].apply(lambda x: x[0]["language"])
+    df["channel"] = df["alternatives"].apply(lambda x: x[0]["speaker"])
+    print(df.columns.to_list())
+    
     df = df.sort_values(by="start_time").reset_index(drop=True)
 
     merged_df = merge_info(df)
@@ -194,7 +200,13 @@ def merge_info(df:pandas.DataFrame) -> pandas.DataFrame:
     """merges contents, start time, and end time"""
 
     # Group by channel, but only group consecutive rows in the same channel
-    df['group'] = (df['channel'] != df['channel'].shift(1)).cumsum()
+    if "channel" not in df.columns.to_list():
+        print("Channel not found in source file, assuming that Speaker Diarization is used instead")
+        if not "speaker" in df.columns.to_list():
+            raise RuntimeError("Can't find speaker in source file - check you have diarization sufficient to proceed")
+        df.rename(columns={"speaker":"channel"},inplace=True)
+        print("Renamed speaker to channel for speaker diarization")
+    df['group'] = (df['channel'] != df['channel'].shift(1)).cumsum()   
 
     # Aggregate text, start_time, and end_time
     merged_df = df.groupby(['channel', 'group']).apply(lambda x: pandas.Series({
