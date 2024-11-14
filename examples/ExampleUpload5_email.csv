@@ -1,4 +1,11 @@
 ﻿thread-id,id,timestamp,to ,cc,from,content,subject,hack_role
-mail-246245,guid-3454343,2024-11-14T09:29:00Z,"stewart@abcd.ai,flee@abcd.ai",olivia@abcd.ai,seb@abcd.ai,"OMG did you see Artifacts in Claude?\nIt's just so amazing.  I build a space invader game\n\n\n",Claude Artifacts,client
-mail-246245,guid-6346353,2024-11-14T09:34:45Z,dave@abcd.ai,olivia@abcd.ai,stewart@abcd.ai,"Nah man it's trash.\n> OMG did you see Artifacts in Claude?\n>\n> It's just so amazing.  \nI build a space invader game",Re: Claude Artifacts,client
+mail-246245,guid-3454343,2024-11-14T09:29:00Z,"stewart@abcd.ai,flee@abcd.ai",olivia@abcd.ai,seb@abcd.ai,"OMG did you see Artifacts in Claude?
+It's just so amazing.  
+I build a space invader game
+",Claude Artifacts,client
+mail-246245,guid-6346353,2024-11-14T09:34:45Z,dave@abcd.ai,olivia@abcd.ai,stewart@abcd.ai,"Nah man it's trash.
+
+> OMG did you see Artifacts in Claude?
+> It's just so amazing.
+> I build a space invader game",Re: Claude Artifacts,client
 mail-523453,guid-6523452,2024-11-12T23:33:54Z,"jodie@abcd.ai",,donald@abcd.ai,"Yeah you still here, I want to grab your pussy.",Pussy,client
