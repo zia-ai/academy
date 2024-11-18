@@ -69,7 +69,9 @@ def main(input_filename: str, max_files: int,
             raise RuntimeError(f'If search_col is provided at least one search value must be passed')
         
         list_cols = df.columns.to_list()
-        assert search_col in list_cols
+        if not search_col in list_cols:
+            raise RuntimeError(f"Can\'t find {search_col} in: {','.join(list_cols)}")
+            print(f'Failed to find ')
         
         # get search values
         search_values = search_values.split(",")
@@ -82,10 +84,10 @@ def main(input_filename: str, max_files: int,
         df_values = search_for_values(df,search_col,search_values)
 
         # check the results
-        if df_values.shape[0] == len(search_values):
+        if df_values["context.context_id"].nunique() == len(search_values):
             print("Found all values")
         else:
-            print(f"Found: {df_values.shape[0]} out of: {search_values}")
+            print(f"Found: {df_values['context.context_id'].unique()} out of: {search_values}")
         print(df_values)
         
         write_output(df_values,input_filename,output_filename.replace(".csv","_searched.csv"))    
