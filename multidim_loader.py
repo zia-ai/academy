@@ -130,10 +130,15 @@ def main(input_folder: str, prefix: str,
             #{'filename': 'abcd-2022-05-28.json', 'triggerId': 'trig-DNXBIEHX5BENDP6GQDWCAR3Z', 'conversationSourceId': 'convsrc-VDXKI7INMBHKPMYNNNSFVPND'}
             
             if "triggerId" in upload_response.keys():
-                loop_trigger_check_until_done(hf_api=hf_api,
+                total_wait = loop_trigger_check_until_done(hf_api=hf_api,
                                               max_loops=max_loops, 
                                               namespace=namespace, 
                                               trigger_id=upload_response["triggerId"])
+        
+            if total_wait == 0:
+                raise RuntimeError(f"Did not get TRIGGER_STATUS_COMPLETED with max_loops: {max_loops}")
+            
+            multidim_data_generation.logit(f"File: {f} total_time:",total_wait)
             
             files_loaded = files_loaded + 1
             
@@ -193,7 +198,7 @@ def loop_trigger_check_until_done(hf_api: humanfirst.apis.HFAPI, max_loops: int,
     total_wait = 0
     done = False
     while done == False:
-        trigger_response = hf_api.describe_trigger(namespace=namespace,trigger_id=trigger_id)
+        trigger_response = hf_api.describe_trigger(namespace=namespace,trigger_id=trigger_id,timeout=120)
         summary = {
             "triggerId": trigger_response["triggerState"]["trigger"]["triggerId"],
             "message": trigger_response["triggerState"]["trigger"]["message"],
