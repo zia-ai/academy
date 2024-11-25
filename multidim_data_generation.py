@@ -19,15 +19,14 @@ import pandas
 import json
 
 # custom imports
-import back_to_hf_unlabelled
 
 @click.command()
 @click.option('-f', '--input_folder', type=str, required=True, help='Input Folder with HumanFirst JSON in')
 @click.option('-p', '--prefix', type=str, required=False, default="abcd", help='Prefix for output')
 def main(input_folder: str, prefix: str):
     
-    # fileoutput format
-    re_output_format = re.compile(prefix + "-[0-9]{,4}-[0-9]{,2}-[0-9]{,2}.json")
+    # get regex
+    re_output_format = get_file_format_regex(prefix)
 
     # Read inputs
     assert os.path.isdir(input_folder)
@@ -81,14 +80,56 @@ def main(input_folder: str, prefix: str):
         filename = f'{prefix}-{d}.json'
         filename = os.path.join(input_folder,filename)
         
-        # these are 
-        back_to_hf_unlabelled.back_to_hf(df_day,file_output=filename)
+        # turn it back into hf json
+        json_output = denormalize_to_hf_json(df_day,delimiter=".")
+        
+        with open(filename,mode="w",encoding="utf8") as file_out:
+            json.dump(json_output,file_out)
+        
+
+def denormalize_to_hf_json(df:pandas.DataFrame,delimiter) -> dict:
+    """Takes a dataframe of extracted from unlabelled examples
+    Puts i"""
+    # There is an old function frot his in academy  back_to_hf_unlabelled.back_to_hf(df_day,file_output=filename)
+    # but I do not like it.  I think this is more readable
+    delimiter="."
+    all_cols = df.columns.to_list()
+    metadata_cols = []
+    context_cols = []
+    other_cols = []
+    for c in all_cols:
+        if c.startswith("metadata"):
+            metadata_cols.append(c)
+        elif c.startswith("context"):
+            context_cols.append(c)
+        else:
+            other_cols.append(c)
+    df_day_output = df[other_cols].copy(deep=True)
+    df_day_output["metadata"] = df[metadata_cols].apply(make_object,args=["metadata",delimiter],axis=1).copy(deep=True)
+    df_day_output["context"] = df[context_cols].apply(make_object,args=["context",delimiter],axis=1).copy(deep=True)
+    json_output = {
+            "$schema": "https://docs.humanfirst.ai/hf-json-schema.json",
+            "examples":df_day_output.to_dict(orient="records")
+    }
+    return json_output
+
+        
+
+def make_object(row: pandas.Series, object_name: str, delimiter: str) -> dict:
+    obj = {}
+    for k in row.keys().to_list():
+        assert isinstance(k, str)
+        obj[k.split(f'{object_name}{delimiter}')[-1]] = row[k]
+    return obj
 
 def logit(log_string: str, value: str, separator: str = ":"):
     """Nicely aligned logging """
     log_string = log_string + separator
     print(f'{log_string:<40} {value}')
     
+def get_file_format_regex(prefix: str) -> re.Pattern:
+    """fileoutput format"""
+    return re.compile(prefix + "-[0-9]{,4}-[0-9]{,2}-[0-9]{,2}.json")
 
 if __name__ == '__main__':
     main() # pylint: disable=no-value-for-parameter
