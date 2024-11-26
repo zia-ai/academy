@@ -47,6 +47,7 @@ import speechmatics_helpers
               type=click.Choice(['debug', 'info', 'warning', 'error', 'critical']),
               default='info',
               help='Log levels')
+@click.option('-y', '--speaker_sensitivity', type=float, default = 0.0, help='speaker sensitivity')
 def main(audio_folder_path: str,
          api_key: str,
          audio_type: str,
@@ -62,7 +63,8 @@ def main(audio_folder_path: str,
          default_language: str,
          low_confidence_action: str,
          log_folder_path: str,
-         log_level: str) -> None:
+         log_level: str,
+         speaker_sensitivity: float) -> None:
     """Main Function"""
 
     # set log level
@@ -103,7 +105,8 @@ def main(audio_folder_path: str,
         punctuation_sensitivity=punctuation_sensitivity,
         expected_languages=expected_languages,
         low_confidence_action=low_confidence_action,
-        default_language=default_language
+        default_language=default_language,
+        speaker_sensitivity=speaker_sensitivity
     )
 
     if vocab_file_path:
