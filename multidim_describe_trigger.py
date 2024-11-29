@@ -11,6 +11,7 @@ Run all the pipelines for a playbook
 # 3rd party imports
 import click
 import pandas
+import json
 
 # custom imports
 import humanfirst
@@ -94,7 +95,14 @@ def run_all_piplines(hf_api: humanfirst.apis.HFAPI, namespace:str, playbook_id: 
                                                 pipeline_step_id=p["steps"][0]["id"],
                                                 timeout=240# just take the first step)
         )
-        print(some_data)
+        
+        # dump output to file
+        with open(f"./data/{playbook_id}-{p["id"]}-{p["steps"][0]["id"]}") as file_out:
+            file_out.write(json.dump(some_data,file_out,indent=2))
+        
+        pipelines_run = pipelines_run + 1
+        
+    print(f"Ran a total of pipelines for playboo: {pipelines_run}")
                                                    
 if __name__ == '__main__':
     main() # pylint: disable=no-value-for-parameter
