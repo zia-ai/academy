@@ -12,6 +12,8 @@ Run all the pipelines for a playbook
 import click
 import pandas
 import json
+import time
+import math
 
 # custom imports
 import humanfirst
@@ -110,15 +112,24 @@ def run_all_piplines(hf_api: humanfirst.apis.HFAPI, namespace:str, playbook_id: 
             #other filters..
         ]
         
+        start=time.perf_counter_ns()
+        # This now has await next index as default
         some_data = hf_api.export_query_conversation_inputs(namespace=namespace,
                                                 playbook_id=playbook_id,
                                                 pipeline_id=p["id"],
                                                 pipeline_step_id=p["steps"][0]["id"],
-                                                # await_next_index=False,
                                                 metadata_predicate=metadata_predicate,
                                                 source_kind=2, # SOURCE_KIND_GENERATED                                             
-                                                timeout=240# just take the first step)
+                                                timeout=480# just take the first step)
         )
+        print(playbook_id)
+        print(p["id"])
+        print(p["steps"][0]["id"])
+        print(metadata_predicate)
+        end=time.perf_counter_ns()
+        duration_ns = end-start
+        duration_s = math.ceil(duration_ns/1000000000)
+        multidim_data_generation.logit(f"{duration_s:<20} Some_data download time is ",f'{duration_s}s')
         
         # dump output to file
         filename_out = f'./data/{playbook_id}-{p["id"]}-{p["steps"][0]["id"]}.json'

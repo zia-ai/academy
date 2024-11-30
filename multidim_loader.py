@@ -93,14 +93,16 @@ def main(input_folder: str, prefix: str,
             if max_files > 0 and files_loaded == max_files:
                 break
 
-            if i >= (len(load_files) - 1):
+            if files_loaded >= (len(load_files) - 1):
+                print(f'files_loaded: {files_loaded} len_load_files -1 {(len(load_files) - 1)}')
                 this_file_no_trigger = False
-            elif i >= max_files - 1:
+            elif files_loaded >= max_files - 1:
+                print(f'files_loaded: {files_loaded} max_files -1 {(len(load_files) - 1)}')
                 this_file_no_trigger = False
             else:
                 this_file_no_trigger = no_trigger
                 
-            multidim_data_generation.logit("this_file_no_trigger",no_trigger)
+            multidim_data_generation.logit("this_file_no_trigger",this_file_no_trigger)
 
             start=time.perf_counter_ns()
             upload_response = hf_api.upload_json_file_to_conversation_source(namespace=namespace,
@@ -128,6 +130,7 @@ def main(input_folder: str, prefix: str,
             #{'filename': 'abcd-2022-05-28.json', 'triggerId': 'trig-DNXBIEHX5BENDP6GQDWCAR3Z', 'conversationSourceId': 'convsrc-VDXKI7INMBHKPMYNNNSFVPND'}
             
             total_wait = 0
+            print(this_file_no_trigger)
             if this_file_no_trigger == False:
                 if "triggerId" in upload_response.keys():
                     total_wait = loop_trigger_check_until_done(hf_api=hf_api,
@@ -162,11 +165,14 @@ def main(input_folder: str, prefix: str,
         if max_files > 0 and files_deleted == max_files:
             break
         
-        if i >= (len(files_at_start) - 1):
+        if files_deleted >= (len(files_at_start) - 1):
+            print('Clause 1')
             this_file_no_trigger = False
-        elif i >= max_files - 1:
+        elif files_deleted >= max_files - 1:
+            print('Clause 2')
             this_file_no_trigger = False
         else:
+            print('Clause 3')
             this_file_no_trigger = no_trigger
             
         multidim_data_generation.logit("this_file_no_trigger",this_file_no_trigger)
@@ -184,6 +190,7 @@ def main(input_folder: str, prefix: str,
         # 3-4 seconds with nothing attached - 1 spike to 11
         # 5 seconds
         
+        print(this_file_no_trigger)
         if this_file_no_trigger == False:
             if "triggerId" in delete_response.keys():
                 total_wait = 0

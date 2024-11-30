@@ -50,7 +50,7 @@ import multidim_data_generation
 
 @click.command()
 @click.option('-f', '--input_folder', type=str, required=True, help='Name of input files')
-@click.option('-m', '--max_files', type=int, required=False, default=0, help='Limit number of files to this') 
+@click.option('-m', '--max_files', type=int, required=True, help='Limit number of files to this') 
 @click.option('-p', '--prefix', type=str, required=False, default="abcd", help='Prefix for input')
 def main(input_folder: str,
          max_files: int,
@@ -129,13 +129,40 @@ def main(input_folder: str,
         
    
 def add_words_to_text(row: pandas.Series, next_file_date: str, large_word_list: list) -> pandas.Series:
-    """update the text based on ABCD and date"""
+    """update the text based on ABCD and date and set conversation_date for download"""
+    
+    # ABCD uniqueness
     first_word_index = int(row["context.context_id"]) # abcd id
+    first_word = large_word_list[first_word_index]
+    
+    # Date uniqueness - all convos should be within the same date as auto generated
     second_word_index = int(next_file_date[0:4]) + int(next_file_date[5:7]) + int(next_file_date[9:10]) # date
+    second_word = large_word_list[second_word_index]
+    
+    # Turn uniqueness
     third_word_index = int(row["metadata.conversation_turn"])
-    random.seed(third_word_index)
-    third_word_index = random.randrange(0,len(large_word_list))
-    row["text"] = row["text"] + " " + large_word_list[first_word_index] + " " + large_word_list[second_word_index] + " " + large_word_list[third_word_index]
+    random.seed(third_word_index) # make it replicatable 
+    third_word_index = random.randrange(0,len(large_word_list)) # just to make the selected words a bit more interesting   
+    third_word = large_word_list[third_word_index]
+    
+    # Update the text
+    row["text"] = str(row["text"]) + " " + first_word + " " + second_word + " " + third_word
+    
+    # set the conversation date so that the results can be downloaded
+    row["metadata.date_of_convo"] = next_file_date
+    
+    # also need to set created_at
+    row["created_at"] = next_file_date + row["created_at"][10:]
+    
+    # also regenerate the conversation id and example id
+    
+    # as they are just strings, just use my unique words
+    row["id"] = row["id"] + "-" + first_word + "-" + second_word + "-" + third_word
+    
+    # convo id needs to be consistent across utterances
+    row["context.context_id"] = str(row["context.context_id"]) + "-" + first_word + "-" + second_word
+    
+    
     return row
            
 if __name__ == '__main__':
