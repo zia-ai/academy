@@ -16,9 +16,9 @@ import click
 
 
 @click.command()
-@click.option('-f', '--folder_path', type=str, required=True, help='Speechmatics json folder')
+@click.option('-f', '--folder_path', type=str, required=True, help='Gong json folder')
 @click.option('-e', '--expert_speaker_ids', type=str, required=True,
-              help='Provide the client speaker ID')
+              help='Provide the agents speaker IDs as comma delimited string')
 @click.option('-o', '--output_filename', type=str, required=True, help='FQN Where to save the output csv')
 def main(folder_path: str,
          output_filename: str,
