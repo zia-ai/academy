@@ -3,6 +3,10 @@ python multidim_loader.py
 
 Load abcd generated files, depends on multidim_data_generation
 
+Loads a number of files based on m settings
+Respects no trigger swtich and if present ignores triggers for all files except the last.
+Also has a delete mode, which works in reverse file order with same options.
+
 """
 # ******************************************************************************************************************120
 
@@ -115,20 +119,7 @@ def main(input_folder: str, prefix: str,
             duration_ns = end-start
             duration_s = math.ceil(duration_ns/1000000000)
             multidim_data_generation.logit(f"{duration_s:<20} Response is",upload_response)
-            # 4-6 seconds no connected workspace
-            
-            # Test with 2 connected - no pipelines
-            # ./zia -n multidim pb list -S 
-            # id                                name        disabled datasets                         intents phrases utters convs
-            # playbook-VZUT22TGVJATJIJ56LC5OFNP qa_resolved false    convset-AZZ3KOSIZRF5LI43V4KDP3PR 33      196     0      0
-            # playbook-KPAW6OKL45DVDLB5RUXMVMB4 qa_topic    false    convset-AZZ3KOSIZRF5LI43V4KDP3PR 33      196     0      0
-            # 5-7 seconds slightly slower, but kicks off a converation file import for every attached workspace they spin for quite a while
-            
-            # 3 minutes job length
-            
-            # get a bunch of trigger IDs and conversationSourceIds - how do I check trigger processes
-            #{'filename': 'abcd-2022-05-28.json', 'triggerId': 'trig-DNXBIEHX5BENDP6GQDWCAR3Z', 'conversationSourceId': 'convsrc-VDXKI7INMBHKPMYNNNSFVPND'}
-            
+
             total_wait = 0
             print(this_file_no_trigger)
             if this_file_no_trigger == False:
@@ -249,6 +240,7 @@ def loop_trigger_check_until_done(hf_api: humanfirst.apis.HFAPI, max_loops: int,
         return 0
 
 def read_input_directory(input_folder: str, prefix: str):
+    """Reads the input directory"""
     
     # get regex
     re_output_format = multidim_data_generation.get_file_format_regex(prefix)

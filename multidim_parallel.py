@@ -1,7 +1,8 @@
 """
 python multidim_parallel.py
 
-Run all the pipelines for a playbook
+Run all the pipelines for a playbook in parallel whilst both uploading and downloading.
+See multdim_README.md for pseudo code describing.
 
 """
 # ******************************************************************************************************************120

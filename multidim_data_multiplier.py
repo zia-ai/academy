@@ -1,32 +1,22 @@
 """
 python multidim_data_multiplier.py
 
-Makes more data from existing data.
+Makes more data from existing data - this is more ABCD specific.
 
 Looks at all the existing data in the file
-Initial load is just 60 files through may nad june 2022 but that may have grown
+Initial load is just 60 files through May aad june 2022 but that may have grown
 Works out the next day
-Checks if there a matching day using may for odd months, and june for even months.
+Checks if there a matching day using May for odd months, and June for even months.
 If there isn't goes onto the next day till it finds a day with base daata
 Takes all the conversations from that day file
 For each conversation appends an additional three words to the end of every utterance.
 These are generated on basis of
 
-year 100 words 
-month 12 words
-day 31 words
+1 ABCD ID (unique per convo)
+2 year + month + day = 2024 12 30 = 2074 (i.e unique per day)
+3 convo turn (with a repetable random seed to spread out of As across the alphabet - so unique per turn)
 
-year + month + day = 2024 12 30 = 2074 
-abcd_id 100042 words
-example_id
-
-
-
-
-
-(so original and modified conversations can be identified)
-
-
+This guarantees every conversation turn is completely unique and will generate full embedding load and no cache hits.
 
 """
 # ******************************************************************************************************************120

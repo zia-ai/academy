@@ -4,8 +4,7 @@ python ./multidim_data_generation.py
        -f <folder>
 
 Takes a folder of humanfirst json and breaks them down.
-
-Erm: split_hf_unlabelled_into_multiple_parts.py
+Expects to be give the two JSON from humanfirst datasets for ABCD May and June in a folder called ./data/abcd/multidim
 
 """
 # *********************************************************************************************************************

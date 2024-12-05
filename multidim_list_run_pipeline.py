@@ -1,7 +1,8 @@
 """
 python multidim_list_run_pipeline.py
 
-Run all the pipelines for a playbook
+Run all the pipelines for a playbook sequentially and download the data 
+see multidim_README.md for pseudo code
 
 """
 # ******************************************************************************************************************120
@@ -36,7 +37,7 @@ def main(namespace: str,
     """Main Function"""
     
     if not sequential:
-        raise RuntimeError("Parallel mode not yet implemented")
+        raise RuntimeError("Parallel mode implemented here")
     
     # Open connection
     hf_api = humanfirst.apis.HFAPI()
@@ -71,7 +72,7 @@ def main(namespace: str,
 
 def run_all_piplines(hf_api: humanfirst.apis.HFAPI, namespace:str, playbook_id: str, 
                      filter_prefix: str, max_loops: int, date_filter_day:str) -> bool:
-    """Some string"""
+    """Run all pipelines for a given playbook"""
     pipelines = hf_api.list_playbook_pipelines(namespace=namespace,
                                    playbook_id=playbook_id)   
     pipelines_run = 0

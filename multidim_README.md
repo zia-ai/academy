@@ -3,12 +3,6 @@ Assumes have access to multidim namespace and the ABCD raw files from HF dataset
 
 Assumes 1 convoset with n playbooks, with n pipelines.  Each pipeline being for a different dimension of analysis.
 
-TODO: where does data live - scripts to transform here, but not very useful. 
-Just check it in - makes thing huge?
-Zip and put somewhere?
-
-IN the document to insight folder
-
 ## implements this logic (sequential)
 
 Upload file to conversation set.
