@@ -16,6 +16,7 @@ import click
 # custom imports
 import speechmatics_helpers
 
+# TODO: Speaker sensitivity
 @click.command()
 # mandatory
 @click.option('-f', '--audio_file_path', type=str, required=True, help='Speechmatics json folder')
@@ -27,13 +28,15 @@ import speechmatics_helpers
 @click.option('-e', '--entities', is_flag=True, default=False, help='Detects entities')
 @click.option('-s', '--operation', type=str, default = "standard", help='Speechmatics operation - standard or enhanced')
 @click.option('-p', '--punctuation_sensitivity', type=float, default = 0.5, help='punctuation sensitivity')
+@click.option('-y', '--speaker_sensitivity', type=float, default = 0.0, help='speaker sensitivity')
 def main(audio_file_path: str,
          api_key: str,
          language: str,
          diarization: str,
          entities: bool,
          operation: str,
-         punctuation_sensitivity: float) -> None:
+         punctuation_sensitivity: float,
+         speaker_sensitivity: float) -> None:
     """Main Function"""
 
     settings = speechmatics_helpers.get_connection_settings(api_key)
@@ -44,7 +47,8 @@ def main(audio_file_path: str,
         diarization=diarization,
         entities=entities,
         operation=operation,
-        punctuation_sensitivity=punctuation_sensitivity
+        punctuation_sensitivity=punctuation_sensitivity,
+        speaker_sensitivity=speaker_sensitivity
     )
 
     # Open the client using a context manager

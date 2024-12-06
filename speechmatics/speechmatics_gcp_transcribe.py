@@ -61,6 +61,7 @@ FOLDER_FILE_SPLIT_DELIMITER = "---"
               https://docs.speechmatics.com/features-other/lang-id#low-confidence-action""")
 @click.option('-h', '--default_language', required = False, default="en",
               help='Default language to use in case automatic laguagee detection couldn\'t able to decide')
+@click.option('-y', '--speaker_sensitivity', type=float, default = 0.0, help='speaker sensitivity')
 def main(
         api_key: str,
         bucket_name: str,
@@ -78,7 +79,8 @@ def main(
         default_language: str,
         low_confidence_action: str,
         log_folder_path: str,
-        log_level: str) -> None:
+        log_level: str,
+        speaker_sensitivity: float) -> None:
     """Main Function"""
 
     # set log level
@@ -112,7 +114,8 @@ def main(
         language=language,
         expected_languages=expected_languages,
         low_confidence_action=low_confidence_action,
-        default_language=default_language
+        default_language=default_language,
+        speaker_sensitivity=speaker_sensitivity
     )
 
     if vocab_file_path:

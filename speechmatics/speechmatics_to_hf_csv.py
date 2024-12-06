@@ -92,10 +92,16 @@ def process(data: str, client_channel: str, bucket_name: str, bucket_exists: int
     df["confidence"] = df["alternatives"].apply(lambda x: x[0]["confidence"])
     df["content"] = df["alternatives"].apply(lambda x: x[0]["content"])
     df["language"] = df["alternatives"].apply(lambda x: x[0]["language"])
-    df["channel"] = df["alternatives"].apply(lambda x: x[0]["speaker"])
+
+    # speechmatics supports 2 types of diarization
+    # if an audio file is speaker diarized, then have to extract the speaker information spearately
+    if data["metadata"]["transcription_config"]["diarization"] == "speaker":
+        df["channel"] = df["alternatives"].apply(lambda x: x[0]["speaker"])
+
     print(df.columns.to_list())
-    
+
     df = df.sort_values(by="start_time").reset_index(drop=True)
+
 
     merged_df = merge_info(df)
     merged_df["type"] = 'word'
@@ -200,13 +206,7 @@ def merge_info(df:pandas.DataFrame) -> pandas.DataFrame:
     """merges contents, start time, and end time"""
 
     # Group by channel, but only group consecutive rows in the same channel
-    if "channel" not in df.columns.to_list():
-        print("Channel not found in source file, assuming that Speaker Diarization is used instead")
-        if not "speaker" in df.columns.to_list():
-            raise RuntimeError("Can't find speaker in source file - check you have diarization sufficient to proceed")
-        df.rename(columns={"speaker":"channel"},inplace=True)
-        print("Renamed speaker to channel for speaker diarization")
-    df['group'] = (df['channel'] != df['channel'].shift(1)).cumsum()   
+    df['group'] = (df['channel'] != df['channel'].shift(1)).cumsum()
 
     # Aggregate text, start_time, and end_time
     merged_df = df.groupby(['channel', 'group']).apply(lambda x: pandas.Series({

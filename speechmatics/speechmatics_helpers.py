@@ -44,7 +44,8 @@ def get_transcription_configuration(
         punctuation_sensitivity: float = 0.5,
         low_confidence_action: str = "",
         expected_languages: str = "",
-        default_language: str = "en"
+        default_language: str = "en",
+        speaker_sensitivity: float = 0.0
     ) -> dict:
     """"
     language: "en", "fr" etc. default "en"
@@ -72,7 +73,8 @@ def get_transcription_configuration(
                     "!"
                 ],
                 "sensitivity": punctuation_sensitivity
-            }
+            },
+
         }
     }
 
@@ -109,6 +111,11 @@ def get_transcription_configuration(
                 conf["language_identification_config"] = {}
             conf["language_identification_config"]["expected_languages"] = expected_languages
     conf["transcription_config"]["language"] = language
+
+    if diarization == "speaker":
+        conf["transcription_config"]["speaker_diarization_config"] = {
+            "speaker_sensitivity": speaker_sensitivity
+        }
 
     return conf
 
