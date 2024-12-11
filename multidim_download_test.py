@@ -71,7 +71,11 @@ def check_file_upload_trigger_id(namespace: str,
     conversation_source_info = hf_api.get_conversation_source(namespace=namespace, conversation_source_id=conversation_source_id)
     assert "exportId" in conversation_source_info.keys()
     assert "exportUrlPath" in conversation_source_info.keys()
-
+    
+    # check the convset config
+    # TODO: need convoset_id have convosource_id
+    # conversation_set_config = hf_api.get_conversation_set_configuration(namespace=namespace,convoset_id=conversation)
+    
     # Check that the file is in the conversation set
     convoset_files = hf_api.list_conversation_src_files(namespace=namespace, conversation_set_src_id=conversation_source_id)
     assert len(convoset_files) > 0
@@ -80,6 +84,7 @@ def check_file_upload_trigger_id(namespace: str,
     df_files = df_files.set_index("name")
     file_upload_time=df_files.loc[filename,"uploadTime"]
     file_upload_format=df_files.loc[filename,"format"]
+    print(df_files)
     
     # see what jobs it ran
     jobs = trigger_response["triggerState"]["jobs"]
@@ -90,7 +95,7 @@ def check_file_upload_trigger_id(namespace: str,
     
     # earliest and latest jobs
     first_job_starttime = df_jobs["triggeredRun.startTime"].min()
-    final_job_endtime = df_jobs["triggeredRun.endTime"].max()
+    final_job_endtime = df_jobs["triggeredRun.endTime"].max()     
         
     response_dict = {
         'namespace':             namespace,
