@@ -1,5 +1,9 @@
 """
-python template.py
+python html_to_json.py
+
+Takes a directory of .html files
+Checks the token numbers and truncates to a passed model applicable limit
+Produces a HumanFirst JSON format output
 
 """
 # ******************************************************************************************************************120
