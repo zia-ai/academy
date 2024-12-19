@@ -1,7 +1,9 @@
 """
 python gong_to_hf_csv.py
 
-Converts Gong transcription JSON to HF CSV
+Converts Gong transcription JSON to HF COnversation CSV
+
+Accepts list of agent ids to perform role mappings to ensure conversion of transcripts to HF conversation format
 """
 # *********************************************************************************************************************
 
