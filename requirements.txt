@@ -3,7 +3,7 @@ wheel
 setuptools
 
 # pandas/numpy/scipy basics
-numpy==2.0.2
+numpy
 pandas
 tdqm
 
@@ -52,6 +52,9 @@ mediawikiapi
 # openai
 openai
 tiktoken
+
+# LLM testing
+deepeval
 
 # microsoft formats
 openpyxl
