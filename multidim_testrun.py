@@ -144,15 +144,16 @@ def main(
     for o in pass_or_fail_keys:
         df_expected_results = df_expected_results.apply(eval_pass_fail_result,args=[o,df],axis=1)
     
-    
-    # Get the model
-    print(f'Downloading: {DEFAULT_SENTENCE_TRANFORMER}')
-    print(f'This may take a while if it hasn\'t been downloaded before - for instance USE Multilingual requires about 2GB of downloads')
-    model = sentence_transformers.SentenceTransformer(DEFAULT_SENTENCE_TRANFORMER)
-        
-    # Do similarity evals
-    for k in similarity_keys:
-        df_expected_results = df_expected_results.apply(eval_similarity_result,args=[k,df,model],axis=1)
+
+    if not skip_pipeline_run:   
+        # Get the model
+        print(f'Downloading: {DEFAULT_SENTENCE_TRANFORMER}')
+        print(f'This may take a while if it hasn\'t been downloaded before - for instance USE Multilingual requires about 2GB of downloads')
+        model = sentence_transformers.SentenceTransformer(DEFAULT_SENTENCE_TRANFORMER)
+            
+        # Do similarity evals
+        for k in similarity_keys:
+            df_expected_results = df_expected_results.apply(eval_similarity_result,args=[k,df,model],axis=1)
         
     # Dump the full output
     assert expected_results.endswith(".csv")
@@ -164,10 +165,37 @@ def main(
     df_expected_results.to_csv(output_filename,index=True, header=True)
     print(f'wrote to: {output_filename}')
 
+    # Dump a excel
+    assert expected_results.endswith(".csv")
+    df_expected_results = do_formatting(df_expected_results)
+    now = datetime.datetime.now().isoformat(timespec="seconds")
+    now = now.replace(":","")
+    now = now.replace("-","")
+    output_filename = expected_results.replace(".csv", f"_{now}_eval.xlsx")
+    assert expected_results != output_filename
+    df_expected_results.to_excel(output_filename,index=True, header=True)
+    print(f'wrote to: {output_filename}')
+        
+def do_formatting(df: pandas.DataFrame) -> pandas.DataFrame:    
+    """Sets all gt columns to grey
+    Highlights eval green/red"""
+    do_these_cols = []
+    for c in df.columns.to_list():
+        if c.endswith("_eval") or c.endswith("_gt") or c.endswith("_gt_cp"):
+            do_these_cols.append(c)
+    df = df.style.apply(highlight_pass_fail,subset=do_these_cols)
+    return df
     
-    
-    
-    
+def highlight_pass_fail(col:pandas.Series) -> str:
+    output_list = []
+    for value in col:
+        if value == "PASS":
+            output_list.append('background-color: mediumseagreen')
+        elif value == "FAIL":
+            output_list.append('background-color: lightcoral')
+        else:
+            output_list.append('background-color: lightgrey')
+    return output_list
 
 def eval_similarity_result(expected_result_row: pandas.Series,
                            similarity_key: str, 
