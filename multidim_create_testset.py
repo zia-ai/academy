@@ -21,6 +21,8 @@ import pandas
 import humanfirst
 
 # constants
+DEFAULT_SCRIPT_MAX_POLLS=240
+DEFAULT_SCRIPT_TIMEOUT=300
 
 @click.command()
 @click.option('-e', '--expected_results', type=str, required=True, help='path to CSV of expected results')
@@ -50,9 +52,10 @@ def main(expected_results: str,
     
 
     # Get the conovesations taking column 0 as the key to lookup
+    # we deduplicate witn unique in case there are multiple classes per convo
     key_col = df_expected_results.columns[0]
     test_convos = get_convos(namespace=namespace,playbook=playbook,
-                             ids=df_expected_results[key_col].to_list(),
+                             ids=list(df_expected_results[key_col].unique()),
                              key_col=key_col,
                              hf_api=hf_api,
                              frig=frig)
@@ -77,7 +80,7 @@ def main(expected_results: str,
 def check_trigger_completion(namespace: str, 
                              trigger_id: str, 
                              hf_api: humanfirst.apis.HFAPI,
-                             max_polls: int = 240):
+                             max_polls: int = DEFAULT_SCRIPT_MAX_POLLS):
     # Check the status of the trigger on the id 
     trigger_response = hf_api.describe_trigger(namespace=namespace,
                             trigger_id=trigger_id)
@@ -114,13 +117,15 @@ def get_convos(namespace: str, playbook: str,
                                                                  playbook_id=playbook,
                                                                  metadata_predicate=metadata_predicate,
                                                                  source_kind=1,# unlabelled
-                                                                 source=1 # client
+                                                                 source=1, # client
+                                                                 timeout=DEFAULT_SCRIPT_TIMEOUT
                                                                  )
     test_convos_expert = hf_api.export_query_conversation_inputs(namespace=namespace,
                                                                  playbook_id=playbook,
                                                                  metadata_predicate=metadata_predicate,
                                                                  source_kind=1,# unlabelled
-                                                                 source=2 # expert
+                                                                 source=2, # expert
+                                                                 timeout=DEFAULT_SCRIPT_TIMEOUT                                                                
                                                                  )
     
     # Reassmeble
