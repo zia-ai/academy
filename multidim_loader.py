@@ -97,13 +97,15 @@ def main(input_folder: str, prefix: str,
             if max_files > 0 and files_loaded == max_files:
                 break
 
+            print('Determining upload no trigger values')
             if files_loaded >= (len(load_files) - 1):
-                print(f'files_loaded: {files_loaded} len_load_files -1 {(len(load_files) - 1)}')
+                print('Penultimate file of the total set = triggers required')
                 this_file_no_trigger = False
             elif files_loaded >= max_files - 1:
-                print(f'files_loaded: {files_loaded} max_files -1 {(len(load_files) - 1)}')
+                print('Penultimate file of the number of deletes intended = triggers required')
                 this_file_no_trigger = False
             else:
+                print(f'File is a mid file, accept passed trigger values: {no_trigger}')
                 this_file_no_trigger = no_trigger
                 
             multidim_data_generation.logit("this_file_no_trigger",this_file_no_trigger)
@@ -135,6 +137,9 @@ def main(input_folder: str, prefix: str,
             
                 if total_wait == 0:
                     raise RuntimeError(f"Did not get TRIGGER_STATUS_COMPLETED with max_loops: {max_loops}")
+            else:
+                # if the file was uploaded with no trigger no trigger should be generated.
+                assert not "triggerId" in upload_response.keys()
                 
             
             multidim_data_generation.logit(f"File: {f} total_time:",total_wait)
@@ -156,14 +161,15 @@ def main(input_folder: str, prefix: str,
         if max_files > 0 and files_deleted == max_files:
             break
         
+        print('Determining Delete no trigger values')
         if files_deleted >= (len(files_at_start) - 1):
-            print('Clause 1')
+            print('Penultimate file of the total set = triggers required')
             this_file_no_trigger = False
         elif files_deleted >= max_files - 1:
-            print('Clause 2')
+            print('Penultimate file of the number of deletes intended = triggers required')
             this_file_no_trigger = False
         else:
-            print('Clause 3')
+            print(f'File is a mid file, accept passed trigger values: {no_trigger}')
             this_file_no_trigger = no_trigger
             
         multidim_data_generation.logit("this_file_no_trigger",this_file_no_trigger)
@@ -197,6 +203,9 @@ def main(input_folder: str, prefix: str,
                 multidim_data_generation.logit(f"File delete: {f} total_time:",total_wait)
             else:
                 multidim_data_generation.logit("triggerid not in delete_response",delete_response)
+        else: 
+            # if the file was uploaded with this_file_no_trigger = True no trigger should be generated.
+            assert not "triggerId" in delete_response.keys()
         
         files_deleted = files_deleted + 1
         
