@@ -40,6 +40,10 @@ google-auth-oauthlib
 google-cloud-dialogflow-cx
 google-cloud-translate
 google-cloud-storage
+google-cloud-aiplatform
+
+# anthropic
+anthropic 
 
 # audio transcription
 deepgram-sdk
