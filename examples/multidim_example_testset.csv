@@ -1,0 +1,6 @@
+abcd_id,resolved_gt,remaining_issue_gt,reasoning_gt
+144,No,""User stopped responding","User stopped responding"
+147,No,"Escalated technical issue to internal team","Customer couldn't get basic details from the website in order to identify their account"
+241,No,"System issue-Website still slow","Website is not responding properly"
+258,Yes,"None-None","Password successfully reset and user thanks agent."
+
