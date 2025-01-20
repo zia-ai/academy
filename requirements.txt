@@ -43,7 +43,7 @@ google-cloud-storage
 google-cloud-aiplatform
 
 # anthropic
-anthropic 
+anthropic
 
 # audio transcription
 deepgram-sdk

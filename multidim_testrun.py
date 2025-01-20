@@ -96,19 +96,20 @@ def main(
         raise RuntimeError(f'Index key not found: {metadata_index_key}')
 
     # Check for all the key ground truth values in expected values
-    similarity_keys = similarity_keys.split(",")
-    nlu_keys = nlu_keys.split(",")
-    pass_or_fail_keys = pass_or_fail_keys.split(",")
+    similarity_keys = check_set_key(similarity_keys)
+    nlu_keys = check_set_key(nlu_keys)
+    pass_or_fail_keys = check_set_key(pass_or_fail_keys)
     all_keys = []
     all_keys.extend(similarity_keys)
     all_keys.extend(nlu_keys)
     all_keys.extend(pass_or_fail_keys)
 
     # check for all the key values in actual values
+    print(f'all_keys: {all_keys}')
     for k in all_keys:
         unique_key_values = list(df["metadata.key"].unique())
         if not k in unique_key_values:
-            raise RuntimeError(f'Expected key to be one of the unique metdata.key values: {unique_key_values} ')
+            raise RuntimeError(f'Expected key: {k} to be one of the unique metdata.key values: {unique_key_values} ')
     print('Checked all keys are present in pipeline output')
     
     # rename then set the index
@@ -123,7 +124,10 @@ def main(
     df = df.apply(extract_top_matching_intents,args=[hf_workspace],axis=1)
     
     # Find the expected results and set the index no metadata.start
-    df_expected_results = pandas.read_csv(expected_results,dtype=str,delimiter=",")
+    df_expected_results = pandas.read_csv(expected_results,
+                                          dtype=str,
+                                          delimiter=",",
+                                          keep_default_na=False) # Keep "None"
     df_expected_results = df_expected_results.set_index(index_key)
     
     # repeate our key checks
@@ -153,7 +157,18 @@ def main(
             
         # Do similarity evals
         for k in similarity_keys:
+            # TODO: this does them all as individual batches where as it could be a single batch
             df_expected_results = df_expected_results.apply(eval_similarity_result,args=[k,df,model],axis=1)
+
+    # Summarise results pass_fail
+    keys_for_testing = []
+    keys_for_testing.extend(pass_or_fail_keys)
+    if not skip_pipeline_run:
+        keys_for_testing.extend(similarity_keys)
+    for k in keys_for_testing :
+        eval_key = f'{k}_eval'
+        text_key = f'{k}_text'
+        print(df_expected_results[[eval_key,text_key]].groupby(eval_key).count()/df_expected_results[eval_key].count())
         
     # Dump the full output
     assert expected_results.endswith(".csv")
@@ -173,8 +188,13 @@ def main(
     now = now.replace("-","")
     output_filename = expected_results.replace(".csv", f"_{now}_eval.xlsx")
     assert expected_results != output_filename
-    df_expected_results.to_excel(output_filename,index=True, header=True)
+    df_expected_results.to_excel(output_filename,
+                                 index=True, 
+                                 header=True,
+                                 na_rep=False) # avoid removing "None"
     print(f'wrote to: {output_filename}')
+    
+
         
 def do_formatting(df: pandas.DataFrame) -> pandas.DataFrame:    
     """Sets all gt columns to grey
@@ -296,7 +316,13 @@ def extract_top_matching_intents(row: pandas.Series, hf_workspace: humanfirst.ob
         row[f'tm{i}_score'] = matching_intents[0]["intent_score"]
         
     return row        
-    
+
+def check_set_key(keystring: str) -> list:
+    if keystring == "":
+        return []
+    if len(keystring.split(",")) > 1:
+        return keystring.split(",")
+    return [keystring]
 
 if __name__ == "__main__":
     main()  # pylint: disable=no-value-for-parameter
