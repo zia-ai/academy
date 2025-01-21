@@ -117,14 +117,14 @@ def get_convos(namespace: str, playbook: str,
                                                                  playbook_id=playbook,
                                                                  metadata_predicate=metadata_predicate,
                                                                  source_kind=1,# unlabelled
-                                                                 source=1, # client
+                                                                 source=3, # skip
                                                                  timeout=DEFAULT_SCRIPT_TIMEOUT
                                                                  )
     test_convos_expert = hf_api.export_query_conversation_inputs(namespace=namespace,
                                                                  playbook_id=playbook,
                                                                  metadata_predicate=metadata_predicate,
                                                                  source_kind=1,# unlabelled
-                                                                 source=2, # expert
+                                                                 source=3, # expert
                                                                  timeout=DEFAULT_SCRIPT_TIMEOUT                                                                
                                                                  )
     
