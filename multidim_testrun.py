@@ -16,11 +16,11 @@ import datetime
 # 3rd party imports
 import click
 import pandas
-import sentence_transformers
 
 # custom imports
 import humanfirst
 import multidim_loader
+import multidim_create_testset
 
 # constants
 DEFAULT_SCRIPT_MAX_LOOPS = 240
@@ -34,9 +34,10 @@ DEFAULT_SENTENCE_TRANFORMER = 'sentence-transformers/use-cmlm-multilingual'
 @click.option("-p", "--pipeline_id", type=str, required=True, help="Pipeline for testing")
 @click.option("-e", "--expected_results", type=str, required=True, help="Expected Results CSV file full path")
 @click.option("-i", "--index_key", type=str, required=True, help="What the name of the unique index key is (without metadata.)")
-@click.option("-k", "--similarity_keys", type=str, required=False, default="", help="comma separated list")
-@click.option("-u", "--nlu_keys", type=str, required=False, default="", help="comma separated list")
-@click.option("-o", "--pass_or_fail_keys", type=str, required=False, default="", help="comma separated list")
+@click.option("-k", "--similarity_keys", type=str, required=False, default="", help="Keys to compare with similarity - comma separated list")
+@click.option("-u", "--nlu_keys", type=str, required=False, default="", help="Keys to lookup NLU values and compare - comma separated list")
+@click.option("-x", "--extra_keys", type=str, required=False, default="", help="Extra generated keys, presented, not evaluated, comma separated list")
+@click.option("-o", "--pass_or_fail_keys", type=str, required=False, default="", help="Exact value keys to evaluate - comma separated list")
 @click.option("-s", "--skip_pipeline_run", is_flag=True, required=False, default=False, help="Target Workspace")
 @click.option("-d", "--delimiter", required=False, default="-", help="Delimiter to format any hierarchical intent names")
 def main(
@@ -48,6 +49,7 @@ def main(
     similarity_keys: str,
     nlu_keys: str,
     pass_or_fail_keys: str,
+    extra_keys: str,
     skip_pipeline_run: bool,
     delimiter: str
     
@@ -99,10 +101,12 @@ def main(
     similarity_keys = check_set_key(similarity_keys)
     nlu_keys = check_set_key(nlu_keys)
     pass_or_fail_keys = check_set_key(pass_or_fail_keys)
+    extra_keys = check_set_key(extra_keys)
     all_keys = []
     all_keys.extend(similarity_keys)
     all_keys.extend(nlu_keys)
     all_keys.extend(pass_or_fail_keys)
+    all_keys.extend(extra_keys)
 
     # check for all the key values in actual values
     print(f'all_keys: {all_keys}')
@@ -128,18 +132,29 @@ def main(
                                           dtype=str,
                                           delimiter=",",
                                           keep_default_na=False) # Keep "None"
+    convo_ids = df_expected_results[index_key].to_list()
     df_expected_results = df_expected_results.set_index(index_key)
     
     # repeate our key checks
     for k in all_keys:
+        # Skip any extra keys they won't necessarily be in expected results
+        if k in extra_keys:
+            continue
         search_column = f'{k}_gt'
         if not search_column in df_expected_results.columns.to_list():
             raise RuntimeError(f'Expected key ground truth column in CSV called: {search_column}')
     print('Checked have a <keyname>_gt value column for each key passed')
+    
+    
+    # Add extra keys - these don't have eval
+    for x in extra_keys:
+        # Slice through the multiindex for the second level key with the name
+        df_temp = df.xs(x, level=1, drop_level=True)[["text"]] # enforcing a Dataframe with the  [[]]
+        # change the name of the text column to the name of the key
+        df_temp = df_temp.rename(columns={"text":x})
+        # are now indexed the same so simple left join
+        df_expected_results = df_expected_results.join(df_temp)
    
-    # going to go with minimal data - don't just include all the metadata runs
-    # can put playbook_pipline_id_in filename
-
     # Do NLU evals
     for u in nlu_keys:
         df_expected_results = df_expected_results.apply(eval_nlu_result,args=[u,df],axis=1)   
@@ -148,8 +163,12 @@ def main(
     for o in pass_or_fail_keys:
         df_expected_results = df_expected_results.apply(eval_pass_fail_result,args=[o,df],axis=1)
     
-
-    if not skip_pipeline_run:   
+    # if we are not skipping the pipeline run do similarity - as it's slow TODO: separate it out.
+    if not skip_pipeline_run:
+        
+        # Importing this is very slow only do it if we have to.
+        import sentence_transformers
+        
         # Get the model
         print(f'Downloading: {DEFAULT_SENTENCE_TRANFORMER}')
         print(f'This may take a while if it hasn\'t been downloaded before - for instance USE Multilingual requires about 2GB of downloads')
@@ -159,6 +178,18 @@ def main(
         for k in similarity_keys:
             # TODO: this does them all as individual batches where as it could be a single batch
             df_expected_results = df_expected_results.apply(eval_similarity_result,args=[k,df,model],axis=1)
+                        
+    # get the convo test and join onto results so we can read the convo in the output sheet
+    convos = multidim_create_testset.get_convos(namespace=namespace,playbook=playbook_id,
+                                       ids = convo_ids,
+                                       key_col=index_key,
+                                       hf_api=hf_api)
+    df_convos = pandas.json_normalize(convos)
+    df_convos = df_convos.sort_values([f"metadata.{index_key}","metadata.turn_id"])
+    df_convos = df_convos.set_index([f"metadata.{index_key}","metadata.turn_id"]) # TODO: when created at not signficantly different
+    df_convos["formatted_text"] = df_convos.apply(format_convo,axis=1)
+    df_convos = df_convos["formatted_text"].groupby(level=0).aggregate(lambda x: "\n".join(x))   
+    df_expected_results = df_expected_results.join(df_convos)
 
     # Summarise results pass_fail
     keys_for_testing = []
@@ -191,10 +222,18 @@ def main(
     df_expected_results.to_excel(output_filename,
                                  index=True, 
                                  header=True,
-                                 na_rep=False) # avoid removing "None"
+                                 na_rep=False                                 
+                                 ) # avoid removing "None"
     print(f'wrote to: {output_filename}')
     
-
+def format_convo(row: pandas.DataFrame) -> pandas.DataFrame:
+    """Format the utterances like the GUI does"""
+    if row["context.role"] == "client":
+        return f'User: {row["text"]}'
+    elif row["context.role"] == "expert":
+        return f'Agent: {row["text"]}'
+    else:
+        raise RuntimeError(f'Unrecognised context.role: {row["role"]}')
         
 def do_formatting(df: pandas.DataFrame) -> pandas.DataFrame:    
     """Sets all gt columns to grey
@@ -220,7 +259,7 @@ def highlight_pass_fail(col:pandas.Series) -> str:
 def eval_similarity_result(expected_result_row: pandas.Series,
                            similarity_key: str, 
                            df: pandas.DataFrame, 
-                           model: sentence_transformers.SentenceTransformer,
+                           model, # sentence_transformers.SentenceTransformer
                            duplicate_key: bool = True, 
                            similarity_clip: float = DEFAULT_SIMILARITY_CLIP) -> pandas.Series:
     """Similarity calculation"""
