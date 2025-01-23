@@ -19,7 +19,6 @@ import pandas
 
 # custom imports
 import humanfirst
-import multidim_loader
 import multidim_create_testset
 
 # constants
@@ -69,12 +68,10 @@ def main(
         print(trigger_pipeline)
 
         # Wait until it is done
-        total_wait = multidim_loader.loop_trigger_check_until_done(
-            hf_api=hf_api,
+        total_wait = hf_api.loop_trigger_check(
             namespace=namespace,
             max_loops=DEFAULT_SCRIPT_MAX_LOOPS,
-            trigger_id=trigger_pipeline["triggerId"],
-            debug=False,
+            trigger_id=trigger_pipeline["triggerId"]
         )
         print(f'Pipeline finished in: {total_wait}')
     else:

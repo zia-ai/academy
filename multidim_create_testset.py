@@ -30,12 +30,10 @@ DEFAULT_SCRIPT_TIMEOUT=300
 @click.option('-n', '--namespace', type=str, required=True, help='Name of namespace')
 @click.option('-p', '--playbook', type=str, required=True, help='Playbook ID')
 @click.option('-o', '--output_file_name', type=str, required=False, default="", help='Optional filename to write the JSON of the convos to')
-@click.option('-f', '--frig', is_flag=True, required=False, default=False, help='multidim frig')
 def main(expected_results: str,
          test_convoset_name: str,
          namespace: str,
          playbook: str,
-         frig: bool,
          output_file_name: str) -> None: # pylint: disable=unused-argument
     """Main Function"""
     
@@ -57,8 +55,7 @@ def main(expected_results: str,
     test_convos = get_convos(namespace=namespace,playbook=playbook,
                              ids=list(df_expected_results[key_col].unique()),
                              key_col=key_col,
-                             hf_api=hf_api,
-                             frig=frig)
+                             hf_api=hf_api)
        
     # write to output
     write_convo_file(test_convos=test_convos, output_file_name=output_file_name)
@@ -94,11 +91,10 @@ def check_trigger_completion(namespace: str,
             
 def get_convos(namespace: str, playbook: str,
                ids: list, key_col: str, 
-               hf_api: humanfirst.apis.HFAPI, 
-               frig: bool = False) -> list:
+               hf_api: humanfirst.apis.HFAPI) -> list:
     """Queries the workspace for the list of conversation IDs
-    Downloads both client expert
-    Returns the full conversations sorted by created_at"""
+    Downloads both client expert by skipping source predictatfe
+    Returns the full conversations as examples in the order downloadedd"""
     
     # build the metadata_predicate
     metadata_predicate = []
@@ -112,40 +108,21 @@ def get_convos(namespace: str, playbook: str,
             }
         )
     
-    # download both sides of the conversation
-    test_convos_client = hf_api.export_query_conversation_inputs(namespace=namespace,
+    # download both sides of the conversation - using 3 to skip source
+    test_convos = hf_api.export_query_conversation_inputs(namespace=namespace,
                                                                  playbook_id=playbook,
                                                                  metadata_predicate=metadata_predicate,
                                                                  source_kind=1,# unlabelled
-                                                                 source=3, # skip
+                                                                 source=-1, # skip source
                                                                  timeout=DEFAULT_SCRIPT_TIMEOUT
                                                                  )
-    test_convos_expert = hf_api.export_query_conversation_inputs(namespace=namespace,
-                                                                 playbook_id=playbook,
-                                                                 metadata_predicate=metadata_predicate,
-                                                                 source_kind=1,# unlabelled
-                                                                 source=3, # expert
-                                                                 timeout=DEFAULT_SCRIPT_TIMEOUT                                                                
-                                                                 )
+    # Do not sort - leave in order download
+    if not "examples" in test_convos.keys():
+        return []
+    return test_convos["examples"]
     
-    # Reassmeble
-    all_examples = []
-    all_examples.extend(test_convos_client["examples"])
-    all_examples.extend(test_convos_expert["examples"])
-    
-    # sort based on id and created at
-    all_examples.sort(key=lambda x: x["context"]["context_id"] + "-" + x["created_at"])
-    
-    # this is a frig because data multiplication in multidim creates duplicates of id
-    test_convos = []
-    for e in all_examples:
-        if frig:
-            if e["context"]["context_id"] == e["metadata"]["abcd_id"]:
-                test_convos.append(e)
-        else:
-            test_convos.append(e)
-            
-    return test_convos
+
+                
 
 def clear_out_convoset(test_convoset_name: str, 
                        namespace: str,
