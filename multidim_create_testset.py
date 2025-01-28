@@ -11,7 +11,6 @@ Checks the trigger completes and the data is ready.
 
 # standard imports
 import json
-import time
 
 # 3rd party imports
 import click
@@ -28,8 +27,8 @@ DEFAULT_SCRIPT_TIMEOUT=300
 @click.option('-e', '--expected_results', type=str, required=True, help='path to CSV of expected results')
 @click.option('-t', '--test_convoset_name', type=str, required=True, help='How to name the conversation set')
 @click.option('-n', '--namespace', type=str, required=True, help='Name of namespace')
-@click.option('-p', '--playbook', type=str, required=True, help='Playbook ID')
-@click.option('-o', '--output_file_name', type=str, required=False, default="", help='Optional filename to write the JSON of the convos to')
+@click.option('-b', '--playbook', type=str, required=True, help='Playbook ID')
+@click.option('-o', '--output_file_name', type=str, required=True, help='Filename to write the extract convos to before upload')
 def main(expected_results: str,
          test_convoset_name: str,
          namespace: str,
@@ -59,7 +58,8 @@ def main(expected_results: str,
        
     # write to output
     write_convo_file(test_convos=test_convos, output_file_name=output_file_name)
-        # Print DF for checks
+    
+    # Print DF for checks
     df_convos = pandas.json_normalize(test_convos)
     print(f'Wrote {len(test_convos)} utterrances across {df_convos["context.context_id"].nunique()} convos to: {output_file_name}')
     
@@ -70,25 +70,15 @@ def main(expected_results: str,
                                                    fqfp=output_file_name)
     
     # check trigger
-    check_trigger_completion(namespace=namespace,
-                             trigger_id=upload_response["triggerId"],
-                             hf_api=hf_api)
-    
-def check_trigger_completion(namespace: str, 
-                             trigger_id: str, 
-                             hf_api: humanfirst.apis.HFAPI,
-                             max_polls: int = DEFAULT_SCRIPT_MAX_POLLS):
-    # Check the status of the trigger on the id 
-    trigger_response = hf_api.describe_trigger(namespace=namespace,
-                            trigger_id=trigger_id)
-    for i in range(max_polls):
-        status = trigger_response["triggerState"]["status"]
-        if status == "TRIGGER_STATUS_COMPLETED":
-            break
-        else:
-            time.sleep(1)
-            print(f'{i:<4} {trigger_id:<30} {status}')
-            
+    total_wait_time = hf_api.loop_trigger_check(namespace=namespace,
+                                                trigger_id=upload_response["triggerId"])
+    if total_wait_time == -1:
+        print('Pipeline failed or cancelled')
+    elif total_wait_time == 0:
+        print('Pipeline timed out')
+    else:
+        print(f'Completed in {total_wait_time}')
+                
 def get_convos(namespace: str, playbook: str,
                ids: list, key_col: str, 
                hf_api: humanfirst.apis.HFAPI) -> list:
