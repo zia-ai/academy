@@ -12,6 +12,8 @@ Workspace has a pipeline setup with the sampling you want.
 
 # standard imports
 import datetime
+import logging
+import os
 
 # 3rd party imports
 import click
@@ -26,6 +28,9 @@ DEFAULT_SCRIPT_MAX_LOOPS = 240
 DEFAULT_SIMILARITY_CLIP = 0.2 # This is very much only an example - probably two low if this is the primary metric - but if it's only and indication
 ## universal-sentence-encoder-multilingual which is same as HF uses
 DEFAULT_SENTENCE_TRANFORMER = 'sentence-transformers/use-cmlm-multilingual'
+
+# logger - picks up config from humanfirst - set HF_LOG_LEVEL=<level in caps>
+logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option("-n", "--namespace", type=str, required=True, help="Target Workspace")
@@ -54,6 +59,8 @@ def main(
     
 ) -> None:  # pylint: disable=unused-argument
     """Main Function"""
+    
+
 
     # create client (remember to export HF_USERNAME and HF_PASSWORD)
     hf_api = humanfirst.apis.HFAPI()
@@ -65,7 +72,7 @@ def main(
         )
         # responds with trigger ID and generation ID
 
-        print(trigger_pipeline)
+        logger.info(f'Pipeline started trigger_id: {trigger_pipeline["triggerId"]} generation_run_id: {trigger_pipeline["generationRunId"]}')
 
         # Wait until it is done
         total_wait = hf_api.loop_trigger_check(
@@ -73,9 +80,14 @@ def main(
             max_loops=DEFAULT_SCRIPT_MAX_LOOPS,
             trigger_id=trigger_pipeline["triggerId"]
         )
-        print(f'Pipeline finished in: {total_wait}')
+        if total_wait == -1:
+            raise Exception(f'Pipeline cancelled or failed')
+        elif total_wait == 0:
+            raise Exception(f'Timed out waiting for pipeline')
+        else:
+            logger.info(f'Pipeline completed in: {total_wait}s')
     else:
-        print(f'Skipped pipeline run as dryrun: {skip_pipeline_run}')
+        logger.info(f'Skipped pipeline run as dryrun: {skip_pipeline_run}')
 
     # put the data into a DF
     some_data = hf_api.export_query_conversation_inputs(namespace=namespace,
@@ -106,12 +118,12 @@ def main(
     all_keys.extend(extra_keys)
 
     # check for all the key values in actual values
-    print(f'all_keys: {all_keys}')
+    logger.info(f'all_keys: {all_keys}')
     for k in all_keys:
         unique_key_values = list(df["metadata.key"].unique())
         if not k in unique_key_values:
             raise RuntimeError(f'Expected key: {k} to be one of the unique metdata.key values: {unique_key_values} ')
-    print('Checked all keys are present in pipeline output')
+    logger.info('Checked all keys are present in pipeline output')
     
     # rename then set the index
     df = df.rename(columns={metadata_index_key:index_key})
@@ -140,7 +152,7 @@ def main(
         search_column = f'{k}_gt'
         if not search_column in df_expected_results.columns.to_list():
             raise RuntimeError(f'Expected key ground truth column in CSV called: {search_column}')
-    print('Checked have a <keyname>_gt value column for each key passed')
+    logger.info('Checked have a <keyname>_gt value column for each key passed')
     
     
     # Add extra keys - these don't have eval
@@ -161,20 +173,22 @@ def main(
         df_expected_results = df_expected_results.apply(eval_pass_fail_result,args=[o,df],axis=1)
     
     # if we are not skipping the pipeline run do similarity - as it's slow TODO: separate it out.
-    if not skip_pipeline_run:
+    if len(similarity_keys) > 0:
         
         # Importing this is very slow only do it if we have to.
         import sentence_transformers
         
         # Get the model
-        print(f'Downloading: {DEFAULT_SENTENCE_TRANFORMER}')
-        print(f'This may take a while if it hasn\'t been downloaded before - for instance USE Multilingual requires about 2GB of downloads')
+        logger.info(f'Downloading: {DEFAULT_SENTENCE_TRANFORMER}')
+        logger.info(f'This may take a while if it hasn\'t been downloaded before - for instance USE Multilingual requires about 2GB of downloads')
         model = sentence_transformers.SentenceTransformer(DEFAULT_SENTENCE_TRANFORMER)
             
         # Do similarity evals
         for k in similarity_keys:
             # TODO: this does them all as individual batches where as it could be a single batch
             df_expected_results = df_expected_results.apply(eval_similarity_result,args=[k,df,model],axis=1)
+    else:
+        logger.info(f'Skipping similarity keys as none passed')
                         
     # get the convo test and join onto results so we can read the convo in the output sheet
     convos = multidim_create_testset.get_convos(namespace=namespace,playbook=playbook_id,
@@ -206,7 +220,7 @@ def main(
     output_filename = expected_results.replace(".csv", f"_{now}_eval.csv")
     assert expected_results != output_filename
     df_expected_results.to_csv(output_filename,index=True, header=True)
-    print(f'wrote to: {output_filename}')
+    print(f'Wrote to: {output_filename}')
 
     # Dump a excel
     assert expected_results.endswith(".csv")
@@ -221,7 +235,7 @@ def main(
                                  header=True,
                                  na_rep=False                                 
                                  ) # avoid removing "None"
-    print(f'wrote to: {output_filename}')
+    print(f'Wrote to: {output_filename}')
     
 def format_convo(row: pandas.DataFrame) -> pandas.DataFrame:
     """Format the utterances like the GUI does"""
