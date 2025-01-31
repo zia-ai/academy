@@ -49,8 +49,8 @@ def main(expected_results: str,
     
 
     # Get the conovesations taking column 0 as the key to lookup
-    # we deduplicate witn unique in case there are multiple classes per convo
     key_col = df_expected_results.columns[0]
+    print(f'key_column: {[key_col]}')
     test_convos = get_convos(namespace=namespace,playbook=playbook,
                              ids=list(df_expected_results[key_col].unique()),
                              key_col=key_col,
