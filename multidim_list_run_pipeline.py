@@ -18,7 +18,6 @@ import math
 
 # custom imports
 import humanfirst
-import multidim_loader
 import multidim_data_generation
 
 @click.command()
@@ -83,13 +82,13 @@ def run_all_piplines(hf_api: humanfirst.apis.HFAPI, namespace:str, playbook_id: 
                                                             playbook_id=playbook_id,
                                                             pipeline_id=p["id"])
         if "triggerId" in trigger_pipeline.keys():
-            total_wait = multidim_loader.loop_trigger_check_until_done(hf_api=hf_api,
-                                                                       namespace=namespace,
-                                                          max_loops=max_loops,
-                                                          trigger_id=trigger_pipeline["triggerId"],
-                                                          debug=False)
+            total_wait = hf_api.loop_trigger_check(namespace=namespace,
+                                                   max_loops=max_loops,
+                                                   trigger_id=trigger_pipeline["triggerId"])
             if total_wait == 0:
                 raise RuntimeError(f'This pipeline did not complete: {trigger_pipeline["triggerId"]}')
+            if total_wait == -1:
+                raise RuntimeError(f'Pipeline failed or cancelled')
             
             multidim_data_generation.logit(f'Pipline: {p["name"]} total_time:',total_wait)
         

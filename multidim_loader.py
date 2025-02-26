@@ -97,13 +97,15 @@ def main(input_folder: str, prefix: str,
             if max_files > 0 and files_loaded == max_files:
                 break
 
+            print('Determining upload no trigger values')
             if files_loaded >= (len(load_files) - 1):
-                print(f'files_loaded: {files_loaded} len_load_files -1 {(len(load_files) - 1)}')
+                print('Penultimate file of the total set = triggers required')
                 this_file_no_trigger = False
             elif files_loaded >= max_files - 1:
-                print(f'files_loaded: {files_loaded} max_files -1 {(len(load_files) - 1)}')
+                print('Penultimate file of the number of deletes intended = triggers required')
                 this_file_no_trigger = False
             else:
+                print(f'File is a mid file, accept passed trigger values: {no_trigger}')
                 this_file_no_trigger = no_trigger
                 
             multidim_data_generation.logit("this_file_no_trigger",this_file_no_trigger)
@@ -124,17 +126,20 @@ def main(input_folder: str, prefix: str,
             print(this_file_no_trigger)
             if this_file_no_trigger == False:
                 if "triggerId" in upload_response.keys():
-                    total_wait = loop_trigger_check_until_done(hf_api=hf_api,
-                                                max_loops=max_loops, 
+                    total_wait = hf_api.loop_trigger_check(max_loops=max_loops, 
                                                 namespace=namespace, 
-                                                trigger_id=upload_response["triggerId"],
-                                                debug=True,
-                                                log_note="upload")
+                                                trigger_id=upload_response["triggerId"])
                 else:
                     multidim_data_generation.logit("No triggerid in upload response",upload_response)
             
                 if total_wait == 0:
                     raise RuntimeError(f"Did not get TRIGGER_STATUS_COMPLETED with max_loops: {max_loops}")
+                if total_wait == -1:
+                    raise RuntimeError(f"Trigger cancelled or failed")
+
+            else:
+                # if the file was uploaded with no trigger no trigger should be generated.
+                assert not "triggerId" in upload_response.keys()
                 
             
             multidim_data_generation.logit(f"File: {f} total_time:",total_wait)
@@ -156,14 +161,15 @@ def main(input_folder: str, prefix: str,
         if max_files > 0 and files_deleted == max_files:
             break
         
+        print('Determining Delete no trigger values')
         if files_deleted >= (len(files_at_start) - 1):
-            print('Clause 1')
+            print('Penultimate file of the total set = triggers required')
             this_file_no_trigger = False
         elif files_deleted >= max_files - 1:
-            print('Clause 2')
+            print('Penultimate file of the number of deletes intended = triggers required')
             this_file_no_trigger = False
         else:
-            print('Clause 3')
+            print(f'File is a mid file, accept passed trigger values: {no_trigger}')
             this_file_no_trigger = no_trigger
             
         multidim_data_generation.logit("this_file_no_trigger",this_file_no_trigger)
@@ -185,60 +191,23 @@ def main(input_folder: str, prefix: str,
         if this_file_no_trigger == False:
             if "triggerId" in delete_response.keys():
                 total_wait = 0
-                total_wait = loop_trigger_check_until_done(hf_api=hf_api,
-                                                max_loops=max_loops, 
+                total_wait = hf_api.loop_trigger_check(max_loops=max_loops, 
                                                 namespace=namespace, 
-                                                trigger_id=delete_response["triggerId"],
-                                                debug=True,
-                                                log_note="delete")
+                                                trigger_id=delete_response["triggerId"])
                 if total_wait == 0:
                     raise RuntimeError(f"Did not get TRIGGER_STATUS_COMPLETED with max_loops: {max_loops}")
+                if total_wait == -1:
+                    raise RuntimeError(f"Trigger Cancelled or Failed")
                 
                 multidim_data_generation.logit(f"File delete: {f} total_time:",total_wait)
             else:
                 multidim_data_generation.logit("triggerid not in delete_response",delete_response)
+        else: 
+            # if the file was uploaded with this_file_no_trigger = True no trigger should be generated.
+            assert not "triggerId" in delete_response.keys()
         
         files_deleted = files_deleted + 1
         
-
-def loop_trigger_check_until_done(hf_api: humanfirst.apis.HFAPI, max_loops: int,
-                                  namespace: str, trigger_id: str, increment: int = 0, debug: bool = False,
-                                  log_note: str = "") -> int:
-    """Loops round and waits for TRIGGER_STATUS_COMPLETE
-    The returns the total time
-    Return 0 if error """
-    loops = 0
-    wait = 1
-    total_wait = 0
-    done = False
-    while done == False:
-        trigger_response = hf_api.describe_trigger(namespace=namespace,trigger_id=trigger_id,timeout=120)
-        summary = {
-            "triggerId": trigger_response["triggerState"]["trigger"]["triggerId"],
-            "message": trigger_response["triggerState"]["trigger"]["message"],
-            "status": trigger_response["triggerState"]["status"]
-        }
-        if "progress" in trigger_response.keys():
-            summary["total"] = trigger_response["triggerState"]["progress"]["total"],
-            summary["completed"] = trigger_response["triggerState"]["progress"]["completed"],
-            summary["percentageComplete"] = trigger_response["triggerState"]["progress"]["percentageComplete"]
- 
-        if debug:
-            multidim_data_generation.logit(f"{loops:>5} total_wait {log_note}: {total_wait}",summary["status"])
-        total_wait = total_wait + wait
-        loops = loops + 1
-        wait = wait + increment
-        if summary["status"] == "TRIGGER_STATUS_COMPLETED":
-            done = True
-            break
-        if loops > max_loops:
-            break
-        time.sleep(wait)
-    if done:
-        return total_wait
-    else:
-        return 0
-
 def read_input_directory(input_folder: str, prefix: str):
     """Reads the input directory"""
     

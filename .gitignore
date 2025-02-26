@@ -34,6 +34,10 @@ onprem/*
 *.gz
 aws/*
 ic/*
+examples/multidim_example_testset_*.csv
+examples/multidim_example_testset_*.xlsx
+node_modules/*
+yarn.lock
 .env
 output.txt
 !.git/hooks/pre-commit

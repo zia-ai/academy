@@ -1,0 +1,18 @@
+The following is a conversation between a "User" and an "Agent" of an online fashion retailer
+
+<conversation>
+{{ conversation }}
+</conversation>
+
+Your job is to analyse whether this conversation was fully resolved?
+- consider what the users initial request was
+- the actions the Agent took to help give it
+- the User's reaction to the agent solution
+
+Give your reasoning, then your answer as Yes, No or Unclear, followed by a brief one line description of the remaining issue is there is one, or "None" if there is not.
+
+Respond with plain text key value pairs in this format:
+
+reasoning: [ Reasoning ]
+resolved: [ Yes, No or Unclear ]
+remaining_issue: [ Your one line summary of remaining issue or None ]
