@@ -3,7 +3,7 @@ wheel
 setuptools
 
 # pandas/numpy/scipy basics
-numpy==2.0.2
+numpy
 pandas
 tdqm
 
@@ -40,6 +40,10 @@ google-auth-oauthlib
 google-cloud-dialogflow-cx
 google-cloud-translate
 google-cloud-storage
+google-cloud-aiplatform
+
+# anthropic
+anthropic
 
 # audio transcription
 deepgram-sdk
@@ -52,6 +56,9 @@ mediawikiapi
 # openai
 openai
 tiktoken
+
+# LLM testing
+deepeval
 
 # microsoft formats
 openpyxl
@@ -86,4 +93,6 @@ speechmatics-python
 # mistral.ai - wants an old python dateutil-2.8.2 but rest is using 2.9.0
 # mistralai 
 
-# tensorflow-hub # not updated to 2.0.2 numpy wants 1.26.4
+# Convenient ways of downloading universal sentence encoder weights for similarity
+# tensorflow-hub # Appears now to be updated to numpy 2.0.2 or better - but needs CUDA drivers
+sentence_transformers # this is based off torch by default, also gets nvidia_cuda++ transformers - does it need a GPU - just embedding some text? 
