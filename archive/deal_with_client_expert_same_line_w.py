@@ -87,7 +87,8 @@ def main(filename: str,
         df = df[~(df["text"]==drop_this)]
 
     # Convert DateTime column to ISO format
-    df['DateTime'] = pandas.to_datetime(df['DateTime'], format="%d %b %Y, %H:%M:%S").dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    print(df.columns)
+    df['DateTime'] = pandas.to_datetime(df[timestamp_col], format="%d %b %Y, %H:%M:%S").dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     print(df)
 
